@@ -1,0 +1,199 @@
+<script src="/public/template/backend/js/form.js?v='. date('YmdHi');?>" type="text/javascript"></script>
+<div class="content-print">
+    <div class="infor-contact">
+        <h4>Phiếu đóng hàng</h4>
+    </div>
+    <div class="infor-order">
+        <table border="1">
+            <tr>
+                <th>STT</th>
+                <th>Mã đơn hàng</th>
+                <th>Mã SP</th>
+                <th>Sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Tên xe - Năm sản xuất</th>
+                <th>Kích thước</th>
+                <th>SL đặt/tồn</th>
+                <th>Ghi chú</th>
+            </tr>
+            <?php
+            $idx = 1;
+            foreach ($this->items as $item) {
+                $code = $item['code'];
+                $options = !empty($item['options']) ? unserialize($item['options']) : array();
+                $note = $item['sale_note'];
+                $contact_options = !empty($item['contact_options']) ? unserialize($item['contact_options']) : array();
+                $products = $options['product'];
+
+                $product_html = '';
+                $i = 0;
+                foreach ($products as $key => $value) {
+                    $return = $this->ctl->kiotviet_call(RETAILER, $this->kovToken, '/products/'.$value['product_id']);
+                    $kovProduct = json_decode($return,true);
+
+
+                    $product_code = $value['code'];
+                    $product_name = $value['full_name'];
+                    $product_number = $value['numbers'];
+                    $driver = $value['car_year'];
+                    $size = $value['length'].'x'.$value['width'].'x'.$value['height'];
+                    if($key == 0){
+                        $product_html .= '<tr>
+                                            <td class="text-center" rowspan="'.count($products).'">' . $idx++ . '</td>
+                                            <td rowspan="'.count($products).'">' . $code . '</td>
+                                            <td>' . $product_code . '</td>
+                                            <td>' . $product_name . '</td>
+                                            <td class="text-center">' . $product_number . '</td>
+                                            <td>' . $driver . '</td>
+                                            <td>' . $size . '</td>
+                                            <td class="text-center">' . number_format($kovProduct['inventories'][0]['reserved']).'/'.number_format($kovProduct['inventories'][0]['onHand']) . '</td>
+                                            <td rowspan="'.count($products).'">' . $note . '</td>
+                                      </tr>';
+                    }
+                    else{
+                        $product_html .= '<tr>
+                                            <td>' . $product_code . '</td>
+                                            <td>' . $product_name . '</td>
+                                            <td class="text-center">' . $product_number . '</td>
+                                            <td>' . $driver . '</td>
+                                            <td>' . $size . '</td>
+                                            <td class="text-center">' . number_format($kovProduct['inventories'][0]['reserved']).'/'.number_format($kovProduct['inventories'][0]['onHand']) . '</td>
+                                      </tr>';
+                    }
+
+                }
+                ?>
+                <?php echo $product_html;
+            }
+            ?>
+        </table>
+    </div>
+</div>
+<style>
+    .text-red{
+        color: red;
+    }
+    *{
+        margin:0px;
+        padding:0px;
+        box-sizing:border-box;
+        moz-box-sizing:border-box;
+        webkit-box-sizing:border-box;
+    }
+    .w-25{
+        width: 25%;
+    }
+    .d-flex{
+        display: flex;
+    }
+    .pt-20{
+        padding-top: 20px;
+    }
+    .pb-80{
+        padding-bottom: 80px;
+    }
+    .pt-5{
+        padding-top: 5px;
+    }
+    .pb-5{
+        padding-bottom: 5px;
+    }
+    .pl-25{
+        padding-right: 40px;
+    }
+    body{
+        background: rgba(0,0, 0, 0.7);
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    table{
+        border-collapse: collapse;
+        width: 100%;
+    }
+    table th{
+        padding: 5px;
+        text-transform: capitalize;
+        font-size: 14px;
+    }
+    table td{
+        padding: 5px;
+        text-transform: capitalize;
+        font-size: 13px;
+        font-weight: bold;
+    }
+    .content-print {
+        min-width: 210mm;
+        max-width: 297mm;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        /*background: #fff url("/public/files/upload/default/images/logo-ok2.jpg") no-repeat center;*/
+    }
+    .content-print .head-print{
+        width: 100%;
+        display: flex;
+    }
+    .content-print .head-print .logo{
+        width: 30%;
+        text-align: center;
+    }
+    .content-print .head-print .logo img {
+        width: 70%;
+    }
+    .content-print .head-print .company {
+        width: 70%;
+        padding: 0 20px;
+        text-align: center;
+    }
+    .content-print .head-print .company h3{
+        font-weight: bold;
+        font-size: 18px;
+        text-transform: uppercase;
+        margin: 5px 0px;
+        width: 100%;
+    }
+    .content-print .head-print .company p {
+        padding: 3px 0;
+        font-size: 14px;
+        text-transform: capitalize;
+        margin: 0;
+    }
+    .content-print .infor-contact{
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .content-print .infor-contact h4{
+        text-align: center;
+        font-size: 20px;
+        text-transform: capitalize;
+        padding: 10px 0 20px;
+    }
+    .content-print .infor-contact .label{
+        width: 50%;
+        float: left;
+    }
+    .content-print .infor-contact p {
+        margin: 0;
+        padding: 5px 30px;
+        font-size: 15px;
+        display: flex;
+        text-transform: capitalize;
+    }
+    .content-print .infor-contact p span{
+        min-width: 160px;
+        display: inline-block;
+    }
+    .text-right{
+        text-align: right;
+    }
+    .text-center{
+        text-align: center;
+    }
+
+    @media print {
+        tr.title{
+            background-color: #d8d8d8 !important;
+            -webkit-print-color-adjust: exact;
+        }
+    }
+
+</style>
