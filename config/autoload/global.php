@@ -8,7 +8,7 @@ return array(
                 'database' => getenv('DB_NAME'),
                 'username' => getenv('DB_USER'),
                 'password' => getenv('DB_PASSWORD'),
-                'hostname' => 'localhost',
+                'hostname' => getenv('DB_HOST'),
                 'port'     => '',
                 'charset'  => 'utf8',
             ),

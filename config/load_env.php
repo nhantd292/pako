@@ -27,9 +27,27 @@ function loadEnv($path)
         // Bỏ dấu nháy nếu có
         $value = trim($value, '"\'');
 
+        // ✅ Convert kiểu dữ liệu
+        $lower = strtolower($value);
+        if ($lower === 'true') {
+            $value = true;
+        } elseif ($lower === 'false') {
+            $value = false;
+        } elseif ($lower === 'null') {
+            $value = null;
+        } elseif (is_numeric($value)) {
+            // nếu là số (nguyên hoặc thập phân)
+            if (strpos($value, '.') !== false) {
+                $value = (float) $value;
+            } else {
+                $value = (int) $value;
+            }
+        }
+
         // Set vào environment nếu chưa có
         if (getenv($name) === false) {
-            putenv("$name=$value");
+            // putenv chỉ nhận string, nên convert lại để lưu
+            putenv($name . '=' . (is_bool($value) ? ($value ? 'true' : 'false') : $value));
             $_ENV[$name]    = $value;
             $_SERVER[$name] = $value;
         }

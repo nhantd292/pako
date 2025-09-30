@@ -2,4 +2,4 @@ cache/
 .idea/
 *.log
 *.zip
-.env
+*.env
