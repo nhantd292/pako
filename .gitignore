@@ -2,5 +2,4 @@ cache/
 .idea/
 *.log
 *.zip
-define.php
-config/autoload/global.php
+.env
