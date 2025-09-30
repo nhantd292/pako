@@ -307,6 +307,11 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_KOV_PRODUCTS, $adapter, null);
                     return new \Admin\Model\KovProductsTable($tableGateway);
                 },
+                'Admin\Model\KovOrderTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_KOV_ORDER, $adapter, null);
+                    return new \Admin\Model\KovOrderTable($tableGateway);
+                },
                 'Admin\Model\KovProductBranchTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig');
                     $tableGateway = new TableGateway(TABLE_KOV_PRODUCT_BRANCH, $adapter, null);
@@ -592,6 +597,11 @@ class Module {
                 'formAdminKovDiscounts' => function($sm) {
                     $myForm	= new \Admin\Form\KovDiscounts($sm);
                     $myForm->setInputFilter(new \Admin\Filter\KovDiscounts());
+                    return $myForm;
+                },
+                'formAdminKovOrder' => function($sm) {
+                    $myForm	= new \Admin\Form\KovOrder($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\KovOrder());
                     return $myForm;
                 },
                 'formAdminProductReturn' => function($sm) {

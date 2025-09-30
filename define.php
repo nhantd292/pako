@@ -4,9 +4,9 @@ chdir(dirname(__FILE__));
 
 // Key App
 
-define('CLIENT_ID',     '8be6d057-c96b-41c4-bcb3-487d3cb051fe');
-define('CLIENT_SECRET', 'FFC626E24C5E63A2E6437DDB6394499EC48C36FF');
-define('RETAILER',      'pako');
+define('CLIENT_ID',     getenv('CLIENT_ID'));
+define('CLIENT_SECRET', getenv('CLIENT_SECRET'));
+define('RETAILER',      getenv('RETAILER'));
 
 define('GHTK',      '6A538Aa24d481851A22D3ACD425c9FB503D5Fa81');//nhantd
 //define('GHTK',      '0f1d03F9b1c5fA3Cd6732633C5b0d018E3916dd4');// anh oanh
@@ -102,6 +102,7 @@ define('TABLE_KOV_DISCOUNTS',       TABLE_PREFIX . 'kov_discounts'); // Quản l
 define('TABLE_KOV_PRODUCT_BRANCH',  TABLE_PREFIX . 'kov_product_branch'); // Số lượng giá vốn sản phẩm
 define('TABLE_PRODUCT_RETURN',      TABLE_PREFIX . 'product_return'); // Quản lý kho hàng hoàn
 define('TABLE_PRODUCT_RETURN_KOV',  TABLE_PREFIX . 'product_return_kov'); // Quản lý kho hàng hoàn về kov
+define('TABLE_KOV_ORDER',           TABLE_PREFIX . 'kov_order'); // Đơn hàng
 
 // Đào tạo
 define('TABLE_EDU_CLASS',           TABLE_PREFIX . 'edu_class');

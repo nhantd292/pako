@@ -3,4 +3,4 @@ public/scripts/kcfinder/cache/
 .idea/
 *.log
 *.zip
-*.env
+.env

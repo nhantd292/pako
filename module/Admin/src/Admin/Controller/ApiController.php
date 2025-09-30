@@ -1304,6 +1304,46 @@ class ApiController extends ActionController {
         exit;
     }
 
+    // webhook cập nhật Order
+    public function updateKovOrderAction(){
+        // Data mẫu
+//         $post_data_test = '{"Id":"7ebdb7c0-8978-4c2a-8bf1-a68170bc4a85","Attempt":1,"Notifications":[{"Action":"order.update.500897536","Data":[{"__type":"KiotViet.OmniChannelCore.Api.Shared.Model.WebhookOrderUpdateRes, KiotViet.OmniChannelCore.Api.Shared","Id":1006167839,"Code":"DH001750","PurchaseDate":"2025-09-29T09:15:03.5270000+07:00","BranchId":1000007141,"BranchName":"Kho Vĩnh Phúc","SoldById":1000048292,"SoldByName":"CTV","CustomerId":1010598898,"CustomerCode":"KH000578","CustomerName":"ANH SÂM","Total":2200000,"TotalPayment":0,"Discount":0,"Status":5,"StatusValue":"Verified","RetailerId":500897536,"UsingCod":true,"ModifiedDate":"2025-09-29T09:43:44.3200000+07:00","CreatedDate":"2025-09-29T09:15:03.5430000+07:00","OrderDelivery":{"DeliveryBy":1000002593,"ServiceType":"ECOD","ServiceTypeText":"COD - Liên tỉnh tiết kiệm","Status":1,"StatusValue":"Not ship","Price":165011,"Receiver":"ANH SÂM","ContactNumber":"0917931988","Address":"Số 205,Phố Chu Văn An,","LocationId":547,"LocationName":"Quảng Ninh - Huyện Đầm Hà","Weight":33000,"Length":70,"Width":23,"Height":90,"UsingPriceCod":true,"PartnerDeliveryId":1000002593,"PartnerDelivery":{"Code":"VTPFW","Name":"Viettel Post FW"}},"DeliveryInfo":{"Id":1008950167,"OrderId":1006167839,"RetailerId":500897536,"DeliveyPackageId":1008950232,"DeliveryBy":1000002593,"ServiceType":"ECOD","ServiceAdd":"[{\"Code\":\"ShipperNote\",\"Value\":\"CHOTHUHANG\",\"ViewType\":\"DropdownList\",\"Name\":\"Cho thử hàng\"},{\"Code\":\"PaymentBy\",\"Value\":\"NGUOIGUI\",\"ViewType\":\"Radio\",\"Name\":\"Người gửi trả phí\"}]","Price":165011,"UseDefaultPartner":true,"Status":1,"CreatedDate":"2025-09-29T09:15:03.5770000+07:00","CreatedBy":1000048292,"ModifiedDate":"2025-09-29T09:43:44.3570000+07:00","ModifiedBy":1000020525,"ServiceTypeText":"COD - Liên tỉnh tiết kiệm","IsCurrent":true},"DeliveryPackage":{"Id":1008950232,"OrderId":1006167839,"Weight":33000,"Length":70,"Width":23,"Height":90,"Receiver":"ANH SÂM","ContactNumber":"0917931988","Address":"Số 205,Phố Chu Văn An,","LocationId":547,"LocationName":"Quảng Ninh - Huyện Đầm Hà","WardName":"Xã Đầm Hà","Comments":"Cho khách xem hàng và thử hàng , mọi vấn đề liên hệ về shop 0389835912 - Minh Thêu","UsingCod":true,"WardId":2735},"OrderDetails":[{"ProductId":1006684314,"ProductCode":"SP000051","ProductName":"Thảm Sàn Rối Cabon Xe 5 Chỗ (Bộ)","Quantity":1,"Price":200000,"Discount":0,"DiscountRatio":0,"Note":"Rối C5- xám sọc kẻ"},{"ProductId":1006672926,"ProductCode":"FW-5","ProductName":"Thảm Sàn Nhựa Đúc PAKO Mazda CX-5 18-25 (Bộ)","Quantity":1,"Price":2000000,"Discount":0,"DiscountRatio":0,"Note":""}],"Payments":[]}]}]}';
+//         $data_post =  json_decode($post_data_test, true);
+
+//        $this->postJson(file_get_contents('php://input'));// Đẩy dữ liệu sang webhook.site để kiểm tra
+        $data_post =  json_decode(file_get_contents('php://input'), true);
+        $notifications = $data_post['Notifications'];
+
+        foreach($notifications as $notifi){
+            foreach($notifi['Data'] as $item_get){
+                $order = $this->getServiceLocator()->get('Admin\Model\KovOrderTable')->getItem(array('Id' => $item_get['Id']));
+
+                $convert['Id']              = $item_get['Id'];
+                $convert['Code']            = $item_get['Code'];
+                $convert['BranchId']        = $item_get['BranchId'];
+                $convert['BranchName']      = $item_get['BranchName'];
+                $convert['SoldById']        = $item_get['SoldById'];
+                $convert['SoldByName']      = $item_get['SoldByName'];
+                $convert['CustomerId']      = $item_get['CustomerId'];
+                $convert['CustomerCode']    = $item_get['CustomerCode'];
+                $convert['CustomerName']    = $item_get['CustomerName'];
+                $convert['Total']           = $item_get['Total'];
+                $convert['TotalPayment']    = $item_get['TotalPayment'];
+                $convert['Status']          = $item_get['Status'];
+                $convert['StatusValue']     = $item_get['StatusValue'];
+                $convert['CreatedDate']     = $item_get['CreatedDate'];
+
+                if($order){
+                    $this->getServiceLocator()->get('Admin\Model\KovOrderTable')->saveItem(array('data' => $convert), array('task' => 'update'));
+                }
+                else{
+                    $this->getServiceLocator()->get('Admin\Model\KovOrderTable')->saveItem(array('data' => $convert), array('task' => 'add'));
+                }
+            }
+        }
+        exit;
+    }
+
     // Chia data tự động
     public function shareDataAutoAction() {
         $params['ssFilter']['filter_type'] = 'auto_share_data';
