@@ -6,7 +6,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use ZendX\System\UserInfo;
 
-class KovOrderTable extends DefaultTable {
+class KovOrdersTable extends DefaultTable {
 
     public function countItem($arrParam = null, $options = null){
 

@@ -1316,7 +1316,7 @@ class ApiController extends ActionController {
 
         foreach($notifications as $notifi){
             foreach($notifi['Data'] as $item_get){
-                $order = $this->getServiceLocator()->get('Admin\Model\KovOrderTable')->getItem(array('Id' => $item_get['Id']));
+                $order = $this->getServiceLocator()->get('Admin\Model\KovOrdersTable')->getItem(array('Id' => $item_get['Id']));
 
                 $convert['Id']              = $item_get['Id'];
                 $convert['Code']            = $item_get['Code'];
@@ -1334,10 +1334,10 @@ class ApiController extends ActionController {
                 $convert['CreatedDate']     = $item_get['CreatedDate'];
 
                 if($order){
-                    $this->getServiceLocator()->get('Admin\Model\KovOrderTable')->saveItem(array('data' => $convert), array('task' => 'update'));
+                    $this->getServiceLocator()->get('Admin\Model\KovOrdersTable')->saveItem(array('data' => $convert), array('task' => 'update'));
                 }
                 else{
-                    $this->getServiceLocator()->get('Admin\Model\KovOrderTable')->saveItem(array('data' => $convert), array('task' => 'add'));
+                    $this->getServiceLocator()->get('Admin\Model\KovOrdersTable')->saveItem(array('data' => $convert), array('task' => 'add'));
                 }
             }
         }

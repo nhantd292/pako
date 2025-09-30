@@ -307,10 +307,10 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_KOV_PRODUCTS, $adapter, null);
                     return new \Admin\Model\KovProductsTable($tableGateway);
                 },
-                'Admin\Model\KovOrderTable'	=> function ($sm) {
+                'Admin\Model\KovOrdersTable' => function ($sm) {
                     $adapter = $sm->get('dbConfig');
-                    $tableGateway = new TableGateway(TABLE_KOV_ORDER, $adapter, null);
-                    return new \Admin\Model\KovOrderTable($tableGateway);
+                    $tableGateway = new TableGateway(TABLE_KOV_ORDERS, $adapter, null);
+                    return new \Admin\Model\KovOrdersTable($tableGateway);
                 },
                 'Admin\Model\KovProductBranchTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig');

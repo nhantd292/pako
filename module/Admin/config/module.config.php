@@ -65,7 +65,7 @@ return array (
 		    'Admin\Controller\ComboProduct'           => Controller\ComboProductController::class,
 		    'Admin\Controller\KovBranches'            => Controller\KovBranchesController::class,
 		    'Admin\Controller\KovProducts'            => Controller\KovProductsController::class,
-		    'Admin\Controller\KovOrder'               => Controller\KovOrderController::class,
+		    'Admin\Controller\KovOrders'              => Controller\KovOrdersController::class,
 		    'Admin\Controller\KovDiscounts'           => Controller\KovDiscountsController::class,
 		    'Admin\Controller\ProductReturn'          => Controller\ProductReturnController::class,
 		    'Admin\Controller\ZaloNotifyConfig'       => Controller\ZaloNotifyConfigController::class,

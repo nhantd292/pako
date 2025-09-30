@@ -8,12 +8,12 @@ use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 use Zend\Form\FormInterface;
 
-class KovOrderController extends ActionController{
+class KovOrdersController extends ActionController{
 
     public function init()
     {
         // Thiết lập options
-        $this->_options['tableName'] = 'Admin\Model\KovOrderTable';
+        $this->_options['tableName'] = 'Admin\Model\KovOrdersTable';
 
         // Thiết lập session filter
         $action = str_replace('-', '_', $this->_params['action']);
