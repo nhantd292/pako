@@ -1,4 +1,5 @@
-cache/
+public/cache/
+public/scripts/kcfinder/cache/
 .idea/
 *.log
 *.zip
