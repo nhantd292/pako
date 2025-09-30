@@ -103,6 +103,7 @@ define('TABLE_KOV_PRODUCT_BRANCH',  TABLE_PREFIX . 'kov_product_branch'); // S�
 define('TABLE_PRODUCT_RETURN',      TABLE_PREFIX . 'product_return'); // Quản lý kho hàng hoàn
 define('TABLE_PRODUCT_RETURN_KOV',  TABLE_PREFIX . 'product_return_kov'); // Quản lý kho hàng hoàn về kov
 define('TABLE_KOV_ORDERS',          TABLE_PREFIX . 'kov_orders'); // Đơn hàng
+define('TABLE_KOV_INVOICES',        TABLE_PREFIX . 'kov_invoices'); // Hóa đơn
 
 // Đào tạo
 define('TABLE_EDU_CLASS',           TABLE_PREFIX . 'edu_class');

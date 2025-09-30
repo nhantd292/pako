@@ -312,6 +312,11 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_KOV_ORDERS, $adapter, null);
                     return new \Admin\Model\KovOrdersTable($tableGateway);
                 },
+                'Admin\Model\KovInvoicesTable' => function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_KOV_INVOICES, $adapter, null);
+                    return new \Admin\Model\KovInvoicesTable($tableGateway);
+                },
                 'Admin\Model\KovProductBranchTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig');
                     $tableGateway = new TableGateway(TABLE_KOV_PRODUCT_BRANCH, $adapter, null);
