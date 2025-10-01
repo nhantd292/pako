@@ -222,6 +222,16 @@
 					<i class="fa fa-file-text-o"></i> <span class="title">Sản phẩm</span><span class="arrow"></span>
 				</a>
 			</li>
+			<li>
+				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'kov-orders', 'action' => 'index'));?>" target="_self">
+					<i class="fa fa-file-text-o"></i> <span class="title">Đặt hàng</span><span class="arrow"></span>
+				</a>
+			</li>
+			<li>
+				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'kov-invoices', 'action' => 'index'));?>" target="_self">
+					<i class="fa fa-file-text-o"></i> <span class="title">Hóa đơn</span><span class="arrow"></span>
+				</a>
+			</li>
 		</ul>
 	</li>
 <?php }?>

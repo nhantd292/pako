@@ -7,10 +7,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ERROR);
 
-// === Load .env ===
-require_once 'config/load_env.php';
-loadEnv(__DIR__ . '\.env'); // nạp file .env ở gốc project
-// =================
+//// === Load .env ===
+//require_once 'config/load_env.php';
+//loadEnv(__DIR__ . '\.env'); // nạp file .env ở gốc project
+//// =================
 
 Zend\Loader\AutoloaderFactory::factory(array(
     'Zend\Loader\StandardAutoloader' => array(

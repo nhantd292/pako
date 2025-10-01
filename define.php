@@ -1,4 +1,9 @@
 <?php
+// === Load .env ===
+require_once 'config/load_env.php';
+loadEnv(__DIR__ . '\.env'); // nạp file .env ở gốc project
+// =================
+
 // Đường dẫn đến thư mục chứa thư mục hiện thời
 chdir(dirname(__FILE__));
 
