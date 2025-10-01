@@ -616,7 +616,7 @@ class ActionController extends AbstractActionController {
     public function postJson($json)
     {
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_URL, 'https://webhook.site/7421599b-15ee-4810-868a-f3b26fbb9b4f');
+        curl_setopt($curl, CURLOPT_URL, 'https://webhook.site/d7f4d9c4-e297-4ac4-b7ed-9ba7a96958ee');
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($curl, CURLOPT_ENCODING, '');
         curl_setopt($curl, CURLOPT_MAXREDIRS, 10);
