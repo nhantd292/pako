@@ -1321,6 +1321,7 @@ class ApiController extends ActionController {
         foreach($notifications as $notifi){
             foreach($notifi['Data'] as $item_get){
                 $order = $this->getServiceLocator()->get('Admin\Model\KovOrdersTable')->getItem(array('Id' => $item_get['Id']));
+                $customer = json_decode($this->kiotviet_call(RETAILER, $this->kiotviet_token, '/customers/'.$item_get['CustomerId']), true);
 
                 $convert['Id']              = $item_get['Id'];
                 $convert['Code']            = $item_get['Code'];
@@ -1331,6 +1332,7 @@ class ApiController extends ActionController {
                 $convert['CustomerId']      = $item_get['CustomerId'];
                 $convert['CustomerCode']    = $item_get['CustomerCode'];
                 $convert['CustomerName']    = $item_get['CustomerName'];
+                $convert['CustomerPhone']   = $customer['contactNumber'];
                 $convert['Total']           = $item_get['Total'];
                 $convert['TotalPayment']    = $item_get['TotalPayment'];
                 $convert['Status']          = $item_get['Status'];
@@ -1351,8 +1353,8 @@ class ApiController extends ActionController {
     // webhook cập nhật Order
     public function updateKovInvoicesAction(){
         // Data mẫu
-//         $post_data_test = '{"Id":"58966411-b131-42dd-9b17-a68c8e21f1d3","Attempt":1,"Notifications":[{"Action":"invoice.update.500897536","Data":[{"__type":"KiotViet.OmniChannelCore.Api.Shared.Model.WebhookInvoiceUpdateRes, KiotViet.OmniChannelCore.Api.Shared","Id":1050445672,"Code":"HD001698","PurchaseDate":"2025-09-26T15:59:53.6270000+07:00","BranchId":1000007141,"BranchName":"Kho Vĩnh Phúc","SoldById":1000023238,"SoldByName":"Triệu Tuyết Nhung","CustomerId":1010546431,"CustomerCode":"KH000556","CustomerName":"ANH ĐỨC LONG","Total":2000000,"TotalPayment":0,"Discount":200000,"Status":3,"StatusValue":"Processing","Description":"MAZDA BT50 2020 - RỐI : C5 XÁM GHI KẺ SỌC","UsingCod":true,"ModifiedDate":"2025-09-29T09:50:32.3430000+07:00","InvoiceDelivery":{"InvoiceId":1050445672,"DeliveryCode":"KMS16270065869815","ServiceType":"ECOD","Status":3,"Price":160011,"Receiver":"ANH ĐỨC LONG","ContactNumber":"0979871063","Address":"ĐỐI DIỆN TRẠM KIỂM LÂM ÂU LÂU THÔN ĐẮNG CON","LocationId":713,"LocationName":"Yên Bái - Thành phố Yên Bái","Weight":32000,"Length":70,"Width":23,"Height":90,"UsingPriceCod":true,"PartnerDeliveryId":1000002593,"PartnerDelivery":{"Code":"VTPFW","Name":"Viettel Post FW"}},"InvoiceDetails":[{"ProductId":1006684314,"ProductCode":"SP000051","ProductName":"Thảm Sàn Rối Cabon Xe 5 Chỗ (Bộ)","Quantity":1,"Price":200000,"Discount":0,"DiscountRatio":0},{"ProductId":1006651953,"ProductCode":"FW-16","ProductName":"Thảm Sàn Nhựa Đúc PAKO Ford Ranger 14-21 / Mazda BT50 14-21 / Ford Ranger Raptor 18-21 (Bộ)","Quantity":1,"Price":2000000,"Discount":0,"DiscountRatio":0}],"Payments":[]}]}]}';
-//         $data_post =  json_decode($post_data_test, true);
+//        $post_data_test = '{"Id":"58966411-b131-42dd-9b17-a68c8e21f1d3","Attempt":1,"Notifications":[{"Action":"invoice.update.500897536","Data":[{"__type":"KiotViet.OmniChannelCore.Api.Shared.Model.WebhookInvoiceUpdateRes, KiotViet.OmniChannelCore.Api.Shared","Id":1050445672,"Code":"HD001698","PurchaseDate":"2025-09-26T15:59:53.6270000+07:00","BranchId":1000007141,"BranchName":"Kho Vĩnh Phúc","SoldById":1000023238,"SoldByName":"Triệu Tuyết Nhung","CustomerId":1010546431,"CustomerCode":"KH000556","CustomerName":"ANH ĐỨC LONG","Total":2000000,"TotalPayment":0,"Discount":200000,"Status":3,"StatusValue":"Processing","Description":"MAZDA BT50 2020 - RỐI : C5 XÁM GHI KẺ SỌC","UsingCod":true,"ModifiedDate":"2025-09-29T09:50:32.3430000+07:00","InvoiceDelivery":{"InvoiceId":1050445672,"DeliveryCode":"KMS16270065869815","ServiceType":"ECOD","Status":3,"Price":160011,"Receiver":"ANH ĐỨC LONG","ContactNumber":"0979871063","Address":"ĐỐI DIỆN TRẠM KIỂM LÂM ÂU LÂU THÔN ĐẮNG CON","LocationId":713,"LocationName":"Yên Bái - Thành phố Yên Bái","Weight":32000,"Length":70,"Width":23,"Height":90,"UsingPriceCod":true,"PartnerDeliveryId":1000002593,"PartnerDelivery":{"Code":"VTPFW","Name":"Viettel Post FW"}},"InvoiceDetails":[{"ProductId":1006684314,"ProductCode":"SP000051","ProductName":"Thảm Sàn Rối Cabon Xe 5 Chỗ (Bộ)","Quantity":1,"Price":200000,"Discount":0,"DiscountRatio":0},{"ProductId":1006651953,"ProductCode":"FW-16","ProductName":"Thảm Sàn Nhựa Đúc PAKO Ford Ranger 14-21 / Mazda BT50 14-21 / Ford Ranger Raptor 18-21 (Bộ)","Quantity":1,"Price":2000000,"Discount":0,"DiscountRatio":0}],"Payments":[]}]}]}';
+//        $data_post =  json_decode($post_data_test, true);
 
 //        $this->postJson(file_get_contents('php://input'));// Đẩy dữ liệu sang webhook.site để kiểm tra
         $data_post =  json_decode(file_get_contents('php://input'), true);
@@ -1361,6 +1363,7 @@ class ApiController extends ActionController {
         foreach($notifications as $notifi){
             foreach($notifi['Data'] as $item_get){
                 $order = $this->getServiceLocator()->get('Admin\Model\KovInvoicesTable')->getItem(array('Id' => $item_get['Id']));
+                $invoice_item = json_decode($this->kiotviet_call(RETAILER, $this->kiotviet_token, '/invoices/'.$item_get['Id']), true);
 
                 $convert['Id']              = $item_get['Id'];
                 $convert['Code']            = $item_get['Code'];
@@ -1376,6 +1379,10 @@ class ApiController extends ActionController {
                 $convert['Discount']        = $item_get['Discount'];
                 $convert['Status']          = $item_get['Status'];
                 $convert['StatusValue']     = $item_get['StatusValue'];
+
+                $convert['OrderId']         = $invoice_item['orderId'];
+                $convert['OrderCode']       = $invoice_item['orderCode'];
+                $convert['CreatedDate']     = $this->convertToDateTime($invoice_item['createdDate']);
 
                 if($order){
                     $this->getServiceLocator()->get('Admin\Model\KovInvoicesTable')->saveItem(array('data' => $convert), array('task' => 'update'));
