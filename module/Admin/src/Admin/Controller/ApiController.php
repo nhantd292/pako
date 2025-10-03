@@ -1382,7 +1382,7 @@ class ApiController extends ActionController {
 
                 $convert['OrderId']         = $invoice_item['orderId'];
                 $convert['OrderCode']       = $invoice_item['orderCode'];
-                $convert['CreatedDate']     = $this->convertToDateTime($invoice_item['createdDate']);
+//                $convert['CreatedDate']     = $this->convertToDateTime($invoice_item['createdDate']);
 
                 if($order){
                     $this->getServiceLocator()->get('Admin\Model\KovInvoicesTable')->saveItem(array('data' => $convert), array('task' => 'update'));
