@@ -171,9 +171,9 @@ class KovInvoicesTable extends DefaultTable {
                 'Discount'      => $arrData['Discount'],
                 'Status'        => $arrData['Status'],
                 'StatusValue'   => $arrData['StatusValue'],
-                'OrderId'       => $arrData['StatusValue'],
-                'OrderCode'     => $arrData['StatusValue'],
-                'CreatedDate'   => $arrData['StatusValue'],
+                'OrderId'       => $arrData['OrderId'],
+                'OrderCode'     => $arrData['OrderCode'],
+                'CreatedDate'   => $arrData['CreatedDate'],
             );
 
             $this->tableGateway->insert($data);
