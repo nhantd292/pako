@@ -60,6 +60,7 @@ class KovInvoicesTable extends DefaultTable {
                 $select -> limit($paginator['itemCountPerPage'])
                     -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
 
+                $select -> order(array(TABLE_KOV_INVOICES.'.CreatedDate DESC'));
 
                 if(isset($ssFilter['filter_categoryId']) && $ssFilter['filter_categoryId'] != '') {
                     $select->where->equalTo(TABLE_KOV_PRODUCTS.'.categoryId', $ssFilter['filter_categoryId']);

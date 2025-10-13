@@ -56,34 +56,53 @@ class KovOrdersTable extends DefaultTable {
                 $date = new \ZendX\Functions\Date();
                 $paginator = $arrParam['paginator'];
                 $ssFilter  = $arrParam['ssFilter'];
+                $order_by = 'CreatedDate';
+                $order_type = 'DESC';
 
-                $select -> limit($paginator['itemCountPerPage'])
-                    -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
+                $date_begin = $date->formatToSearch($ssFilter['filter_date_begin']);
+                $date_end 	= $date->formatToSearch($ssFilter['filter_date_end']);
 
+                if ($paginator){
+                    $select -> limit($paginator['itemCountPerPage'])
+                        -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
+                }
 
-                if(isset($ssFilter['filter_categoryId']) && $ssFilter['filter_categoryId'] != '') {
-                    $select->where->equalTo(TABLE_KOV_PRODUCTS.'.categoryId', $ssFilter['filter_categoryId']);
+                if(!empty($ssFilter['order_by']) && !empty($ssFilter['order'])) {
+                    $order_by = strtoupper($ssFilter['order']);
+                }
+                if(!empty($ssFilter['order_type']) ) {
+                    $order_type = strtoupper($ssFilter['order_type']);
+                }
+                $select -> order(array(TABLE_KOV_ORDERS.'.'.$order_by.' '.$order_type));
+
+                if(isset($ssFilter['filter_CustomerPhone']) && $ssFilter['filter_CustomerPhone'] != '') {
+                    $select->where->equalTo(TABLE_KOV_ORDERS.'.CustomerPhone', $ssFilter['filter_CustomerPhone']);
+                }
+
+                if(isset($ssFilter['filter_status_array'])) {
+                    $select->where->in(TABLE_KOV_ORDERS.'.Status', $ssFilter['filter_status_array']);
+                }
+
+                if(!empty($date_begin) && !empty($date_end)) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_KOV_ORDERS .'.CreatedDate', $date_begin)
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_KOV_ORDERS .'.CreatedDate', $date_end . ' 23:59:59')
+                        -> UNNEST;
+                } elseif (!empty($date_begin)) {
+                    $select -> where -> greaterThanOrEqualTo(TABLE_KOV_ORDERS .'.CreatedDate', $date_begin);
+                } elseif (!empty($date_end)) {
+                    $select->where->lessThanOrEqualTo(TABLE_KOV_ORDERS .'.CreatedDate', $date_end . ' 23:59:59');
                 }
 
                 if(isset($ssFilter['filter_keyword']) && trim($ssFilter['filter_keyword']) != '') {
                     $select -> where -> NEST
-                        ->like(TABLE_KOV_PRODUCTS.'.fullName', '%'.$ssFilter['filter_keyword'].'%')
+                        ->like(TABLE_KOV_ORDERS.'.CustomerPhone', '%'.$ssFilter['filter_keyword'].'%')
                         ->Or
-                        ->like(TABLE_KOV_PRODUCTS.'.code', '%'.$ssFilter['filter_keyword'].'%')
+                        ->like(TABLE_KOV_ORDERS.'.CustomerName', '%'.$ssFilter['filter_keyword'].'%')
+                        ->Or
+                        ->like(TABLE_KOV_ORDERS.'.Code', '%'.$ssFilter['filter_keyword'].'%')
                         -> UNNEST;
-                }
-
-                if(isset($ssFilter['filter_branches']) && $ssFilter['filter_branches'] != '') {
-                    $select->where->equalTo(TABLE_KOV_PRODUCT_BRANCH.'.branchId', $ssFilter['filter_branches']);
-                }
-                if(isset($ssFilter['filter_evaluate']) && $ssFilter['filter_evaluate'] != '') {
-                    $select->where->equalTo(TABLE_KOV_PRODUCTS.'.evaluate', $ssFilter['filter_evaluate']);
-                }
-                if(isset($ssFilter['filter_tailors']) && $ssFilter['filter_tailors'] != '') {
-                    $select->where->equalTo(TABLE_KOV_PRODUCTS.'.product_type', $ssFilter['filter_tailors']);
-                }
-                if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
-                    $select->where->equalTo(TABLE_KOV_PRODUCTS.'.status', $ssFilter['filter_status']);
                 }
             });
         }
