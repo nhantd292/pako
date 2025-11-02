@@ -92,7 +92,7 @@ class KovOrdersTable extends DefaultTable {
                     $order_by = $ssFilter['order_by'];
                 }
                 if(!empty($ssFilter['order']) ) {
-                    $order_type = strtoupper($ssFilter['order_type']);
+                    $order_type = strtoupper($ssFilter['order']);
                 }
                 $select -> order(array(TABLE_KOV_ORDERS.'.'.$order_by.' '.$order_type));
 
