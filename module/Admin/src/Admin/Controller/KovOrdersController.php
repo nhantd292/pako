@@ -18,14 +18,13 @@ class KovOrdersController extends ActionController{
         // Thiết lập session filter
         $action = str_replace('-', '_', $this->_params['action']);
         $ssFilter                                    = new Container(__CLASS__);
-        $this->_params['ssFilter']['order_by']       = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'name';
+        $this->_params['ssFilter']['order_by']       = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'CreatedDate';
         $this->_params['ssFilter']['order']          = !empty($ssFilter->order) ? $ssFilter->order : 'DESC';
 
         $this->_params['ssFilter']['filter_keyword']        = $ssFilter->filter_keyword;
-        $this->_params['ssFilter']['filter_categoryId']     = $ssFilter->filter_categoryId;
         $this->_params['ssFilter']['filter_branches']       = $ssFilter->filter_branches ;
-        $this->_params['ssFilter']['filter_evaluate']       = $ssFilter->filter_evaluate;
-        $this->_params['ssFilter']['filter_tailors']        = $ssFilter->filter_tailors;
+        $this->_params['ssFilter']['filter_date_begin']     = $ssFilter->filter_date_begin ;
+        $this->_params['ssFilter']['filter_date_end']       = $ssFilter->filter_date_end ;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage']  = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : 50;
@@ -50,11 +49,10 @@ class KovOrdersController extends ActionController{
             $ssFilter->order_by          = $data['order_by'];
             $ssFilter->order             = $data['order'];
 
-            $ssFilter->filter_categoryId    = $data['filter_categoryId'];
             $ssFilter->filter_keyword       = $data['filter_keyword'];
             $ssFilter->filter_branches      = $data['filter_branches'];
-            $ssFilter->filter_evaluate      = $data['filter_evaluate'];
-            $ssFilter->filter_tailors       = $data['filter_tailors'];
+            $ssFilter->filter_date_begin    = $data['filter_date_begin'];
+            $ssFilter->filter_date_end      = $data['filter_date_end'];
         }
 
         $this->goRoute(['action' => $action]);
@@ -95,14 +93,10 @@ class KovOrdersController extends ActionController{
     }
 
     public function indexAction(){
-        $categories = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/categories?pageSize=100&hierachicalData=true');
-        $categories = json_decode($categories, true)['data'];
-        $categories = $this->getNameCat($this->addNew($categories), $result);
-
         $ssFilter = new Container(__CLASS__. 'sales');
         $ssFilter->currentPageNumber = $this->_paginator['currentPageNumber'];
 
-        $myForm	= new \Admin\Form\Search\KovProduct($this, $categories);
+        $myForm	= new \Admin\Form\Search\KovOrders($this);
         $myForm->setData($this->_params['ssFilter']);
         $items = $this->getTable()->listItem($this->_params, array('task' => 'list-item'));
         $count = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
@@ -110,9 +104,8 @@ class KovOrdersController extends ActionController{
         $this->_viewModel['myForm']	                = $myForm;
         $this->_viewModel['items']                  = $items;
         $this->_viewModel['count']                  = $count;
-        $this->_viewModel['categories']             = $categories;
         $this->_viewModel['sale_branch']            = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
-        $this->_viewModel['caption']                = 'Danh sách sản phẩm';
+        $this->_viewModel['caption']                = 'Danh sách đặt hàng';
 
         return new ViewModel($this->_viewModel);
     }
