@@ -19,13 +19,8 @@ define('GHTK',      '6A538Aa24d481851A22D3ACD425c9FB503D5Fa81');//nhantd
 define('URLGHTK',   'https://services.giaohangtietkiem.vn');
 define('HASS',      '6A538A1ASD4FG8D83D5FG8D5D4FAS8E8DF4D5D54F4');
 define('UPDATESHIPMENT',      'http://crm.5sauto.local/xadmin/api/updateShipment?hash=6A538A1ASD4FG8D83D5FG8D5D4FAS8E8DF4D5D54F4');
-
-//define('VIETTELPOST_CODE_SECRET', '480F1AA0CBD582AFB310B397C7950E0C');
-//define('VIETTELPOST_CODE_SECRET', '9CD92FFBD93C73CF098E5E0017AE2C87');
 define('TOKENUPDATE', 'DFG8DFGJDFG098DJGDAO89FUG90ASDFGUDSFG908SDJFG90SD8FUGJASDFG8MSDH');
-
 define('URLWEBHOOK','https://webhook.site/f941080a-4646-47d4-adca-18817f664cf8');
-
 
 define('URL_GHN',   'https://dev-online-gateway.ghn.vn/shiip/public-api/v2');
 define('URL_GHN_PRINT',   'https://dev-online-gateway.ghn.vn/a5/public-api/print80x80');
