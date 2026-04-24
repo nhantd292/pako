@@ -182,17 +182,28 @@
     </li>
 
     <!--Kinh doanh-->
+    <li class="parent">
+        <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
+            <i class="fa fa-user"></i> <span class="title">Khách hàng</span><span class="arrow"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'customer-type', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-list-ul"></i> <span class="title">Nhóm Khách hàng</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contact', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-list-ul"></i> <span class="title">Danh sách Khách hàng</span><span class="arrow"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
 	<li class="parent">
 	    <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
 			<i class="fa fa-money"></i> <span class="title">Sales</span><span class="arrow"></span>
 		</a> 
 		<ul class="dropdown-menu">
-            <li>
-				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contact', 'action' => 'index'));?>" target="_self">
-					<i class="fa fa-list"></i> <span class="title">Danh sách liên hệ</span><span class="arrow"></span>
-				</a>
-			</li>
-
 			<li>
 				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'index'));?>" target="_self">
 					<i class="fa fa-file-text-o"></i> <span class="title">Danh sách đơn hàng</span><span class="arrow"></span>

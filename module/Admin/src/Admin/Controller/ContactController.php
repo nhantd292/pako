@@ -39,9 +39,10 @@ class ContactController extends ActionController
         $this->_params['ssFilter']['filter_location_district'] = $ssFilter->filter_location_district;
         $this->_params['ssFilter']['filter_history_status']    = $ssFilter->filter_history_status;
         $this->_params['ssFilter']['filter_number_contract']   = $ssFilter->filter_number_contract;
-        $this->_params['ssFilter']['filter_number_contract2']   = $ssFilter->filter_number_contract2;
-        $this->_params['ssFilter']['filter_product_group_id']   = $ssFilter->filter_product_group_id;
+        $this->_params['ssFilter']['filter_number_contract2']  = $ssFilter->filter_number_contract2;
+        $this->_params['ssFilter']['filter_product_group_id']  = $ssFilter->filter_product_group_id;
         $this->_params['ssFilter']['filter_history_type_id']   = $ssFilter->filter_history_type_id;
+        $this->_params['ssFilter']['filter_customer_type']     = $ssFilter->filter_customer_type;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage']  = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : $this->_paginator['itemCountPerPage'];
@@ -88,6 +89,7 @@ class ContactController extends ActionController
             $ssFilter->filter_user              = $data['filter_user'];
             $ssFilter->filter_marketer_id       = $data['filter_marketer_id'];
             $ssFilter->filter_sale_group        = $data['filter_sale_group'];
+            $ssFilter->filter_customer_type     = $data['filter_customer_type'];
 
             if (!empty($data['filter_sale_branch'])) {
                 if ($ssFilter->filter_sale_branch != $data['filter_sale_branch']) {
@@ -120,7 +122,6 @@ class ContactController extends ActionController
 
     public function indexAction()
     {
-//        $listProducts = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/products');
         $ssFilter = new Container(__CLASS__);
         $user_id = $this->_userInfo->getUserInfo('id');
         if(!empty($this->_params['route']['nid'])) {
@@ -184,7 +185,8 @@ class ContactController extends ActionController
         $this->_viewModel['sale_history_type']   = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-history-type')), array('task' => 'cache'));
 
 
-        $this->_viewModel['locations']         = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['locations']              = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['customer_type']          = $this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache'));
 
 
         $this->_viewModel['caption']             = 'Liên hệ - Danh sách';

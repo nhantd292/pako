@@ -74,8 +74,8 @@ class Contact extends Form {
 		    'options'		=> array(
 		        'empty_option'	=> '- Chọn -',
 		        'disable_inarray_validator' => true,
-		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'contact-group')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
-		    )
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            )
 		));
 
         // Nhóm sản phẩm quan tâm
@@ -251,18 +251,18 @@ class Contact extends Form {
 		));
 		
 		// Phân loại khách hàng
-		$this->add(array(
-		    'name'			=> 'type',
-		    'type'			=> 'Select',
-		    'attributes'	=> array(
-		        'class'		=> 'form-control select2 select2_basic',
-		    ),
-		    'options'		=> array(
-		        'empty_option'  => '- Chọn -',
-		        'disable_inarray_validator' => true,
-		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "sale-contact-type" )), array('task' => 'cache-public')), array('key' => 'alias', 'value' => 'name')),
-		    )
-		));
+//		$this->add(array(
+//		    'name'			=> 'type',
+//		    'type'			=> 'Select',
+//		    'attributes'	=> array(
+//		        'class'		=> 'form-control select2 select2_basic',
+//		    ),
+//		    'options'		=> array(
+//		        'empty_option'  => '- Chọn -',
+//		        'disable_inarray_validator' => true,
+//		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "sale-contact-type" )), array('task' => 'cache-public')), array('key' => 'alias', 'value' => 'name')),
+//		    )
+//		));
 		
 		// History Result - Lý do mất
 		$this->add(array(

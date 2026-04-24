@@ -335,6 +335,18 @@ class Contact extends Form
             )
         ));
 
+        $this->add(array(
+            'name'			=> 'filter_customer_type',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Nhóm KH -',
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            )
+        ));
+
         // Submit
         $this->add(array(
             'name' => 'filter_submit',

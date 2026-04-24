@@ -212,9 +212,9 @@ class Contact extends InputFilter {
 		    )
 		));
 		
-		// Phân loại khách hàng
+		// Nhóm khách hàng
 		$this->add(array(
-		    'name'		=> 'type',
+		    'name'		=> 'contact_group',
 		    'required'	=> true,
 		    'validators'	=> array(
 		        array(

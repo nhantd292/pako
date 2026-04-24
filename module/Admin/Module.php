@@ -347,6 +347,11 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_ZALO_NOTIFY_RESULT, $adapter, null);
                     return new \Admin\Model\ZaloNotifyResultTable($tableGateway);
                 },
+                'Admin\Model\CustomerTypeTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_CUSTOMER_TYPE, $adapter, null);
+                    return new \Admin\Model\CustomerTypeTable($tableGateway);
+                },
                 
                 // Khai báo xác thực đăng nhập
                 'AuthenticateService'	=> function ($sm) {
@@ -579,11 +584,6 @@ class Module {
                     $myForm->setInputFilter(new \Admin\Filter\Evaluate());
                     return $myForm;
                 },
-                'formAdminPermissionList' => function($sm) {
-                    $myForm	= new \Admin\Form\PermissionList($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\PermissionList());
-                    return $myForm;
-                },
                 'formAdminComboProduct' => function($sm) {
                     $myForm	= new \Admin\Form\ComboProduct($sm);
                     $myForm->setInputFilter(new \Admin\Filter\ComboProduct());
@@ -622,6 +622,11 @@ class Module {
                 'formAdminZaloNotifyResult' => function($sm) {
                     $myForm	= new \Admin\Form\ZaloNotifyResult($sm);
                     $myForm->setInputFilter(new \Admin\Filter\ZaloNotifyResult());
+                    return $myForm;
+                },
+                'formAdminCustomerType' => function($sm) {
+                    $myForm	= new \Admin\Form\CustomerType($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\CustomerType());
                     return $myForm;
                 },
             )

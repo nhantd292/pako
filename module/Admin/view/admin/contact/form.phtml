@@ -24,9 +24,9 @@
         array('element' => $myForm->get('phone'), 'label' => 'Số điện thoại', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('sex'), 'label' => 'Giới tính', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('product_group_id'), 'label' => 'Sản phẩm quan tâm', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
-        array('element' => $myForm->get('type'), 'label' => 'Phân loại khách hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+//        array('element' => $myForm->get('type'), 'label' => 'Phân loại khách hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
 //        array('element' => $myForm->get('marketer_id'), 'label' => 'Nhân viên Marketing', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
-        array('element' => $myForm->get('contact_group'), 'label' => 'Nhóm khách hàng', 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('contact_group'), 'label' => 'Nhóm khách hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('name'), 'label' => 'Họ và tên', 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('location_city_id'), 'label' => 'Tỉnh thành', 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('location_district_id'), 'label' => 'Quận huyện', 'boxClass' => 'col-md-2'),
@@ -100,49 +100,6 @@
         var parent = $(select).parent();
         $('.select2-container', parent).select2('val', '');
         $(select).attr('data-parent', $(this).val());
-    });
-    
-    $('select[name="type"]').change(function() {
-    	if($(this).val() == 'lost') {
-        	$('#input_lost').removeClass('hidden');
-    	} else {
-    		$('#input_lost').addClass('hidden');
-    	}
-    });
-    <?php
-    if($myForm->get('type')->getValue() == 'lost') {
-    ?>
-    $('#input_lost').removeClass('hidden');
-    <?php
-    } else {
-    ?>
-    $('#input_lost').addClass('hidden');
-    <?php
-    }
-    ?>
-    
-    // Check phân loại
-    function checkSubject(id) {
-		if(id == 'sinh-vien' || id == 'nguoi-di-lam') {
-			$('#school_name').removeClass('hidden');
-			$('#major_name').removeClass('hidden');
-			$('#class_name').addClass('hidden');
-		} else if (id == 'hoc-sinh') {
-			$('#major_name').addClass('hidden');
-			$('#school_name').removeClass('hidden');
-			$('#class_name').removeClass('hidden');
-		} else {
-		    $('#school_name').addClass('hidden');
-			$('#major_name').addClass('hidden');
-			$('#class_name').addClass('hidden');
-		}
-    }
-    var subject_id = '<?php echo $myForm->get('subject_id')->getValue(); ?>';
-    if(subject_id) {
-        checkSubject(subject_id);
-    }
-    $('select[name="subject_id"]').change(function() {
-        checkSubject($(this).val());
     });
     
     <?php if(empty($myForm->get('id')->getValue())) {?>

@@ -25,10 +25,11 @@
         array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_date_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_customer_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_last_action'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_number_contract'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_number_contract2'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_sale_branch'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_sale_branch'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //        array('element' => $myForm->get('filter_sale_group'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_user'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_marketer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
@@ -72,7 +73,7 @@
             $care_id                = $item->care_id ? $this->user[$item->care_id]['name'] : '';
             $sale_group_id          = $item->sale_group_id ? '<br>'. $this->sale_group[$item->sale_group_id]['name'] : '';
             $sale_branch_id         = $item->sale_branch_id ? ' - '. $this->sale_branch[$item->sale_branch_id]['name'] : '';
-            $type                   = $this->sale_contact_type[$item->type]['name'];
+            $contact_group          = $this->customer_type[$item->contact_group]['name'];
             $contract_total         = $item->contract_total > 0 ? $item->contract_total : '';
             $options                = $item->options ? unserialize($item['options']) : array();
             
@@ -138,7 +139,7 @@
             $xhtmlItems .= '<td>'. $date .'</td>';
             $xhtmlItems .= '<td>'. $phone .'</td>';
             $xhtmlItems .= '<td>'. $name .'</td>';
-            $xhtmlItems .= '<td><div class="col-100 text-wrap">'. $type.'</div></td>';
+            $xhtmlItems .= '<td><div class="col-100 text-wrap">'. $contact_group.'</div></td>';
             $xhtmlItems .= '<td>'. $product_group.'</td>';
             $xhtmlItems .= '<td class="text-center">'. $contract_number .'</td>';
             $xhtmlItems .= '<td><div class="col-190 text-wrap">'. $note .'</div></td>';
@@ -160,7 +161,7 @@
     $xhtmlHead .= $this->linkAdminSort('Ngày', 'date', $this->params['ssFilter'], array('class' => 'col-150', 'width' => '110'));
     $xhtmlHead .= '<th width ="90">Điện thoại</th>';
     $xhtmlHead .= '<th width ="150">Họ tên</th>';
-    $xhtmlHead .= '<th width ="100">Phân loại KH</th>';
+    $xhtmlHead .= '<th width ="120">Nhóm Khách hàng</th>';
     $xhtmlHead .= '<th width ="150">SP quan tâm</th>';
     $xhtmlHead .= '<th width ="140">Số lần mua sản phẩm</th>';
     $xhtmlHead .= '<th width ="200">Tên xe - Năm sản xuất</th>';

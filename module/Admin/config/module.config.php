@@ -71,6 +71,7 @@ return array (
 		    'Admin\Controller\ProductReturn'          => Controller\ProductReturnController::class,
 		    'Admin\Controller\ZaloNotifyConfig'       => Controller\ZaloNotifyConfigController::class,
 		    'Admin\Controller\ZaloNotifyResult'       => Controller\ZaloNotifyResultController::class,
+            'Admin\Controller\CustomerType'           => Controller\CustomerTypeController::class,
 		)
 	),
 	'view_manager' => array(

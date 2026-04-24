@@ -61,6 +61,10 @@ class ContactTable extends DefaultTable {
 	            if(!empty($ssFilter['filter_sale_branch'])) {
     			    $select -> where -> equalTo('sale_branch_id', $ssFilter['filter_sale_branch']);
     			}
+
+                if(!empty($ssFilter['filter_customer_type'])) {
+                    $select -> where -> equalTo('contact_group', $ssFilter['filter_customer_type']);
+                }
     			
     			if(!empty($ssFilter['filter_sale_group'])) {
     			    $select -> where -> equalTo('sale_group_id', $ssFilter['filter_sale_group']);
@@ -197,6 +201,10 @@ class ContactTable extends DefaultTable {
 
     			if(!empty($ssFilter['filter_sale_branch'])) {
     			    $select -> where -> equalTo('sale_branch_id', $ssFilter['filter_sale_branch']);
+    			}
+
+    			if(!empty($ssFilter['filter_customer_type'])) {
+    			    $select -> where -> equalTo('contact_group', $ssFilter['filter_customer_type']);
     			}
     			
     			if(!empty($ssFilter['filter_sale_group'])) {

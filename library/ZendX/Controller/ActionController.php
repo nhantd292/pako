@@ -45,12 +45,6 @@ class ActionController extends AbstractActionController {
             $_COOKIE['kiotviet_token'] = $token;
             $this->kiotviet_token = $token;
         }
-//        echo $this->kiotviet_token;
-//        exit;
-
-//        if(isset($_COOKIE['viettelPost_token'])){
-//            $this->viettelPost_token = $_COOKIE['viettelPost_token'];
-//        }
 
         // Lấy thông tin setting
         $this->_settings = $this->getServiceLocator()->get('Admin\Model\SettingTable')->listItem(array('code' => 'General'), array('task' => 'cache-by-code'));
@@ -146,14 +140,6 @@ class ActionController extends AbstractActionController {
         // Gọi đến function chạy đầu tiên
         $this->init();
     }
-
-//    public function updateToken($codeSecret){
-//        setcookie('viettelPost_token', '', time() - 1000);
-//        $result_token = json_decode($this->viettelpost("/user/LoginVTP", ["token"=>$codeSecret],"POST"), true);
-//        $token = $result_token['data']['token'];
-//        setcookie('viettelPost_token', $token,time()+86400*30);
-//        return $_COOKIE['viettelPost_token'];
-//    }
     
     public function onDispath(MvcEvent $e) {
         // Truyền tất cả params ra ngoài layout
