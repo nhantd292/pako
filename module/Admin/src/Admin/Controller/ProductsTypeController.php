@@ -9,12 +9,12 @@ use Zend\Session\Container;
 use Zend\Form\FormInterface;
 use ZendX\System\UserInfo;
 
-class CustomerTypeController extends ActionController{
-    public $caption = 'Nhóm khách hàng';
+class ProductsTypeController extends ActionController{
+    public $caption = 'Nhóm sản phẩm';
     public function init() {
         // Thiết lập options
-        $this->_options['tableName'] = 'Admin\Model\CustomerTypeTable';
-        $this->_options['formName'] = 'formAdminCustomerType';
+        $this->_options['tableName'] = 'Admin\Model\ProductsTypeTable';
+        $this->_options['formName'] = 'formAdminProductsType';
 
         // Thiết lập session filter
         $ssFilter = new Container(__CLASS__ . $this->_params['action']);
@@ -76,7 +76,7 @@ class CustomerTypeController extends ActionController{
         $myForm = $this->getForm();
 
         if($this->getRequest()->isPost()){
-            $myForm->setInputFilter(new \Admin\Filter\CustomerType());
+            $myForm->setInputFilter(new \Admin\Filter\ProductsType());
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
             if($myForm->isValid()){
@@ -115,7 +115,7 @@ class CustomerTypeController extends ActionController{
             }
         }
         if ($this->getRequest()->isPost()) {
-            $myForm->setInputFilter(new \Admin\Filter\CustomerType());
+            $myForm->setInputFilter(new \Admin\Filter\ProductsType());
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
 

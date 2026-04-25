@@ -199,6 +199,18 @@
             </li>
         </ul>
     </li>
+    <li class="parent">
+        <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
+            <i class="fa fa-product-hunt"></i> <span class="title">Sản phẩm</span><span class="arrow"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'products-type', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-list-ul"></i> <span class="title">Nhóm sản phẩm</span><span class="arrow"></span>
+                </a>
+            </li>
+        </ul>
+    </li>
 	<li class="parent">
 	    <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
 			<i class="fa fa-money"></i> <span class="title">Sales</span><span class="arrow"></span>

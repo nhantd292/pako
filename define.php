@@ -94,6 +94,7 @@ define('TABLE_NOTIFI',              TABLE_PREFIX . 'notifi'); // Bảng thông b
 define('TABLE_NOTIFI_USER',         TABLE_PREFIX . 'notifi_user'); // Bảng trạng thái thông báo
 define('TABLE_COMBO_PRODUCT',       TABLE_PREFIX . 'combo_product'); // Bảng combo sản phẩm
 define('TABLE_CUSTOMER_TYPE',       TABLE_PREFIX . 'customer_type'); // Bảng phân loại khách hàng.
+define('TABLE_PRODUCTS_TYPE',       TABLE_PREFIX . 'products_type'); // Nhóm sản phẩm
 
 // Bảng Kiotviet
 define('TABLE_KOV_BRANCHES',        TABLE_PREFIX . 'kov_branches'); // Kho hàng

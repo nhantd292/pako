@@ -297,6 +297,11 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_CUSTOMER_TYPE, $adapter, null);
                     return new \Admin\Model\CustomerTypeTable($tableGateway);
                 },
+                'Admin\Model\ProductsTypeTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_PRODUCTS_TYPE, $adapter, null);
+                    return new \Admin\Model\ProductsTypeTable($tableGateway);
+                },
                 
                 // Khai báo xác thực đăng nhập
                 'AuthenticateService'	=> function ($sm) {
@@ -492,6 +497,11 @@ class Module {
                 'formAdminCustomerType' => function($sm) {
                     $myForm	= new \Admin\Form\CustomerType($sm);
                     $myForm->setInputFilter(new \Admin\Filter\CustomerType());
+                    return $myForm;
+                },
+                'formAdminProductsType' => function($sm) {
+                    $myForm	= new \Admin\Form\ProductsType($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\ProductsType());
                     return $myForm;
                 },
             )

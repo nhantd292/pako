@@ -60,6 +60,7 @@ return array (
 		    'Admin\Controller\ZaloNotifyConfig'       => Controller\ZaloNotifyConfigController::class,
 		    'Admin\Controller\ZaloNotifyResult'       => Controller\ZaloNotifyResultController::class,
             'Admin\Controller\CustomerType'           => Controller\CustomerTypeController::class,
+            'Admin\Controller\ProductsType'           => Controller\ProductsTypeController::class,
 		)
 	),
 	'view_manager' => array(
