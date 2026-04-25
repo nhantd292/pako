@@ -4,7 +4,7 @@ namespace Admin\Filter;
 use Zend\InputFilter\InputFilter;
 use Zend\Db\TableGateway\Feature\GlobalAdapterFeature;
 
-class CustomerType extends InputFilter {
+class Warehouse extends InputFilter {
 	
 	public function __construct($options = null){
         $exclude = null;
@@ -48,7 +48,7 @@ class CustomerType extends InputFilter {
                 array(
                     'name'		=> 'DbNoRecordExists',
                     'options'	=> array(
-                        'table'   => TABLE_CUSTOMER_TYPE,
+                        'table'   => TABLE_WAREHOUSE,
                         'field'   => 'code',
                         'adapter' => GlobalAdapterFeature::getStaticAdapter(),
                         'exclude' => $exclude,
@@ -58,6 +58,40 @@ class CustomerType extends InputFilter {
                     ),
                     'break_chain_on_failure'	=> true
                 )
+            )
+        ));
+
+
+
+        $this->add(array(
+            'name'		=> 'phone',
+            'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                ),
+            )
+        ));
+
+        $this->add(array(
+            'name'		=> 'address',
+            'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                ),
             )
         ));
 

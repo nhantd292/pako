@@ -59,7 +59,7 @@ class ProductsTypeTable extends DefaultTable {
 		
 	    if($options['task'] == 'cache') {
 	        $cache = $this->getServiceLocator()->get('cache');
-	        $cache_key = 'CustomerType';
+	        $cache_key = 'ProductsType';
 	        $result = $cache->getItem($cache_key);
 	         
 	        if (empty($result)) {

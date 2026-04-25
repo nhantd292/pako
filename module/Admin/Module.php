@@ -302,6 +302,11 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_PRODUCTS_TYPE, $adapter, null);
                     return new \Admin\Model\ProductsTypeTable($tableGateway);
                 },
+                'Admin\Model\WarehouseTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_WAREHOUSE, $adapter, null);
+                    return new \Admin\Model\WarehouseTable($tableGateway);
+                },
                 
                 // Khai báo xác thực đăng nhập
                 'AuthenticateService'	=> function ($sm) {
@@ -502,6 +507,11 @@ class Module {
                 'formAdminProductsType' => function($sm) {
                     $myForm	= new \Admin\Form\ProductsType($sm);
                     $myForm->setInputFilter(new \Admin\Filter\ProductsType());
+                    return $myForm;
+                },
+                'formAdminWarehouse' => function($sm) {
+                    $myForm	= new \Admin\Form\Warehouse($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\Warehouse());
                     return $myForm;
                 },
             )
