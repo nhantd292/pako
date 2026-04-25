@@ -76,7 +76,6 @@ define('TABLE_SALES_TARGET',        TABLE_PREFIX . 'sales_target');
 define('TABLE_MARKETING_REPORT',    TABLE_PREFIX . 'marketing_report'); // Báo cáo marketing
 define('TABLE_MARKETING_ADS',       TABLE_PREFIX . 'marketing_ads'); // Báo cáo ads
 define('TABLE_MATERIAL',            TABLE_PREFIX . 'material'); // Bảng nguyên liệu đầu kỳ
-define('TABLE_EVENT',               TABLE_PREFIX . 'event');
 define('TABLE_EVENT_CONTACT',		TABLE_PREFIX . 'event_contact');
 define('TABLE_HISTORY',             TABLE_PREFIX . 'history');
 define('TABLE_LOGS',                TABLE_PREFIX . 'logs');
@@ -105,15 +104,6 @@ define('TABLE_PRODUCT_RETURN',      TABLE_PREFIX . 'product_return'); // Quản 
 define('TABLE_PRODUCT_RETURN_KOV',  TABLE_PREFIX . 'product_return_kov'); // Quản lý kho hàng hoàn về kov
 define('TABLE_KOV_ORDERS',          TABLE_PREFIX . 'kov_orders'); // Đơn hàng
 define('TABLE_KOV_INVOICES',        TABLE_PREFIX . 'kov_invoices'); // Hóa đơn
-
-// Đào tạo
-define('TABLE_EDU_CLASS',           TABLE_PREFIX . 'edu_class');
-
-// Công việc
-define('TABLE_TASK_CATEGORY',       TABLE_PREFIX . 'task_category');
-define('TABLE_TASK_PROJECT',        TABLE_PREFIX . 'task_project');
-define('TABLE_TASK_PROJECT_CONTENT',TABLE_PREFIX . 'task_project_content');
-define('TABLE_TASK',                TABLE_PREFIX . 'task');
 
 // Hội đồng Anh
 define('TABLE_BC',                  TABLE_PREFIX . 'bc');

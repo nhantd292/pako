@@ -42,11 +42,6 @@ class Module {
             		$tableGateway = new TableGateway(TABLE_USER, $adapter, null);
             		return new \Admin\Model\UserTable($tableGateway);
             	},
-            	'Admin\Model\TeacherTable'	=> function ($sm) {
-            		$adapter = $sm->get('dbConfig');
-            		$tableGateway = new TableGateway(TABLE_USER, $adapter, null);
-            		return new \Admin\Model\TeacherTable($tableGateway);
-            	},
             	'Admin\Model\CoachTable'	=> function ($sm) {
             		$adapter = $sm->get('dbConfig');
             		$tableGateway = new TableGateway(TABLE_USER, $adapter, null);
@@ -71,11 +66,6 @@ class Module {
                     $adapter = $sm->get('dbConfig'); 
                     $tableGateway = new TableGateway(TABLE_DOCUMENT, $adapter, null);
                     return new \Admin\Model\DocumentTable($tableGateway);
-                },
-                'Admin\Model\NestedTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig'); 
-                    $tableGateway = new TableGateway(TABLE_NESTED, $adapter, null);
-                    return new \Admin\Model\NestedTable($tableGateway);
                 },
                 'Admin\Model\SettingTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig'); 
@@ -132,25 +122,10 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_MATERIAL, $adapter, null);
                     return new \Admin\Model\MaterialTable($tableGateway);
                 },
-                'Admin\Model\EventTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig');
-                    $tableGateway = new TableGateway(TABLE_EVENT, $adapter, null);
-                    return new \Admin\Model\EventTable($tableGateway);
-                },
-                'Admin\Model\EventContactTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig');
-                    $tableGateway = new TableGateway(TABLE_EVENT_CONTACT, $adapter, null);
-                    return new \Admin\Model\EventContactTable($tableGateway);
-                },
                 'Admin\Model\ProductTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig'); 
                     $tableGateway = new TableGateway(TABLE_PRODUCT, $adapter, null);
                     return new \Admin\Model\ProductTable($tableGateway);
-                },
-                'Admin\Model\EduClassTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig'); 
-                    $tableGateway = new TableGateway(TABLE_EDU_CLASS, $adapter, null);
-                    return new \Admin\Model\EduClassTable($tableGateway);
                 },
                 'Admin\Model\HistoryTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig'); 
@@ -161,26 +136,6 @@ class Module {
                     $adapter = $sm->get('dbConfig'); 
                     $tableGateway = new TableGateway(TABLE_LOGS, $adapter, null);
                     return new \Admin\Model\LogsTable($tableGateway); 
-                },
-                'Admin\Model\TaskCategoryTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig');
-                    $tableGateway = new TableGateway(TABLE_TASK_CATEGORY, $adapter, null);
-                    return new \Admin\Model\TaskCategoryTable($tableGateway);
-                },
-                'Admin\Model\TaskProjectTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig');
-                    $tableGateway = new TableGateway(TABLE_TASK_PROJECT, $adapter, null);
-                    return new \Admin\Model\TaskProjectTable($tableGateway);
-                },
-                'Admin\Model\TaskProjectContentTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig');
-                    $tableGateway = new TableGateway(TABLE_TASK_PROJECT_CONTENT, $adapter, null);
-                    return new \Admin\Model\TaskProjectContentTable($tableGateway);
-                },
-                'Admin\Model\TaskTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig');
-                    $tableGateway = new TableGateway(TABLE_TASK, $adapter, null);
-                    return new \Admin\Model\TaskTable($tableGateway);
                 },
                 'Admin\Model\CampaignTable'	=> function ($sm) {
                 	$adapter = $sm->get('dbConfig');
@@ -251,16 +206,6 @@ class Module {
                     $adapter = $sm->get('dbConfig');
                     $tableGateway = new TableGateway(TABLE_COLOR, $adapter, null);
                     return new \Admin\Model\ColorGroupTable($tableGateway);
-                },
-                'Admin\Model\CarpetColorTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig');
-                    $tableGateway = new TableGateway(TABLE_COLOR, $adapter, null);
-                    return new \Admin\Model\CarpetColorTable($tableGateway);
-                },
-                'Admin\Model\TangledColorTable'	=> function ($sm) {
-                    $adapter = $sm->get('dbConfig');
-                    $tableGateway = new TableGateway(TABLE_COLOR, $adapter, null);
-                    return new \Admin\Model\TangledColorTable($tableGateway);
                 },
                 'Admin\Model\DataConfigTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig');
@@ -379,11 +324,6 @@ class Module {
             		$myForm->setInputFilter(new \Admin\Filter\User());
             		return $myForm;
             	},
-            	'formAdminTeacher' => function($sm) {
-            		$myForm	= new \Admin\Form\Teacher($sm);
-            		$myForm->setInputFilter(new \Admin\Filter\Teacher());
-            		return $myForm;
-            	},
             	'formAdminCoach' => function($sm) {
             		$myForm	= new \Admin\Form\Coach($sm);
             		$myForm->setInputFilter(new \Admin\Filter\Coach());
@@ -459,34 +399,9 @@ class Module {
                     $myForm->setInputFilter(new \Admin\Filter\Material());
                     return $myForm;
                 },
-                'formAdminEventDemo' => function($sm) {
-                    $myForm	= new \Admin\Form\EventDemo($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\EventDemo());
-                    return $myForm;
-                },
-                'formAdminEventTest' => function($sm) {
-                    $myForm	= new \Admin\Form\EventTest($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\EventTest());
-                    return $myForm;
-                },
-                'formAdminEventWorkshop' => function($sm) {
-                    $myForm	= new \Admin\Form\EventWorkshop($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\EventWorkshop());
-                    return $myForm;
-                },
-                'formAdminEventContact' => function($sm) {
-                    $myForm	= new \Admin\Form\EventContact($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\EventContact());
-                    return $myForm;
-                },
                 'formAdminProduct' => function($sm) {
                     $myForm	= new \Admin\Form\Product($sm);
                     $myForm->setInputFilter(new \Admin\Filter\Product());
-                    return $myForm;
-                },
-                'formAdminEduClass' => function($sm) {
-                    $myForm	= new \Admin\Form\EduClass($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\EduClass());
                     return $myForm;
                 },
                 'formAdminLogs' => function($sm) {
@@ -497,26 +412,6 @@ class Module {
                 'formAdminLogin' => function($sm) {
                     $myForm	= new \Admin\Form\Login($sm);
                     $myForm->setInputFilter(new \Admin\Filter\Login());
-                    return $myForm;
-                },
-                'formAdminTaskCategory' => function($sm) {
-                    $myForm	= new \Admin\Form\TaskCategory($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\TaskCategory());
-                    return $myForm;
-                },
-                'formAdminTaskProject' => function($sm) {
-                    $myForm	= new \Admin\Form\TaskProject($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\TaskProject());
-                    return $myForm;
-                },
-                'formAdminTaskProjectContent' => function($sm) {
-                    $myForm	= new \Admin\Form\TaskProjectContent($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\TaskProjectContent());
-                    return $myForm;
-                },
-                'formAdminTask' => function($sm) {
-                    $myForm	= new \Admin\Form\Task($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\Task());
                     return $myForm;
                 },
                 'formAdminCampaign' => function($sm) {
@@ -554,16 +449,6 @@ class Module {
                     $myForm->setInputFilter(new \Admin\Filter\ColorGroup());
                     return $myForm;
                 },
-                'formAdminCarpetColor' => function($sm) {
-                    $myForm	= new \Admin\Form\CarpetColor($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\CarpetColor());
-                    return $myForm;
-                },
-                'formAdminTangledColor' => function($sm) {
-                    $myForm	= new \Admin\Form\TangledColor($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\TangledColor());
-                    return $myForm;
-                },
                 'formAdminDataConfig' => function($sm) {
                     $myForm	= new \Admin\Form\DataConfig($sm);
                     $myForm->setInputFilter(new \Admin\Filter\DataConfig());
@@ -572,11 +457,6 @@ class Module {
                 'formAdminCheckIn' => function($sm) {
                     $myForm	= new \Admin\Form\CheckIn($sm);
                     $myForm->setInputFilter(new \Admin\Filter\CheckIn());
-                    return $myForm;
-                },
-                'formAdminTarget' => function($sm) {
-                    $myForm	= new \Admin\Form\Target($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\Target());
                     return $myForm;
                 },
                 'formAdminEvaluate' => function($sm) {
@@ -589,24 +469,9 @@ class Module {
                     $myForm->setInputFilter(new \Admin\Filter\ComboProduct());
                     return $myForm;
                 },
-                'formAdminKovProducts' => function($sm) {
-                    $myForm	= new \Admin\Form\KovProducts($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\KovProducts());
-                    return $myForm;
-                },
-                'formAdminKovProductBranch' => function($sm) {
-                    $myForm	= new \Admin\Form\KovProductBranch($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\KovProductBranch());
-                    return $myForm;
-                },
                 'formAdminKovDiscounts' => function($sm) {
                     $myForm	= new \Admin\Form\KovDiscounts($sm);
                     $myForm->setInputFilter(new \Admin\Filter\KovDiscounts());
-                    return $myForm;
-                },
-                'formAdminKovOrder' => function($sm) {
-                    $myForm	= new \Admin\Form\KovOrder($sm);
-                    $myForm->setInputFilter(new \Admin\Filter\KovOrder());
                     return $myForm;
                 },
                 'formAdminProductReturn' => function($sm) {
