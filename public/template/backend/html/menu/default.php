@@ -209,6 +209,16 @@
                     <i class="fa fa-list-ul"></i> <span class="title">Nhóm sản phẩm</span><span class="arrow"></span>
                 </a>
             </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'trademark', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-car"></i> <span class="title">Thương hiệu</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'unit', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-sitemap"></i> <span class="title">Đơn vị tính</span><span class="arrow"></span>
+                </a>
+            </li>
         </ul>
     </li>
     <li class="parent">
@@ -225,51 +235,51 @@
     </li>
 	<li class="parent">
 	    <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
-			<i class="fa fa-money"></i> <span class="title">Sales</span><span class="arrow"></span>
+			<i class="fa fa-money"></i> <span class="title">Bán hàng</span><span class="arrow"></span>
 		</a> 
 		<ul class="dropdown-menu">
 			<li>
 				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'index'));?>" target="_self">
-					<i class="fa fa-file-text-o"></i> <span class="title">Danh sách đơn hàng</span><span class="arrow"></span>
+					<i class="fa fa-file-text-o"></i> <span class="title">Đơn hàng</span><span class="arrow"></span>
 				</a>
 			</li>
 
-			<li>
-				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract-detail', 'action' => 'products'));?>" target="_self">
-					<i class="fa fa-file-text-o"></i> <span class="title">Báo cáo sản phẩm</span><span class="arrow"></span>
-				</a>
-			</li>
+<!--			<li>-->
+<!--				<a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'contract-detail', 'action' => 'products'));?><!--" target="_self">-->
+<!--					<i class="fa fa-file-text-o"></i> <span class="title">Báo cáo sản phẩm</span><span class="arrow"></span>-->
+<!--				</a>-->
+<!--			</li>-->
 		</ul>
 	</li>
-<?php if($is_system){?>
-	<li class="parent">
-	    <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
-			<i class="fa fa-cogs"></i> <span class="title">Kho Kiotviet</span><span class="arrow"></span>
-		</a>
-		<ul class="dropdown-menu">
-			<li>
-				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'kov-branches', 'action' => 'index'));?>" target="_self">
-					<i class="fa fa-file-text-o"></i> <span class="title">Kho hàng</span><span class="arrow"></span>
-				</a>
-			</li>
-			<li>
-				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'kov-products', 'action' => 'index'));?>" target="_self">
-					<i class="fa fa-file-text-o"></i> <span class="title">Sản phẩm</span><span class="arrow"></span>
-				</a>
-			</li>
-			<li>
-				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'kov-orders', 'action' => 'index'));?>" target="_self">
-					<i class="fa fa-file-text-o"></i> <span class="title">Đặt hàng</span><span class="arrow"></span>
-				</a>
-			</li>
-			<li>
-				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'kov-invoices', 'action' => 'index'));?>" target="_self">
-					<i class="fa fa-file-text-o"></i> <span class="title">Hóa đơn</span><span class="arrow"></span>
-				</a>
-			</li>
-		</ul>
-	</li>
-<?php }?>
+<?php //if($is_system){?>
+<!--	<li class="parent">-->
+<!--	    <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">-->
+<!--			<i class="fa fa-cogs"></i> <span class="title">Kho Kiotviet</span><span class="arrow"></span>-->
+<!--		</a>-->
+<!--		<ul class="dropdown-menu">-->
+<!--			<li>-->
+<!--				<a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'kov-branches', 'action' => 'index'));?><!--" target="_self">-->
+<!--					<i class="fa fa-file-text-o"></i> <span class="title">Kho hàng</span><span class="arrow"></span>-->
+<!--				</a>-->
+<!--			</li>-->
+<!--			<li>-->
+<!--				<a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'kov-products', 'action' => 'index'));?><!--" target="_self">-->
+<!--					<i class="fa fa-file-text-o"></i> <span class="title">Sản phẩm</span><span class="arrow"></span>-->
+<!--				</a>-->
+<!--			</li>-->
+<!--			<li>-->
+<!--				<a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'kov-orders', 'action' => 'index'));?><!--" target="_self">-->
+<!--					<i class="fa fa-file-text-o"></i> <span class="title">Đặt hàng</span><span class="arrow"></span>-->
+<!--				</a>-->
+<!--			</li>-->
+<!--			<li>-->
+<!--				<a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'kov-invoices', 'action' => 'index'));?><!--" target="_self">-->
+<!--					<i class="fa fa-file-text-o"></i> <span class="title">Hóa đơn</span><span class="arrow"></span>-->
+<!--				</a>-->
+<!--			</li>-->
+<!--		</ul>-->
+<!--	</li>-->
+<?php //}?>
 
 	<!--Giục đơn-->
 	<li class="parent">
