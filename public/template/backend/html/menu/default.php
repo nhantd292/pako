@@ -232,12 +232,12 @@
                 </a>
             </li>
             <li>
-                <a href="<?php echo $this->url('routeAdmin/default', array('slug' => 'products-inventory', 'action' => 'index'));?>" target="_self">
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'products-inventory', 'action' => 'index'));?>" target="_self">
                     <i class="fa fa-sitemap"></i> <span class="title">Tồn kho sản phẩm</span><span class="arrow"></span>
                 </a>
             </li>
             <li>
-                <a href="<?php echo $this->url('routeAdmin/default', array('slug' => 'products-price', 'action' => 'index'));?>" target="_self">
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'products-price', 'action' => 'index'));?>" target="_self">
                     <i class="fa fa-money"></i> <span class="title">Bảng giá sản phẩm</span><span class="arrow"></span>
                 </a>
             </li>
