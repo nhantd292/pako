@@ -50,11 +50,12 @@
             $xhtmlItems .= '<tr id="tr_'. $id .'">
                                 <td class="text-center">'. $index .'</td>
     							<td class="text-center">'. $item->products_code .'</td>
-    							<td class="text-bold"><a href="'. $linkEdit .'">'.  $item->products_name .'</a></td><td>'. $products_type .'</td>
-    							<td>'. $products_unit .'</td>
-    							<td>'. $products_trademark .'</td>
-    							<td>'. $item->customer_type_name .'</td>
+    							<td class="text-bold"><a href="'. $linkEdit .'">'.  $item->products_name .'</a></td>
     							<td class="mask_currency text-right">'. $item->price .'</td>
+    							<td class="text-center">'. $item->customer_type_name .'</td>
+    							<td>'. $products_type .'</td>
+    							<td class="text-center">'. $products_unit .'</td>
+    							<td class="text-center">'. $products_trademark .'</td>
     						</tr>';
         }
     }
@@ -63,12 +64,12 @@
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Mã</th>';
-    $xhtmlHead .= '<th width="150">Tên sản phẩm</th>';
+    $xhtmlHead .= '<th width="120">Tên sản phẩm</th>';
+    $xhtmlHead .= '<th width="50" class="text-right">Giá bán</th>';
+    $xhtmlHead .= '<th width="80" class="text-center">Nhóm khách hàng</th>';
     $xhtmlHead .= '<th width="100">Nhóm sản phẩm</th>';
-    $xhtmlHead .= '<th width="100">Đơn vị</th>';
-    $xhtmlHead .= '<th width="100">Thương hiệu</th>';
-    $xhtmlHead .= '<th width="100">Nhóm khách hàng</th>';
-    $xhtmlHead .= '<th width="60" class="text-right">Giá bán</th>';
+    $xhtmlHead .= '<th width="100" class="text-center">Đơn vị</th>';
+    $xhtmlHead .= '<th width="100" class="text-center">Thương hiệu</th>';
     $xhtmlHead .= '</tr>';
     
     // Control
