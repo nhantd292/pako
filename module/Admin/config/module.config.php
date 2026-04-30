@@ -62,6 +62,7 @@ return array (
             'Admin\Controller\CustomerType'           => Controller\CustomerTypeController::class,
             'Admin\Controller\ProductsType'           => Controller\ProductsTypeController::class,
             'Admin\Controller\Warehouse'              => Controller\WarehouseController::class,
+            'Admin\Controller\Products'               => Controller\ProductsController::class,
 		)
 	),
 	'view_manager' => array(

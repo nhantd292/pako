@@ -307,6 +307,21 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_WAREHOUSE, $adapter, null);
                     return new \Admin\Model\WarehouseTable($tableGateway);
                 },
+                'Admin\Model\ProductsTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_PRODUCTS, $adapter, null);
+                    return new \Admin\Model\ProductsTable($tableGateway);
+                },
+                'Admin\Model\ProductsInventoryTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_PRODUCTS_INVENTORY, $adapter, null);
+                    return new \Admin\Model\ProductsInventoryTable($tableGateway);
+                },
+                'Admin\Model\ProductsPriceTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_PRODUCTS_PRICE, $adapter, null);
+                    return new \Admin\Model\ProductsPriceTable($tableGateway);
+                },
                 
                 // Khai báo xác thực đăng nhập
                 'AuthenticateService'	=> function ($sm) {
@@ -512,6 +527,21 @@ class Module {
                 'formAdminWarehouse' => function($sm) {
                     $myForm	= new \Admin\Form\Warehouse($sm);
                     $myForm->setInputFilter(new \Admin\Filter\Warehouse());
+                    return $myForm;
+                },
+                'formAdminProducts' => function($sm) {
+                    $myForm	= new \Admin\Form\Products($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\Products());
+                    return $myForm;
+                },
+                'formAdminProductsPrice' => function($sm) {
+                    $myForm	= new \Admin\Form\ProductsPrice($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\ProductsPrice());
+                    return $myForm;
+                },
+                'formAdminProductsInventory' => function($sm) {
+                    $myForm	= new \Admin\Form\ProductsInventory($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\ProductsInventory());
                     return $myForm;
                 },
             )

@@ -1,0 +1,76 @@
+<?php
+    $myForm = $this->myForm;
+    $myForm->prepare();
+
+    $formProductsPrice = $this->formProductsPrice;
+    $formProductsPrice->prepare();
+
+    $formProductsInventory = $this->formProductsInventory;
+    $formProductsInventory->prepare();
+    
+    $arrControl = array(
+        array('name' => 'save', 'caption' => 'Lưu', 'link' => 'javascript:;', 'icon' => 'fa-check', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save\');', 'class' => 'btn')),
+        array('name' => 'save-new', 'caption' => 'Lưu &amp; Mới', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save-new\');', 'class' => 'btn')),
+        array('name' => 'save-close', 'caption' => 'Lưu &amp; Đóng', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save-close\');', 'class' => 'btn')),
+        array('name' => 'close', 'caption' => 'Hủy', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn')),
+    );
+
+    $product_id = '';
+
+    $customer_type = $this->customer_type;
+    $fieldFormProductPrice = [];
+    $fieldFormProductPrice[] = array('section' => 'Cấu hình giá bán', 'boxClass' => 'col-md-12');
+    foreach ($customer_type as $key => $value) {
+        $fieldFormProductPrice[] = array('element' => $formProductsPrice->get($key.'_'.$product_id.'_price'), 'label' => 'Giá bán cho: '.$value->name, 'validate' => array('require' => true), 'boxClass' => 'col-md-2');
+    }
+
+    $warehouse = $this->warehouse;
+    $fieldFormProductInventory = [];
+    $fieldFormProductInventory[] = array('section' => 'Số lượng tồn kho', 'boxClass' => 'col-md-12');
+    foreach ($warehouse as $key => $value) {
+        $fieldFormProductInventory[] = array('element' => $formProductsInventory->get($key.'_'.$product_id.'_quantity'), 'label' => 'Số lượng: '.$value->name, 'validate' => array('require' => true), 'boxClass' => 'col-md-2');
+    }
+    
+    $elements = array(
+        array('section' => 'Thông tin chung', 'boxClass' => 'col-md-12'),
+        array('element' => $myForm->get('code'), 'label' => 'Mã SP', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('name'), 'label' => 'Tên SP', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('note'), 'label' => 'Mô tả', 'validate' => array('require' => false), 'boxClass' => 'col-md-6'),
+        array('element' => $myForm->get('products_type_id'), 'label' => 'Nhóm SP', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('trademark_id'), 'label' => 'Thương hiệu', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('unit_id'), 'label' => 'Đơn vị tính', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('cost_price'), 'label' => 'Giá nhập', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('min'), 'label' => 'SL Tồn tối thiểu', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('max'), 'label' => 'SL Tồn tối đa', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
+
+        array('section' => 'Thông tin kích thước', 'boxClass' => 'col-md-12'),
+        array('element' => $myForm->get('length'), 'label' => 'Chiều dài (cm)', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('width'), 'label' => 'Chiều rộng (cm)', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('height'), 'label' => 'Chiều cao (cm)', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('weight'), 'label' => 'Khối lượng (g)', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
+    );
+    $elements = array_merge($elements, $fieldFormProductPrice, $fieldFormProductInventory);
+    
+    $xhtml = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+?>
+
+<form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm" class="">
+    <div class="page-control">
+    	<div class="title pull-left">
+    		<?php echo $this->caption;?>
+    	</div>
+    	<div class="control pull-right">
+			<?php echo $this->partial($this->params['module'] . '/partial/control-default.phtml', array( 'control' => $arrControl )); ?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+    <?php echo $this->flashMessenger()->render();?>
+	<?php echo @$this->xViewElementErrors($elements);?>
+	
+    <div class="page-content">
+    	<div class="row" id="info_data">
+			<?php echo $xhtml;?>
+		</div>
+	</div>
+</form>

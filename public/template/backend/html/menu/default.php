@@ -204,19 +204,41 @@
             <i class="fa fa-product-hunt"></i> <span class="title">Sản phẩm</span><span class="arrow"></span>
         </a>
         <ul class="dropdown-menu">
+            <li class="dropdown-submenu">
+                <a href="javascript:;" target="_self">
+                    <i class="fa fa-link"></i> <span class="title">Thiết lập</span><span class="arrow"></span>
+                </a>
+                <ul class="dropdown-menu" style="display: none;">
+                    <li>
+                        <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'products-type', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-list-ul"></i> <span class="title">Nhóm sản phẩm</span><span class="arrow"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'trademark', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-car"></i> <span class="title">Thương hiệu</span><span class="arrow"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'unit', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-sitemap"></i> <span class="title">Đơn vị tính</span><span class="arrow"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li>
-                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'products-type', 'action' => 'index'));?>" target="_self">
-                    <i class="fa fa-list-ul"></i> <span class="title">Nhóm sản phẩm</span><span class="arrow"></span>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'products', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-sitemap"></i> <span class="title">Danh sách sản phẩm</span><span class="arrow"></span>
                 </a>
             </li>
             <li>
-                <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'trademark', 'action' => 'index'));?>" target="_self">
-                    <i class="fa fa-car"></i> <span class="title">Thương hiệu</span><span class="arrow"></span>
+                <a href="<?php echo $this->url('routeAdmin/default', array('slug' => 'products-inventory', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-sitemap"></i> <span class="title">Tồn kho sản phẩm</span><span class="arrow"></span>
                 </a>
             </li>
             <li>
-                <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'unit', 'action' => 'index'));?>" target="_self">
-                    <i class="fa fa-sitemap"></i> <span class="title">Đơn vị tính</span><span class="arrow"></span>
+                <a href="<?php echo $this->url('routeAdmin/default', array('slug' => 'products-price', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-money"></i> <span class="title">Bảng giá sản phẩm</span><span class="arrow"></span>
                 </a>
             </li>
         </ul>

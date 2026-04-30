@@ -16,10 +16,11 @@ class ActionController extends AbstractActionController {
     protected $_params;
     protected $_table;
     protected $_form;
+    protected $_connection;
     protected $kiotviet_token;
     protected $viettelPost_token;
     protected $_options = array(
-        'tableName', 'formName'
+        'tableName', 'formName',
     );
     protected $_paginator = array(
         'itemCountPerPage'	=> 50,
@@ -165,6 +166,13 @@ class ActionController extends AbstractActionController {
         }
     
         return $this->_form;
+    }
+    public function getConnection() {
+        $dbAdapter = $this->getServiceLocator()->get('dbConfig');
+        $connection = $dbAdapter->getDriver()->getConnection();
+        $this->_connection = $connection;
+
+        return $this->_connection;
     }
     
     public function setLayout($layout) {
