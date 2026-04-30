@@ -45,11 +45,23 @@ class ProductsInventoryTable extends DefaultTable {
 
 //                $select -> order(array('ordering' => 'ASC'));
 
-                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_INVENTORY .'.products_id', array( 'products_name' => 'name', 'products_code' => 'code' ), 'inner')
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_INVENTORY .'.products_id', array( 'products_name' => 'name', 'products_code' => 'code', 'products_type_id' => 'products_type_id','trademark_id' => 'trademark_id','unit_id' => 'unit_id', ), 'inner')
                     -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_PRODUCTS_INVENTORY .'.warehouse_id', array( 'warehouse_name' => 'name' ), 'inner');
 
                 if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
                     $select->where->equalTo(TABLE_PRODUCTS.'.status', $ssFilter['filter_status']);
+                }
+
+                if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
+                }
+
+                if(isset($ssFilter['filter_trademark']) && $ssFilter['filter_trademark'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.trademark_id', $ssFilter['filter_trademark']);
+                }
+
+                if(isset($ssFilter['filter_warehouse']) && $ssFilter['filter_warehouse'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS_INVENTORY.'.warehouse_id', $ssFilter['filter_warehouse']);
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {

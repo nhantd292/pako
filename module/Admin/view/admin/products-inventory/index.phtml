@@ -1,0 +1,120 @@
+<?php
+    // Filter
+    $myForm				= $this->myForm;
+    $model = $this->model;
+    $myForm->prepare();
+    $dateFormat = new \ZendX\Functions\Date();
+    $numberFormat = new \ZendX\Functions\Number();
+
+    $userInfo = new \ZendX\System\UserInfo();
+    $curent_user = $userInfo->getUserInfo();
+    $permission_ids = explode(',', $curent_user['permission_ids']);
+
+    $elements = array(
+        array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_products_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_trademark'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_warehouse'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('order')),
+        array('element' => $myForm->get('order_by')),
+    );
+    $xhtmlFilter = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+
+    // Danh sách
+    $xhtmlItems = '';
+    
+    if(!empty($this->items)) {
+        $index = 0;
+        $list_item  = $this->items;
+        $total_price = 0;
+        foreach ($list_item AS $item) {
+            $index++;
+            $id             = $item['id'];
+            $cid            = $this->xFormInput('cid[]', $item['id'], array('type' => 'checkbox', 'class' => 'checkboxes'));
+            $created        = $dateFormat->formatToView($item['created'], 'd/m/Y H:i:s');
+            $cid            = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
+            $ordering       = @$this->xFormInput('ordering['. $id .']', $item->ordering, array('class' => 'form-control input-xs'));
+
+            $products_type = $this->products_type[$item->products_type_id]['name'];
+            $products_unit = $this->units[$item->unit_id]['name'];
+            $products_trademark = $this->trademarks[$item->trademark_id]['name'];
+
+            // Link Action
+            $linkEdit   = $this->url('routeAdmin/default', array('controller' => 'products', 'action' => 'edit', 'id' => $item->products_id));
+
+            $controlEdit = $this->linkAdminHtml($linkEdit, array('type' => 'icon', 'title' => 'Sửa', 'class' => 'btn btn-xs yellow', 'icon' => 'fa fa-edit'));
+            $controlStatus = $this->linkAdminStatus($id, $item->status);
+            
+            $xhtmlItems .= '<tr id="tr_'. $id .'">
+                                <td class="text-center">'. $index .'</td>
+    							<td class="text-center">'. $item->products_code .'</td>
+    							<td class="text-bold"><a href="'. $linkEdit .'">'.  $item->products_name .'</a></td>
+    							<td class="mask_currency text-right">'. $item->quantity .'</td>
+    							<td class="text-center">'. $item->warehouse_name .'</td>
+    							<td>'. $products_type .'</td>
+    							<td class="text-center">'. $products_unit .'</td>
+    							<td class="text-center">'. $products_trademark .'</td>
+    						</tr>';
+        }
+    }
+
+    // Head
+    $xhtmlHead  = '<tr>';
+    $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Mã</th>';
+    $xhtmlHead .= '<th width="120">Tên sản phẩm</th>';
+    $xhtmlHead .= '<th width="50" class="text-right">Số lượng</th>';
+    $xhtmlHead .= '<th width="80" class="text-center">Kho hàng</th>';
+    $xhtmlHead .= '<th width="100">Nhóm sản phẩm</th>';
+    $xhtmlHead .= '<th width="100" class="text-center">Đơn vị</th>';
+    $xhtmlHead .= '<th width="100" class="text-center">Thương hiệu</th>';
+    $xhtmlHead .= '</tr>';
+    
+    // Control
+    $arrControl = array(
+        array( 'name' => 'add', 'caption' => 'Thêm', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn', ) ),
+        array(
+            'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
+            'children' => array(
+                array( 'name' => 'delete', 'caption' => 'Xóa', 'link' => 'javascript:;', 'icon' => 'fa-trash', 'attributes' => array( 'onclick' => 'javascript:deleteItem(\'multi\', \'all\');' ) ),
+                array('name' => 'sort', 'caption' => 'Sắp xếp', 'link' => 'javascript:;', 'icon' => 'fa-sort-alpha-asc', 'attributes' => array('onclick' => 'javascript:changeOrdering();',))
+                ),
+            'children-class' => 'dropdown-menu pull-right'
+        ),
+    );
+?>
+<form action="<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'filter')); ?>" name="adminFormFilter" id="adminFormFilter" method="post">
+    <div class="page-control">
+    	<div class="title pull-left">
+    		<?php echo $this->caption;?>
+    	</div>
+    	<div class="control pull-right">
+		</div>
+		<div class="clearfix"></div>
+	</div>
+    <?php echo $this->flashMessenger()->render();?>
+    <div class="page-filter">
+    	<div class="row">
+    		<?php echo $xhtmlFilter;?>
+    	</div>
+    </div>
+    <div class="page-content">
+    	<div class="table-manager" id="table-manager">
+    		<div class="table-scrollable">
+    			<table class="table table-striped table-bordered table-hover">
+    				<thead>
+    					<?php echo $xhtmlHead;?>
+    				</thead>
+    				<tbody>
+    					<?php echo $xhtmlItems;?>
+    				</tbody>
+    			</table>
+    		</div>
+    		<?php
+            	echo $this->paginationControl(\ZendX\Paginator\Paginator::createPaginator($this->count, $this->params['paginator']), 'sliding', $this->params['module'] . '/partial/paginator.phtml', array('currentURL' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'options' => $this->params['paginator']['options'])); 
+            ?>
+    	</div>
+	</div>
+</form>
