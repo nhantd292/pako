@@ -20,7 +20,10 @@ class ProductsController extends ActionController{
         $this->_options['formName'] = 'formAdminProducts';
 
         // Thiết lập session filter
-        $ssFilter = new Container(__CLASS__ . $this->_params['action']);
+        $action = str_replace('-', '_', $this->_params['action']);
+        $ssFilter = new Container(__CLASS__);
+
+
         $this->_params['ssFilter']['order_by']                  = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'ordering';
         $this->_params['ssFilter']['order']                     = !empty($ssFilter->order) ? $ssFilter->order : 'DESC';
         $this->_params['ssFilter']['filter_status']             = $ssFilter->filter_status;
@@ -42,8 +45,7 @@ class ProductsController extends ActionController{
     public function filterAction() {
         if ($this->getRequest()->isPost()) {
             $action = !empty($this->getRequest()->getPost('filter_action')) ? $this->getRequest()->getPost('filter_action') : 'index';
-            
-            $ssFilter	= new Container(__CLASS__ . $action);
+            $ssFilter	= new Container(__CLASS__);
             $data = $this->_params['data'];
             
             $ssFilter->pagination_option        = intval($data['pagination_option']);
@@ -320,5 +322,95 @@ class ProductsController extends ActionController{
         }
 
         $this->goRoute(array('action' => 'index'));
+    }
+
+    public function exportAction() {
+        $dateFormat = new \ZendX\Functions\Date();
+        $customer_type = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
+        $warehouse = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
+
+        $this->_params['customer_type'] = $customer_type;
+        $this->_params['warehouse'] = $warehouse;
+        $items = $this->getTable()->listItem($this->_params, array('task' => 'list-full'));
+
+        $products_type = $this->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache'));
+        $units         = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache'));
+        $trademarks    = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'trademark')), array('task' => 'cache'));
+
+        require_once PATH_VENDOR . '/Excel/PHPExcel.php';
+
+        $config = array('sheetData' => 0, 'headRow' => 1, 'startRow' => 2, 'startColumn' => 0);
+        $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
+
+        $arrData = array(
+            array('field' => 'code', 'title' => 'Mã sản phẩm'),
+            array('field' => 'name', 'title' => 'Tên sản phẩm'),
+            array('field' => 'products_type_id', 'title' => 'Nhóm sản phẩm', 'type' => 'data_source', 'data_source' => $products_type),
+            array('field' => 'trademark_id', 'title' => 'Thương hiệu', 'type' => 'data_source', 'data_source' => $trademarks),
+            array('field' => 'unit_id', 'title' => 'Đơn vị', 'type' => 'data_source', 'data_source' => $units),
+            array('field' => 'min', 'title' => 'SL tồn tối thiểu'),
+            array('field' => 'max', 'title' => 'SL tồn tối đa'),
+            array('field' => 'length', 'title' => 'Dài(cm)'),
+            array('field' => 'width', 'title' => 'Rộng(cm)'),
+            array('field' => 'height', 'title' => 'Cao(cm)'),
+            array('field' => 'weight', 'title' => 'Khối lượng(g)'),
+        );
+
+        foreach ($customer_type as $key => $value) {
+            $arrData[] = array('field' => $key, 'title' => $value);
+        }
+        foreach ($warehouse as $key => $value) {
+            $arrData[] = array('field' => $key, 'title' => $value);
+        }
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->getProperties()->setCreator($this->_userInfo->getUserInfo('name'))->setTitle("Export");
+
+        // Dữ liệu tiêu đề
+        $startColumn = $config['startColumn'];
+        foreach ($arrData AS $key => $data) {
+            $colLetter = $arrColumn[$startColumn];
+            $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $config['headRow'], $data['title']);
+            $objPHPExcel->getActiveSheet()->getStyle($colLetter . $config['headRow'])->getFont()->setBold(true);
+            $startColumn++;
+        }
+
+        // Dữ liệu data
+        $startRow = $config['startRow'];
+        foreach ($items AS $item) {
+            $startColumn = $config['startColumn'];
+            foreach ($arrData AS $key => $data) {
+                $colLetter = $arrColumn[$startColumn];
+                // ... (Giữ nguyên logic switch case xử lý $value của bạn)
+                switch ($data['type']) {
+                    case 'date':
+                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
+                        $value      = $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        break;
+                    case 'data_source':
+                        $field = $data['data_source_field'] ? $data['data_source_field'] : 'name';
+                        $value = $data['data_source'][$item[$data['field']]][$field];
+                        break;
+                    default:
+                        $value = $item[$data['field']];
+                }
+
+                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value);
+                $startColumn++;
+            }
+            $startRow++;
+        }
+
+        $lastColumnIndex = $config['startColumn'] + count($arrData) - 1;
+        for ($i = $config['startColumn']; $i <= $lastColumnIndex; $i++) {
+            $objPHPExcel->getActiveSheet()->getColumnDimension($arrColumn[$i])->setAutoSize(true);
+        }
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="Products '.date('Y-m-d H-i-s').'.xlsx"');
+
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
     }
 }
