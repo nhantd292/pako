@@ -79,14 +79,7 @@ class ProductsTable extends DefaultTable
         if ($options['task'] == 'list-full') {
             $result = $this->tableGateway->select(function (Select $select) use ($arrParam, $options) {
                 $ssFilter = $arrParam['ssFilter'];
-//                $columns = [
-//                    'id' => 'id',
-//                    'mã' => 'code',
-//                    'tên' => 'name',
-//                    'products_type_id' => 'products_type_id',
-//                ];
-                $ssFilter = $arrParam['ssFilter'];
-                $columns = [ 'id', 'code', 'name', 'products_type_id', 'trademark_id', 'unit_id', 'min', 'max', 'length', 'width', 'height', 'weight'];
+                $columns = [ 'id', 'code', 'name', 'products_type_id', 'trademark_id', 'unit_id', 'cost_price', 'min', 'max', 'length', 'width', 'height', 'weight'];
 
                 // 2. Build cột động cho Giá
                 foreach ($arrParam['customer_type'] as $id => $alias) {
@@ -122,6 +115,10 @@ class ProductsTable extends DefaultTable
                         ->or
                         ->like(TABLE_PRODUCTS . '.code', '%' . $ssFilter['filter_keyword'] . '%')
                         ->UNNEST;
+                }
+
+                if (isset($ssFilter['limit']) && $ssFilter['limit'] != '') {
+                    $select->limit($ssFilter['limit']);
                 }
 
                 // 5. Group by ID sản phẩm

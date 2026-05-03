@@ -17,9 +17,6 @@ class DocumentController extends ActionController {
             die('Lỗi đường dẫn. Vui lòng liên hệ admin');
         } else {
             $dynamic_option = $dynamic['option'];
-//            echo '<pre>';
-//            print_r($dynamic_option);
-//            echo '</pre>';
             eval("\$this->_params[\"configs\"] = $dynamic_option;");
         }
         

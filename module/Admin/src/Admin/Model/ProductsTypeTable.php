@@ -82,6 +82,12 @@ class ProductsTypeTable extends DefaultTable {
 			    $select -> where -> equalTo('id', $arrParam['id']);
     		})->current();
 		}
+
+		if($options['task'] == 'by-name'){
+            $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $select -> where -> equalTo('name', $arrParam['name']);
+            })->current();
+        }
 		
 		return $result;
 	}

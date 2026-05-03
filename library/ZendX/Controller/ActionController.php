@@ -699,4 +699,31 @@ class ActionController extends AbstractActionController {
         }
         return $result;
     }
+
+    public function createAlias($str) {
+        if(!$str) return "";
+
+        // Chuyển về chữ thường
+        $str = mb_strtolower($str, 'UTF-8');
+
+        // Thay thế các ký tự tiếng Việt có dấu
+        $str = preg_replace('/(à|ả|ã|á|ạ|ă|ằ|ẳ|ẵ|ắ|ặ|â|ầ|ẩ|ẫ|ấ|ậ)/', 'a', $str);
+        $str = preg_replace('/(è|ẻ|ẽ|é|ẹ|ê|ề|ể|ễ|ế|ệ)/', 'e', $str);
+        $str = preg_replace('/(ì|ỉ|ĩ|í|ị)/', 'i', $str);
+        $str = preg_replace('/(ò|ỏ|õ|ó|ọ|ô|ồ|ổ|ỗ|ố|ộ|ơ|ờ|ở|ỡ|ớ|ợ)/', 'o', $str);
+        $str = preg_replace('/(ù|ủ|ũ|ú|ụ|ư|ừ|ử|ữ|ứ|ự)/', 'u', $str);
+        $str = preg_replace('/(ỳ|ỷ|ỹ|ý)/', 'y', $str);
+        $str = preg_replace('/(đ)/', 'd', $str);
+
+        // Thay thế ký tự đặc biệt và khoảng trắng thành dấu gạch ngang
+        $str = preg_replace('/(!|@|\$|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'| |\"|\“|\”|\&|\#|\[|\]|~)/', '-', $str);
+
+        // Thay thế nhiều dấu gạch ngang liên tiếp thành 1 dấu
+        $str = preg_replace('/-+/', '-', $str);
+
+        // Cắt bỏ dấu gạch ngang ở đầu và cuối chuỗi
+        $str = trim($str, '-');
+
+        return $str;
+    }
 }

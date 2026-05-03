@@ -366,7 +366,8 @@ class DocumentTable extends AbstractTableGateway implements ServiceLocatorAwareI
     		            $this->tableGateway->insert($data);
 		            }
 		        }
-		    } else {
+		    }
+		    else {
     		    // Lưu các giá trị cố định
     			$id = !empty($arrData['id']) ? $arrData['id'] : $gid->getId();
     			$data	= array(
