@@ -227,14 +227,29 @@ class ProductsTable extends DefaultTable
                 'trademark_id' => $arrData['trademark_id'],
                 'unit_id' => $arrData['unit_id'],
                 'cost_price' => $number->formatToData($arrData['cost_price']),
-                'min' => $number->formatToData($arrData['min']),
-                'max' => $number->formatToData($arrData['max']),
-                'length' => $number->formatToData($arrData['length']),
-                'width' => $number->formatToData($arrData['width']),
-                'height' => $number->formatToData($arrData['height']),
-                'weight' => $number->formatToData($arrData['weight']),
-                'note' => $arrData['note'],
             );
+
+            if(isset($arrData['min'])) {
+                $data['min'] = $number->formatToData($arrData['min']);
+            }
+            if(isset($arrData['max'])) {
+                $data['max'] = $number->formatToData($arrData['max']);
+            }
+            if(isset($arrData['length'])) {
+                $data['length'] = $number->formatToData($arrData['length']);
+            }
+            if(isset($arrData['width'])) {
+                $data['width'] = $number->formatToData($arrData['width']);
+            }
+            if(isset($arrData['height'])) {
+                $data['height'] = $number->formatToData($arrData['height']);
+            }
+            if(isset($arrData['weight'])) {
+                $data['weight'] = $number->formatToData($arrData['weight']);
+            }
+            if(isset($arrData['note'])) {
+                $data['note'] = $arrData['note'];
+            }
 
             try {
                 $this->tableGateway->update($data, ['id' => $id]);
