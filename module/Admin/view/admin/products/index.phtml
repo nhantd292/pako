@@ -84,6 +84,7 @@
 //                array( 'name' => 'sort', 'caption' => 'Sắp xếp', 'link' => 'javascript:;', 'icon' => 'fa-sort-alpha-asc', 'attributes' => array('onclick' => 'javascript:changeOrdering();',)),
                 array( 'name' => 'export', 'caption' => 'Xuất bản excel', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'export')), 'icon' => 'fa-file-excel-o', ),
                 array( 'name' => 'import', 'caption' => 'Import dữ liệu', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import')), 'icon' => 'fa fa-upload' ),
+                array( 'name' => 'update-price', 'caption' => 'Cập nhật bảng giá', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'update-price')), 'icon' => 'fa fa-upload' ),
 
             ),
             'children-class' => 'dropdown-menu pull-right'

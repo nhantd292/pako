@@ -1,0 +1,148 @@
+<?php
+    $dateFormat = new \ZendX\Functions\Date();
+    $number = new \ZendX\Functions\Number();
+
+    $myForm = $this->myForm;
+    $myForm->prepare();
+
+    $arrControl = array(
+        array('name' => 'close', 'caption' => 'Quay lại danh sách', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'onclick' => '', 'icon' => 'fa-arrow-left', 'attributes' => array('class' => 'btn')),
+    );
+
+    $elements = array(
+        array('div' => '', 'boxClass' => 'col-md-12', 'boxId' => 'result_check_contact'),
+        array('element' => $myForm->get('file_import'), 'label' => 'Chọn file cần import dữ liệu <a href="/xadmin/products/export-template-price/type/template-import"><b>(Tải file mẫu <i class="fa fa-download"></i>)</b></a>', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
+        array('element' => $myForm->get('submit'), 'label' => '.', 'boxClass' => 'col-md-1'),
+    );
+
+    $xhtml = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+
+    $title_custom = '';
+    foreach ($this->customer_type as $key => $value) {
+        $title_custom .= '<th>Giá: '.$value.' <span class="text-red">*</span></th>';
+    }
+?>
+
+<form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm" enctype="multipart/form-data">
+    <div class="page-control">
+    	<div class="title pull-left">
+    		<?php echo $this->caption;?>
+    	</div>
+    	<div class="control pull-right">
+			<?php echo $this->partial($this->params['module'] . '/partial/control-default.phtml', array( 'control' => $arrControl )); ?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+    <?php echo $this->flashMessenger()->render();?>
+	<?php echo @$this->xViewElementErrors($elements);?>
+
+    <div class="page-content">
+    	<div class="row">
+			<?php echo $xhtml;?>
+		</div>
+		<?php
+		if(!empty($this->import) && !empty($this->sheetData)) {
+		?>
+    	<div class="row">
+			<div class="col-md-12">
+			    <div class="table-manager" id="table-manager">
+                    <div class="table-scrollable" style="height: 600px;">
+        				<table class="table table-striped table-bordered table-hover">
+            				<thead>
+            					<tr>
+                                    <th width="100px" class=" text-center"><a href="javascript:;" class="btn btn-xs green begin-check">Bắt đầu</a></th>
+            						<th class="col-50">STT</th>
+                                    <th>Mã SP <span class="text-red">*</span></th>
+            						<th>Tên SP <span class="text-red">*</span></th>
+            						<th>Giá nhập <span class="text-red">*</span></th>
+                                    <?php echo $title_custom; ?>
+            					</tr>
+            				</thead>
+            				<tbody>
+            					<?php
+                                $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
+                                $index = 0;
+            					foreach ($this->sheetData AS $key => $val) {
+                                    $tbody_custom = '';
+            					    if(strlen(trim($val['A'])) > 0 and $key > 1) {
+            							$index++;
+
+            							$begin_index_custom = 3;
+                                        foreach ($this->customer_type as $key => $value) {
+                                            $tbody_custom .= '<td><span class="'.$key.'_price">'.trim($val[$arrColumn[$begin_index_custom]]).'</span></td>';
+                                            $begin_index_custom++;
+                                        }
+
+            					?>
+            					<tr id="tr_<?php echo $index;?>" data-index="<?php echo $index;?>">
+            					    <td><a href="javascript:;" data-index="<?php echo $index;?>" class="btn btn-xs default">Import</a></td>
+        							<td><?php echo $index;?></td>
+                                    <td><span class="code"><?php echo trim($val['A']);?></span></td>
+                                    <td><span class="name"><?php echo trim($val['B']);?></span></td>
+        							<td><span class="cost_price"><?php echo trim($val['C']);?></span></td>
+                                    <?php echo $tbody_custom; ?>
+        						</tr>
+        						<?php
+            					    }
+            					}
+        						?>
+        					</tbody>
+            			</table>
+        			</div>
+    			</div>
+			</div>
+		</div>
+		<?php
+		} else {
+			echo '<div class="alert alert-danger">Không có dữ liệu import</div>';
+		}
+		?>
+	</div>
+</form>
+
+<?php $this->headScript()->captureStart() ?>
+	<?php
+	if(!empty($this->import) && !empty($this->sheetData)) {
+	?>
+	function startImport(index) {
+		var item = '#tr_'+ index;
+
+		if($(item).size() > 0) {
+            var data = {};
+		    $(item +' span').each(function() {
+		        data[$(this).attr('class')] = $(this).text();
+		    });
+            console.log(data);
+            $.ajax({
+    			url: "<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => $this->params['action']));?>",
+    			type: 'POST',
+    			data: data,
+    			beforeSend: function() {
+    				$(item + ' .btn').html('Đang xử lý ...').removeClass('default').addClass('yellow');
+    			},
+    			success: function(result) {
+    				setTimeout(function(){
+    					$(item).removeClass('active');
+    					if(result == 'Hoàn thành') {
+    						$(item + ' .btn').html('Hoàn thành').removeClass('yellow').addClass('green');
+    					} else {
+    						$(item + ' .btn').html(result).removeClass('yellow').addClass('red');
+    					}
+
+    				    var index_next = parseInt(index) + 1;
+    				    startImport(index_next);
+    			    }, 100);
+    			}
+    		});
+		} else {
+			alert('Import thành công');
+		}
+	}
+    $('.begin-check').click(function(){
+        startImport(1);
+    });
+    <?php
+	}
+    ?>
+<?php $this->headScript()->captureEnd() ?>

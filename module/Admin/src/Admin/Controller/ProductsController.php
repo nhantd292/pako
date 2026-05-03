@@ -426,7 +426,7 @@ class ProductsController extends ActionController{
     {
         $dateFormat = new \ZendX\Functions\Date();
         $myForm = new \Admin\Form\Products\Import($this->getServiceLocator(), $this->_params);
-        $myForm->setInputFilter(new \Admin\Filter\Contact\Import($this->_params));
+        $myForm->setInputFilter(new \Admin\Filter\Products\Import($this->_params));
 
         $customer_type = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
         $warehouse = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
@@ -628,6 +628,168 @@ class ProductsController extends ActionController{
                     $viewModel->setVariable('sheetData', $sheetData);
                     $viewModel->setVariable('customer_type', $customer_type);
                     $viewModel->setVariable('warehouse', $warehouse);
+                }
+            }
+        }
+
+        return $viewModel;
+    }
+
+    public function exportTemplatePriceAction() {
+
+        $dateFormat = new \ZendX\Functions\Date();
+        $customer_type = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
+
+        $this->_params['customer_type'] = $customer_type;
+
+        $file_name = 'products_export_ '.date('Y_m_d').'.xlsx';
+        $type = $this->params('type');
+        if ($type == 'template-import'){
+            $this->_params['ssFilter']['limit'] = 5;
+            $file_name = 'template_products_update_price.xlsx';
+        }
+
+        $items = $this->getTable()->listItem($this->_params, array('task' => 'list-full'));
+
+        require_once PATH_VENDOR . '/Excel/PHPExcel.php';
+
+        $config = array('sheetData' => 0, 'headRow' => 1, 'startRow' => 2, 'startColumn' => 0);
+        $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
+
+        $arrData = array(
+            array('field' => 'code', 'title' => 'Mã sản phẩm'),
+            array('field' => 'name', 'title' => 'Tên sản phẩm'),
+            array('field' => 'cost_price', 'title' => 'Giá nhập'),
+        );
+
+        foreach ($customer_type as $key => $value) {
+            $arrData[] = array('field' => $key, 'title' => "Giá: ".$value);
+        }
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->getProperties()->setCreator($this->_userInfo->getUserInfo('name'))->setTitle("Export");
+
+        // Dữ liệu tiêu đề
+        $startColumn = $config['startColumn'];
+        foreach ($arrData AS $key => $data) {
+            $colLetter = $arrColumn[$startColumn];
+            $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $config['headRow'], $data['title']);
+            $objPHPExcel->getActiveSheet()->getStyle($colLetter . $config['headRow'])->getFont()->setBold(true);
+            $startColumn++;
+        }
+
+        // Dữ liệu data
+        $startRow = $config['startRow'];
+        foreach ($items AS $item) {
+            $startColumn = $config['startColumn'];
+            foreach ($arrData AS $key => $data) {
+                $colLetter = $arrColumn[$startColumn];
+                switch ($data['type']) {
+                    case 'date':
+                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
+                        $value      = $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        break;
+                    case 'data_source':
+                        $field = $data['data_source_field'] ? $data['data_source_field'] : 'name';
+                        $value = $data['data_source'][$item[$data['field']]][$field];
+                        break;
+                    default:
+                        $value = $item[$data['field']];
+                }
+
+                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value);
+                $startColumn++;
+            }
+            $startRow++;
+        }
+
+        $lastColumnIndex = $config['startColumn'] + count($arrData) - 1;
+        for ($i = $config['startColumn']; $i <= $lastColumnIndex; $i++) {
+            $objPHPExcel->getActiveSheet()->getColumnDimension($arrColumn[$i])->setAutoSize(true);
+        }
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$file_name.'"');
+
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function updatePriceAction()
+    {
+        $myForm = new \Admin\Form\Products\Import($this->getServiceLocator(), $this->_params);
+        $myForm->setInputFilter(new \Admin\Filter\Products\Import($this->_params));
+
+        $customer_type = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
+
+        $this->_viewModel['caption'] = 'Cập nhật bảng giá - '.$this->caption;;
+        $this->_viewModel['myForm']  = $myForm;
+        $viewModel                   = new ViewModel($this->_viewModel);
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            if ($this->getRequest()->isPost()) {
+                if (empty($this->_params['data']['code'])) {
+                    echo 'Thiếu mã SP';
+                    return $this->response;
+                }
+                if (empty($this->_params['data']['cost_price'])) {
+                    echo 'Thiếu giá nhập';
+                    return $this->response;
+                }
+                foreach ($customer_type as $key => $value) {
+                    if (empty($this->_params['data'][$key.'_price'])) {
+                        echo 'Thiếu giá: '.$value;
+                        return $this->response;
+                    }
+                }
+
+                $item = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->getItem(array('code' => $this->_params['data']['code']), array('task' => 'code'));
+
+                if (!empty($item)) {
+                    # update price products
+                    foreach ($customer_type as $key => $value) {
+                        $priceData = array(
+                            'products_id'       => $item->id,
+                            'customer_type_id'  => $key,
+                            'price'             => $this->_params['data'][$key.'_price'],
+                        );
+                        $products_price_item = $this->getServiceLocator()->get('Admin\Model\ProductsPriceTable')->getItem(array('products_id' => $item->id, 'customer_type_id' => $key), array('task' => 'filter'));
+                        if (!empty($products_price_item)){
+                            $priceData['id'] = $products_price_item->id;
+                            $this->getServiceLocator()->get('Admin\Model\ProductsPriceTable')->saveItem(array('data' => $priceData), array('task' => 'edit-item'));
+                        }
+                        else{
+                            $this->getServiceLocator()->get('Admin\Model\ProductsPriceTable')->saveItem(array('data' => $priceData), array('task' => 'add-item'));
+                        }
+                    }
+                    echo 'Hoàn thành';
+                }
+                else {
+                    echo 'SP không tồn tại';
+                }
+
+                return $this->response;
+            }
+        }
+        else {
+            if ($this->getRequest()->isPost()) {
+                $myForm->setData($this->_params['data']);
+
+                if ($myForm->isValid()) {
+                    if (!empty($this->_params['data']['file_import']['tmp_name'])) {
+                        $upload      = new \ZendX\File\Upload();
+                        $file_import = $upload->uploadFile('file_import', PATH_FILES . '/import/', array());
+                    }
+                    $viewModel->setVariable('file_import', $file_import);
+                    $viewModel->setVariable('import', true);
+
+                    require_once PATH_VENDOR . '/Excel/PHPExcel/IOFactory.php';
+                    $objPHPExcel = \PHPExcel_IOFactory::load(PATH_FILES . '/import/' . $file_import);
+
+                    $sheetData = $objPHPExcel->getActiveSheet(1)->toArray(null, true, true, true);
+                    $viewModel->setVariable('sheetData', $sheetData);
+                    $viewModel->setVariable('customer_type', $customer_type);
                 }
             }
         }
