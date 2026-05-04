@@ -220,15 +220,26 @@ class ProductsTable extends DefaultTable
         if ($options['task'] == 'edit-item') {
             $id = $arrData['id'];
 
-            $data = array(
-                'name' => $arrData['name'],
-                'code' => $arrData['code'],
-                'products_type_id' => $arrData['products_type_id'],
-                'trademark_id' => $arrData['trademark_id'],
-                'unit_id' => $arrData['unit_id'],
-                'cost_price' => $number->formatToData($arrData['cost_price']),
-            );
+            $data = array();
 
+            if(isset($arrData['name'])) {
+                $data['name'] = $arrData['name'];
+            }
+            if(isset($arrData['code'])) {
+                $data['code'] = $arrData['code'];
+            }
+            if(isset($arrData['products_type_id'])) {
+                $data['products_type_id'] = $arrData['products_type_id'];
+            }
+            if(isset($arrData['trademark_id'])) {
+                $data['trademark_id'] = $arrData['trademark_id'];
+            }
+            if(isset($arrData['unit_id'])) {
+                $data['unit_id'] = $arrData['unit_id'];
+            }
+            if(isset($arrData['cost_price'])) {
+                $data['cost_price'] = $number->formatToData($arrData['cost_price']);
+            }
             if(isset($arrData['min'])) {
                 $data['min'] = $number->formatToData($arrData['min']);
             }

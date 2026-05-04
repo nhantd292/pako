@@ -747,6 +747,9 @@ class ProductsController extends ActionController{
                 $item = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->getItem(array('code' => $this->_params['data']['code']), array('task' => 'code'));
 
                 if (!empty($item)) {
+                    // cập nhật giá nhập
+                    $this->_params['data']['id'] = $item->id;
+                    $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
                     # update price products
                     foreach ($customer_type as $key => $value) {
                         $priceData = array(
