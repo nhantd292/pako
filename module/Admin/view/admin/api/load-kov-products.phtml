@@ -1,50 +1,41 @@
 <?php
-if($this->kov_branch_id){
-    $count = $this->count;
-    $itemPerpage = $this->itemPerpage;
-    $curentPage = $this->curentPage;
-    $textItemPerpage = $count > $itemPerpage ? $itemPerpage : $count;
-    $xhtml = '';
-    $show_infor = $count > 0 ? '<p class="page">Hiển thị '.$textItemPerpage.' / '.$count.' sản phẩm</p>' : 'Không có sản phẩm tìm kiếm';
+$count = $this->count;
+$itemPerpage = $this->itemPerpage;
+$curentPage = $this->curentPage;
+$textItemPerpage = $count > $itemPerpage ? $itemPerpage : $count;
+$xhtml = '';
+$show_infor = $count > 0 ? '<p class="page">Hiển thị '.$textItemPerpage.' / '.$count.' sản phẩm</p>' : 'Không có sản phẩm tìm kiếm';
 
-    if($count / $itemPerpage > 1){
-        $page = (int)($count / $itemPerpage);
-        if($count % $itemPerpage > 0)
-            $page = $page + 1;
+if($count / $itemPerpage > 1){
+    $page = (int)($count / $itemPerpage);
+    if($count % $itemPerpage > 0)
+        $page = $page + 1;
+}
+if($page > 1){
+    $pageText = '<ul class="pages">';
+    for($p = 1; $p <= $page; $p++){
+        $active = $p == $curentPage ? "active" : '';
+        $pageText .= '<li class="'.$active.'">'.$p.'</li>';
     }
-    if($page > 1){
-        $pageText = '<ul class="pages">';
-        for($p = 1; $p <= $page; $p++){
-            $active = $p == $curentPage ? "active" : '';
-            $pageText .= '<li class="'.$active.'">'.$p.'</li>';
-        }
-        $pageText .= '</ul>';
-    }
-    $xhtml .= '<div class="pagination">'.$show_infor.$pageText.'</div>';
-    $xhtml .= '<div class="listProduct" >';
-    foreach ($this->kovProducts as $pro) {
-        $num_status = $pro['inventories'][0]['onHand'] - $pro['inventories'][0]['reserved'] > 0 ? 'Còn hàng' : 'Hết hàng'  ;
-        $xhtml .= '<div class="col-xl-2 col-sm-3 col-xs-6 item">
-                <div class="product col-xs-12" data-id="' . $pro['id'] . '" data-branch-id="' . $pro['inventories'][0]['branchId'] . '" >
-                    <div class="img col-sm-3 col-xs-3">
-                        <img src="' . $pro['images'][0] . '" width="100%">
-                    </div>
-                    <div class="infor col-sm-9 col-xs-9">
-                        <p class="code-product text-bold">' . $pro['code'] .'</span> (<span class="text-green text-bold">' . $num_status . '</span>)</p>
-                        <p class="name-product">' . $pro['fullName'] . '</p>
-                        <p class="price-product">Giá:' . number_format($pro['basePrice']) . '</p>
-                        <p class="number-product"></p>
-                        <p class="number-product">Size:<span class="text-bold"><span>'.strip_tags($pro['description']).'cm - '.$pro['weight'].' kg</span></p>
-                    </div>
+    $pageText .= '</ul>';
+}
+$xhtml .= '<div class="listProduct" >';
+foreach ($this->kovProducts as $pro) {
+    $num_status = $pro['quantity'] > 0 ? $pro['quantity'] : 'Hết hàng'  ;
+    $xhtml .= '<div class="col-xl-2 col-sm-3 col-xs-6 item">
+            <div class="product col-xs-12" data-id="' . $pro['id'] . '" data-warehouse-id="' . $pro['warehouse_id'] .'" data-customer-type-id="' . $pro['customer_type_id']. '" >
+                <div class="infor col-sm-12 col-xs-12">
+                    <p class="code-product text-bold">' . $pro['code'] .'</span> (<span class="text-green text-bold">' . $num_status . '</span>)</p>
+                    <p class="name-product">' . $pro['name'] . '</p>
+                    <p class="price-product">Giá: ' . number_format($pro['price']) . '</p>
+                    <p class=""><span><span>'.$pro['length'].'-'.$pro['width'].'-'.$pro['height'].' (cm) - '.($pro['weight']/1000).' (kg)</span></p>
                 </div>
-            </div>';
-    }
-    $xhtml .= '</div>';
-    echo $xhtml;
+            </div>
+        </div>';
 }
-else{
-    echo "Bạn chưa được chọn kho hàng lấy sản phẩm";
-}
+$xhtml .= '</div>';
+$xhtml .= '<div class="pagination">'.$show_infor.$pageText.'</div>';
+echo $xhtml;
 
 ?>
 <style>
@@ -59,7 +50,8 @@ else{
     $('#loadProducts .item .product').on('click', function () {
         // resetDiscounts();
         var id = $(this).attr('data-id');
-        var branch_id = $(this).attr('data-branch-id');
+        var warehouse_id = $(this).attr('data-warehouse-id');
+        var customer_type_id = $(this).attr('data-customer-type-id');
         if ($('#tr_' + id).length) {
             var number = $('#tr_' + id).find('.numbers input').val();
             var price = $('#tr_' + id).find('.price > input').val();
@@ -70,7 +62,7 @@ else{
             $.ajax({
                 url: '/xadmin/api/add-product-to-list/',
                 method: 'POST',
-                data: {id: id, branch_id: branch_id},
+                data: {id: id, warehouse_id: warehouse_id, customer_type_id: customer_type_id},
                 success: function (data) {
                     $('.list-product-contract').append(data);
                     format_to_money();
@@ -83,7 +75,7 @@ else{
     // Load sản phẩm khi chọn phân trang
     $('#loadProducts .pagination ul li').on('click', function () {
         var curentPage = parseInt($(this).text());
-        var data = {categoriId: $(`select[name="kov_product_category"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), curentPage : curentPage};
+        var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_customer_type: $(`select[name="customer_type_id"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val(), curentPage : curentPage};
         load_action('#loadProducts', '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProducts'));?>', data);
     });
 
@@ -95,17 +87,6 @@ else{
         tr_parent.find('.total input').val(formatNumber(parseInt(number) * parseInt(price)));
         updateTotal();
     });
-
-    // $('body').delegate(".numbers input",'change',function(e){
-    //     var tr_parent = $(this).parents('tr');
-    //     var number = parseInt(tr_parent.find('.numbers input').val());
-    //     var length = parseInt(tr_parent.find('.length > input').val());
-    //     var width = parseInt(tr_parent.find('.width > input').val());
-    //     var height = parseInt(tr_parent.find('.height > input').val());
-    //     tr_parent.find('.length input').val(number * length);
-    //     tr_parent.find('.width input').val(number * width);
-    //     tr_parent.find('.height input').val(number * height);
-    // });
 
     $('body').delegate(".show-price",'click',function(e){
         $(this).parents('tr').find('.price-detail').show();

@@ -68,7 +68,6 @@ class LogsController extends ActionController {
         $this->_viewModel['count']          = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
         $this->_viewModel['user']           = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['product']        = $this->getServiceLocator()->get('Admin\Model\ProductTable')->listItem(null, array('task' => 'cache'));
-        $this->_viewModel['edu_class']      = $this->getServiceLocator()->get('Admin\Model\EduClassTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['document']       = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['caption']        = 'Lịch sử hệ thống - Danh sách';
         return new ViewModel($this->_viewModel);

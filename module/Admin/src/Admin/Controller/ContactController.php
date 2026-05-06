@@ -198,9 +198,6 @@ class ContactController extends ActionController
         $dateFormat = new \ZendX\Functions\Date();
         $ssFilter   = new Container(__CLASS__);
 
-//        $myForm = $this->getForm();
-
-//        $myForm = new \Admin\Form\Contact($this);
         $curent_user_id  = $this->_userInfo->getUserInfo('id');
         $phone_code = true;
 

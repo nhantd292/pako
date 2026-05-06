@@ -234,9 +234,13 @@ class LogsTable extends DefaultTable {
 				'created'           => date('Y-m-d H:i:s'),
 				'created_by'        => $this->userInfo->getUserInfo('id'),
 			);
-			
-			$this->tableGateway->insert($data);
-			return $id;
+
+            try {
+                $this->tableGateway->insert($data);
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Insert Logs Table failed: ' . $e->getMessage());
+            }
 		}
 	}
 	

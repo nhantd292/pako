@@ -73,7 +73,7 @@
             $care_id                = $item->care_id ? $this->user[$item->care_id]['name'] : '';
             $sale_group_id          = $item->sale_group_id ? '<br>'. $this->sale_group[$item->sale_group_id]['name'] : '';
             $sale_branch_id         = $item->sale_branch_id ? ' - '. $this->sale_branch[$item->sale_branch_id]['name'] : '';
-            $contact_group          = $this->customer_type[$item->contact_group]['name'];
+            $customer_type          = $this->customer_type[$item->customer_type_id]['name'];
             $contract_total         = $item->contract_total > 0 ? $item->contract_total : '';
             $options                = $item->options ? unserialize($item['options']) : array();
             
@@ -139,7 +139,7 @@
             $xhtmlItems .= '<td>'. $date .'</td>';
             $xhtmlItems .= '<td>'. $phone .'</td>';
             $xhtmlItems .= '<td>'. $name .'</td>';
-            $xhtmlItems .= '<td><div class="col-100 text-wrap">'. $contact_group.'</div></td>';
+            $xhtmlItems .= '<td><div class="col-100 text-wrap">'. $customer_type.'</div></td>';
             $xhtmlItems .= '<td>'. $product_group.'</td>';
             $xhtmlItems .= '<td class="text-center">'. $contract_number .'</td>';
             $xhtmlItems .= '<td><div class="col-190 text-wrap">'. $note .'</div></td>';

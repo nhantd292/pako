@@ -1,4 +1,5 @@
-load_action('#loadProducts', '/xadmin/api/loadKovProducts/', null);
+var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_customer_type: $(`select[name="customer_type_id"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val()};
+load_action('#loadProducts', '/xadmin/api/loadKovProducts/', data);
 // Xử lý load tỉnh thành
 $('select[name="location_city_id"]').change(function () {
     var select = 'input[name="location_district_id"]';

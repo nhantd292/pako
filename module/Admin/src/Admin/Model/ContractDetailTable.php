@@ -113,8 +113,13 @@ class ContractDetailTable extends DefaultTable {
                 'created_by'    => $this->userInfo->getUserInfo('id'),
             );
 
-            $this->tableGateway->insert($data);
-            return $id;
+            try {
+                $this->tableGateway->insert($data);
+                return $id;
+
+            } catch (\Exception $e) {
+                throw new \Exception('Insert Contract Detail Table failed ('.$arrData['code'].'): ' . $e->getMessage());
+            }
         }
 
         if($options['task'] == 'delete_product_by_contract_id') {

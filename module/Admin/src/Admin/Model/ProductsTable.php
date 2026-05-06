@@ -36,6 +36,49 @@ class ProductsTable extends DefaultTable
             })->count();
         }
 
+        if ($options['task'] == 'list-search') {
+            $result = $this->tableGateway->select(function (Select $select) use ($arrParam, $options) {
+                $ssFilter = $arrParam['ssFilter'];
+
+                $select
+                    -> join(TABLE_PRODUCTS_PRICE, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_PRICE .'.products_id', array( 'price'), 'inner')
+                    -> join(TABLE_PRODUCTS_INVENTORY, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_INVENTORY .'.products_id', array( 'quantity' ), 'inner')
+                    -> join(TABLE_CUSTOMER_TYPE, TABLE_CUSTOMER_TYPE .'.id = '. TABLE_PRODUCTS_PRICE .'.customer_type_id', array( 'customer_type_id' => 'id', 'customer_type_name' => 'name' ), 'inner')
+                    -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_PRODUCTS_INVENTORY .'.warehouse_id', array( 'warehouse_id' => 'id', 'warehouse_name' => 'name' ), 'inner')
+                ;
+
+
+                if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.status', $ssFilter['filter_status']);
+                }
+
+                if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
+                }
+
+                if(isset($ssFilter['filter_trademark']) && $ssFilter['filter_trademark'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.trademark_id', $ssFilter['filter_trademark']);
+                }
+
+                if(isset($ssFilter['filter_customer_type'])) {
+                    $select->where->equalTo(TABLE_PRODUCTS_PRICE.'.customer_type_id', $ssFilter['filter_customer_type']);
+                }
+
+                if(isset($ssFilter['filter_warehouse'])) {
+                    $select->where->equalTo(TABLE_PRODUCTS_INVENTORY.'.warehouse_id', $ssFilter['filter_warehouse']);
+                }
+
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $select->where->NEST
+                        ->like(TABLE_PRODUCTS.'.name', '%'. $ssFilter['filter_keyword'] . '%')
+                        ->or
+                        ->like(TABLE_PRODUCTS.'.code', '%'. $ssFilter['filter_keyword'] . '%')
+                        ->UNNEST;
+                }
+
+            })->count();
+        }
+
         return $result;
     }
 
@@ -129,6 +172,55 @@ class ProductsTable extends DefaultTable
             });
         }
 
+        if($options['task'] == 'list-search') {
+            $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $paginator = $arrParam['paginator'];
+                $ssFilter  = $arrParam['ssFilter'];
+
+                if(!isset($options['paginator']) || $options['paginator'] == true) {
+                    $select -> limit($paginator['itemCountPerPage'])
+                        -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
+                }
+
+                $select
+                    -> join(TABLE_PRODUCTS_PRICE, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_PRICE .'.products_id', array( 'price'), 'inner')
+                    -> join(TABLE_PRODUCTS_INVENTORY, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_INVENTORY .'.products_id', array( 'quantity' ), 'inner')
+                    -> join(TABLE_CUSTOMER_TYPE, TABLE_CUSTOMER_TYPE .'.id = '. TABLE_PRODUCTS_PRICE .'.customer_type_id', array( 'customer_type_id' => 'id', 'customer_type_name' => 'name' ), 'inner')
+                    -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_PRODUCTS_INVENTORY .'.warehouse_id', array( 'warehouse_id' => 'id', 'warehouse_name' => 'name' ), 'inner')
+                ;
+
+
+                if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.status', $ssFilter['filter_status']);
+                }
+
+                if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
+                }
+
+                if(isset($ssFilter['filter_trademark']) && $ssFilter['filter_trademark'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.trademark_id', $ssFilter['filter_trademark']);
+                }
+
+                if(isset($ssFilter['filter_customer_type'])) {
+                    $select->where->equalTo(TABLE_PRODUCTS_PRICE.'.customer_type_id', $ssFilter['filter_customer_type']);
+                }
+
+                if(isset($ssFilter['filter_warehouse'])) {
+                    $select->where->equalTo(TABLE_PRODUCTS_INVENTORY.'.warehouse_id', $ssFilter['filter_warehouse']);
+                }
+
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $select->where->NEST
+                        ->like(TABLE_PRODUCTS.'.name', '%'. $ssFilter['filter_keyword'] . '%')
+                        ->or
+                        ->like(TABLE_PRODUCTS.'.code', '%'. $ssFilter['filter_keyword'] . '%')
+                        ->UNNEST;
+                }
+                $select -> order(array(TABLE_PRODUCTS.'.name' => 'ASC'));
+            });
+        }
+
         if ($options['task'] == 'cache') {
             $cache = $this->getServiceLocator()->get('cache');
             $cache_key = 'Products';
@@ -162,6 +254,22 @@ class ProductsTable extends DefaultTable
                 if (!empty($arrParam['status'])) {
                     $select->where->equalTo('status', $arrParam['status']);
                 }
+
+            })->current();
+        }
+
+        if ($options['task'] == 'full') {
+            $result = $this->tableGateway->select(function (Select $select) use ($arrParam, $options) {
+                $select->where->equalTo(TABLE_PRODUCTS.'.id', $arrParam['id']);
+                $select
+                    -> join(TABLE_PRODUCTS_PRICE, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_PRICE .'.products_id', array( 'price'), 'inner')
+                    -> join(TABLE_PRODUCTS_INVENTORY, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_INVENTORY .'.products_id', array( 'quantity' ), 'inner')
+                    -> join(TABLE_CUSTOMER_TYPE, TABLE_CUSTOMER_TYPE .'.id = '. TABLE_PRODUCTS_PRICE .'.customer_type_id', array( 'customer_type_id' => 'id', 'customer_type_name' => 'name' ), 'inner')
+                    -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_PRODUCTS_INVENTORY .'.warehouse_id', array( 'warehouse_id' => 'id', 'warehouse_name' => 'name' ), 'inner')
+                    -> join(TABLE_PRODUCTS_TYPE, TABLE_PRODUCTS_TYPE .'.id = '. TABLE_PRODUCTS .'.products_type_id', array( 'products_type_name' => 'name'), 'inner')
+                ;
+                $select->where->equalTo(TABLE_PRODUCTS_INVENTORY.'.warehouse_id', $arrParam['warehouse_id']);
+                $select->where->equalTo(TABLE_PRODUCTS_PRICE.'.customer_type_id', $arrParam['customer_type_id']);
 
             })->current();
         }

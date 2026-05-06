@@ -67,7 +67,7 @@ class Contact extends InputFilter {
 	    }
 		$this->add(array(
 			'name'		=> 'phone',
-			'required'	=> false,
+			'required'	=> true,
 			'validators'	=> array(
 				array(
 					'name'		=> 'NotEmpty',
@@ -119,11 +119,6 @@ class Contact extends InputFilter {
 					'break_chain_on_failure'	=> true
 				)
 			)
-		));
-
-		$this->add(array(
-			'name'		=> 'contact_group',
-			'required'	=> false,
 		));
 		
 		// Sex
@@ -214,7 +209,7 @@ class Contact extends InputFilter {
 		
 		// Nhóm khách hàng
 		$this->add(array(
-		    'name'		=> 'contact_group',
+		    'name'		=> 'customer_type_id',
 		    'required'	=> true,
 		    'validators'	=> array(
 		        array(

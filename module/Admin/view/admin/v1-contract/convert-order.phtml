@@ -1,0 +1,73 @@
+<?php
+    $myForm = $this->myForm;
+    $myForm->prepare();
+    $data = $this->data;
+    $classx = $data['unit_transport'] == '5sauto' ? '' : 'hidden';
+    $classy = $data['unit_transport'] == '5sauto' ? 'hidden' : '';
+
+    $myForm->get('ghtk_status')->setAttributes(array('data-parent' => $myForm->get('unit_transport')->getValue() == 'viettel' ? 'viettel-status' : 'ghtk-status'));
+    $elements = array(
+        array('element' => $myForm->get('unit_transport'), 'label' => 'Đơn vị vận chuyển', 'boxClass' => 'col-md-3', 'validate' => array('require' => true)),
+        array('element' => $myForm->get('ghtk_code'), 'label' => 'Mã đơn vận chuyển', 'boxClass' => 'col-md-3 unit-child '.$classy, 'validate' => array('require' => true)),
+        array('element' => $myForm->get('shipper_id'), 'label' => 'Nhân viên giao hàng', 'boxClass' => 'col-md-3 unit-child 5sauto '.$classx, 'validate' => array('require' => true)),
+        array('element' => $myForm->get('ghtk_status'), 'label' => 'Trạng thái vận chuyển', 'boxClass' => 'col-md-3', 'validate' => array('require' => true)),
+        array('element' => $myForm->get('price_transport'), 'label' => 'Phí vận chuyển', 'boxClass' => 'col-md-3', 'validate' => array('require' => true)),
+        array('element' => $myForm->get('id'), 'validate' => array('require' => true)),
+        array('element' => $myForm->get('modal'), 'validate' => array('require' => true))
+    );
+
+    $xhtml = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+?>
+
+<?php
+if($this->params['data']['modal'] != 'success') { 
+?>
+<div class="modal-header">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+	<h4 class="modal-title"><?php echo $this->caption;?></h4>
+</div>
+<div class="modal-body">
+<?php
+} 
+?>
+    <?php echo @$this->xViewElementErrors($elements);?>
+	<form method="post" action="" class="horizontal-form adminForm" role="form" name="adminFormModal" id="adminFormModal">
+    	<div class="row">
+			<?php echo $xhtml;?>
+		</div>
+    </form>
+<?php
+if($this->params['data']['modal'] != 'success') { 
+?>
+</div>
+<div class="modal-footer">
+	<button type="button" class="btn green save-close">Lưu & Đóng</button>
+	<button type="button" data-dismiss="modal" class="btn btn-default">Đóng</button>
+</div>
+    <script>
+        $('select[name="unit_transport"]').change(function() {
+            var select = 'input[name="ghtk_status"]';
+            var parent = $(select).parent();
+            $('.select2-container', parent).select2('val', '');
+            var code = 'ghtk-status';
+            if($(this).val() == 'viettel')
+                code = 'viettel-status';
+            $(select).attr('data-parent', code);
+        });
+
+        $('select[name="unit_transport"]').change(function() {
+            var unit = $(this).val();
+            if(unit == '5sauto'){
+                $('.unit-child').addClass('hidden')
+                $('.5sauto').removeClass('hidden')
+            }
+            else {
+                $('.unit-child').removeClass('hidden')
+                $('.5sauto').addClass('hidden')
+            }
+        });
+    </script>
+<?php
+} 
+?>
+

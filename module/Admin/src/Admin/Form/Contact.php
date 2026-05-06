@@ -66,7 +66,7 @@ class Contact extends Form {
 		));
 
 		$this->add(array(
-		    'name'			=> 'contact_group',
+		    'name'			=> 'customer_type_id',
 		    'type'			=> 'Select',
 		    'attributes'	=> array(
 		        'class'		=> 'form-control select2 select2_basic',

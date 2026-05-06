@@ -250,22 +250,31 @@ class ApiController extends ActionController {
     public function loadKovProductsAction() {
         $itemPerpage = 20;
         $curentPage = $this->_params['data']['curentPage'] ? $this->_params['data']['curentPage'] : 1;
-        $curentItem = ($curentPage - 1) * $itemPerpage;
-        $search_params = '';
-        if(!empty($this->_params['data']['categoriId']))
-            $search_params .= '&categoryId='.$this->_params['data']['categoriId'];
+        $paginator = array(
+            'itemCountPerPage' => $itemPerpage,
+            'currentPageNumber' => $curentPage
+        );
+        $ssFilter = array(
+            'filter_customer_type' => $this->_params['data']['filter_customer_type'],
+            'filter_warehouse' => $this->_params['data']['filter_warehouse'],
+        );
+
+        if(!empty($this->_params['data']['filter_products_type']))
+            $ssFilter['filter_products_type'] = $this->_params['data']['filter_products_type'];
         if(!empty($this->_params['data']['filter_keyword']))
-            $search_params .= '&name='.urlencode($this->_params['data']['filter_keyword']);
+            $ssFilter['filter_keyword'] = $this->_params['data']['filter_keyword'];
+        if(!empty($this->_params['data']['filter_trademark']))
+            $ssFilter['filter_trademark'] = $this->_params['data']['filter_trademark'];
 
+        $param = array(
+            'paginator' => $paginator,
+            'ssFilter' => $ssFilter
+        );
 
-        $return = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/products?currentItem='.$curentItem.'&isActive=1&includeInventory=true'.$search_params);
-        $kovProducts = json_decode($return,true);
-
-        $this->_viewModel['kovProducts'] = $kovProducts['data'];
-        $this->_viewModel['count'] = $kovProducts['total'];
+        $this->_viewModel['kovProducts'] = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->listItem($param, array('task' => 'list-search'));;
+        $this->_viewModel['count'] = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->countItem($param, array('task' => 'list-search'));
         $this->_viewModel['itemPerpage'] = $itemPerpage;
         $this->_viewModel['curentPage']  = $curentPage;
-        $this->_viewModel['kov_branch_id']  = $this->_userInfo->getUserInfo('kov_branch_id');
 
         $viewModel = new ViewModel($this->_viewModel);
         $viewModel->setTerminal(true);
@@ -274,9 +283,8 @@ class ApiController extends ActionController {
 
     public function addProductToListAction() {
         if($this->_params['data']['id']){
-            $return = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/products/'.$this->_params['data']['id']);
-            $product = json_decode($return,true);
-            $this->_viewModel['product'] = $product;
+            $product = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->getItem($this->_params['data'], array('task' => 'full'));
+            $this->_viewModel['product'] = (array)$product;
             $this->_viewModel['data'] = $this->_params['data'];
             $viewModel = new ViewModel($this->_viewModel);
             $viewModel->setTerminal(true);

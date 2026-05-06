@@ -63,7 +63,7 @@ class ContactTable extends DefaultTable {
     			}
 
                 if(!empty($ssFilter['filter_customer_type'])) {
-                    $select -> where -> equalTo('contact_group', $ssFilter['filter_customer_type']);
+                    $select -> where -> equalTo('customer_type_id', $ssFilter['filter_customer_type']);
                 }
     			
     			if(!empty($ssFilter['filter_sale_group'])) {
@@ -204,7 +204,7 @@ class ContactTable extends DefaultTable {
     			}
 
     			if(!empty($ssFilter['filter_customer_type'])) {
-    			    $select -> where -> equalTo('contact_group', $ssFilter['filter_customer_type']);
+    			    $select -> where -> equalTo('customer_type_id', $ssFilter['filter_customer_type']);
     			}
     			
     			if(!empty($ssFilter['filter_sale_group'])) {
@@ -439,7 +439,7 @@ class ContactTable extends DefaultTable {
                 'sex'                   => $arrData['sex'],
                 'birthday_year'         => $arrData['birthday_year'] ? $arrData['birthday_year'] : null,
 			    'type'                  => $arrData['type'],
-			    'contact_group'         => $arrData['contact_group'],
+			    'customer_type_id'      => $arrData['customer_type_id'],
 			    'license_plate'         => $arrData['license_plate'],
 				'product_id'            => $arrData['product_id'] ? $arrData['product_id'] : null,
 				'product_group_id'      => $arrData['product_group_id'] ? $arrData['product_group_id'] : null,
@@ -726,8 +726,8 @@ class ContactTable extends DefaultTable {
 		    if(!empty($arrData['type'])) {
 		        $data['type'] = $arrData['type'];
 		    }
-		    if(!empty($arrData['contact_group'])) {
-		        $data['contact_group'] = $arrData['contact_group'];
+		    if(!empty($arrData['customer_type_id'])) {
+		        $data['customer_type_id'] = $arrData['customer_type_id'];
 		    }
 		    if(!empty($arrData['history_success']) && $arrData['history_success'] == 'true') {
 		        $data['history_success'] = $arrItem['history_success'] + 1;

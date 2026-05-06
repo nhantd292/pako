@@ -681,7 +681,7 @@ input.radio-status{
 }
 #loadProductsReturn .item .product div.infor,
 #loadProducts .item .product div.infor{
-	padding-left: 6px;
+	/*padding-left: 6px;*/
 }
 #loadProductsReturn .item .product div.infor p,
 #loadProducts .item .product div.infor p{

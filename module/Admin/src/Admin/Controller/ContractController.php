@@ -147,12 +147,6 @@ class ContractController extends ActionController {
             }
         }
 
-        // Lấy danh mục sản phẩm cho vào bộ lọc
-        $categories = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/categories?pageSize=100&hierachicalData=true');
-        $categories = json_decode($categories, true)['data'];
-        $categories = $this->getNameCat($this->addNew($categories), $result);
-        $this->_params['categories'] = $categories;
-
         $myForm	= new \Admin\Form\Search\Contract($this, $this->_params);
         $myForm->setData($this->_params['ssFilter']);
         $user_branch = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->getItem(['id' => $this->_params['ssFilter']['filter_sale_branch']]);
@@ -214,12 +208,6 @@ class ContractController extends ActionController {
                 $this->_params['ssFilter']['filter_delivery_id'] = $curent_user['id'];
             }
         }
-
-        // Lấy danh mục sản phẩm cho vào bộ lọc
-        $categories = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/categories?pageSize=100&hierachicalData=true');
-        $categories = json_decode($categories, true)['data'];
-        $categories = $this->getNameCat($this->addNew($categories), $result);
-        $this->_params['categories'] = $categories;
 
         $myForm	= new \Admin\Form\Search\Contract($this, $this->_params);
         $myForm->setData($this->_params['ssFilter']);
@@ -329,17 +317,8 @@ class ContractController extends ActionController {
         $ssFilter->filter_status = DA_CHOT;
         $ssFilter->filter_send_ghtk = -1;
 
-        // Lấy danh mục sản phẩm cho vào bộ lọc
-        $categories = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/categories?pageSize=100&hierachicalData=true');
-        $categories = json_decode($categories, true)['data'];
-        $categories = $this->getNameCat($this->addNew($categories), $result);
-        $this->_params['categories'] = $categories;
-
         $myForm	= new \Admin\Form\Search\Contract($this, $this->_params);
         $myForm->setData($this->_params['ssFilter']);
-//        $user_obj = $this->getServiceLocator()->get('Admin\Model\UserTable')->getItem(['id' => $curent_user['id']]);
-//        $user_branch = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->getItem(['id' => $user_obj['sale_branch_id']]);
-        $user_branch = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->getItem(['id' => $this->_params['ssFilter']['filter_sale_branch']]);
 
         $this->_viewModel['myForm']	                = $myForm;
         $this->_viewModel['items']                  = $this->getTable()->listItem($this->_params, array('task' => 'list-item'));
@@ -351,9 +330,6 @@ class ContractController extends ActionController {
         $this->_viewModel['location_district']      = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
         $this->_viewModel['location_town']          = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 3), array('task' => 'cache'));
         $this->_viewModel['shippers']               = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'shipper')), array('task' => 'cache'));
-//        $this->_viewModel['viettelKeyList']         = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'viettel-key', 'key_ghtk_ids' => explode(',', $user_branch['key_viettel_ids']))), array('task' => 'list-all'));
-//        $this->_viewModel['ghtkKeyList']            = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghtk-key', 'key_ghtk_ids' => explode(',', $user_branch['key_ghtk_ids']))), array('task' => 'list-all'));
-//        $this->_viewModel['ghnKeyList']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghn-key', 'key_ghn_ids' => explode(',', $user_branch['key_ghn_ids']))), array('task' => 'list-all'));
         $this->_viewModel['viettelKeyList']         = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'viettel-key')), array('task' => 'list-all'));
         $this->_viewModel['ghtkKeyList']            = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghtk-key')), array('task' => 'list-all'));
         $this->_viewModel['ghnKeyList']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghn-key')), array('task' => 'list-all'));
@@ -372,31 +348,29 @@ class ContractController extends ActionController {
     // Thêm mới đơn hàng theo sản phẩm mới
     public function addKovAction() {
         $this->_params['userInfo'] = $this->_userInfo->getUserInfo();
-        $numberFormat = new \ZendX\Functions\Number();
-//        $myForm = $this->getForm();
+        $number = new \ZendX\Functions\Number();
         $myForm = new \Admin\Form\Contract($this, $this->_params);
+        $connection = $this->getConnection();
 
         $contact_item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $this->params('id')));
-        $sales_manager = $this->getServiceLocator()->get('Admin\Model\UserTable')->getItem(array('id' => $contact_item['user_id']));
         if(empty($contact_item)){
             return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'not-found'));
         }
         
         if($this->getRequest()->isPost()){
+            unset($this->_params['data']['filter_products_type']);
+            unset($this->_params['data']['filter_keyword']);
+
             $myForm->setInputFilter(new \Admin\Filter\Contract(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
             $productList = $this->_params['data']['contract_product'];
 
+
             if($myForm->isValid()){
                 $contract_product = $this->_params['data']['contract_product'];
                 $check_emty_data = !empty($contract_product) ? true : false;
 
-                // Lấy ra đơn hàng chưa thành công của khách hàng đang lên đơn
-                $contract_coincider = $this->getTable()->listItem(['phone' => $this->_params['data']['phone'], 'ghtk_status_not_success'=> true], array('task' => 'list-params'))->toArray();
-                if(!empty($contract_coincider)){
-                    $this->_params['data']['coincider_code']    = $contract_coincider[0]['code'];
-                }
                 for ($i = 0; $i < count($contract_product['product_id']); $i++ ){
                     if(
                         trim($contract_product['product_id'][$i]) == "" ||
@@ -405,45 +379,71 @@ class ContractController extends ActionController {
                         (int)trim($contract_product['length'][$i]) == 0 ||
                         (int)trim($contract_product['width'][$i]) == 0 ||
                         (int)trim($contract_product['height'][$i]) == 0 ||
-//                        (int)trim($contract_product['price'][$i]) == 0 ||
                         trim($contract_product['price'][$i]) == "" ||
                         (int)trim($contract_product['numbers'][$i]) == 0
                     )$check_emty_data = false;
                 }
 
                 if($check_emty_data){
-                    $this->_params['item'] = $contact_item;
 
-                    // TẠO ĐƠN HÀNG LÊN API
-                    $result_kov = $this->createOrderKov($this->_params['data']);
-                    if((int)$result_kov['id']){
-                        $this->_params['data']['id_kov']  = $result_kov['id'];
-                        $this->_params['data']['kov_code']  = $result_kov['code'];
+                    $products_detail  = array();
+                    $total_number_product = 0;
+                    $cost_price_total = 0;
+                    for($i = 0; $i < count($contract_product['product_id']); $i++){
+                        if(!empty($contract_product['product_id'][$i])) {
+                            $products_detail[$i]['full_name']        = $contract_product['full_name'][$i]; // Tên đầy đủ
+                            $products_detail[$i]['product_id']       = $contract_product['product_id'][$i]; // id sản phẩm
+                            $products_detail[$i]['code']             = $contract_product['code'][$i];// mã sản phẩm
+                            $products_detail[$i]['numbers']          = $number->formatToData($contract_product['numbers'][$i]); // số lượng của đơn hàng
+                            $products_detail[$i]['price']            = $number->formatToData($contract_product['price'][$i]); // giá bán
+                            $products_detail[$i]['total']            = $number->formatToData($contract_product['total'][$i]); // tổng tiền (chính là cột thành tiền)
+                            $products_detail[$i]['cost']             = $contract_product['cost'][$i]; // giá vốn kov
+                            $products_detail[$i]['weight']           = $contract_product['weight'][$i]; // Khối lượng 1 gói hàng (gram)
+                            $products_detail[$i]['categoryId']       = $contract_product['categoryId'][$i]; // Khối lượng 1 gói hàng (gram)
+                            $products_detail[$i]['categoryName']     = $contract_product['categoryName'][$i]; // Khối lượng 1 gói hàng (gram)
+                            $products_detail[$i]['car_year']         = $contract_product['car_year'][$i]; // Tên xe năm sản xuất
+                            $products_detail[$i]['length']           = $contract_product['length'][$i]; // Chiều dài
+                            $products_detail[$i]['width']            = $contract_product['width'][$i]; // Chiều rộng
+                            $products_detail[$i]['height']           = $contract_product['height'][$i]; // Chiều cao
 
-                        $result = $this->getTable()->saveItem($this->_params, array('task' => 'add-kov-item'));
-                        $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
-
-                        // cập nhật mã đơn hàng trên crm lên ghi chú đơn hàng kov
-                        $contract_new = $this->getTable()->getItem(array('id' => $result));
-                        $order_data['description'] = $this->_params['data']['sale_note'].'(Đơn hàng đẩy từ CRM '.$contract_new['code'].')';
-                        $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/orders/'.$contract_new['id_kov'], $order_data, 'PUT');
-
-                        // Gửi thông báo zalo tới khách hàng
-                        $this->zalo_send_notify(ZALO_NOTIFY_CONFIG_DATHANG, $numberFormat->convertToInternational($contract_new['phone']), $contract_new);
-
-                        if($controlAction == 'save-new') {
-                            $this->goRoute(array('action' => 'add-kov'));
-                        } else if($controlAction == 'save') {
-                            $this->goRoute();
-                        } else {
-                            $this->goRoute();
+                            $total_number_product += $number->formatToData($contract_product['numbers'][$i]);
+                            $cost_price_total += ($number->formatToData($contract_product['numbers'][$i]) * $number->formatToData($contract_product['cost'][$i]));
                         }
                     }
-                    else{
-                        $mesage = $result_kov['responseStatus']['message'];
-                        $this->_viewModel['check_product_id'] = 'Đồng bộ đơn hàng lên hệ thống Kiotviet thất bại: '.$mesage;
-                        $this->_viewModel['productList'] = $this->_params['data']['contract_product'];
-                        $this->_viewModel['data']  = $this->_params['data'];
+
+                    $this->_params['data']['cost_price_total'] = $cost_price_total;
+                    $this->_params['data']['total_number_product'] = $total_number_product;
+                    $this->_params['data']['total_product'] = count($products_detail);
+                    $this->_params['data']['total_product'] = count($products_detail);
+                    $this->_params['data']['contract_product'] = $products_detail;
+                    $this->_params['data']['state'] = NEW_STATUS;
+
+                    $this->_params['item'] = $contact_item;
+
+                    ##### begin #####
+                    $connection->beginTransaction();
+
+                    # tạo đơn hàng
+                    $contract_id = $this->getTable()->saveItem($this->_params, array('task' => 'add-kov-item'));
+                    # cập nhật mã đơn hàng
+                    $this->getTable()->saveItem(array('data' => $contract_id), array('task' => 'update-code'));
+                    // Thêm chi tiết sản phẩm đơn hàng
+                    foreach($products_detail as $arraydata){
+                        $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem(array('data' => $arraydata, 'contract_id' => $contract_id), array('task' => 'add-item'));
+                    }
+
+                    $connection->commit();
+                    ##### end #####
+
+                    $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+
+
+                    if($controlAction == 'save-new') {
+                        $this->goRoute(array('action' => 'add-kov'));
+                    } else if($controlAction == 'save') {
+                        $this->goRoute();
+                    } else {
+                        $this->goRoute();
                     }
                 }
                 else{
@@ -462,10 +462,7 @@ class ContractController extends ActionController {
             $this->_viewModel['contactId']      = $contact_item['id'];
         }
 
-        $categories = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/categories?pageSize=100&hierachicalData=true');
-        $categories = json_decode($categories, true)['data'];
-        $this->_viewModel['categories'] = $this->getNameCat($this->addNew($categories), $result);
-        
+        $this->_viewModel['products_type']  = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
         $this->_viewModel['myForm']	        = $myForm;
         $this->_viewModel['caption']        = 'Tạo đơn hàng';
         return new ViewModel($this->_viewModel);

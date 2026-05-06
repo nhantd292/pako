@@ -43,19 +43,19 @@ class Contract extends Form {
 			),
 		));
 
-//        // Nhân viên mkt
-//        $this->add(array(
-//            'name'			=> 'marketer_id',
-//            'type'			=> 'Select',
-//            'attributes'	=> array(
-//                'class'		=> 'form-control select2 select2_basic',
-//            ),
-//            'options'		=> array(
-//                'empty_option'	=> '- Chọn -',
-//                'disable_inarray_validator' => true,
-//                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\UserTable')->listItem(array("data" => array('sale_branch_id' =>$options['userInfo']['sale_branch_id'])), array('task' => 'list-marketing')), array('key' => 'id', 'value' => 'name')),
-//            ),
-//        ));
+        // Nhóm khách hàng
+        $this->add(array(
+            'name'			=> 'customer_type_id',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Chọn -',
+                'disable_inarray_validator' => true,
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            ),
+        ));
 
 		// Tỉnh thành
 		$this->add(array(
@@ -117,10 +117,52 @@ class Contract extends Form {
 		    'name'			=> 'price_total',
 		    'type'			=> 'Text',
 		    'attributes'	=> array(
-		        'class'		  => 'form-control text-danger mask_currency',
+		        'class'		  => 'form-control text-warning text-bold mask_currency',
 		        'value'       => 0,
 		        'data-value'  => 0,
 		        'readonly'    => 'readonly',
+		    )
+		));
+
+		// Nợ cũ
+		$this->add(array(
+		    'name'			=> 'amount_owed',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		  => 'form-control text-danger text-bold mask_currency',
+		        'value'       => 0,
+		        'data-value'  => 0,
+		        'readonly'    => 'readonly',
+		    )
+		));
+
+		$this->add(array(
+		    'name'			=> 'paid_cash',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		  => 'form-control text-danger text-bold mask_currency',
+		        'value'       => 0,
+		        'data-value'  => 0,
+		    )
+		));
+
+		$this->add(array(
+		    'name'			=> 'paid_transfer',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		  => 'form-control text-danger text-bold mask_currency',
+		        'value'       => 0,
+		        'data-value'  => 0,
+		    )
+		));
+
+		$this->add(array(
+		    'name'			=> 'discount',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		  => 'form-control text-danger text-bold mask_currency',
+		        'value'       => 0,
+		        'data-value'  => 0,
 		    )
 		));
 		
@@ -192,33 +234,33 @@ class Contract extends Form {
 //            )
 //        ));
 
-        $this->add(array(
-            'name'			=> 'deliver_work_shift',
-            'type'			=> 'Select',
-            'attributes'	=> array(
-                'class'		=> 'form-control select2 select2_basic',
-            ),
-            'options'		=> array(
-                'empty_option'	=> '- Thời gian giao hàng-',
-                'disable_inarray_validator' => true,
-                'value_options'	=> ['1' => "Sáng", '2' => "Chiều", '3' => "Tối", ],
-            )
-        ));
+//        $this->add(array(
+//            'name'			=> 'deliver_work_shift',
+//            'type'			=> 'Select',
+//            'attributes'	=> array(
+//                'class'		=> 'form-control select2 select2_basic',
+//            ),
+//            'options'		=> array(
+//                'empty_option'	=> '- Thời gian giao hàng-',
+//                'disable_inarray_validator' => true,
+//                'value_options'	=> ['1' => "Sáng", '2' => "Chiều", '3' => "Tối", ],
+//            )
+//        ));
 
 
         // Loại đơn sản xuất
-        $this->add(array(
-            'name'			=> 'production_type_id',
-            'type'			=> 'Select',
-            'attributes'	=> array(
-                'class'		=> 'form-control select2 select2_basic',
-            ),
-            'options'		=> array(
-                'empty_option'	=> '- Chọn -',
-                'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "production-type" )), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
-            ),
-        ));
+//        $this->add(array(
+//            'name'			=> 'production_type_id',
+//            'type'			=> 'Select',
+//            'attributes'	=> array(
+//                'class'		=> 'form-control select2 select2_basic',
+//            ),
+//            'options'		=> array(
+//                'empty_option'	=> '- Chọn -',
+//                'disable_inarray_validator' => true,
+//                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "production-type" )), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+//            ),
+//        ));
 
         // Kho xuất hàng
         $this->add(array(
@@ -230,22 +272,22 @@ class Contract extends Form {
             'options'		=> array(
                 'empty_option'	=> '- Chọn -',
                 'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "inventory" )), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
             ),
         ));
 
 
-        $this->add(array(
-            'name'			=> 'fee_type',
-            'type'			=> 'Select',
-            'attributes'	=> array(
-                'class'		=> 'form-control select2 select2_basic',
-            ),
-            'options'		=> array(
-                'empty_option'	=> '- chọn -',
-                'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "fee-type" )), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
-            )
-        ));
+//        $this->add(array(
+//            'name'			=> 'fee_type',
+//            'type'			=> 'Select',
+//            'attributes'	=> array(
+//                'class'		=> 'form-control select2 select2_basic',
+//            ),
+//            'options'		=> array(
+//                'empty_option'	=> '- chọn -',
+//                'disable_inarray_validator' => true,
+//                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "fee-type" )), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
+//            )
+//        ));
 	}
 }

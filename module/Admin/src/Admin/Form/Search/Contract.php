@@ -7,7 +7,6 @@ class Contract extends Form{
 	public function __construct($sm, $params = null){
 	    $action   = $params['action'];
 	    $ssFilter = $params['ssFilter'];
-	    $categories = $params['categories'];
 	    $products = $params['products'];
 		parent::__construct();
 		
@@ -90,7 +89,7 @@ class Contract extends Form{
             'options'		=> array(
                 'empty_option'	=> '- Kho xuất hàng -',
                 'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "inventory" )), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
             ),
         ));
 
@@ -214,7 +213,7 @@ class Contract extends Form{
 		    ),
 		    'options'		=> array(
 		        'empty_option'	=> '- Nhóm sản phẩm -',
-		        'value_options'	=> $categories,
+		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
 		    )
 		));
 
@@ -242,8 +241,7 @@ class Contract extends Form{
 		    ),
 		    'options'		=> array(
 //		        'empty_option'	=> '- Sản phẩm-',
-//		        'value_options'	=> $products,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\KovProductsTable')->listItem([], array('task' => 'cache')), array('key' => 'id', 'value' => 'fullName')),
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\ProductsTable')->listItem([], array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
             )
 		));
 

@@ -146,6 +146,12 @@ define('STATUS_CONTACT_ADVISORY'    , 'da-tu-van');
 define('STATUS_CONTACT_POSITIVE'    , 'tich-cuc');
 define('STATUS_CONTACT_NEGATIVE'    , 'tieu-cuc');
 
+// Trạng thái đơn hàng
+define('NEW_STATUS'    , 'new');
+define('PROCESSING_STATUS'  , 'processing');
+define('COMPLETE_STATUS'  , 'complete');
+define('CANCEL_STATUS'        , 'cancel');
+
 // Phân loại lịch sử chăm sóc
 define('DA_CHOT'    , 'da-chot');
 define('HUY_SALES'  , 'huy-sales');
