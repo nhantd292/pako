@@ -117,7 +117,7 @@ class Contract extends Form {
 		    'name'			=> 'price_total',
 		    'type'			=> 'Text',
 		    'attributes'	=> array(
-		        'class'		  => 'form-control text-warning text-bold mask_currency',
+		        'class'		  => 'form-control text-danger text-bold mask_currency',
 		        'value'       => 0,
 		        'data-value'  => 0,
 		        'readonly'    => 'readonly',
@@ -131,10 +131,20 @@ class Contract extends Form {
 		    'attributes'	=> array(
 		        'class'		  => 'form-control text-danger text-bold mask_currency',
 		        'value'       => 0,
-		        'data-value'  => 0,
 		        'readonly'    => 'readonly',
 		    )
 		));
+		// nợ lại
+        $this->add(array(
+            'name'			=> 'new_debt',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'		  => 'form-control text-danger text-bold mask_currency',
+                'value'       => 0,
+                'data-value'  => 0,
+                'readonly'    => 'readonly',
+            )
+        ));
 
 		$this->add(array(
 		    'name'			=> 'paid_cash',
@@ -142,7 +152,6 @@ class Contract extends Form {
 		    'attributes'	=> array(
 		        'class'		  => 'form-control text-danger text-bold mask_currency',
 		        'value'       => 0,
-		        'data-value'  => 0,
 		    )
 		));
 

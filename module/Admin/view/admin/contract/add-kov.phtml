@@ -35,7 +35,8 @@
     $elementsBottom = array(
         array('section' => 'Thành tiền hóa đơn', 'boxClass' => 'col-md-12'),
         array('element' => $myForm->get('amount_owed'), 'label' => 'Nợ cũ', 'boxClass' => 'col-md-4'),
-        array('element' => $myForm->get('price_total'), 'label' => 'Nợ lại', 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('price_total'), 'label' => 'Tổng tiền hàng', 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('new_debt'), 'label' => 'Nợ lại', 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('paid_cash'), 'label' => 'Trả tiền mặt', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('paid_transfer'), 'label' => 'Chuyển khoản', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('discount'), 'label' => 'giảm giá', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),

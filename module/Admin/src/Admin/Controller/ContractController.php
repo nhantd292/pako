@@ -43,7 +43,7 @@ class ContractController extends ActionController {
         $this->_params['ssFilter']['filter_category']       = $ssFilter->filter_category;
         $this->_params['ssFilter']['filter_product']        = $ssFilter->filter_product;
         $this->_params['ssFilter']['filter_update_kov_false']        = $ssFilter->filter_update_kov_false;
-        $this->_params['ssFilter']['filter_production_type_id']        = $ssFilter->filter_production_type_id;
+//        $this->_params['ssFilter']['filter_production_type_id']        = $ssFilter->filter_production_type_id;
         $this->_params['ssFilter']['filter_shipper_id']     = $ssFilter->filter_shipper_id;
         $this->_params['ssFilter']['filter_care_status']    = $ssFilter->filter_care_status;
         $this->_params['ssFilter']['filter_marketer_status']= $ssFilter->filter_marketer_status;
@@ -92,7 +92,7 @@ class ContractController extends ActionController {
             $ssFilter->filter_category 	        = $data['filter_category'];
             $ssFilter->filter_product 	        = $data['filter_product'];
             $ssFilter->filter_update_kov_false 	= $data['filter_update_kov_false'];
-            $ssFilter->filter_production_type_id= $data['filter_production_type_id'];
+//            $ssFilter->filter_production_type_id= $data['filter_production_type_id'];
             $ssFilter->filter_shipper_id 	    = $data['filter_shipper_id'];
             $ssFilter->filter_care_status 	    = $data['filter_care_status'];
             $ssFilter->filter_marketer_status 	= $data['filter_marketer_status'];
@@ -173,6 +173,11 @@ class ContractController extends ActionController {
         $this->_viewModel['status_check_vtp']       = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'viettel-status')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['status_accounting']      = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status-acounting')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['status_sales']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $this->_viewModel['order_status']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+//        echo "<pre>";
+//        print_r($this->_viewModel['order_status']['new']->name);
+//        echo "</pre>";
+//        exit;
         $this->_viewModel['fee_type_list']          = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['caption']                = 'Đơn hàng - Danh sách';
 

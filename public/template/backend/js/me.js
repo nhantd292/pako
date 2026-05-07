@@ -202,10 +202,19 @@ function loadDataToElement(data, option) {
 						$(this).select2('val', data[name]);
 					} else {
 						var value = $(this).attr('data-value');
+
 						if(value) {
-							$(this).val(value);
+							if ($(this).hasClass('mask_currency')) {
+								$(this).val(formatNumber(value));
+							} else {
+								$(this).val(value);
+							}
 						} else {
-							$(this).val(data[name]);
+							if ($(this).hasClass('mask_currency')) {
+								$(this).val(formatNumber(data[name]));
+							} else {
+								$(this).val(data[name]);
+							}
 						}
 					}
 				}

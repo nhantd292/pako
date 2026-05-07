@@ -43,6 +43,12 @@ if (contactId) {
     checkContactToElement(contactId, 'element');
 }
 
+
+
+$('input[name="paid_cash"] , input[name="paid_transfer"], input[name="discount"]').change(function() {
+    updateTotal();
+});
+
 updateTotal()
 
 function updateTotal() {
@@ -52,6 +58,11 @@ function updateTotal() {
     var fee_other = $('.fee_other input').val() ? $('.fee_other input').val() : 0;
     var total_contract_discount = $('.total_contract_discount input').val() ? $('.total_contract_discount input').val() : 0;
     var price_deposits = $('.price_deposits input').val() ? $('.price_deposits input').val() : 0;
+    var amount_owed = $("input[name=amount_owed]").val() ? parseInt(unFormatNumber($("input[name=amount_owed]").val())) : 0;
+    var paid_cash = $("input[name=paid_cash]").val() ? parseInt(unFormatNumber($("input[name=paid_cash]").val())) : 0;
+    var paid_transfer = $("input[name=paid_transfer]").val() ? parseInt(unFormatNumber($("input[name=paid_transfer]").val())) : 0;
+    var discount = $("input[name=discount]").val() ? parseInt(unFormatNumber($("input[name=discount]").val())) : 0;
+
     $.each($('.list-product-contract tr'), function (index, value) {
         var price = $(this).find('.price > input').val() ? $(this).find('.price > input').val() : 0;
         var number = $(this).find('.numbers input').val() ? $(this).find('.numbers input').val() : 0;
@@ -69,7 +80,8 @@ function updateTotal() {
     $(".total_contract_product span").text(formatNumber(total_contract_product));
     $(".total_contract_product input").val(formatNumber(total_contract_product));
 
-    $("input[name=price_total]").val(price_total)
+    $("input[name=price_total]").val(formatNumber(price_total))
+    $("input[name=new_debt]").val(formatNumber(amount_owed + price_total - (paid_cash + paid_transfer + discount)))
 }
 
 function resetDiscounts() {
