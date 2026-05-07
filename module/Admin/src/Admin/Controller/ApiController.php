@@ -512,12 +512,9 @@ class ApiController extends ActionController {
 
     public function listProductAction() {
         if($this->getRequest()->isXmlHttpRequest()) {
-            $items = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $this->_params['data']['contract_id']), null);
-            $this->_viewModel['items']          = $items;
-            $this->_viewModel['product']        = $this->getServiceLocator()->get('Admin\Model\ProductTable')->listItem(null, array('task' => 'cache'));
-            $this->_viewModel['kovProduct']     = $this->getServiceLocator()->get('Admin\Model\KovProductsTable')->listItem(null, array('task' => 'cache'));
-            $this->_viewModel['unit']           = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache'));
-            $viewModel = new ViewModel($this->_viewModel);
+            $contract_id = $this->_params['data']['contract_id'];
+            $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contract_id), array('task' => 'list-ajax'));
+            $this->_viewModel['items'] = $items;$viewModel = new ViewModel($this->_viewModel);
             $viewModel->setTerminal(true);
         } else {
             return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found'));

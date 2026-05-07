@@ -776,6 +776,21 @@ class ContactTable extends DefaultTable {
 			return $id;
 		}
 
+        if ($options['task'] == 'update-infor') {
+            $id = $arrData['id'];
+            $data = array();
+            if(isset($arrData['amount_owed'])){
+                $data['amount_owed'] = $arrData['amount_owed'];
+            }
+
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Update Debt code failed: ' . $e->getMessage());
+            }
+        }
+
 		// Cập nhật thông tin đơn hàng đâu tiên cho liên hệ
         if($options['task'] == 'update-contract-first') {
             $contract_id       = $arrParam['contract_id'];

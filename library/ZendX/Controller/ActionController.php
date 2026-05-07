@@ -726,4 +726,14 @@ class ActionController extends AbstractActionController {
 
         return $str;
     }
+
+    function createCode($prefix, $index, $leng = 9) {
+        $prefixLength = strlen($prefix);
+        $indexStr = (string)$index;
+        $padLength = $leng - $prefixLength;
+        if ($padLength > 0) {
+            return $prefix . str_pad($indexStr, $padLength, '0', STR_PAD_LEFT);
+        }
+        return $prefix . $indexStr;
+    }
 }

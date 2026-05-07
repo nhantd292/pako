@@ -131,6 +131,7 @@ class Contract extends Form {
 		    'attributes'	=> array(
 		        'class'		  => 'form-control text-danger text-bold mask_currency',
 		        'value'       => 0,
+                'data-value'  => null,
 		        'readonly'    => 'readonly',
 		    )
 		));

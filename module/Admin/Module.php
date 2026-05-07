@@ -297,6 +297,11 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_CUSTOMER_TYPE, $adapter, null);
                     return new \Admin\Model\CustomerTypeTable($tableGateway);
                 },
+                'Admin\Model\CustomerDebtTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_CUSTOMER_DEBT, $adapter, null);
+                    return new \Admin\Model\CustomerDebtTable($tableGateway);
+                },
                 'Admin\Model\ProductsTypeTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig');
                     $tableGateway = new TableGateway(TABLE_PRODUCTS_TYPE, $adapter, null);
@@ -517,6 +522,11 @@ class Module {
                 'formAdminCustomerType' => function($sm) {
                     $myForm	= new \Admin\Form\CustomerType($sm);
                     $myForm->setInputFilter(new \Admin\Filter\CustomerType());
+                    return $myForm;
+                },
+                'formAdminCustomerDebt' => function($sm) {
+                    $myForm	= new \Admin\Form\CustomerDebt($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\CustomerDebt());
                     return $myForm;
                 },
                 'formAdminProductsType' => function($sm) {

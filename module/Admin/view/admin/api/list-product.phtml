@@ -13,37 +13,30 @@
 
     // Head
     $xhtmlHead  = '<tr>';
-    $xhtmlHead .= '<th>Sản phẩm</th>';
-    $xhtmlHead .= '<th>SL</th>';
-    $xhtmlHead .= '<th>Giá bán</th>';
-    $xhtmlHead .= '<th>Giảm giá</th>';
-    $xhtmlHead .= '<th>VAT</th>';
-    $xhtmlHead .= '<th>Thành tiền bán</th>';
-    if($view_price_production){
-//        $xhtmlHead .= '<th>Thành tiền giá vốn</th>';
-        $xhtmlHead .= '<th>Giá vốn mặc định</th>';
-    }
+    $xhtmlHead .= '<th class="text-center">STT</th>';
+    $xhtmlHead .= '<th class="text-center">Mã sản phẩm</th>';
+    $xhtmlHead .= '<th>Tên Sản phẩm</th>';
+    $xhtmlHead .= '<th>Tên xe năm sản xuất</th>';
+    $xhtmlHead .= '<th class="text-center">Số Lượng</th>';
+    $xhtmlHead .= '<th class="text-right">Giá bán</th>';
+    $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
+    $xhtmlHead .= '<th class="text-right">Khối lượng</th>';
 	$xhtmlHead .= '</tr>';
     
     // Danh sách
     $xhtmlItems = '';
-    $options = $this->items['options'] ? unserialize($this->items['options']) : array();
-    if(count($options['product']) > 0) {
-        foreach ($options['product'] AS $item) {
-            $productName = $this->items['kov_status'] ? $this->kovProduct[$item['product_id']]->fullName : $this->product[$item['product_id']]['name'];
-            if($view_price_production){
-                $price_production = '<!--<td class="text-right"><span class="mask_currency">'. $item['total_production'] .'</span></td>-->
-    							    <td class="text-right"><span class="mask_currency">'. ($item['cost_new'] * $item['numbers']) .'</span></td>';
-            }
-            $item_price = $this->items['kov_status'] ? $item['price'] * $item['numbers'] : $item['price'];
+    if($this->items) {
+        $index = 1;
+        foreach ($this->items AS $item) {
             $xhtmlItems .= '<tr>
-    							<td>'. $item['full_name'].'</td>
-    							<td class="text-right">'. number_format($item['numbers'],0) .'</td>
-    							<td class="text-right"><span class="mask_currency">'. $item_price .'</span></td>
-    							<td class="text-right"><span class="mask_currency">'. $item['sale_price'] .'</span></td>
-    							<td class="text-right"><span class="mask_currency">'. $item['vat'] .'</span></td>
-    							<td class="text-right"><span class="mask_currency">'. $item['total'] .'</span></td>
-    							'.$price_production.'
+    							<td class="text-center">'. $index++.'</td>
+    							<td class="text-center">'. $item->code.'</td>
+    							<td>'. $item->full_name.'</td>
+    							<td>'. ''.'</td>
+    							<td class="text-center"><span class="mask_currency">'. $item->numbers .'</span></td>
+    							<td class="text-right"><span class="mask_currency">'. $item->price .'</span></td>
+    							<td class="text-right"><span class="mask_currency">'. $item->total .'</span></td>
+    							<td class="text-right"><span class="mask_currency">'. $item->weight .'</span></td>
     						</tr>';
         }
 ?>

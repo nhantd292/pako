@@ -155,6 +155,12 @@ define('PROCESSING_STATUS'  , 'processing');
 define('COMPLETE_STATUS'  , 'complete');
 define('CANCEL_STATUS'        , 'cancel');
 
+define('KMH'    , 'KMH');
+
+define('CATEGORY_KMH'    , 'khach_mua_hang');
+
+
+
 // Phân loại lịch sử chăm sóc
 define('DA_CHOT'    , 'da-chot');
 define('HUY_SALES'  , 'huy-sales');

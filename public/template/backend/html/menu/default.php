@@ -197,6 +197,11 @@
                     <i class="fa fa-list-ul"></i> <span class="title">Danh sách Khách hàng</span><span class="arrow"></span>
                 </a>
             </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'customer-debt', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-retweet"></i> <span class="title">Thu chi khách hàng</span><span class="arrow"></span>
+                </a>
+            </li>
         </ul>
     </li>
     <li class="parent">

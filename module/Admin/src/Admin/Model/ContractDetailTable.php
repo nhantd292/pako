@@ -70,6 +70,20 @@ class ContractDetailTable extends DefaultTable {
     		});
 		}
 
+		if($options['task'] == 'list-ajax') {
+			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $date       = new \ZendX\Functions\Date();
+				$number     = new \ZendX\Functions\Number();
+
+                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code'), 'inner');
+                $select -> order(array(TABLE_CONTRACT_DETAIL .'.created' => 'DESC'));
+
+                if(isset($arrParam['contract_id']) && $arrParam['contract_id'] != '') {
+                    $select->where->equalTo('contract_id', $arrParam['contract_id']);
+                }
+    		});
+		}
+
         if($options['task'] == 'list-query') {
             $result = $this->tableGateway->getAdapter()->driver->getConnection()->execute($arrParam['query']);
         }
