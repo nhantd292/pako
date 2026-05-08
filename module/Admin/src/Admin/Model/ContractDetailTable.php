@@ -119,6 +119,8 @@ class ContractDetailTable extends DefaultTable {
                 'price'         => $arrData['price'],
                 'total'         => $arrData['total'],
                 'cost'          => $arrData['cost'],
+                'total_cost'    => $arrData['total_cost'],
+                'car_year'      => $arrData['car_year'],
                 'weight'        => $arrData['weight'],
                 'categoryId'    => $arrData['categoryId'],
                 'categoryName'  => $arrData['categoryName'],
@@ -137,8 +139,12 @@ class ContractDetailTable extends DefaultTable {
         }
 
         if($options['task'] == 'delete_product_by_contract_id') {
-            $sql_delete = "DELETE FROM ".TABLE_CONTRACT_DETAIL." WHERE ".TABLE_CONTRACT_DETAIL.".contract_id = '".$contract_id."'";
-            $this->tableGateway->getAdapter()->driver->getConnection()->execute($sql_delete);
+            try {
+                $sql_delete = "DELETE FROM ".TABLE_CONTRACT_DETAIL." WHERE ".TABLE_CONTRACT_DETAIL.".contract_id = '".$contract_id."'";
+                $this->tableGateway->getAdapter()->driver->getConnection()->execute($sql_delete);
+            } catch (\Exception $e) {
+                throw new \Exception('Delete Contract Detail Table failed: ' . $e->getMessage());
+            }
         }
 	}
 }

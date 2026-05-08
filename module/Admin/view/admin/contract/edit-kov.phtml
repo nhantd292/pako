@@ -34,12 +34,12 @@
 
     $elementsBottom = array(
         array('section' => 'Thành tiền hóa đơn', 'boxClass' => 'col-md-12'),
-        array('element' => $myForm->get('amount_owed'), 'label' => 'Nợ cũ', 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('price_total'), 'label' => 'Tổng tiền hàng', 'boxClass' => 'col-md-4'),
-        array('element' => $myForm->get('new_debt'), 'label' => 'Nợ lại', 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('paid_cash'), 'label' => 'Trả tiền mặt', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('paid_transfer'), 'label' => 'Chuyển khoản', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('discount'), 'label' => 'giảm giá', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('amount_owed'), 'label' => 'Nợ cũ', 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('new_debt'), 'label' => 'Nợ lại', 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('id'), 'validate' => array('require' => true)),
     );
     $xhtmlBottom = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elementsBottom);
@@ -67,42 +67,6 @@
             </div>
             <div class="col-md-4">
                 <?php echo $xhtmlBottom;?>
-<!--                <h3 class="form-section">Thành tiền hóa đơn</h3>-->
-<!--                <div class="contract_product" style="width: 100%;">-->
-<!--                    <table class="table table-striped table-bordered table-hover table-product">-->
-<!--                        <thead>-->
-<!--                        <tr><th>Mô tả</th><th>Giá trị</th></tr>-->
-<!--                        </thead>-->
-<!--                        <tfoot>-->
-<!--                        <tr>-->
-<!--                            <td class="text-middle">Tổng tiền hàng</td>-->
-<!--                            <td class="total_contract_product text-right text-middle" style="padding: 0px 17px;"><span></span><input class="form-control hidden" type="text" name="total_contract_product"  value="0"></td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td class="text-middle">Thuế VAT</td>-->
-<!--                            <td class="total_contract_vat"><input class="form-control text-right money" type="text" name="total_contract_vat" value="--><?php //if($this->data['total_contract_vat']) echo $this->data['total_contract_vat'];  else echo 0; ?><!--" min="0"></td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td class="text-middle">Thu khác</td>-->
-<!--                            <td class="fee_other"><input class="form-control text-right money" type="text" name="fee_other" value="--><?php //if($this->data['fee_other']) echo $this->data['fee_other'];  else echo 0; ?><!--" min="0"></td>-->
-<!--                        </tr>-->
-<!--                        <tr class="hidden">-->
-<!--                            <td class="text-middle">Giảm giá-->
-<!--                                <div id="gift"></div>-->
-<!--                            </td>-->
-<!--                            <td class="total_contract_discount"><input class="form-control text-right money" type="text" name="total_contract_discount" value="--><?php //if($this->data['total_contract_discount']) echo $this->data['total_contract_discount'];  else echo 0; ?><!--" min="0"></td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td class="text-middle">Đặt cọc/Thanh toán trước</td>-->
-<!--                            <td class="price_deposits"><input class="form-control text-right money" type="text" name="price_deposits" value="--><?php //if($this->data['price_deposits']) echo $this->data['price_deposits'];  else echo 0; ?><!--" min="0"></td>-->
-<!--                        </tr>-->
-<!--                        <tr>-->
-<!--                            <td class="text-middle">Khách cần trả</td>-->
-<!--                            <td class="price_owed text-right text-middle" style="padding: 0px 17px;"><span></span><input class="form-control hidden" type="text" name="price_owed" value="0"></td>-->
-<!--                        </tr>-->
-<!--                        </tfoot>-->
-<!--                    </table>-->
-<!--                </div>-->
             </div>
             <div class="col-md-10">
                 <p class="text-alert"></p>
@@ -180,6 +144,7 @@
                                 $productList = $this->productList;
                                 $productHtml = '';
                                 for($i = 0; $i < count($productList['product_id']); $i++) {
+                                    $check_name = empty($productList['product_name'][$i]) ? 'has-error' : "";
                                     $check_number = empty($productList['numbers'][$i]) ? 'has-error' : "";
                                     $check_price = empty($productList['price'][$i]) ? 'has-error' : "";
                                     $check_car_year = empty($productList['car_year'][$i]) ? 'has-error' : "";
@@ -188,38 +153,79 @@
                                     $check_height = empty($productList['height'][$i]) ? 'has-error' : "";
                                     $check_weight = empty($productList['weight'][$i]) ? 'has-error' : "";
 
-                                    $productHtml .= '<tr data-id="'.$productList['product_id'][$i].'">
-                                                            <td width="100px" class="text-bold text-red text-middle">'.$productList['code'][$i].'</td>
-                                                            <td width="100px" class="text-middle">'.$productList['full_name'][$i].'</td>
-                                                            <td class="car_year '.$check_car_year.'"><input class="form-control text-right" type="text" name="contract_product[car_year][]" value="'.$productList['car_year'][$i].'" ></td>
-                                                            <td class="numbers '.$check_number.'"><input class="form-control text-right money w-60 p5" type="text" name="contract_product[numbers][]" value="'.$productList['numbers'][$i].'" min="1"></td>
-                                                            <td class="price text-middle text-right box-price '.$check_price.'">
-                                                                <input class="form-control text-right money base_price " name="contract_product[price][]" type="text" value="'.$productList['price'][$i].'" min="0">
-                                                            </td>
-                                                            <td class="total"><input class="form-control text-right" type="text" name="contract_product[total][]" value="'.$productList['total'][$i].'" readonly></td>
-                                                            <td class="length hidden">
-                                                                <input class="form-control text-right w-60 p5 '.$check_length.'" type="number" name="contract_product[length][]" value="'.$productList['length'][$i].'" required min="1" max="300">
-                                                            </td>
-                                                            <td class="width hidden">
-                                                                <input class="form-control text-right w-60 p5 '.$check_width.'" type="number" name="contract_product[width][]" value="'.$productList['width'][$i].'" required min="1" max="300">
-                                                            </td>
-                                                            <td class="height hidden">
-                                                                <input class="form-control text-right w-60 p5 '.$check_height.'" type="number" name="contract_product[height][]" value="'.$productList['height'][$i].'" required min="1" max="300">
-                                                            </td>
-                                                            <td class="weight">
-                                                                <input class="form-control text-right w-60 p5 '.$check_weight.'" type="number" name="contract_product[weight][]" value="'.$productList['weight'][$i].'" required>
-                                                            </td>
-                                                            <td class="hidden">
-                                                                <input class="form-control" type="text" name="contract_product[product_id][]" value="'.$productList['product_id'][$i].'">
-                                                                <input class="form-control" type="text" name="contract_product[full_name][]" value="'.$productList['full_name'][$i].'">
-                                                                <input class="form-control" type="text" name="contract_product[code][]" value="'.$productList['code'][$i].'">
-                                                                <input class="form-control" type="text" name="contract_product[cost][]" value="'.$productList['cost'][$i].'"> 
-                                                                <input class="form-control" type="text" name="contract_product[categoryId][]" value="'.$productList['categoryId'][$i].'"> 
-                                                                <input class="form-control" type="text" name="contract_product[categoryName][]" value="'.$productList['categoryName'][$i].'"> 
-                                                            </td>
-                                                           
-                                                            <td><i class="fa fa-trash delete-row" aria-hidden="true" style="color:red; margin: 5px 0 0 5px; font-size: 20px;"></i></td>
-                                                        </tr>';
+                                    $productHtml .= '<tr id="tr_'.$productList['product_id'][$i].' data-id="'.$productList['product_id'][$i].'">
+                                                        <td width="100px" class="text-bold text-red text-middle">'.$productList['code'][$i].'</td>
+                                                        <td width="100px" class="text-middle">'.$productList['full_name'][$i].'</td>
+                                                        <td class="car_year '.$check_car_year.'"><input class="form-control text-right" type="text" name="contract_product[car_year][]" value="'.$productList['car_year'][$i].'" ></td>
+                                                        <td class="numbers '.$check_number.'"><input class="form-control text-right w-60 p5" type="number" name="contract_product[numbers][]" value="'.$productList['numbers'][$i].'" min="1"></td>
+                                                        <td class="price text-middle text-right box-price '.$check_price.'">
+                                                            <input class="form-control text-right money base_price" name="contract_product[price][]" type="text" value="'.$productList['price'][$i].'" min="0">
+                                                        </td>
+                                                        <td class="text-middle text-right hidden">'.number_format($productList['listed_price'][$i]).'</td>
+                                                        <td class="total"><input class="form-control text-right" type="text" name="contract_product[total][]" value="'.$productList['total'][$i].'" readonly></td>
+                                                        <td class="length hidden">
+                                                            <input class="form-control text-right w-60 p5 '.$check_length.'" type="number" name="contract_product[length][]" value="'.$productList['length'][$i].'" required min="1" max="300">
+                                                        </td>
+                                                        <td class="width hidden">
+                                                            <input class="form-control text-right w-60 p5 '.$check_width.'" type="number" name="contract_product[width][]" value="'.$productList['width'][$i].'" required min="1" max="300">
+                                                        </td>
+                                                        <td class="height hidden">
+                                                            <input class="form-control text-right w-60 p5 '.$check_height.'" type="number" name="contract_product[height][]" value="'.$productList['height'][$i].'" required min="1" max="300">
+                                                        </td>
+                                                        <td class="weight">
+                                                            <input class="form-control text-right w-60 p5 '.$check_weight.'" type="number" name="contract_product[weight][]" value="'.$productList['weight'][$i].'" required>
+                                                        </td>
+                                                        <td class="hidden">
+                                                            <input class="form-control" type="text" name="contract_product[product_id][]" value="'.$productList['product_id'][$i].'">
+                                                            <input class="form-control" type="text" name="contract_product[full_name][]" value="'.$productList['full_name'][$i].'">
+                                                            <input class="form-control" type="text" name="contract_product[code][]" value="'.$productList['code'][$i].'">
+                                                            <input class="form-control" type="text" name="contract_product[cost][]" value="'.$productList['cost'][$i].'"> 
+                                                            <input class="form-control" type="text" name="contract_product[categoryId][]" value="'.$productList['categoryId'][$i].'"> 
+                                                            <input class="form-control" type="text" name="contract_product[categoryName][]" value="'.$productList['categoryName'][$i].'"> 
+                                                        </td>
+                                                       
+                                                        <td class="text-center"><i class="fa fa-trash delete-row" aria-hidden="true" style="color:red; margin: 10px 0 0 5px; font-size: 20px;"></i></td>
+                                                    </tr>';
+                                }
+                                echo $productHtml;
+                            }
+                            else if(!empty($this->option_product)){
+                                $productHtml = '';
+                                foreach($this->option_product as $pro_item){
+
+                                    $tr_name = 'id="tr_'.$pro_item['product_id'].'"';
+                                    $text_number = '';
+                                    $productHtml .= '<tr '.$tr_name.' data-id="'.$pro_item['product_id'].'">
+                                                    <td width="100px" class="text-bold text-red text-middle">'.$pro_item['code'].'</td>
+                                                    <td width="100px" class="text-middle">'.$pro_item['full_name'].'</td>
+                                                    <td class="car_year"><input class="form-control text-right" type="text" name="contract_product[car_year][]" value="'.$pro_item['car_year'].'" ></td>
+                                                    <td class="numbers "><input class="form-control text-right w-60 p5" type="number" name="contract_product[numbers][]" value="'.$pro_item['numbers'].'" min="1"></td>
+                                                    <td class="price text-middle text-right box-price">
+                                                        <input class="form-control text-right money base_price" name="contract_product[price][]" type="text" value="'.number_format($pro_item['price']).'" min="0">
+                                                    </td>
+                                                    <td class="total"><input class="form-control text-right" type="text" name="contract_product[total][]" value="'.number_format($pro_item['total']).'" readonly></td>
+                                                    <td class="length hidden">
+                                                        <input class="form-control text-right w-60 p5" type="number" name="contract_product[length][]" value="'.$pro_item['length'].'" required min="1" max="300">
+                                                    </td>
+                                                    <td class="width hidden">
+                                                        <input class="form-control text-right w-60 p5" type="number" name="contract_product[width][]" value="'.$pro_item['width'].'" required min="1" max="300">
+                                                    </td>
+                                                    <td class="height hidden">
+                                                        <input class="form-control text-right w-60 p5" type="number" name="contract_product[height][]" value="'.$pro_item['height'].'" required min="1" max="300">
+                                                    </td>
+                                                    <td class="weight">
+                                                        <input class="form-control text-right w-60 p5" type="number" name="contract_product[weight][]" value="'.$pro_item['weight'].'" required>
+                                                    </td>
+                                                    <td class="hidden">
+                                                        <input class="form-control" type="text" name="contract_product[product_id][]" value="'.$pro_item['product_id'].'">
+                                                        <input class="form-control" type="text" name="contract_product[full_name][]" value="'.$pro_item['full_name'].'">
+                                                        <input class="form-control" type="text" name="contract_product[code][]" value="'.$pro_item['code'].'">
+                                                        <input class="form-control" type="text" name="contract_product[cost][]" value="'.$pro_item['cost'].'"> 
+                                                        <input class="form-control" type="text" name="contract_product[categoryId][]" value="'.$pro_item['categoryId'].'"> 
+                                                        <input class="form-control" type="text" name="contract_product[categoryName][]" value="'.$pro_item['categoryName'].'"> 
+                                                    </td>
+                                                    <td class="text-center"><i class="fa fa-trash delete-row" aria-hidden="true" style="color:red; margin: 10px 0 0 5px; font-size: 20px;"></i></td>
+                                                </tr>';
                                 }
                                 echo $productHtml;
                             }
@@ -232,12 +238,6 @@
         </div>
 	</div>
 </form>
-<div class="hidden" id="contactPhone">
-    <?php echo $this->contactPhone;?>
-</div>
-<div class="hidden" id="contactId">
-    <?php echo $this->contactId;?>
-</div>
 
 <link href="/public/template/backend/css/contract.css?v=<?php echo date('dmYHis');?>" media="screen" rel="stylesheet" type="text/css">
 

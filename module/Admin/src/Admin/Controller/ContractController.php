@@ -12,6 +12,7 @@ require_once PATH_VENDOR . '/Fpdi/autoload.php';
 use setasign\Fpdi\Fpdi;
 
 class ContractController extends ActionController {
+    public $caption = 'Đơn hàng';
     public function init() {
         // Thiết lập options
         $this->_options['tableName'] = 'Admin\Model\ContractTable';
@@ -179,7 +180,7 @@ class ContractController extends ActionController {
 //        echo "</pre>";
 //        exit;
         $this->_viewModel['fee_type_list']          = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-        $this->_viewModel['caption']                = 'Đơn hàng - Danh sách';
+        $this->_viewModel['caption']                = 'Danh sách - '.$this->caption;
 
         return new ViewModel($this->_viewModel);
     }
@@ -403,11 +404,12 @@ class ContractController extends ActionController {
                             $products_detail[$i]['numbers']          = $number->formatToData($contract_product['numbers'][$i]); // số lượng của đơn hàng
                             $products_detail[$i]['price']            = $number->formatToData($contract_product['price'][$i]); // giá bán
                             $products_detail[$i]['total']            = $number->formatToData($contract_product['total'][$i]); // tổng tiền (chính là cột thành tiền)
-                            $products_detail[$i]['cost']             = $contract_product['cost'][$i]; // giá vốn kov
-                            $products_detail[$i]['weight']           = $contract_product['weight'][$i]; // Khối lượng 1 gói hàng (gram)
-                            $products_detail[$i]['categoryId']       = $contract_product['categoryId'][$i]; // Khối lượng 1 gói hàng (gram)
-                            $products_detail[$i]['categoryName']     = $contract_product['categoryName'][$i]; // Khối lượng 1 gói hàng (gram)
+                            $products_detail[$i]['cost']             = $number->formatToData($contract_product['cost'][$i]); // giá vốn kov
+                            $products_detail[$i]['total_cost']       = $number->formatToData($contract_product['cost'][$i]) * $number->formatToData($contract_product['numbers'][$i]); // Tổng giá vốn
                             $products_detail[$i]['car_year']         = $contract_product['car_year'][$i]; // Tên xe năm sản xuất
+                            $products_detail[$i]['weight']           = $contract_product['weight'][$i]; // Khối lượng 1 gói hàng (kg)
+                            $products_detail[$i]['categoryId']       = $contract_product['categoryId'][$i]; // nhóm hàng
+                            $products_detail[$i]['categoryName']     = $contract_product['categoryName'][$i]; // Tên nhóm hàng
                             $products_detail[$i]['length']           = $contract_product['length'][$i]; // Chiều dài
                             $products_detail[$i]['width']            = $contract_product['width'][$i]; // Chiều rộng
                             $products_detail[$i]['height']           = $contract_product['height'][$i]; // Chiều cao
@@ -420,7 +422,6 @@ class ContractController extends ActionController {
                     $this->_params['data']['cost_price_total'] = $cost_price_total;
                     $this->_params['data']['total_number_product'] = $total_number_product;
                     $this->_params['data']['total_product'] = count($products_detail);
-                    $this->_params['data']['total_product'] = count($products_detail);
                     $this->_params['data']['contract_product'] = $products_detail;
                     $this->_params['data']['state'] = NEW_STATUS;
 
@@ -431,14 +432,12 @@ class ContractController extends ActionController {
 
                     # tạo đơn hàng
                     $contract_id = $this->getTable()->saveItem($this->_params, array('task' => 'add-kov-item'));
-                    # cập nhật mã đơn hàng
-                    $this->getTable()->saveItem(array('data' => $contract_id), array('task' => 'update-code'));
+
                     // Thêm chi tiết sản phẩm đơn hàng
                     foreach($products_detail as $arraydata){
                         $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem(array('data' => $arraydata, 'contract_id' => $contract_id), array('task' => 'add-item'));
                     }
                     # tạo phiếu thu cho khách hàng
-                    $old_debt = 0;
                     $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
                     if ($count_debt > 0) {
                         $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item', 'paginator' => false));
@@ -469,18 +468,7 @@ class ContractController extends ActionController {
                         'state' => NEW_STATUS,
                         'category' => CATEGORY_KMH,
                     );
-                    $debt_id = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
-                    # cập nhật mã phiếu thu
-                    $debt_item = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('id' => $debt_id), null);
-                    $debt_code = $this->createCode("P", $debt_item->index);
-                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => array('id' => $debt_id, 'code' => $debt_code)), array('task' => 'update-code'));
-
-                    # cập nhật amount_owed (nợ hiện tại) của khách hàng
-                    $data_contact = array(
-                        'id' => $customer_id,
-                        'amount_owed' => $new_debt,
-                    );
-                    $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
 
                     $connection->commit();
                     ##### end #####
@@ -514,7 +502,7 @@ class ContractController extends ActionController {
 
         $this->_viewModel['products_type']  = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
         $this->_viewModel['myForm']	        = $myForm;
-        $this->_viewModel['caption']        = 'Tạo đơn hàng';
+        $this->_viewModel['caption']        = 'Thêm mới - '.$this->caption;
         return new ViewModel($this->_viewModel);
     }
 
@@ -524,18 +512,18 @@ class ContractController extends ActionController {
         $dateFormat = new \ZendX\Functions\Date();
         $myForm = new \Admin\Form\Contract($this, $this->_params);
         $connection = $this->getConnection();
+        $id = $this->params('id');
 
-        if(!empty($this->params('id'))) {
-            $id = $this->params('id');
-            $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id));
+        if(!empty($id)) {
+            $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id), array('task' => 'join-debt'));
 
             $contract_options = !empty($contract['options']) ? unserialize($contract['options']) : array();
             $contract['date'] = $dateFormat->formatToView($contract['date']);
             $contract = array_merge($contract, $contract_options);
+            $contract['amount_owed'] = $contract['old_debt'];
 
-            $contact_old = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $contract['contact_id']));
             $myForm->setData($contract);
-            $this->_viewModel['contract']           = $contract;
+            $this->_viewModel['contract']        = $contract;
             $this->_viewModel['option_product']     = $contract_options['product'];
             if($contract['lock'] == 1){
                 return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'not-found'));
@@ -578,7 +566,6 @@ class ContractController extends ActionController {
                 }
 
                 if($check_emty_data){
-
                     $products_detail  = array();
                     $total_number_product = 0;
                     $cost_price_total = 0;
@@ -590,11 +577,12 @@ class ContractController extends ActionController {
                             $products_detail[$i]['numbers']          = $number->formatToData($contract_product['numbers'][$i]); // số lượng của đơn hàng
                             $products_detail[$i]['price']            = $number->formatToData($contract_product['price'][$i]); // giá bán
                             $products_detail[$i]['total']            = $number->formatToData($contract_product['total'][$i]); // tổng tiền (chính là cột thành tiền)
-                            $products_detail[$i]['cost']             = $contract_product['cost'][$i]; // giá vốn kov
-                            $products_detail[$i]['weight']           = $contract_product['weight'][$i]; // Khối lượng 1 gói hàng (gram)
-                            $products_detail[$i]['categoryId']       = $contract_product['categoryId'][$i]; // Khối lượng 1 gói hàng (gram)
-                            $products_detail[$i]['categoryName']     = $contract_product['categoryName'][$i]; // Khối lượng 1 gói hàng (gram)
+                            $products_detail[$i]['cost']             = $number->formatToData($contract_product['cost'][$i]); // giá vốn kov
+                            $products_detail[$i]['total_cost']       = $number->formatToData($contract_product['cost'][$i]) * $number->formatToData($contract_product['numbers'][$i]); // Tổng giá vốn
                             $products_detail[$i]['car_year']         = $contract_product['car_year'][$i]; // Tên xe năm sản xuất
+                            $products_detail[$i]['weight']           = $contract_product['weight'][$i]; // Khối lượng 1 gói hàng (kg)
+                            $products_detail[$i]['categoryId']       = $contract_product['categoryId'][$i]; // nhóm hàng
+                            $products_detail[$i]['categoryName']     = $contract_product['categoryName'][$i]; // Tên nhóm hàng
                             $products_detail[$i]['length']           = $contract_product['length'][$i]; // Chiều dài
                             $products_detail[$i]['width']            = $contract_product['width'][$i]; // Chiều rộng
                             $products_detail[$i]['height']           = $contract_product['height'][$i]; // Chiều cao
@@ -607,7 +595,6 @@ class ContractController extends ActionController {
                     $this->_params['data']['cost_price_total'] = $cost_price_total;
                     $this->_params['data']['total_number_product'] = $total_number_product;
                     $this->_params['data']['total_product'] = count($products_detail);
-                    $this->_params['data']['total_product'] = count($products_detail);
                     $this->_params['data']['contract_product'] = $products_detail;
                     $this->_params['data']['state'] = NEW_STATUS;
 
@@ -616,52 +603,33 @@ class ContractController extends ActionController {
                     ##### begin #####
                     $connection->beginTransaction();
 
-                    # tạo đơn hàng
-                    $contract_id = $this->getTable()->saveItem($this->_params, array('task' => 'add-kov-item'));
-                    # cập nhật mã đơn hàng
-                    $this->getTable()->saveItem(array('data' => $contract_id), array('task' => 'update-code'));
+                    # Cập nhật đơn hàng
+                    $contract_id = $this->getTable()->saveItem($this->_params, array('task' => 'edit-kov-item'));
+                    # Xóa chi tiết đơn hàng cũ
+                    $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem(array('contract_id' => $id), array('task' => 'delete_product_by_contract_id'));
                     // Thêm chi tiết sản phẩm đơn hàng
                     foreach($products_detail as $arraydata){
                         $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem(array('data' => $arraydata, 'contract_id' => $contract_id), array('task' => 'add-item'));
                     }
-                    # tạo phiếu thu cho khách hàng
-                    $old_debt = 0;
-                    $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
-                    if ($count_debt > 0) {
-                        $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item', 'paginator' => false));
-                        $list_debt = $list_debt->toArray();
-                        $ucdebt = $list_debt[0];
-                        $old_debt = $ucdebt['new_debt'];
-                    }
-                    else{
-                        $old_debt = $contact_item['amount_owed'];
-                    }
+                    # Sửa phiếu thu chi khách hàng
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                    $value_old = $debt_item_old->price_total + $debt_item_old->discount + $debt_item_old->paid_cash + $debt_item_old->paid_transfer;
 
                     $discount       = $number->formatToData($this->_params['data']['discount']);
                     $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
                     $price_total    = $number->formatToData($this->_params['data']['price_total']);
-                    $new_debt       = $old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
+                    $new_debt       = $debt_item_old->old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
                     $data_debt = array(
-                        'customer_id' => $customer_id,
-                        'type' => KMH,
-                        'orders_id' => $contract_id,
+                        'id' => $debt_item_old->id,
                         'inventory_id' => $this->_params['data']['inventory_id'],
                         'price_total' => -$price_total,
                         'discount' => $discount,
                         'paid_cash' => $paid_cash,
                         'paid_transfer' => $paid_transfer,
-                        'old_debt' => $old_debt,
                         'new_debt' => $new_debt,
-                        'state' => NEW_STATUS,
-                        'category' => CATEGORY_KMH,
                     );
-                    $debt_id = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
-                    # cập nhật mã phiếu thu
-                    $debt_item = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('id' => $debt_id), null);
-                    $debt_code = $this->createCode("P", $debt_item->index);
-                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => array('id' => $debt_id, 'code' => $debt_code)), array('task' => 'update-code'));
-
+                    $debt_id = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'edit-item'));
                     # cập nhật amount_owed (nợ hiện tại) của khách hàng
                     $data_contact = array(
                         'id' => $customer_id,
@@ -669,6 +637,28 @@ class ContractController extends ActionController {
                     );
                     $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
 
+
+                    $debt_item_new = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                    $value_new = $debt_item_new->price_total + $debt_item_new->discount + $debt_item_new->paid_cash + $debt_item_new->paid_transfer;
+
+                    # cập nhật lại số liệu cho các phiếu thu chi phát sinh sau
+                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('customer_id' => $customer_id, 'created' => $debt_item_old->created), array('task' => 'list-update'));
+                    $change_value = $value_old - $value_new;
+                    foreach ($list_debt as $debt) {
+                        $data_update = array(
+                            'id' => $debt->id,
+                            'old_debt' => $debt->old_debt + $change_value,
+                            'new_debt' => $debt->new_debt + $change_value,
+                        );
+
+                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_update), array('task' => 'update-value'));
+
+                        $data_contact = array(
+                            'id' => $customer_id,
+                            'amount_owed' => $debt->new_debt + $change_value,
+                        );
+                        $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+                    }
                     $connection->commit();
                     ##### end #####
 
@@ -694,19 +684,15 @@ class ContractController extends ActionController {
                 $this->_viewModel['data']  = $this->_params['data'];
             }
         }
-        else{
-            $this->_viewModel['contactPhone']   = $contact_item['phone'];
-            $this->_viewModel['contactId']      = $contact_item['id'];
-        }
 
         $this->_viewModel['products_type']  = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
         $this->_viewModel['myForm']	        = $myForm;
-        $this->_viewModel['caption']        = 'Tạo đơn hàng';
+        $this->_viewModel['caption']        = 'Cập nhật - '.$this->caption;
         return new ViewModel($this->_viewModel);
     }
 
     // Sửa Đơn hàng
-    public function editv1KovAction() {
+    public function editKovV1Action() {
         $dateFormat = new \ZendX\Functions\Date();
         $numberFormat = new \ZendX\Functions\Number();
         $myForm = new \Admin\Form\Contract($this, $this->_params);
@@ -1019,7 +1005,7 @@ class ContractController extends ActionController {
         $this->_viewModel['status']                     = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status')), array('task' => 'cache'));
         $this->_viewModel['order_status']               = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['production_type']            = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'production-type')), array('task' => 'cache')), array('key' => 'id', 'value' => 'object'));
-        $this->_viewModel['caption']                    = 'Xem chi tiết đơn hàng';
+        $this->_viewModel['caption']                    = 'Chi tiết - '.$this->caption. ' - '. $item['code'];
         $viewModel = new ViewModel($this->_viewModel);
         return $viewModel;
     }
@@ -1064,7 +1050,7 @@ class ContractController extends ActionController {
         $this->_viewModel['status']                     = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status')), array('task' => 'cache'));
         $this->_viewModel['production_type']            = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'production-type')), array('task' => 'cache')), array('key' => 'id', 'value' => 'object'));
         $this->_viewModel['kovProduct']                 = $this->getServiceLocator()->get('Admin\Model\KovProductsTable')->listItem(null, array('task' => 'cache'));
-        $this->_viewModel['caption']                    = 'Xem chi tiết đơn hàng';
+        $this->_viewModel['caption']                    = 'Chi tiết - '.$this->caption;
         $viewModel = new ViewModel($this->_viewModel);
         $viewModel->setTerminal(true);
 

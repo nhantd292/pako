@@ -1382,7 +1382,15 @@ class ContractTable extends DefaultTable {
 	
 		if($options == null) {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
-			    $select -> where -> equalTo('id', $arrParam['id']);
+			    $select -> where -> equalTo(TABLE_CONTRACT.'.id', $arrParam['id']);
+    		})->toArray();
+		}
+
+        if($options['task'] == 'join-debt') {
+			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+			    $select -> where -> equalTo(TABLE_CONTRACT.'.id', $arrParam['id']);
+                $select
+                    -> join(TABLE_CUSTOMER_DEBT, TABLE_CUSTOMER_DEBT .'.orders_id = '. TABLE_CONTRACT .'.id', array( 'old_debt', 'new_debt'), 'inner');
     		})->toArray();
 		}
 	
@@ -1473,8 +1481,6 @@ class ContractTable extends DefaultTable {
 //                    }
                 $data['code'] = substr_replace("DH000000",$index, 2);
             }
-
-
             $branch = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->getItem(array('id' => $result['sale_branch_id']));
             $inventory = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->getItem(array('id' => $result['inventory_id']));
             $user = $this->getServiceLocator()->get('Admin\Model\UserTable')->getItem(array('id' => $result['user_id']));
@@ -2415,6 +2421,8 @@ class ContractTable extends DefaultTable {
 
             try {
                 $this->tableGateway->insert($data); // Thực hiện lưu database
+                # cập nhật mã đơn hàng
+                $this->saveItem(array('data' => $id), array('task' => 'update-code'));
 
                 // Thêm lịch sử hệ thống
                 $locations     = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
@@ -2446,153 +2454,82 @@ class ContractTable extends DefaultTable {
                 $this->getServiceLocator()->get('Admin\Model\LogsTable')->saveItem($arrParamLogs, array('task' => 'add-item'));
 
                 return $id;
-
             } catch (\Exception $e) {
                 throw new \Exception('Insert Contract Table failed: ' . $e->getMessage());
             }
         }
 
 		if($options['task'] == 'edit-kov-item') {
-
-			$contact_old = $arrParam['contact_old'];
-			$contact_new = $arrParam['contact_new'];
-            if($contact_new['id'] != $contact_old['id'] ) {
-                $arrParamContact['item']                      		= $contact_new;
-                $arrParamContact['data']['id']                		= $contact_new['id'];
-                $arrParamContact['data']['contract_total']    		= $contact_new['contract_total'] + 1;
-                $arrParamContact['data']['contract_number']   		= $contact_new['contract_number'] + 1;
-                $arrParamContact['data']['contract_price_total']    = $contact_new['contract_price_total'] + $number->formatToData($arrData['price_total']);
-                $contact_id_new = $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($arrParamContact, array('task' => 'edit-item'));
-
-                $arrParamContact['item']                      		= $contact_old;
-                $arrParamContact['data']['id']                		= $contact_old['id'];
-                $arrParamContact['data']['contract_total']    		= $contact_old['contract_total'] - 1;
-                $arrParamContact['data']['contract_number']   		= $contact_old['contract_number'] - 1;
-                $arrParamContact['data']['contract_price_total']    = $contact_old['contract_price_total'] - $number->formatToData($arrData['price_total']);
-                $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($arrParamContact, array('task' => 'edit-item'));
-            }
-            else{
-                $arrParamContact['item']                      		= $contact_new;
-                $arrParamContact['data']['id']                		= $contact_new['id'];
-                $arrParamContact['data']['contract_price_total']    = $contact_new['contract_price_total'] - $number->formatToData($arrItem['price_total']) + $number->formatToData($arrData['price_total']);
-                $contact_id_new = $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($arrParamContact, array('task' => 'edit-item'));
-            }
-
-
-
 		    $id = $arrData['id'];
-			$contract_product = $arrData['contract_product'];
-
-            $contract_options['product']  = array();
-            for($i = 0; $i < count($contract_product['product_id']); $i++){
-                if(!empty($contract_product['product_id'][$i])) {
-                    $contract_options['product'][$i]['full_name']        = $contract_product['full_name'][$i]; // Tên đầy đủ
-                    $contract_options['product'][$i]['product_id']       = $contract_product['product_id'][$i]; // id sản phẩm
-                    $contract_options['product'][$i]['code']             = $contract_product['code'][$i];// mã sản phẩm
-                    $contract_options['product'][$i]['numbers']          = $number->formatToData($contract_product['numbers'][$i]); // số lượng của đơn hàng
-                    $contract_options['product'][$i]['price']            = $number->formatToData($contract_product['price'][$i]); // giá bán
-                    $contract_options['product'][$i]['total']            = $number->formatToData($contract_product['total'][$i]); // tổng tiền (chính là cột thành tiền)
-                    $contract_options['product'][$i]['cost']             = $contract_product['cost'][$i]; // giá vốn kov
-                    $contract_options['product'][$i]['weight']           = $contract_product['weight'][$i]; // Khối lượng 1 gói hàng (gram)
-                    $contract_options['product'][$i]['categoryId']       = $contract_product['categoryId'][$i]; // Khối lượng 1 gói hàng (gram)
-                    $contract_options['product'][$i]['categoryName']     = $contract_product['categoryName'][$i]; // Khối lượng 1 gói hàng (gram)
-                    $contract_options['product'][$i]['car_year']         = $contract_product['car_year'][$i]; // Tên xe năm sản xuất
-                    $contract_options['product'][$i]['length']           = $contract_product['length'][$i]; // Chiều dài
-                    $contract_options['product'][$i]['width']            = $contract_product['width'][$i]; // Chiều rộng
-                    $contract_options['product'][$i]['height']           = $contract_product['height'][$i]; // Chiều cao
-
-                    $item_inven = $this->getServiceLocator()->get('Admin\Model\KovProductBranchTable')->getItem(array('productId' => $contract_product['product_id'][$i], 'branchId' => $arrItem['sale_branch_id']));
-                    if($item_inven){
-                        $capital_default = (int)($contract_product['cost'][$i] + $item_inven['cost_new']) * $number->formatToData($contract_product['numbers'][$i]);
-
-                        $contract_options['product'][$i]['capital_default'] = (int)$capital_default; // Giá vốn mới
-                        $contract_options['product'][$i]['cost_new']        = $item_inven['cost_new']; // giá vốn thăng theo chi nhánh
-                        $contract_options['product'][$i]['fee']             = $item_inven['fee']; // phụ phí
-                    }
-                }
-            }
+            $contract_options = array();
+            $contract_options['product']  = $arrData['contract_product'];
 
             $data = array(
+                'id'                      => $id,
                 'name'                    => $arrData['name'],
+                'customer_type_id'        => $arrData['customer_type_id'],
                 'phone'                   => $arrData['phone'],
+                'inventory_id'            => $arrData['inventory_id'],
+                'sale_note'               => $arrData['sale_note'],
                 'location_city_id'        => $arrData['location_city_id'],
                 'location_district_id'    => $arrData['location_district_id'],
                 'location_town_id'        => $arrData['location_town_id'],
                 'address'                 => $arrData['address'],
-                'price_deposits'          => $number->formatToData($arrData['price_deposits']),
-                'price_paid'              => 0,
-                'price_owed'              => $number->formatToData($arrData['price_owed']),
-                'total_price_product'     => $number->formatToData($arrData['total_contract_product']),
-                'contact_id'              => $contact_id_new,
-                'coincider_code'          => $arrData['coincider_code'],
-                'vat'		      		  => $number->formatToData($arrData['total_contract_vat']),
-                'fee_other'		      	  => $number->formatToData($arrData['fee_other']),
-                'price_total'             => $number->formatToData($arrData['total_contract_product'])+$number->formatToData($arrData['total_contract_vat'])+$number->formatToData($arrData['fee_other']),
-                'marketer_id'             => $arrItem['marketer_id'],
-                'sale_note'               => $arrData['sale_note'],
-                'ghtk_note'               => $arrData['ghtk_note'],
-                'groupaddressId'          => $arrData['groupaddressId'],
-                'size_product_id'         => $arrData['size_product_id'],
-                'ORDER_SERVICE'           => $arrData['ORDER_SERVICE'],
-                'options'                 => serialize($contract_options),
-                'pick_work_shift'         => $arrData['pick_work_shift'],
-                'deliver_work_shift'      => $arrData['deliver_work_shift'],
-                'production_type_id'      => $arrData['production_type_id'],
-                'inventory_id'            => $arrData['inventory_id'],
-                'fee_type'                => $arrData['fee_type'],
+                'price_total'             => $number->formatToData($arrData['price_total']),
+                'paid_cash'               => $number->formatToData($arrData['paid_cash']),
+                'paid_transfer'           => $number->formatToData($arrData['paid_transfer']),
+                'discount'                => $number->formatToData($arrData['discount']),
+                'cost_price_total'        => $number->formatToData($arrData['cost_price_total']),
+                'total_number_product'    => $number->formatToData($arrData['total_number_product']),
+                'total_product'           => $number->formatToData($arrData['total_product']),
+                'options'                 => serialize($contract_options)
             );
 
-			// Cập nhật đơn hàng
-			$this->tableGateway->update($data, array('id' => $id));
-            // Lưu mã hoá đơn
-            $this->saveItem(array('data' => $id), array('task' => 'update-code'));
-            // Cập nhật tổng số lượng sản phẩm trong đơn hàng
-            $this->saveItem(array('data' => $id), array('task' => 'update-number-product-total'));
-            // Xóa sản phẩm cũ của đơn hàng
-//            $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem(array('contract_id' => $id), array('task' => 'delete_product_by_contract_id'));
-//            // Thêm chi tiết sản phẩm đơn hàng
-//            foreach($contract_options['product'] as $arraydata){
-//                $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem(array('data' => $arraydata, 'contract_id' => $id), array('task' => 'add-item'));
-//            }
+            try {
+                // Cập nhật đơn hàng
+                $this->tableGateway->update($data, array('id' => $id));
 
-			// Thêm lịch sử hệ thống
-			if(!empty($id)) {
-			    $arrCheckLogs = array('name', 'phone', 'location_city_id', 'location_district_id', 'location_town_id', 'address', 'marketer_id', 'options');
-			    $arrCheckResult = array();
-                $locations     = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
-			    foreach ($arrCheckLogs AS $field) {
-		            if(isset($data[$field])) {
-		                $check = $data[$field];
-		                if($field == 'date') {
-		                    $check = $date->formatToView($data[$field]);
-		                }
-			            if($check != $arrItem[$field]) {
-			                $value_change = $data[$field];
-                            if($field == 'location_city_id' || $field == 'location_district_id' || $field == 'location_town_id')
-                                $value_change = $locations[$data[$field]]->name;
+                // Thêm lịch sử hệ thống
+                if(!empty($id)) {
+                    $arrCheckLogs = array('name', 'phone', 'location_city_id', 'location_district_id', 'location_town_id', 'address', 'marketer_id', 'options');
+                    $arrCheckResult = array();
+                    $locations     = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
+                    foreach ($arrCheckLogs AS $field) {
+                        if(isset($data[$field])) {
+                            $check = $data[$field];
+                            if($field == 'date') {
+                                $check = $date->formatToView($data[$field]);
+                            }
+                            if($check != $arrItem[$field]) {
+                                $value_change = $data[$field];
+                                if($field == 'location_city_id' || $field == 'location_district_id' || $field == 'location_town_id')
+                                    $value_change = $locations[$data[$field]]->name;
 
-			                $arrCheckResult[$field] = $value_change;
-			            }
-			        }
-			    }
+                                $arrCheckResult[$field] = $value_change;
+                            }
+                        }
+                    }
 
-			    if(!empty($arrCheckResult)) {
-			        $arrParamLogs = array(
-			            'data' => array(
-			                'title'          => 'đơn hàng',
-			                'phone'          => $contact_new['phone'],
-			                'name'           => $contact_new['name'],
-			                'action'         => 'Sửa',
-			                'contact_id'     => $contact_new['id'],
-			                'contract_id'    => $id,
-			                'options'        => $arrCheckResult
-			            )
-			        );
-			        $logs = $this->getServiceLocator()->get('Admin\Model\LogsTable')->saveItem($arrParamLogs, array('task' => 'add-item'));
-			    }
-			}
+                    if(!empty($arrCheckResult)) {
+                        $arrParamLogs = array(
+                            'data' => array(
+                                'title'          => 'đơn hàng',
+                                'phone'          => $data['phone'],
+                                'name'           => $data['name'],
+                                'action'         => 'Sửa',
+                                'contact_id'     => $data['contact_id'],
+                                'contract_id'    => $id,
+                                'options'        => $arrCheckResult
+                            )
+                        );
+                        $logs = $this->getServiceLocator()->get('Admin\Model\LogsTable')->saveItem($arrParamLogs, array('task' => 'add-item'));
+                    }
+                }
 
-			return $id;
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Update Contract Table failed: ' . $e->getMessage());
+            }
 		}
 
         if($options['task'] == 'edit-product-price') {

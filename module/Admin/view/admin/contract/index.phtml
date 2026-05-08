@@ -81,7 +81,7 @@
     if($this->items->count() > 0) {
         $stt = 0;
         $sum = 0;
-        $total_number = $total_price = $total_cod = $total_discount =  $total_price_owed = 0;
+        $total_number = $total_price = $total_cod = $total_discount =  $total_price_owed = $total_paid_cash = $total_paid_transfer = 0;
         foreach ($this->items AS $key => $item) {
         	$stt++;
         	$cid                    = @$this->xFormInput('cid[]', $item->id, array('type' => 'checkbox', 'class' => 'checkboxes'));
@@ -103,14 +103,18 @@
                 if ($item->user_id == $this->params['ssFilter']['filter_user']){
                     $total_price           += $price_total;
                     $total_cod             += $item->price_transport;
-                    $total_discount        += $item->price_reduce_sale;
+                    $total_paid_cash       += $item->paid_cash;
+                    $total_paid_transfer   += $item->paid_transfer;
+                    $total_discount        += $item->discount;
                     $total_price_owed      += $item->price_owed;
                 }
             }
             else{
                 $total_price           += $price_total;
                 $total_cod             += $item->price_transport;
-                $total_discount        += $item->price_reduce_sale;
+                $total_paid_cash       += $item->paid_cash;
+                $total_paid_transfer   += $item->paid_transfer;
+                $total_discount        += $item->discount;
                 $total_price_owed      += $item->price_owed;
             }
 
@@ -156,8 +160,10 @@
             $fee_type = !empty($item->fee_type) ?  ' '.$this->fee_type_list[$item->fee_type]->name : '';
 
 
+
             $color_price_owed       = '';
             // Link Action
+            $linkDetail = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail', 'id' => $id));
             $linkView               = 'javascript:popupAction(\''. $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'view')) .'\', {\'id\': \''. $id .'\'});';
             $linkEditNote           = 'javascript:popupAction(\''. $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit-note')) .'\', {\'id\': \''. $id .'\'});';
             $linkEditStatus         = 'javascript:popupAction(\''. $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit-status')) .'\', {\'id\': \''. $id .'\'});';
@@ -247,9 +253,9 @@
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'"'.$color_text_row.'>
     							<th '.$rowSpan.'>'. $cid .'</th>
-                                <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlView.$controlAddHistoryContract. $controls .'<br>'.$controlPrint.'</th>
+                                <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.'</th>
     							<td '.$rowSpan.'>'. $order_status .'</td>
-    							<td '.$rowSpan.'><span class="text-bold">'. $code .'</span><br><span style="color: #a70101;">'.$item->coincider_code.'</span></td>
+    							<td '.$rowSpan.'><a href="'.$linkDetail.'" class="text-bold">'. $code .'</a></td>
     							<td '.$rowSpan.'>'. $date .'<br>'.$shipped_date.'</td>
     							<td '.$rowSpan.'>'. $user_name .'<br>'.$care_name.'</td>
     							';
@@ -269,17 +275,15 @@
             }
             $xhtmlItems .= '
                             <td '.$rowSpan.' class="text-right">'. number_format($price_total) .'</td>
-                            <td '.$rowSpan.' class="text-right">'. $fee_cod .'</td>
-                            <td '.$rowSpan.' class="text-right">'. number_format($item->price_reduce_sale) .'</td>
-                            <td '.$rowSpan.' class="text-right">'. number_format($price_owed) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($item->paid_transfer) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($item->discount) .'</td>
                             <td '.$rowSpan.'>'. $contact_name .'</td>
                             <td '.$rowSpan.'>'. $contact_phone .'</td>
-                            <td class="" '.$rowSpan.' style="inline-size: 200px;overflow-wrap: break-word;">'. $address .$location_town.$location_district.$location_city.'</td>
+                            <td class="" '.$rowSpan.' style="inline-size: 200px;overflow-wrap: break-word;">'. $address .'<br>'.$location_town.'<br>'.$location_district.'<br>'.$location_city.'</td>
                             <td class="av-read" '.$rowSpan.'>'. $item->sale_note .'</td>
-                            <td '.$rowSpan.'>'. $user_gd_name .'</td>
                             <td '.$rowSpan.'>'. $created_by . $sale_group_created_by . $sale_branch_created_by.'<br>'.$created .'<br>Đơn thứ: '.$index_number.'</td>
                             <td '.$rowSpan.'>'. $this->user[$item->marketer_id]['name'] .'<br>'.$this->sale_group[$this->user[$item->marketer_id]['sale_group_id']]['name'].'  '.$this->sale_branch[$this->user[$item->marketer_id]['sale_branch_id']]['name'].'<br>'.$contact_date.'<br>'.$contact_contract_first_date.'</td>
-    						<td '.$rowSpan.'>'. $paid_cost .'</td>
                         </tr>';
 
             if (count($options['product']) > 0) {
@@ -297,7 +301,8 @@
     }
 
     $text_total = '<br><span  class="text-red">' . number_format($total_price) . '</span>';
-    $text_total_cod = '<br><span  class="text-red">' . number_format($total_cod) . '</span>';
+    $text_total_paid_cash = '<br><span  class="text-red">' . number_format($total_paid_cash) . '</span>';
+    $text_total_paid_transfer = '<br><span  class="text-red">' . number_format($total_paid_transfer) . '</span>';
     $text_total_discount = '<br><span  class="text-red">' . number_format($total_discount) . '</span>';
     $text_total_price_owed = '<br><span  class="text-red">' . number_format($total_price_owed) . '</span>';
     $text_total_number = $total_number > 0 ? '<br><span class="text-red">' . number_format($total_number) . '</span>' : '';
@@ -315,17 +320,15 @@
     $xhtmlHead .= '<th width="120" class="text-center">Kg</th>';
     $xhtmlHead .= '<th width="150">Tên xe - năm sx</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Tổng tiền'.$text_total.'</th>';
-    $xhtmlHead .= '<th width="80" class="text-right">COD'.$text_total_cod.'</th>';
-    $xhtmlHead .= '<th width="80" class="text-right">Giảm trừ<br>doanh thu'.$text_total_discount.'</th>';
-    $xhtmlHead .= '<th width="80" class="text-right">Công nợ'.$text_total_price_owed.'</th>';
+    $xhtmlHead .= '<th width="80" class="text-right">Trả tiền mặt'.$text_total_paid_cash.'</th>';
+    $xhtmlHead .= '<th width="80" class="text-right">Chuyển khoản'.$text_total_paid_transfer.'</th>';
+    $xhtmlHead .= '<th width="80" class="text-right">Giảm giá'.$text_total_discount.'</th>';
     $xhtmlHead .= '<th width="150">Tên khách hàng</th>';
     $xhtmlHead .= '<th width="90">Điện thoại</th>';
     $xhtmlHead .= '<th class="av-read">Địa chỉ</th>';
     $xhtmlHead .= '<th width="150">Ghi chú</th>';
-    $xhtmlHead .= '<th width="150">Giục đơn</th>';
     $xhtmlHead .= '<th width="140">Người tạo</th>';
     $xhtmlHead .= '<th width="140">Marketer</th>';
-    $xhtmlHead .= '<th width="150">Thanh toán giá vốn</th>';
     $xhtmlHead .= '</tr>';
 
     $sendViettelAccount = [];
@@ -344,52 +347,43 @@
     // Control
     $arrControl = array(
 //        array( 'name' => 'add', 'caption' => 'Tạo đơn', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add-kov')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => '', 'class' => 'btn' ) ),
-        array(
-            'name' => 'tool', 'caption' => 'Đẩy đơn sang Viettel Post', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown' ),
-            'children' => $sendViettelAccount,
-            'children-class' => 'dropdown-menu pull-right'
-        ),
-        array(
-            'name' => 'tool', 'caption' => 'Đẩy đơn sang GHTK', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown' ),
-            'children' => $sendGhtkAccount,
-            'children-class' => 'dropdown-menu pull-right'
-        ),
-        array(
-            'name' => 'tool', 'caption' => 'Đẩy đơn sang GH Nhanh', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown' ),
-            'children' => $sendGhnAccount,
-            'children-class' => 'dropdown-menu pull-right'
-        ),
+//        array(
+//            'name' => 'tool', 'caption' => 'Đẩy đơn sang Viettel Post', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown' ),
+//            'children' => $sendViettelAccount,
+//            'children-class' => 'dropdown-menu pull-right'
+//        ),
+//        array(
+//            'name' => 'tool', 'caption' => 'Đẩy đơn sang GHTK', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown' ),
+//            'children' => $sendGhtkAccount,
+//            'children-class' => 'dropdown-menu pull-right'
+//        ),
+//        array(
+//            'name' => 'tool', 'caption' => 'Đẩy đơn sang GH Nhanh', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown' ),
+//            'children' => $sendGhnAccount,
+//            'children-class' => 'dropdown-menu pull-right'
+//        ),
         array(
             'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown' ), 
             'children' => array(
                 array( 'name' => 'print', 'caption' => 'In đóng hàng', 'link' => 'javascript:;',  'icon' => 'fa-print', 'attributes' => array( 'onclick' => 'javascript:contractPrint(\'_blank\');') ),
-                array( 'name' => 'import', 'caption' => 'Đối soát ghtk', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import')), 'icon' => 'fa fa-check-square-o' ),
-                array( 'name' => 'exportToVTP', 'caption' => 'Xuất dữ liệu đẩy sang Viettel port', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport(\'exportToVTP\');')) ,
-                array( 'name' => 'transfer', 'caption' => 'Thêm quyền giục đơn', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:changeUser(\'changeDelivery\');') ),
-                array( 'name' => 'transfer', 'caption' => 'Thêm quyền chăm sóc', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:changeUser(\'shareOrder\');') ),
+//                array( 'name' => 'import', 'caption' => 'Đối soát ghtk', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import')), 'icon' => 'fa fa-check-square-o' ),
+//                array( 'name' => 'exportToVTP', 'caption' => 'Xuất dữ liệu đẩy sang Viettel port', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport(\'exportToVTP\');')) ,
+//                array( 'name' => 'transfer', 'caption' => 'Thêm quyền giục đơn', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:changeUser(\'changeDelivery\');') ),
+//                array( 'name' => 'transfer', 'caption' => 'Thêm quyền chăm sóc', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:changeUser(\'shareOrder\');') ),
 //                array( 'name' => 'export', 'caption' => 'Xuất bản excel', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport();')) ,
 //                array( 'name' => 'hidden', 'caption' => 'Khóa đơn hàng', 'link' => 'javascript:;', 'icon' => 'fa fa-lock', 'attributes' => array('onclick'=>'javascript:contractLock(\'lock\');')),
 //                array( 'name' => 'return', 'caption' => 'Xác nhận hoàn', 'link' => 'javascript:;', 'icon' => 'fa fa-arrow-left', 'attributes' => array('onclick'=>'javascript:updateItem(\'returned\', \'Bạn có muốn xác nhận hoàn các đơn hàng đã chọn\');')),
+
 //                array(
-//                    'name' => 'sendGhtk',
-//                    'caption' => 'Đẩy đơn sang GHTK',
+//                    'name' => 'updateOrderKiotviet',
+//                    'caption' => 'Cập nhật số lượng sang Kiotviet',
 //                    'link' => 'javascript:;',
-//                    'icon' => 'fa fa-paper-plane-o',
+//                    'icon' => 'fa fa-retweet',
 //                    'attributes' => array(
-//                        'onclick' => 'javascript:updateItem(\'sendGhtk\', \'Mỗi một đơn chỉ được đẩy sang 1 lần! <br> Vui lòng kiểm tra và chắc chắn các đơn hàng đã chọn ?\');',
-//                        'title' => 'Tạo đơn từ CRM Sang giao hàng tiết kiệm',
+//                        'onclick' => 'javascript:updateItem(\'updateNumberProductKov\', \'Mỗi một đơn chỉ được cập nhật sang 1 lần! <br> Vui lòng kiểm tra và chắc chắn các đơn hàng đã chọn ?\');',
+//                        'title' => 'Cập nhật số lượng sang kiotviet',
 //                    ),
 //                ) ,
-                array(
-                    'name' => 'updateOrderKiotviet',
-                    'caption' => 'Cập nhật số lượng sang Kiotviet',
-                    'link' => 'javascript:;',
-                    'icon' => 'fa fa-retweet',
-                    'attributes' => array(
-                        'onclick' => 'javascript:updateItem(\'updateNumberProductKov\', \'Mỗi một đơn chỉ được cập nhật sang 1 lần! <br> Vui lòng kiểm tra và chắc chắn các đơn hàng đã chọn ?\');',
-                        'title' => 'Cập nhật số lượng sang kiotviet',
-                    ),
-                ) ,
                 array(
                     'name' => 'transported',
                     'caption' => 'Hủy giao hàng',

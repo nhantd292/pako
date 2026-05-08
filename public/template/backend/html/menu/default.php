@@ -250,6 +250,24 @@
     </li>
     <li class="parent">
         <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
+            <i class="fa fa-money"></i> <span class="title">Bán hàng</span><span class="arrow"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-file-text-o"></i> <span class="title">Đơn hàng</span><span class="arrow"></span>
+                </a>
+            </li>
+
+            <!--			<li>-->
+            <!--				<a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'contract-detail', 'action' => 'products'));?><!--" target="_self">-->
+            <!--					<i class="fa fa-file-text-o"></i> <span class="title">Báo cáo sản phẩm</span><span class="arrow"></span>-->
+            <!--				</a>-->
+            <!--			</li>-->
+        </ul>
+    </li>
+    <li class="parent">
+        <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
             <i class="fa fa-product-hunt"></i> <span class="title">Quản lý kho</span><span class="arrow"></span>
         </a>
         <ul class="dropdown-menu">
@@ -260,24 +278,6 @@
             </li>
         </ul>
     </li>
-	<li class="parent">
-	    <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
-			<i class="fa fa-money"></i> <span class="title">Bán hàng</span><span class="arrow"></span>
-		</a> 
-		<ul class="dropdown-menu">
-			<li>
-				<a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'index'));?>" target="_self">
-					<i class="fa fa-file-text-o"></i> <span class="title">Đơn hàng</span><span class="arrow"></span>
-				</a>
-			</li>
-
-<!--			<li>-->
-<!--				<a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'contract-detail', 'action' => 'products'));?><!--" target="_self">-->
-<!--					<i class="fa fa-file-text-o"></i> <span class="title">Báo cáo sản phẩm</span><span class="arrow"></span>-->
-<!--				</a>-->
-<!--			</li>-->
-		</ul>
-	</li>
 <?php //if($is_system){?>
 <!--	<li class="parent">-->
 <!--	    <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">-->

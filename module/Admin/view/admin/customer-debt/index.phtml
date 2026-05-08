@@ -55,12 +55,12 @@
     							<td class="text-bold">'.  $item['customer_name'] .'</td>
     							<td class="text-center">'. $item['type'] .'</td>
     							<td class="text-bold"><a href="/xadmin/contract/detail/id/'.$item['orders_id'].'/" target="_blank"> '. $item['orders_code'] .'</a></td>
-    							<td class="text-right mask_currency">'. abs($item['price_total']) .'</td>
-    							<td class="text-right mask_currency">'. $item['discount'] .'</td>
-    							<td class="text-right mask_currency">'. $item['paid_cash'] .'</td>
-    							<td class="text-right mask_currency">'. $item['paid_transfer'] .'</td>
-    							<td class="text-right mask_currency text-warning">'. $item['old_debt'] .'</td>
-    							<td class="text-right mask_currency text-danger">'. $item['new_debt'] .'</td>
+    							<td class="text-right mask_currency text-green">'. abs($item['price_total']) .'</td>
+    							<td class="text-right mask_currency text-purple">'. $item['discount'] .'</td>
+    							<td class="text-right mask_currency text-purple">'. $item['paid_cash'] .'</td>
+    							<td class="text-right mask_currency text-purple">'. $item['paid_transfer'] .'</td>
+    							<td class="text-right mask_currency text-info">'. $item['old_debt'] .'</td>
+    							<td class="text-right mask_currency text-red">'. $item['new_debt'] .'</td>
     							<td>'. $order_status .'</td>
     							<td>'. $item['note'] .'</td>
     							<td>'. $item['warehouse_name'] .'</td>

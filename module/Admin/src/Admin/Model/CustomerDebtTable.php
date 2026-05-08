@@ -50,18 +50,33 @@ class CustomerDebtTable extends DefaultTable {
 
     			
     			if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
-    			    $select->where->equalTo('status', $ssFilter['filter_status']);
+    			    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.status', $ssFilter['filter_status']);
     			}
 
                 if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
-                    $select->where->equalTo('customer_id', $ssFilter['filter_customer_id']);
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.customer_id', $ssFilter['filter_customer_id']);
                 }
     			
     			if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
     		        $select->where->NEST
-                			      ->like('code', '%'. $ssFilter['filter_keyword'] . '%')
+                			      ->like(TABLE_CUSTOMER_DEBT.'.code', '%'. $ssFilter['filter_keyword'] . '%')
                 			      ->UNNEST;
     			}
+    		});
+		}
+
+		if($options['task'] == 'list-update') {
+			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+
+                $select -> order(array('created' => 'ASC'));
+
+    			if(isset($arrParam['created']) && $arrParam['created'] != '') {
+                    $select->where->greaterThan('created', $arrParam['created']);
+    			}
+
+                if(isset($arrParam['customer_id']) && $arrParam['customer_id'] != '') {
+                    $select->where->equalTo('customer_id', $arrParam['customer_id']);
+                }
     		});
 		}
 		
@@ -131,6 +146,7 @@ class CustomerDebtTable extends DefaultTable {
 	    $number   = new \ZendX\Functions\Number();
 	    $filter   = new \ZendX\Filter\Purifier();
 	    $gid      = new \ZendX\Functions\Gid();
+	    $action   = new \ZendX\Controller\ActionController();
 	    if($options['task'] == 'add-item') {
 	        $id = $gid->getId();
 
@@ -163,6 +179,13 @@ class CustomerDebtTable extends DefaultTable {
 
             try {
                 $this->tableGateway->insert($data);
+                # tạo code cho phiếu
+                $this->saveItem(array('data' => array('id' => $id)), array('task' => 'update-code'));
+                # cập nhật amount_owed (nợ hiện tại) của khách hàng
+                $data_contact = array('id' => $arrData['customer_id'], 'amount_owed' => $number->formatToData($arrData['new_debt']), );
+                $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+
+
                 return $id;
             } catch (\Exception $e) {
                 throw new \Exception('Insert Customer Debt Table failed: ' . $e->getMessage());
@@ -171,27 +194,63 @@ class CustomerDebtTable extends DefaultTable {
 
         if($options['task'] == 'edit-item') {
             $id = $arrData['id'];
-            $data	= array(
-                'name'              => $arrData['name'],
-                'code'              => $arrData['code'],
-                'note'              => $arrData['note'],
-                'percent'           => $arrData['percent'],
-                'ordering'          => $arrData['ordering'],
-            );
-            $this->tableGateway->update($data, array('id' => $id));
-            return $id;
+            $data	= array();
+            if(isset($arrData['inventory_id'])) {
+                $data['inventory_id'] = $arrData['inventory_id'];
+            }
+            if(isset($arrData['price_total'])) {
+                $data['price_total'] = $number->formatToData($arrData['price_total']);
+            }
+            if(isset($arrData['paid_cash'])) {
+                $data['paid_cash'] = $number->formatToData($arrData['paid_cash']);
+            }
+            if(isset($arrData['paid_transfer'])) {
+                $data['paid_transfer'] = $number->formatToData($arrData['paid_transfer']);
+            }
+            if(isset($arrData['discount'])) {
+                $data['discount'] = $number->formatToData($arrData['discount']);
+            }
+            if(isset($arrData['new_debt'])) {
+                $data['new_debt'] = $number->formatToData($arrData['new_debt']);
+            }
+            if(isset($arrData['state'])) {
+                $data['state'] = $arrData['state'];
+            }
+
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Update Customer Debt Table failed: ' . $e->getMessage());
+            }
         }
 
         if ($options['task'] == 'update-code') {
             $id = $arrData['id'];
+            $debt_item = $this->getItem(array('id' => $id));
+            $debt_code = $action->createCode("P", $debt_item->index);
             $data = array(
-                'code' => $arrData['code'],
+                'code' => $debt_code,
             );
             try {
                 $this->tableGateway->update($data, array('id' => $id));
                 return $id;
             } catch (\Exception $e) {
                 throw new \Exception('Update Debt code failed: ' . $e->getMessage());
+            }
+        }
+
+        if ($options['task'] == 'update-value') {
+            $id = $arrData['id'];
+            $data = array(
+                'old_debt' => $arrData['old_debt'],
+                'new_debt' => $arrData['new_debt'],
+            );
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Update Debt value failed: ' . $e->getMessage());
             }
         }
 	}
