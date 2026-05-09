@@ -147,7 +147,7 @@ class ProductsController extends ActionController{
                     $connection->commit();
                     # end
 
-                    $this->flashMessenger()->addMessage('Thêm mới '.$this->caption.' thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm mới '.$this->caption.' thành công');
 
                     if($controlAction == 'save-new') {
                         $this->goRoute(array('action' => 'add'));
@@ -286,7 +286,7 @@ class ProductsController extends ActionController{
 
                     $connection->commit();
 
-                    $this->flashMessenger()->addMessage('Cập nhật '.$this->caption.' thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật '.$this->caption.' thành công');
 
                     if($controlAction == 'save-new') {
                         $this->goRoute(array('action' => 'add'));
@@ -317,7 +317,7 @@ class ProductsController extends ActionController{
             if(!empty($this->_params['data']['cid'])) {
                 $cdata = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
                 $message = 'Xóa '. $cdata .' '.$this->caption.' thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
 

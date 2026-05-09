@@ -136,10 +136,10 @@ class   MaterialController extends ActionController
 
                     if(empty($item)){
                         $result = $this->getTable()->saveItem($this->_params, array('task' => $task));
-                        $this->flashMessenger()->addMessage('Dữ liệu đã được thêm mới thành công');
+                        $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được thêm mới thành công');
                     }
                     else{
-                        $this->flashMessenger()->addMessage('Sản phẩm đã tồn tại trong bảng nhập số dư đầu kỳ');
+                        $this->flashMessenger()->addSuccessMessage('Sản phẩm đã tồn tại trong bảng nhập số dư đầu kỳ');
                     }
                 }
                 elseif ($task == 'edit-item'){
@@ -147,7 +147,7 @@ class   MaterialController extends ActionController
                     $this->_params['item']           = $item;
                     $this->_params['data']['params'] = $params;
                     $result                          = $this->getTable()->saveItem($this->_params, array('task' => $task));
-                    $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
                 }
 
                 if ($controlAction == 'save-new') {
@@ -208,7 +208,7 @@ class   MaterialController extends ActionController
                     }
                 }
 
-                $this->flashMessenger()->addMessage('Tạo bảng thành công');
+                $this->flashMessenger()->addSuccessMessage('Tạo bảng thành công');
                 $this->goRoute();
             }
         }

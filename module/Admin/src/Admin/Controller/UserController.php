@@ -153,7 +153,7 @@ class UserController extends ActionController {
                     $this->getServiceLocator()->get('Admin\Model\CheckInTable')->saveItem(array('data' => $checkInData), array('task' => 'add-item'));
                 }
     
-                $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
     
                 if($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'form'));
@@ -197,7 +197,7 @@ class UserController extends ActionController {
             }
             
             if($flag == true){
-                $this->flashMessenger()->addMessage('Mật khẩu của bạn đã được đổi thành công');
+                $this->flashMessenger()->addSuccessMessage('Mật khẩu của bạn đã được đổi thành công');
                 $result = $this->getTable()->saveItem($this->_params, array('task' => 'change-password'));
     
                 // Cập nhật lại session user
@@ -242,7 +242,7 @@ class UserController extends ActionController {
             }
             
             if($flag == true){
-                $this->flashMessenger()->addMessage('Mật khẩu của bạn đã được đổi thành công');
+                $this->flashMessenger()->addSuccessMessage('Mật khẩu của bạn đã được đổi thành công');
                 $result = $this->getTable()->saveItem($this->_params, array('task' => 'update-password'));
     
                 // Cập nhật lại session user

@@ -121,7 +121,7 @@ class CampaignDataController extends ActionController {
                     // Cập nhật lại thông tin quản lý khách hàng
                     $contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($this->_params, array('task' => 'form_data-update'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }

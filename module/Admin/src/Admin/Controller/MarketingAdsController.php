@@ -119,7 +119,7 @@ class MarketingAdsController extends ActionController{
             if($myForm->isValid()){
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $result = $this->getServiceLocator()->get('Admin\Model\MarketingAdsTable')->saveItem($this->_params, array('task' => 'add-item'));
-                $this->flashMessenger()->addMessage('Thêm mới chi phí thành công');
+                $this->flashMessenger()->addSuccessMessage('Thêm mới chi phí thành công');
 
                 if($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'add'));
@@ -163,7 +163,7 @@ class MarketingAdsController extends ActionController{
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $this->_params['item'] = $item;
                 $this->getServiceLocator()->get('Admin\Model\MarketingAdsTable')->saveItem($this->_params, array('task' => 'edit-item'));
-                $this->flashMessenger()->addMessage('Chi phí ads đã được cập nhật');
+                $this->flashMessenger()->addSuccessMessage('Chi phí ads đã được cập nhật');
 
                 if($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'add'));
@@ -187,7 +187,7 @@ class MarketingAdsController extends ActionController{
                 // Xóa data đã chọn
                 $cdata = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
                 $message = 'Xóa '. $cdata .' phần tử thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
 

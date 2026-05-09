@@ -173,10 +173,10 @@ class   MarketingReportController extends ActionController
 
                     if(empty($report_item)){
                         $result = $this->getTable()->saveItem($this->_params, array('task' => $task));
-                        $this->flashMessenger()->addMessage('Dữ liệu đã được thêm mới thành công');
+                        $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được thêm mới thành công');
                     }
                     else{
-                        $this->flashMessenger()->addMessage('Nhân viên đã có báo cáo không thể thêm mới');
+                        $this->flashMessenger()->addSuccessMessage('Nhân viên đã có báo cáo không thể thêm mới');
                     }
                 }
                 elseif ($task == 'edit-item'){
@@ -184,7 +184,7 @@ class   MarketingReportController extends ActionController
                     $this->_params['item']           = $item;
                     $this->_params['data']['params'] = $params;
                     $result                          = $this->getTable()->saveItem($this->_params, array('task' => $task));
-                    $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
                 }
 
                 if ($controlAction == 'save-new') {
@@ -299,7 +299,7 @@ class   MarketingReportController extends ActionController
                     }
                 }
 
-                $this->flashMessenger()->addMessage(''.$message);
+                $this->flashMessenger()->addSuccessMessage(''.$message);
                 $this->goRoute();
             }
         }

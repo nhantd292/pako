@@ -108,7 +108,7 @@ class PendingController extends ActionController {
     
                     $result = $this->getServiceLocator()->get('Admin\Model\PendingTable')->saveItem($this->_params, array('task' => 'accept'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -155,7 +155,7 @@ class PendingController extends ActionController {
     
                     $result = $this->getServiceLocator()->get('Admin\Model\PendingTable')->saveItem($this->_params, array('task' => 'unaccept'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }

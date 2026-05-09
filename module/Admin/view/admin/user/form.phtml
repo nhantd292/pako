@@ -81,7 +81,7 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
-    <?php echo $this->flashMessenger()->render();?>
+    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
 	<?php echo @$this->xViewElementErrors($elements);?>
     <?php echo @$this->xViewElementErrors($elements_permission);?>
     <div class="page-content">

@@ -84,7 +84,7 @@ class CustomerDebtController extends ActionController{
             if($myForm->isValid()){
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $result = $this->getTable()->saveItem($this->_params, array('task' => 'add-item'));
-                $this->flashMessenger()->addMessage('Thêm mới '.$this->caption.' thành công');
+                $this->flashMessenger()->addSuccessMessage('Thêm mới '.$this->caption.' thành công');
 
                 if($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'add'));
@@ -125,7 +125,7 @@ class CustomerDebtController extends ActionController{
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $this->_params['item'] = $item;
                 $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
-                $this->flashMessenger()->addMessage($this->caption.' đã được cập nhật');
+                $this->flashMessenger()->addSuccessMessage($this->caption.' đã được cập nhật');
 
                 if($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'add'));
@@ -148,7 +148,7 @@ class CustomerDebtController extends ActionController{
             if(!empty($this->_params['data']['cid'])) {
                 $cdata = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
                 $message = 'Xóa '. $cdata .' '.$this->caption.' thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
 

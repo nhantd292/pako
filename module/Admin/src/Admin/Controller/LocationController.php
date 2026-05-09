@@ -156,7 +156,7 @@ class LocationController extends ActionController {
                         $this->getServiceLocator()->get('Admin\Model\HistoryLevelTable')->saveItem($this->_params, array('task' => 'add-item'));
                     }
 
-                    $this->flashMessenger()->addMessage('Sửa thông tin khách hàng thành công');
+                    $this->flashMessenger()->addSuccessMessage('Sửa thông tin khách hàng thành công');
                     echo 'success';
                     return $this->response;
                 }

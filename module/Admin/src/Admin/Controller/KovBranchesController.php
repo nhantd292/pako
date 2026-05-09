@@ -89,13 +89,13 @@ class KovBranchesController extends ActionController
             }
         }
         if($number_update > 0 && $number_add > 0){
-            $this->flashMessenger()->addMessage('Tạo mới '.$number_add.' và Cập nhật '.$number_update.' bản ghi thành công');
+            $this->flashMessenger()->addSuccessMessage('Tạo mới '.$number_add.' và Cập nhật '.$number_update.' bản ghi thành công');
         }
         else if($number_add > 0){
-            $this->flashMessenger()->addMessage('Tạo mới '.$number_add.' bản ghi thành công');
+            $this->flashMessenger()->addSuccessMessage('Tạo mới '.$number_add.' bản ghi thành công');
         }
         else if($number_update > 0){
-            $this->flashMessenger()->addMessage('Cập nhật '.$number_update.' bản ghi thành công');
+            $this->flashMessenger()->addSuccessMessage('Cập nhật '.$number_update.' bản ghi thành công');
         }
         $this->goRoute(array('action' => 'index'));
     }

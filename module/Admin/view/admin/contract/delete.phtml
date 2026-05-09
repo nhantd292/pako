@@ -48,7 +48,7 @@
 		<div class="clearfix"></div>
 	</div>
 	
-    <?php echo $this->flashMessenger()->render();?>
+    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
     <div class="alert alert-danger">Lưu ý: Sẽ xóa toàn bộ hóa đơn, trong danh sách đơn hàng và không thể khôi phục lại</div>
     <div class="page-content">
     	<div class="row">

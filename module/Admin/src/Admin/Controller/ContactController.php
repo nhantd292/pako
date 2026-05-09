@@ -263,7 +263,7 @@ class ContactController extends ActionController
                     $history                     = $this->getServiceLocator()->get('Admin\Model\HistoryTable')->saveItem($this->_params, array('task' => 'add-item'));
                 }
 
-                $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                 if ($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'form'));
@@ -330,7 +330,7 @@ class ContactController extends ActionController
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $this->_params['item'] = $item;
                 $result                = $this->getTable()->saveItem($this->_params, array('task' => 'register-store'));
-                $this->flashMessenger()->addMessage('Bạn đã là người quản lý khách hàng kho: ' . $item['phone'] . ' - ' . $item['name']);
+                $this->flashMessenger()->addSuccessMessage('Bạn đã là người quản lý khách hàng kho: ' . $item['phone'] . ' - ' . $item['name']);
                 $this->goRoute();
             }
         }
@@ -401,7 +401,7 @@ class ContactController extends ActionController
                     // Cập nhật lịch sử chăm sóc cuối cho liên hệ
                     $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($this->_params, array('task' => 'edit-item'));
 
-                    $this->flashMessenger()->addMessage('Thêm lịch sử thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm lịch sử thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -469,7 +469,7 @@ class ContactController extends ActionController
 
                     $result = $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($this->_params, array('task' => 'change-user'));
 
-                    $this->flashMessenger()->addMessage('Chuyển quyền quản lý ' . $result . ' liên hệ thành công');
+                    $this->flashMessenger()->addSuccessMessage('Chuyển quyền quản lý ' . $result . ' liên hệ thành công');
                     $this->goRoute();
                 }
             } else {
@@ -505,7 +505,7 @@ class ContactController extends ActionController
 
                     $result = $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($this->_params, array('task' => 'change-password'));
 
-                    $this->flashMessenger()->addMessage('Đổi mật khẩu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Đổi mật khẩu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -721,7 +721,7 @@ class ContactController extends ActionController
                     $this->_params['data']['user_id'] = [$curent_user['id']];
                     $result = $this->getServiceLocator()->get('Admin\Model\FormDataTable')->shareData($this->_params);
 
-                    $this->flashMessenger()->addMessage('Nhận data thành công');
+                    $this->flashMessenger()->addSuccessMessage('Nhận data thành công');
                     echo 'success';
                     return $this->response;
                 }

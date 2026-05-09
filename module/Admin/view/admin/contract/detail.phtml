@@ -45,10 +45,18 @@ $xhtmlProducts = $this->partialLoop($this->params['module'] . '/partial/form-vie
 $linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit-kov', 'id' => $this->item['id']));
 $linkIndex  = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index'));
 
-$arrControl = array(
-    array('name' => 'close', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn blue')),
+$arrControlProcessing = $this->item['state'] == NEW_STATUS ? array(
+    array('name' => 'save', 'caption' => 'Xử lý đơn', 'link' => 'javascript:;', 'icon' => 'fa-check', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'processing\', \' Bạn có chắc chắn muốn chuyển trạng thái xử lý đơn hàng\');', 'class' => 'btn blue')),
+) : array();
+$arrControlAction = array(
+    array('name' => 'save-new', 'caption' => 'Hủy đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'cancel\', \' Bạn có chắc chắn muốn hủy đơn hàng\');', 'class' => 'btn red')),
+    array('name' => 'save-close', 'caption' => 'Hoàn thành', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành đơn hàng\');', 'class' => 'btn green')),
+    array('name' => 'close', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow')),
+);
+$arrControlDefault = array(
     array('name' => 'edit', 'caption' => 'Đóng', 'link' => $linkIndex, 'onclick' => '', 'icon' => 'fa fa-pencil', 'attributes' => array('class' => 'btn default'))
 );
+$arrControl = in_array($this->item['state'], [CANCEL_STATUS, COMPLETE_STATUS]) ? $arrControlDefault : array_merge($arrControlProcessing,$arrControlAction, $arrControlDefault);
 ?>
 
 <form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm" class="">
@@ -62,7 +70,8 @@ $arrControl = array(
         <div class="clearfix"></div>
     </div>
 
-    <?php echo $this->flashMessenger()->render();?>
+    <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
+    <?php echo $this->flashMessenger()->renderCurrent('success', array('alert', 'alert-success')); ?>
 
     <div class="page-content">
         <div class="row">

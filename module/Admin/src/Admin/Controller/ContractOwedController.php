@@ -272,7 +272,7 @@ class ContractOwedController extends ActionController {
     
                     $result = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-reduce'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -340,7 +340,7 @@ class ContractOwedController extends ActionController {
                         $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $arrContract), array('task' => 'update-bill-add'));
                     }
             
-                    $this->flashMessenger()->addMessage('Thêm hóa đơn thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm hóa đơn thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -459,7 +459,7 @@ class ContractOwedController extends ActionController {
                 $result = $this->getTable()->updateItem($params, array('task' => 'update-item-status'));
 
                 $message = 'Đã cập nhật '. $result .' đơn hàng về trạng thái - Hủy không gửi';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
 
@@ -489,7 +489,7 @@ class ContractOwedController extends ActionController {
                     $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                     $result = $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem($this->_params, array('task' => 'update-status'));
 
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -708,10 +708,10 @@ class ContractOwedController extends ActionController {
                     $this->_params['contact'] = $contact;
                     if($contract['status_check_id'] == 'thanh-cong'){
                         $this->getTable()->saveItem($this->_params, array('task' => 'edit-code-price'));
-                        $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                        $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     }
                     else{
-                        $this->flashMessenger()->addMessage('Cập nhật thất bại! (Đơn hàng chưa ở trạng thái thành công)');
+                        $this->flashMessenger()->addSuccessMessage('Cập nhật thất bại! (Đơn hàng chưa ở trạng thái thành công)');
                     }
                     echo 'success';
                     return $this->response;
@@ -771,7 +771,7 @@ class ContractOwedController extends ActionController {
                 }
 
                 $message = 'Đã cập nhật '. $result .' đơn hàng về trạng thái - Đã nhận hoàn';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
 

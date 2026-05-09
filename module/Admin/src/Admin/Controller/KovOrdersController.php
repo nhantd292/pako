@@ -192,7 +192,7 @@ class KovOrdersController extends ActionController{
     public function availableAction() {
         $this->_params['data']['product_type'] = 1;
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'change-available'));
-        $this->flashMessenger()->addMessage('Chuyển '.$result.' sản phẩm sang hàng bán sẵn');
+        $this->flashMessenger()->addSuccessMessage('Chuyển '.$result.' sản phẩm sang hàng bán sẵn');
         $this->goRoute();
     }
 
@@ -200,7 +200,7 @@ class KovOrdersController extends ActionController{
     public function unavailableAction() {
         $this->_params['data']['product_type'] = 2;
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'change-available'));
-        $this->flashMessenger()->addMessage('Chuyển '.$result.' sản phẩm sang hàng sản xuất');
+        $this->flashMessenger()->addSuccessMessage('Chuyển '.$result.' sản phẩm sang hàng sản xuất');
         $this->goRoute();
     }
 
@@ -208,7 +208,7 @@ class KovOrdersController extends ActionController{
     public function tailorsAction() {
         $this->_params['data']['evaluate'] = 1;
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'change-tailors'));
-        $this->flashMessenger()->addMessage('Chuyển '.$result.' sản phẩm sang có đánh giá thợ may');
+        $this->flashMessenger()->addSuccessMessage('Chuyển '.$result.' sản phẩm sang có đánh giá thợ may');
         $this->goRoute();
     }
 
@@ -216,7 +216,7 @@ class KovOrdersController extends ActionController{
     public function untailorsAction() {
         $this->_params['data']['evaluate'] = 0;
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'change-tailors'));
-        $this->flashMessenger()->addMessage('Chuyển '.$result.' sản phẩm sang không đánh giá thợ may');
+        $this->flashMessenger()->addSuccessMessage('Chuyển '.$result.' sản phẩm sang không đánh giá thợ may');
         $this->goRoute();
     }
 

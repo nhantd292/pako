@@ -92,7 +92,7 @@ class LinkCheckingController extends ActionController {
     
                 $this->getServiceLocator()->get('Admin\Model\LinkCheckingTable')->saveItem($this->_params, array('task' => 'add-item'));
     
-                $this->flashMessenger()->addMessage('Dữ liệu đã được thêm thành công');
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được thêm thành công');
                 if ($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'add'));
                 } else {
@@ -123,7 +123,7 @@ class LinkCheckingController extends ActionController {
                     $this->_params['item'] = $link;
                     $this->getServiceLocator()->get('Admin\Model\LinkCheckingTable')->saveItem($this->_params, array('task' => 'edit-item'));
         
-                    $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
                     echo 'success';
                     return $this->response;
                 }

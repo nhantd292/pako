@@ -126,7 +126,7 @@ class ZaloNotifyResultController extends ActionController{
                 $this->_params['item'] = $item;
                 $result = $this->getTable()->saveItem($this->_params, array('task' => $task));
 
-                $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                 if($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'form'));
@@ -164,7 +164,7 @@ class ZaloNotifyResultController extends ActionController{
                     }
                 }
                 $message = 'Đã gửi lại '. count($cid_update) .' thông báo thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
 
@@ -177,7 +177,7 @@ class ZaloNotifyResultController extends ActionController{
                 // Xóa data đã chọn
                 $cdata = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
                 $message = 'Xóa '. $cdata .' phần tử thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
 

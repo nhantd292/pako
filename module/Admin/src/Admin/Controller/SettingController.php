@@ -101,7 +101,7 @@ class SettingController extends ActionController {
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $result = $this->getTable()->saveItem($this->_params, array('task' => 'add-item'));
     
-                $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                 if($controlAction == 'save-new') {
                     return $this->redirect()->toRoute('routeAdminNested/add', array(
@@ -161,7 +161,7 @@ class SettingController extends ActionController {
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $result = $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
     
-                $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
     
                 if($controlAction == 'save') {
                     return $this->redirect()->toRoute('routeAdminNested/default', array(
@@ -211,7 +211,7 @@ class SettingController extends ActionController {
                 $this->_params['route']['type'] = 'after';
                 $result = $this->getTable()->saveItem($this->_params, array('task' => 'add-item'));
     
-                $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
     
                 if($controlAction == 'save') {
                     return $this->redirect()->toRoute('routeAdminNested/default', array(
@@ -241,7 +241,7 @@ class SettingController extends ActionController {
             if($this->getRequest()->isPost()) {
                 $this->getTable()->moveItem($this->_params['data']);
                 $message = 'Thứ tự phần tử đã được cập nhật thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         
             return $this->response;
@@ -275,7 +275,7 @@ class SettingController extends ActionController {
                     break;
             }
             
-            $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+            $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
             if($controlAction == 'save') {
                 return $this->redirect()->toRoute('routeAdminNested/default', array(
@@ -323,7 +323,7 @@ class SettingController extends ActionController {
                     break;
             }
             
-            $this->flashMessenger()->addMessage('Dữ liệu đã được xóa thành công');
+            $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được xóa thành công');
 
             if($controlAction == 'save') {
                 return $this->redirect()->toRoute('routeAdminNested/default', array(
@@ -362,7 +362,7 @@ class SettingController extends ActionController {
             if(!empty($this->_params['data']['cid']) && !empty($this->_params['data']['ordering'])) {
                 $result = $this->getTable()->changeOrdering($this->_params['data'], array('task' => 'change-ordering'));
                 $message = 'Sắp xếp '. $result .' phần tử thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
     

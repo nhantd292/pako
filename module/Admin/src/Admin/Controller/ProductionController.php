@@ -332,7 +332,7 @@ class ProductionController extends ActionController {
                     $this->_params['item'] = $contract;
                     $result = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-guarantee'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -378,7 +378,7 @@ class ProductionController extends ActionController {
                     $this->getTable()->updateItem($params, array('task' => 'update-item-status'));
                 }
                 $message = 'Đã cập nhật '. count($cid_update) .' đơn hàng về trạng thái - Đã giao hàng';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
 
@@ -433,13 +433,13 @@ class ProductionController extends ActionController {
                             }
                             else{
                                 $mesage = $result_kov['responseStatus']['message'];
-                                $this->flashMessenger()->addMessage($mesage);
+                                $this->flashMessenger()->addSuccessMessage($mesage);
                             }
                         }
                     }
                 }
                 $message = ' Đã xác nhận '. $count_update .' đơn hàng xuất kho';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
         $this->goRoute(array('action' => 'index'));
@@ -518,7 +518,7 @@ class ProductionController extends ActionController {
                         $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/orders/' . $contract['id_kov'], null, 'DELETE' );
                     }
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-production'));
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -599,7 +599,7 @@ class ProductionController extends ActionController {
                     $this->_params['contact'] = $contact;
 
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-production-technical'));
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }

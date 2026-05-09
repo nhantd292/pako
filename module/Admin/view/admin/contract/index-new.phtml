@@ -412,7 +412,7 @@ if(in_array(GDCN, $permission_ids)){
         </div>
         <div class="clearfix"></div>
     </div>
-    <?php echo $this->flashMessenger()->render();?>
+    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
     <div class="page-filter">
         <div class="row">
             <?php echo $xhtmlFilter;?>

@@ -187,7 +187,7 @@ class BcController extends ActionController {
                     
                     $result = $this->getServiceLocator()->get('Admin\Model\BcTable')->saveItem($this->_params, array('task' => 'edit-item'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -241,7 +241,7 @@ class BcController extends ActionController {
     
                     $result = $this->getServiceLocator()->get('Admin\Model\BcTable')->saveItem($this->_params, array('task' => 'edit-item'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -295,7 +295,7 @@ class BcController extends ActionController {
     
                     $result = $this->getServiceLocator()->get('Admin\Model\BcTable')->saveItem($this->_params, array('task' => 'edit-item'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -329,7 +329,7 @@ class BcController extends ActionController {
             $this->_params['item'] = $item;
             $contract_delete = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
     
-            $this->flashMessenger()->addMessage('Xóa đơn hàng thành công');
+            $this->flashMessenger()->addSuccessMessage('Xóa đơn hàng thành công');
     
             $this->goRoute();
         }
@@ -373,7 +373,7 @@ class BcController extends ActionController {
     
                     $result = $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($this->_params, array('task' => 'edit-item'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -437,7 +437,7 @@ class BcController extends ActionController {
                         $contract = $this->getServiceLocator()->get('Admin\Model\BcTable')->saveItem(array('data' => $arrContract), array('task' => 'edit-item'));
                     }
             
-                    $this->flashMessenger()->addMessage('Thêm hóa đơn thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm hóa đơn thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -490,7 +490,7 @@ class BcController extends ActionController {
                     
                     $result = $this->getServiceLocator()->get('Admin\Model\BcBillTable')->saveItem($this->_params, array('task' => 'contract-edit-item'));
             
-                    $this->flashMessenger()->addMessage($message);
+                    $this->flashMessenger()->addSuccessMessage($message);
                     echo 'success';
                     return $this->response;
                 }
@@ -541,7 +541,7 @@ class BcController extends ActionController {
     
                     $result = $this->getServiceLocator()->get('Admin\Model\BcBillTable')->deleteItem($this->_params, array('task' => 'contract-delete-item'));
     
-                    $this->flashMessenger()->addMessage('Xóa hóa đơn thành công');
+                    $this->flashMessenger()->addSuccessMessage('Xóa hóa đơn thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -588,7 +588,7 @@ class BcController extends ActionController {
                     // Cập nhật vào đơn hàng
                     $update = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'edu-class-leave'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -631,7 +631,7 @@ class BcController extends ActionController {
                     // Cập nhật vào đơn hàng
                     $update = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'edu-class-leave-cancel'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }

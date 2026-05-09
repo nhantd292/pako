@@ -343,7 +343,7 @@ class CheckController extends ActionController {
 
                     $result = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-status'));
 
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -458,7 +458,7 @@ class CheckController extends ActionController {
                     $this->_params['item'] = $contract;
 
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-history-contract'));
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -518,13 +518,13 @@ class CheckController extends ActionController {
 
                     $result = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-refund-contract'));
                     if($result == 'er1'){
-                        $this->flashMessenger()->addMessage('Tách đơn thất bại! Không được trả toàn bộ sản phẩm');
+                        $this->flashMessenger()->addSuccessMessage('Tách đơn thất bại! Không được trả toàn bộ sản phẩm');
                     }
                     else if($result == 'er2'){
-                        $this->flashMessenger()->addMessage('Tách đơn thất bại! Không có sản phẩm trả lại');
+                        $this->flashMessenger()->addSuccessMessage('Tách đơn thất bại! Không có sản phẩm trả lại');
                     }
                     else{
-                        $this->flashMessenger()->addMessage('Cập nhật thông tin hoàn đơn thành công. Đơn mới đã được tạo');
+                        $this->flashMessenger()->addSuccessMessage('Cập nhật thông tin hoàn đơn thành công. Đơn mới đã được tạo');
                     }
                     echo 'success';
                     return $this->response;
@@ -592,7 +592,7 @@ class CheckController extends ActionController {
 
                     $contract_id = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'approve-refund-contract'));
                     $contract_new = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(['id'=>$contract_id]);
-                    $this->flashMessenger()->addMessage('Hoàn đơn thành công. Đơn mới đã được tạo.');
+                    $this->flashMessenger()->addSuccessMessage('Hoàn đơn thành công. Đơn mới đã được tạo.');
                     echo 'success';
                     return $this->response;
                 }

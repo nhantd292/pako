@@ -140,12 +140,12 @@ class ContactDataController extends ActionController{
                 $list_data_id = json_decode($this->_params['data']['list_data_id']);
 
                 if (empty($list_data_id)) {
-                    $this->flashMessenger()->addMessage('Chưa chọn data để chia');
+                    $this->flashMessenger()->addSuccessMessage('Chưa chọn data để chia');
                     echo 'success';
                     return $this->response;
                 }
                 if (empty($this->_params['data']['user_id'])) {
-                    $this->flashMessenger()->addMessage('Chưa chọn nhân viên sale');
+                    $this->flashMessenger()->addSuccessMessage('Chưa chọn nhân viên sale');
                     echo 'success';
                     return $this->response;
                 }
@@ -159,7 +159,7 @@ class ContactDataController extends ActionController{
 
                 if(!empty($this->_params['data']['user_id']) && !empty($this->_params['data']['items'])){
                     $result = $this->getServiceLocator()->get('Admin\Model\FormDataTable')->shareData($this->_params);
-                    $this->flashMessenger()->addMessage('Chia sẻ data thành công');
+                    $this->flashMessenger()->addSuccessMessage('Chia sẻ data thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -183,7 +183,7 @@ class ContactDataController extends ActionController{
                 $result  = $this->getTable()->saveItem($params, array('task' => 'update-cancel-share'));
                 if(!empty($result)){
                     $message = 'Cập nhật thành công trạng thái - Hủy không chia';
-                    $this->flashMessenger()->addMessage($message);
+                    $this->flashMessenger()->addSuccessMessage($message);
                 }
             }
         }
@@ -202,7 +202,7 @@ class ContactDataController extends ActionController{
                 $result  = $this->getTable()->saveItem($params, array('task' => 'update-cancel-share'));
                 if(!empty($result)){
                     $message = 'Cập nhật thành công trạng thái - Được phép chia';
-                    $this->flashMessenger()->addMessage($message);
+                    $this->flashMessenger()->addSuccessMessage($message);
                 }
             }
         }

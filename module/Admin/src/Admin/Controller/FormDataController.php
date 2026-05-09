@@ -180,7 +180,7 @@ class FormDataController extends ActionController{
                 $items = [];
                 $list_data_id = json_decode($this->_params['data']['list_data_id']);
                 if (empty($list_data_id)) {
-                    $this->flashMessenger()->addMessage('Chưa chọn data để chia');
+                    $this->flashMessenger()->addSuccessMessage('Chưa chọn data để chia');
                     echo 'success';
                     return $this->response;
                 }
@@ -194,7 +194,7 @@ class FormDataController extends ActionController{
 
                 if(!empty($this->_params['data']['user_id']) && !empty($this->_params['data']['items'])){
                     $result = $this->getServiceLocator()->get('Admin\Model\FormDataTable')->shareData($this->_params);
-                    $this->flashMessenger()->addMessage('Chia sẻ data thành công');
+                    $this->flashMessenger()->addSuccessMessage('Chia sẻ data thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -223,7 +223,7 @@ class FormDataController extends ActionController{
                     $this->_params['data']['contact_coin'] = 1;
                     $this->_params['data']['contact_id']   = $contact['id'];
                     $result = $this->getServiceLocator()->get('Admin\Model\FormDataTable')->saveItem($this->_params, array('task' => 'add-item'));
-                    $this->flashMessenger()->addMessage('Thêm mới data thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm mới data thành công');
                 }
                 else{
                     // tồn tại data trong kho
@@ -232,11 +232,11 @@ class FormDataController extends ActionController{
                             $this->_params['data']['contact_coin'] = 1;
                             $result = $this->getServiceLocator()->get('Admin\Model\FormDataTable')->saveItem($this->_params, array('task' => 'add-item'));
                             $this->getServiceLocator()->get('Admin\Model\FormDataTable')->saveItem(array('contact_coin' => 1, 'phone' => $this->_params['data']['phone'], 'branch_id' => $sale_branch_id), array('task' => 'update-contact-coin'));
-                            $this->flashMessenger()->addMessage('Thêm mới data thành công');
+                            $this->flashMessenger()->addSuccessMessage('Thêm mới data thành công');
                     }
                     else{
                         $result = $this->getServiceLocator()->get('Admin\Model\FormDataTable')->saveItem($this->_params, array('task' => 'add-item'));
-                        $this->flashMessenger()->addMessage('Thêm mới data thành công');
+                        $this->flashMessenger()->addSuccessMessage('Thêm mới data thành công');
                     }
                 }
 
@@ -291,7 +291,7 @@ class FormDataController extends ActionController{
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('phone' => $this->_params['data']['phone'], 'sale_branch_id' => $sale_branch_id), array('task' => 'by-phone'));
                 if (!empty($contact)){
-                    $this->flashMessenger()->addMessage('Data đã tồn tại trong liên hệ - không thể cập nhật lại thông tin');
+                    $this->flashMessenger()->addSuccessMessage('Data đã tồn tại trong liên hệ - không thể cập nhật lại thông tin');
                     $this->goRoute(array('action' => 'edit', 'id' => $item_id));
                 }
                 else{
@@ -306,22 +306,22 @@ class FormDataController extends ActionController{
                         $item_coin_other = $this->getTable()->countItem(array('phone' => $this->_params['data']['phone'], 'marketer_id' => $curent_user_id, 'date' => $param_date), array('task' => 'list-data-coin'));
 
                         if (!empty($item_coin_phone_mkt)){
-                            $this->flashMessenger()->addMessage('Data đã tồn tại trong kho của bạn - không thể cập nhật lại số điện thoại');
+                            $this->flashMessenger()->addSuccessMessage('Data đã tồn tại trong kho của bạn - không thể cập nhật lại số điện thoại');
                         }
                         else if ($item_coin_other > 0){
-                            $this->flashMessenger()->addMessage('Data trùng trong ngày với data của nhân viên khác - không thể cập nhật lại số điện thoại');
+                            $this->flashMessenger()->addSuccessMessage('Data trùng trong ngày với data của nhân viên khác - không thể cập nhật lại số điện thoại');
                         }
                         else{
                             $this->_params['data']['contact_coin'] = 1;
                             $this->getServiceLocator()->get('Admin\Model\FormDataTable')->saveItem($this->_params, array('task' => 'edit-item'));
                             // Cập nhật lại trạng thái trùng của các data trung.
                             $this->getServiceLocator()->get('Admin\Model\FormDataTable')->saveItem(array('contact_coin' => 1, 'phone' => $this->_params['data']['phone'], 'branch_id' => $sale_branch_id), array('task' => 'update-contact-coin'));
-                            $this->flashMessenger()->addMessage('Data đã được cập nhật thành công');
+                            $this->flashMessenger()->addSuccessMessage('Data đã được cập nhật thành công');
                         }
                     }
                     else{
                         $this->getServiceLocator()->get('Admin\Model\FormDataTable')->saveItem($this->_params, array('task' => 'edit-item'));
-                        $this->flashMessenger()->addMessage('Data đã được cập nhật thành công');
+                        $this->flashMessenger()->addSuccessMessage('Data đã được cập nhật thành công');
                     }
 
                     if($controlAction == 'save-new') {
@@ -381,7 +381,7 @@ class FormDataController extends ActionController{
                     $this->_params['item'] = $contact;
                     $contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($this->_params, array('task' => 'add-history'));
 
-                    $this->flashMessenger()->addMessage('Thêm lịch sử chăm sóc thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm lịch sử chăm sóc thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -425,7 +425,7 @@ class FormDataController extends ActionController{
                     // Cập nhật lại thông tin quản lý khách hàng
                     $contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($this->_params, array('task' => 'form_data-update'));
 
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -746,7 +746,7 @@ class FormDataController extends ActionController{
                 }
 
                 $message = 'Xóa '. $cdata .' phần tử thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
     

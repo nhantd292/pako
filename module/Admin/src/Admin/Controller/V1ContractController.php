@@ -421,7 +421,7 @@ class V1ContractController extends ActionController {
                         $this->_params['data']['kov_code']  = $result_kov['code'];
 
                         $result = $this->getTable()->saveItem($this->_params, array('task' => 'add-kov-item'));
-                        $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                        $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                         // cập nhật mã đơn hàng trên crm lên ghi chú đơn hàng kov
                         $contract_new = $this->getTable()->getItem(array('id' => $result));
@@ -549,7 +549,7 @@ class V1ContractController extends ActionController {
                         }
 
                         $result = $this->getTable()->saveItem($this->_params, array('task' => 'edit-kov-item'));
-                        $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                        $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                         // cập nhật mã đơn hàng trên crm lên ghi chú đơn hàng kov
                         $contract_new = $this->getTable()->getItem(array('id' => $result));
@@ -659,7 +659,7 @@ class V1ContractController extends ActionController {
                     }
 
                     $result = $this->getTable()->saveItem($this->_params, array('task' => 'edit-product-price'));
-                    $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                     if ($controlAction == 'save-new') {
                         $this->goRoute(array('action' => 'add-kov'));
@@ -737,7 +737,7 @@ class V1ContractController extends ActionController {
                         
                         $this->_params['item'] = $contract;
                         $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $data_update), array('task' => 'update-item'));
-                        $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                        $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                         echo 'success';
                         return $this->response;
                     }
@@ -1001,7 +1001,7 @@ class V1ContractController extends ActionController {
 
                     if($check_emty_data){
                         $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'edit-item'));
-                        $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                        $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                         echo 'success';
                         return $this->response;
                     }
@@ -1091,7 +1091,7 @@ class V1ContractController extends ActionController {
     
                     $result = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'edit-item'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -1139,7 +1139,7 @@ class V1ContractController extends ActionController {
 
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-note'));
 
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -1185,7 +1185,7 @@ class V1ContractController extends ActionController {
 
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'show-delete'));
 
-                    $this->flashMessenger()->addMessage('Khôi phục đơn hàng thành công');
+                    $this->flashMessenger()->addSuccessMessage('Khôi phục đơn hàng thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -1238,10 +1238,10 @@ class V1ContractController extends ActionController {
 
                     if($contract['unit_transport'] == '5sauto'){
                         $this->getTable()->updateItem($this->_params, array('task' => 'update-ghtk'));
-                        $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                        $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     }
                     else{
-                        $this->flashMessenger()->addMessage('Chỉ đơn hàng lẻ mới có thể cập nhật trạng thái giục đơn');
+                        $this->flashMessenger()->addSuccessMessage('Chỉ đơn hàng lẻ mới có thể cập nhật trạng thái giục đơn');
                     }
 
                     echo 'success';
@@ -1285,7 +1285,7 @@ class V1ContractController extends ActionController {
                 if($myForm->isValid()){
                     $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                     $this->getTable()->updateItem($this->_params, array('task' => 'update-status'));
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
 
                     echo 'success';
                     return $this->response;
@@ -1340,7 +1340,7 @@ class V1ContractController extends ActionController {
 
                     $this->check_send_zalo_notify($this->_params['data'] ,$contract);
 
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'print';
                     return $this->response;
                 }
@@ -1381,7 +1381,7 @@ class V1ContractController extends ActionController {
             // Xóa tạm thời
             $contract_delete = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-hidden'));
 
-            $this->flashMessenger()->addMessage('Xóa Đơn hàng thành công');
+            $this->flashMessenger()->addSuccessMessage('Xóa Đơn hàng thành công');
     
             $this->goRoute();
         }
@@ -1423,7 +1423,7 @@ class V1ContractController extends ActionController {
             else{
                 $this->getTable()->deleteItem($this->_params, array('task' => 'cancel'));
             }
-            $this->flashMessenger()->addMessage($msg);
+            $this->flashMessenger()->addSuccessMessage($msg);
             $this->goRoute();
         }
 
@@ -1485,7 +1485,7 @@ class V1ContractController extends ActionController {
                         $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $arrContract), array('task' => 'update-bill-add'));
                     }
             
-                    $this->flashMessenger()->addMessage('Thêm hóa đơn thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm hóa đơn thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -1542,7 +1542,7 @@ class V1ContractController extends ActionController {
                     
                     $result = $this->getServiceLocator()->get('Admin\Model\BillTable')->saveItem($this->_params, array('task' => 'contract-edit-item'));
             
-                    $this->flashMessenger()->addMessage($message);
+                    $this->flashMessenger()->addSuccessMessage($message);
                     echo 'success';
                     return $this->response;
                 }
@@ -1597,7 +1597,7 @@ class V1ContractController extends ActionController {
     
                     $result = $this->getServiceLocator()->get('Admin\Model\BillTable')->deleteItem($this->_params, array('task' => 'contract-delete-item'));
     
-                    $this->flashMessenger()->addMessage('Xóa hóa đơn thành công');
+                    $this->flashMessenger()->addSuccessMessage('Xóa hóa đơn thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -1686,7 +1686,7 @@ class V1ContractController extends ActionController {
 
                     $result = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'change-delivery'));
 
-                    $this->flashMessenger()->addMessage('Thêm giục đơn ' . $result . ' 5 đơn hàng thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm giục đơn ' . $result . ' 5 đơn hàng thành công');
                     $this->goRoute();
                 }
             } else {
@@ -1732,7 +1732,7 @@ class V1ContractController extends ActionController {
                     }
                     $result = $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'change-care'));
 
-                    $this->flashMessenger()->addMessage('Thêm quyền chăm sóc ' . $result . ' đơn hàng thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm quyền chăm sóc ' . $result . ' đơn hàng thành công');
                     $this->goRoute();
                 }
             } else {
@@ -1993,7 +1993,7 @@ class V1ContractController extends ActionController {
                     $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                     $this->_params['item'] = $contract;
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-price'));
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -2417,13 +2417,13 @@ class V1ContractController extends ActionController {
 
     public function hiddenAction() {
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'hidden'));
-        $this->flashMessenger()->addMessage('Ẩn '.$result.' đơn hàng thành công');
+        $this->flashMessenger()->addSuccessMessage('Ẩn '.$result.' đơn hàng thành công');
         $this->goRoute(['action' => 'warehouse']);
     }
 
     public function showAction() {
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'show'));
-        $this->flashMessenger()->addMessage('Hiển thị '.$result.' đơn hàng thành công');
+        $this->flashMessenger()->addSuccessMessage('Hiển thị '.$result.' đơn hàng thành công');
         $this->goRoute(['action' => 'warehouse-hidden']);
     }
 
@@ -2450,7 +2450,7 @@ class V1ContractController extends ActionController {
 //                    $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
 //                    $result = $this->getTable()->updateItem($this->_params, array('task' => 'update-status'));
 //
-//                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+//                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
 //                    echo 'success';
 //                    return $this->response;
 //                }
@@ -2652,10 +2652,10 @@ class V1ContractController extends ActionController {
                             }
 
                             if(!empty($contract_code_success)){
-                                $this->flashMessenger()->addMessage('Các đơn đã đẩy thành công sang GHTK '.implode(', ', $contract_code_success) );
+                                $this->flashMessenger()->addSuccessMessage('Các đơn đã đẩy thành công sang GHTK '.implode(', ', $contract_code_success) );
                             }
                             if(!empty($contract_code_error)){
-                                $this->flashMessenger()->addMessage(', Chưa đẩy thành công '.implode(', ', $contract_code_error) );
+                                $this->flashMessenger()->addSuccessMessage(', Chưa đẩy thành công '.implode(', ', $contract_code_error) );
                             }
 
 //                            $order_code_ghtk='S22620562.MB3-01-A7.1982417997,S22620562.BO.MN6-05-D1.1923217495,S22620562.BO.SGP23-E47.1981878263';
@@ -2695,7 +2695,7 @@ class V1ContractController extends ActionController {
                     }
                 }
                 $message = 'Đã Hủy giao '. count($cid_update) .' đơn hàng';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
 
@@ -2826,10 +2826,10 @@ class V1ContractController extends ActionController {
                             }
 
                             if(!empty($contract_code_success)){
-                                $this->flashMessenger()->addMessage('Các đơn đã đẩy thành công sang Viettel Post '.implode(', ', $contract_code_success) );
+                                $this->flashMessenger()->addSuccessMessage('Các đơn đã đẩy thành công sang Viettel Post '.implode(', ', $contract_code_success) );
                             }
                             if(!empty($contract_code_error)){
-                                $this->flashMessenger()->addMessage('Chưa đẩy thành công '.implode(', ', $contract_code_error) );
+                                $this->flashMessenger()->addSuccessMessage('Chưa đẩy thành công '.implode(', ', $contract_code_error) );
                             }
 
                             echo 'success';
@@ -3006,10 +3006,10 @@ class V1ContractController extends ActionController {
                             }
 
                             if(!empty($contract_code_success)){
-                                $this->flashMessenger()->addMessage('Các đơn đã đẩy thành công sang GIAO HÀNG NHANH '.implode(', ', $contract_code_success) );
+                                $this->flashMessenger()->addSuccessMessage('Các đơn đã đẩy thành công sang GIAO HÀNG NHANH '.implode(', ', $contract_code_success) );
                             }
                             if(!empty($contract_code_error)){
-                                $this->flashMessenger()->addMessage('Chưa đẩy thành công '.implode(', ', $contract_code_error) );
+                                $this->flashMessenger()->addSuccessMessage('Chưa đẩy thành công '.implode(', ', $contract_code_error) );
                             }
 
                             $this->getResponse()->getHeaders()->addHeaderLine('Content-Type', 'application/json');
@@ -3068,10 +3068,10 @@ class V1ContractController extends ActionController {
 
 
                     if(!empty($contract_code_success)){
-                        $this->flashMessenger()->addMessage('Các đơn đã cập nhật trạng thái thành công '.implode(', ', $contract_code_success) );
+                        $this->flashMessenger()->addSuccessMessage('Các đơn đã cập nhật trạng thái thành công '.implode(', ', $contract_code_success) );
                     }
                     if(!empty($contract_code_error)){
-                        $this->flashMessenger()->addMessage('Chưa đẩy thành công '.implode(', ', $contract_code_error) );
+                        $this->flashMessenger()->addSuccessMessage('Chưa đẩy thành công '.implode(', ', $contract_code_error) );
                     }
 
                     echo 'success';
@@ -3136,10 +3136,10 @@ class V1ContractController extends ActionController {
         }
 
         if(!empty($contract_code_success)){
-            $this->flashMessenger()->addMessage('Các đơn đã cập nhật số lượng thành công sang Kiotviet '.implode(', ', $contract_code_success) );
+            $this->flashMessenger()->addSuccessMessage('Các đơn đã cập nhật số lượng thành công sang Kiotviet '.implode(', ', $contract_code_success) );
         }
         if(!empty($contract_code_error)){
-            $this->flashMessenger()->addMessage('Chưa cập nhật thành công thành công '.implode(', ', $contract_code_error) );
+            $this->flashMessenger()->addSuccessMessage('Chưa cập nhật thành công thành công '.implode(', ', $contract_code_error) );
         }
 
         $this->goRoute(['action' => 'index-accounting']);
@@ -3148,28 +3148,28 @@ class V1ContractController extends ActionController {
     // Xác nhận đã nhận hoàn đơn hàng
     public function returnedAction() {
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'returned'));
-        $this->flashMessenger()->addMessage('Xác nhận hoàn '.$result.' đơn hàng thành công');
+        $this->flashMessenger()->addSuccessMessage('Xác nhận hoàn '.$result.' đơn hàng thành công');
         $this->goRoute();
     }
 
     // Khóa đơn hàng
     public function lockAction() {
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'lock'));
-        $this->flashMessenger()->addMessage('Khóa '.$result.' đơn hàng thành công');
+        $this->flashMessenger()->addSuccessMessage('Khóa '.$result.' đơn hàng thành công');
         $this->goRoute();
     }
 
     // Mở khóa đơn hàng
     public function unlockAction() {
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'unlock'));
-        $this->flashMessenger()->addMessage('Mở khóa '.$result.' đơn hàng thành công');
+        $this->flashMessenger()->addSuccessMessage('Mở khóa '.$result.' đơn hàng thành công');
         $this->goRoute();
     }
 
     // đã Thanh toán giá vốn
     public function paidCostAction() {
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'paidcost'));
-        $this->flashMessenger()->addMessage('Đã xác nhận thanh toán giá vốn '.$result.' đơn hàng thành công');
+        $this->flashMessenger()->addSuccessMessage('Đã xác nhận thanh toán giá vốn '.$result.' đơn hàng thành công');
 //        $this->goRoute();
         $this->goUrl('/xreport/index/index/id/acounting/code/import/');
     }
@@ -3177,7 +3177,7 @@ class V1ContractController extends ActionController {
     // Chưa thanh toán giá vốn
     public function noPaidCostAction() {
         $result = $this->getTable()->saveItem($this->_params, array('task' => 'nopaidcost'));
-        $this->flashMessenger()->addMessage('Bỏ xác nhận thanh toán giá vốn '.$result.' đơn hàng thành công');
+        $this->flashMessenger()->addSuccessMessage('Bỏ xác nhận thanh toán giá vốn '.$result.' đơn hàng thành công');
 //        $this->goRoute();
         $this->goUrl('/xreport/index/index/id/acounting/code/import/');
     }
@@ -3205,7 +3205,7 @@ class V1ContractController extends ActionController {
                     $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                     $this->_params['item'] = $contract;
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-reduce'));
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -3249,7 +3249,7 @@ class V1ContractController extends ActionController {
                     $this->_params['item'] = $contract;
 
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-history-contract'));
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -3299,7 +3299,7 @@ class V1ContractController extends ActionController {
                     $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                     $this->_params['item'] = $contract;
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-shipping-fee'));
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -3346,7 +3346,7 @@ class V1ContractController extends ActionController {
                     $this->_params['data']['shipped_date'] = $dateFormat->formatToData($this->_params['data']['shipped_date']);
                     $this->_params['item'] = $contract;
                     $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-item'));
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }

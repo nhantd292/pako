@@ -258,7 +258,7 @@ class HistoryController extends ActionController {
 //                $result = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
 //
 //                $message = 'Xóa '. $result .' phần tử thành công';
-//                $this->flashMessenger()->addMessage($message);
+//                $this->flashMessenger()->addSuccessMessage($message);
 //            }
 //        }
 //

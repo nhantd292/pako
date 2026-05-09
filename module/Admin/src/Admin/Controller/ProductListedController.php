@@ -92,7 +92,7 @@ class ProductListedController extends ActionController {
                     $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                     $this->_params['data']['type'] = 'price';
                     $result = $this->getTable()->saveItem($this->_params, array('task' => 'add-item'));
-                    $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                     if($controlAction == 'save-new') {
                         $this->goRoute(array('action' => 'add'));
@@ -135,7 +135,7 @@ class ProductListedController extends ActionController {
                     $this->_params['item'] = $ProductListed;
                     $result = $this->getServiceLocator()->get('Admin\Model\ProductListedTable')->saveItem($this->_params, array('task' => 'edit-item'));
     
-                    $this->flashMessenger()->addMessage('Cập nhật dữ liệu thành công');
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;
                 }
@@ -160,7 +160,7 @@ class ProductListedController extends ActionController {
     public function deleteAction() {
         if($this->getRequest()->isPost()) {
             $contract_delete = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
-            $this->flashMessenger()->addMessage('Xóa thành công');
+            $this->flashMessenger()->addSuccessMessage('Xóa thành công');
             $this->goRoute();
         }
     }

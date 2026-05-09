@@ -98,10 +98,10 @@ class DataConfigController extends ActionController {
                 $this->_params['data']['type'] = 'auto_share_data';
                 if(!empty($this->_params['data']['user_branch_ids'])){
                     $this->getServiceLocator()->get('Admin\Model\DataConfigTable')->saveItem($this->_params, array('task' => $task));
-                    $this->flashMessenger()->addMessage('Dữ liệu đã được thêm thành công');
+                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được thêm thành công');
                 }
                 else{
-                    $this->flashMessenger()->addMessage('Chưa cấu hình nhân sự được chọn');
+                    $this->flashMessenger()->addSuccessMessage('Chưa cấu hình nhân sự được chọn');
                 }
 
                 if ($controlAction == 'save-new') {

@@ -8,7 +8,7 @@
 ?>
 <div class="box_login">
 	<div class="box_title">Đăng nhập</div>
-	<?php echo $this->flashMessenger()->render();?>
+	<?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
 	
     <div class="box_content">
     	<form class="login-form" action="" method="post">

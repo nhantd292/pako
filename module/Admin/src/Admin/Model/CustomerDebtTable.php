@@ -224,9 +224,11 @@ class CustomerDebtTable extends DefaultTable {
             try {
                 # cập nhật thu chi
                 $this->tableGateway->update($data, array('id' => $id));
-                # cập nhật amount_owed (nợ hiện tại) của khách hàng
-                $data_contact = array( 'id' => $customer_id, 'amount_owed' => $number->formatToData($arrData['new_debt']), );
-                $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+                if (isset($arrData['new_debt'])) {
+                    # cập nhật amount_owed (nợ hiện tại) của khách hàng
+                    $data_contact = array( 'id' => $customer_id, 'amount_owed' => $number->formatToData($arrData['new_debt']), );
+                    $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+                }
 
                 # cập nhật lại số liệu cho các phiếu thu chi phát sinh sau
                 $debt_item_new = $this->getItem(array('orders_id' => $debt_item_old->orders_id), array('task' => 'type-id'));
@@ -240,7 +242,6 @@ class CustomerDebtTable extends DefaultTable {
                         'old_debt' => $debt->old_debt + $change_value,
                         'new_debt' => $debt->new_debt + $change_value,
                     );
-
                     $this->saveItem(array('data' => $data_update), array('task' => 'update-value'));
 
                     $data_contact = array(

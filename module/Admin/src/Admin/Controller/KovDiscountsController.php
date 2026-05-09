@@ -127,7 +127,7 @@ class KovDiscountsController extends ActionController
 
                 if($check_emty_data){
                     $this->getTable()->saveItem($this->_params, array('task' => 'add-item'));
-                    $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                     if($controlAction == 'save-new') {
                         $this->goRoute(array('action' => 'add'));
@@ -205,7 +205,7 @@ class KovDiscountsController extends ActionController
 
                 if($check_emty_data){
                     $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
-                    $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                     if($controlAction == 'save-new') {
                         $this->goRoute(array('action' => 'add'));

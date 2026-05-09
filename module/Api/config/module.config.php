@@ -33,12 +33,20 @@ return array (
         'default_template_suffix'  	=> 'phtml',
         'layout'					=> 'layout/layout'
     ),
-    'view_helper_config' => array(
+//    'view_helper_config' => array(
+//        'flashmessenger' => array(
+//            'message_open_format' => '<div class="alert alert-block alert-danger"><button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button><p>',
+//            'message_close_string' => '</p></div>',
+//            'message_separator_string' => '',
+//        )
+//    ),
+
+        'view_helper_config' => array(
         'flashmessenger' => array(
-            'message_open_format' => '<div class="alert alert-block alert-success"><button type="button" class="close" data-dismiss="alert" aria-hidden="true"></button><p>',
-            'message_close_string' => '</p></div>',
-            'message_separator_string' => '',
-        )
+            'message_open_format'      => '<div %s><button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button><p>',
+            'message_close_string'     => '</p></div>',
+            'message_separator_string' => '</p><p>',
+        ),
     ),
 );
 

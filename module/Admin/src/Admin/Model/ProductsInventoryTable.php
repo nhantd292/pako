@@ -114,13 +114,14 @@ class ProductsInventoryTable extends DefaultTable {
 
         if($options['task'] == 'filter') {
             $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
-
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_INVENTORY .'.products_id', array( 'products_name' => 'name', 'products_code' => 'code' ), 'inner')
+                        -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_PRODUCTS_INVENTORY .'.warehouse_id', array( 'warehouse_name' => 'name' ), 'inner');
                 if(!empty($arrParam['products_id'])) {
-                    $select -> where -> equalTo('products_id', $arrParam['products_id']);
+                    $select -> where -> equalTo(TABLE_PRODUCTS_INVENTORY.'.products_id', $arrParam['products_id']);
                 }
 
                 if(!empty($arrParam['warehouse_id'])) {
-                    $select -> where -> equalTo('warehouse_id', $arrParam['warehouse_id']);
+                    $select -> where -> equalTo(TABLE_PRODUCTS_INVENTORY.'.warehouse_id', $arrParam['warehouse_id']);
                 }
 
             })->current();
@@ -163,12 +164,20 @@ class ProductsInventoryTable extends DefaultTable {
 
         if($options['task'] == 'edit-item') {
             $id = $arrData['id'];
-            $data	= array(
-                'products_id'       => $arrData['products_id'],
-                'warehouse_id'      => $arrData['warehouse_id'],
-                'quantity'          => $arrData['quantity'],
-                'location_text'     => $arrData['location_text'],
-            );
+
+            $data	= array();
+            if (isset($arrData['products_id'])) {
+                $data['products_id'] = $arrData['products_id'];
+            }
+            if (isset($arrData['warehouse_id'])) {
+                $data['warehouse_id'] = $arrData['warehouse_id'];
+            }
+            if (isset($arrData['quantity'])) {
+                $data['quantity'] = $number->formatToData($arrData['quantity']);
+            }
+            if (isset($arrData['location_text'])) {
+                $data['location_text'] = $arrData['location_text'];
+            }
 
             try {
                 $this->tableGateway->update($data, array('id' => $id));

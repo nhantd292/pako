@@ -181,7 +181,7 @@ class TargetController extends ActionController
                     }
                 }
 
-                $this->flashMessenger()->addMessage('Thêm mới danh sách thành công');
+                $this->flashMessenger()->addSuccessMessage('Thêm mới danh sách thành công');
                 $this->goRoute();
             }
         }

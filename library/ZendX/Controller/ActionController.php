@@ -252,7 +252,7 @@ class ActionController extends AbstractActionController {
             if(!empty($this->_params['data']['cid'])) {
                 $result = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
                 $message = 'Xóa '. $result .' phần tử thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
     
@@ -264,7 +264,7 @@ class ActionController extends AbstractActionController {
             if(!empty($this->_params['data']['cid']) && !empty($this->_params['data']['ordering'])) {
                 $result = $this->getTable()->changeOrdering($this->_params, array('task' => 'change-ordering'));
                 $message = 'Sắp xếp '. $result .' phần tử thành công';
-                $this->flashMessenger()->addMessage($message);
+                $this->flashMessenger()->addSuccessMessage($message);
             }
         }
     

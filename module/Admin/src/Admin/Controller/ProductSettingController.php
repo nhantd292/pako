@@ -106,7 +106,7 @@ class ProductSettingController extends ActionController
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $result = $this->getTable()->saveItem($this->_params, array('task' => $task));
 
-                $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
                 if ($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'form'));

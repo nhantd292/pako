@@ -114,7 +114,7 @@ class CoachController extends ActionController {
                 $this->_params['item'] = $item;
                 $result = $this->getTable()->saveItem($this->_params, array('task' => $task));
     
-                $this->flashMessenger()->addMessage('Dữ liệu đã được cập nhật thành công');
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
     
                 if($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'form'));

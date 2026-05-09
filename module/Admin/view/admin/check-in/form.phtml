@@ -67,7 +67,7 @@ $xhtml    = $this->partialLoop($this->params['module'] . '/partial/form-default.
         <div class="clearfix"></div>
     </div>
 
-    <?php echo $this->flashMessenger()->render(); ?>
+    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
     <?php echo @$this->xViewElementErrors($elements); ?>
 
     <div class="page-content">
