@@ -629,36 +629,37 @@ class ContractController extends ActionController {
                         'paid_transfer' => $paid_transfer,
                         'new_debt' => $new_debt,
                     );
-                    $debt_id = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'edit-item'));
-                    # cập nhật amount_owed (nợ hiện tại) của khách hàng
-                    $data_contact = array(
-                        'id' => $customer_id,
-                        'amount_owed' => $new_debt,
-                    );
-                    $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+//                    # cập nhật amount_owed (nợ hiện tại) của khách hàng
+//                    $data_contact = array(
+//                        'id' => $customer_id,
+//                        'amount_owed' => $new_debt,
+//                    );
+//                    $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
 
 
-                    $debt_item_new = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
-                    $value_new = $debt_item_new->price_total + $debt_item_new->discount + $debt_item_new->paid_cash + $debt_item_new->paid_transfer;
-
-                    # cập nhật lại số liệu cho các phiếu thu chi phát sinh sau
-                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('customer_id' => $customer_id, 'created' => $debt_item_old->created), array('task' => 'list-update'));
-                    $change_value = $value_old - $value_new;
-                    foreach ($list_debt as $debt) {
-                        $data_update = array(
-                            'id' => $debt->id,
-                            'old_debt' => $debt->old_debt + $change_value,
-                            'new_debt' => $debt->new_debt + $change_value,
-                        );
-
-                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_update), array('task' => 'update-value'));
-
-                        $data_contact = array(
-                            'id' => $customer_id,
-                            'amount_owed' => $debt->new_debt + $change_value,
-                        );
-                        $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
-                    }
+//                    # cập nhật lại số liệu cho các phiếu thu chi phát sinh sau
+//                    $debt_item_new = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+//                    $value_new = $debt_item_new->price_total + $debt_item_new->discount + $debt_item_new->paid_cash + $debt_item_new->paid_transfer;
+//
+//                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('customer_id' => $customer_id, 'created' => $debt_item_old->created), array('task' => 'list-update'));
+//                    $change_value = $value_old - $value_new;
+//                    foreach ($list_debt as $debt) {
+//                        $data_update = array(
+//                            'id' => $debt->id,
+//                            'old_debt' => $debt->old_debt + $change_value,
+//                            'new_debt' => $debt->new_debt + $change_value,
+//                        );
+//
+//                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_update), array('task' => 'update-value'));
+//
+//                        $data_contact = array(
+//                            'id' => $customer_id,
+//                            'amount_owed' => $debt->new_debt + $change_value,
+//                        );
+//                        $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+//                    }
                     $connection->commit();
                     ##### end #####
 

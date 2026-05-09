@@ -193,6 +193,10 @@ class CustomerDebtTable extends DefaultTable {
 	    }
 
         if($options['task'] == 'edit-item') {
+            $debt_item_old = $arrParam['item'];
+            $customer_id = $debt_item_old->customer_id;
+            $value_old = $debt_item_old->price_total + $debt_item_old->discount + $debt_item_old->paid_cash + $debt_item_old->paid_transfer;
+
             $id = $arrData['id'];
             $data	= array();
             if(isset($arrData['inventory_id'])) {
@@ -218,7 +222,34 @@ class CustomerDebtTable extends DefaultTable {
             }
 
             try {
+                # cập nhật thu chi
                 $this->tableGateway->update($data, array('id' => $id));
+                # cập nhật amount_owed (nợ hiện tại) của khách hàng
+                $data_contact = array( 'id' => $customer_id, 'amount_owed' => $number->formatToData($arrData['new_debt']), );
+                $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+
+                # cập nhật lại số liệu cho các phiếu thu chi phát sinh sau
+                $debt_item_new = $this->getItem(array('orders_id' => $debt_item_old->orders_id), array('task' => 'type-id'));
+                $value_new = $debt_item_new->price_total + $debt_item_new->discount + $debt_item_new->paid_cash + $debt_item_new->paid_transfer;
+
+                $list_debt = $this->listItem(array('customer_id' => $customer_id, 'created' => $debt_item_old->created), array('task' => 'list-update'));
+                $change_value = $value_old - $value_new;
+                foreach ($list_debt as $debt) {
+                    $data_update = array(
+                        'id' => $debt->id,
+                        'old_debt' => $debt->old_debt + $change_value,
+                        'new_debt' => $debt->new_debt + $change_value,
+                    );
+
+                    $this->saveItem(array('data' => $data_update), array('task' => 'update-value'));
+
+                    $data_contact = array(
+                        'id' => $customer_id,
+                        'amount_owed' => $debt->new_debt + $change_value,
+                    );
+                    $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+                }
+
                 return $id;
             } catch (\Exception $e) {
                 throw new \Exception('Update Customer Debt Table failed: ' . $e->getMessage());
@@ -246,6 +277,7 @@ class CustomerDebtTable extends DefaultTable {
                 'old_debt' => $arrData['old_debt'],
                 'new_debt' => $arrData['new_debt'],
             );
+
             try {
                 $this->tableGateway->update($data, array('id' => $id));
                 return $id;

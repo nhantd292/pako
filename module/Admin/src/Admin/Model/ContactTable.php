@@ -787,7 +787,7 @@ class ContactTable extends DefaultTable {
                 $this->tableGateway->update($data, array('id' => $id));
                 return $id;
             } catch (\Exception $e) {
-                throw new \Exception('Update Debt code failed: ' . $e->getMessage());
+                throw new \Exception('Update customer amount_owed failed: ' . $e->getMessage());
             }
         }
 
