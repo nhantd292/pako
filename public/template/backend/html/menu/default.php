@@ -202,6 +202,16 @@
                     <i class="fa fa-retweet"></i> <span class="title">Thu chi khách hàng</span><span class="arrow"></span>
                 </a>
             </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'customer-debt', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-retweet"></i> <span class="title">Công nợ phải thu</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'customer-debt', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-retweet"></i> <span class="title">Công nợ phải trả</span><span class="arrow"></span>
+                </a>
+            </li>
         </ul>
     </li>
     <li class="parent">
@@ -231,6 +241,7 @@
                     </li>
                 </ul>
             </li>
+            <li class="divider"></li>
             <li>
                 <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'products', 'action' => 'index'));?>" target="_self">
                     <i class="fa fa-sitemap"></i> <span class="title">Danh sách sản phẩm</span><span class="arrow"></span>
@@ -256,6 +267,22 @@
             <li>
                 <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'index'));?>" target="_self">
                     <i class="fa fa-file-text-o"></i> <span class="title">Đơn hàng</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract-detail', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-file-text-o"></i> <span class="title">Sản phẩm đã bán</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li class="divider"></li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'orders-return', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-file-text-o"></i> <span class="title">Phiếu KH trả hàng</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'orders-return-detail', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-file-text-o"></i> <span class="title">Sản phẩm KH trả hàng</span><span class="arrow"></span>
                 </a>
             </li>
 

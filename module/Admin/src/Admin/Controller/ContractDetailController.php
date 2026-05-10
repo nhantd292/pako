@@ -122,34 +122,6 @@ class ContractDetailController extends ActionController {
             }
         }
 
-        // Lấy danh mục sản phẩm cho vào bộ lọc
-        $categories = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/categories?pageSize=100&hierachicalData=true');
-        $categories = json_decode($categories, true)['data'];
-        $categories = $this->getNameCat($this->addNew($categories), $result);
-        $this->_params['categories'] = $categories;
-
-        // Lấy danh sách sản phẩm đưa vào bộ lọc
-        $products = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/products?pageSize=100');
-        $products = json_decode($products, true);
-        if($products['total'] < $products['pageSize']){
-            $product_data = \ZendX\Functions\CreateArray::create($products['data'], array('key' => 'id', 'value' => 'fullName'));
-        }
-        else{
-            $total = $products['total'];
-            $pageSize = $products['pageSize'];
-            $pageTotal = (int)($total / $pageSize) + 1;
-            $product_data = [];
-            for ($index = 0; $index < $pageTotal; $index++) {
-                $currentItem = $index * $pageSize;
-                $products = $this->kiotviet_call(RETAILER, $this->kiotviet_token,
-                    '/products?pageSize=100&currentItem=' . $currentItem);
-                $products = json_decode($products, true);
-                $product_data = array_merge($product_data, $products['data']);
-            }
-            $product_data = \ZendX\Functions\CreateArray::create($product_data, array('key' => 'id', 'value' => 'fullName'));
-        }
-        $this->_params['products'] = $product_data;
-
         $myForm	= new \Admin\Form\Search\ContractDetail($this, $this->_params);
         $myForm->setData($this->_params['ssFilter']);
 
