@@ -36,40 +36,24 @@
             $created        = $dateFormat->formatToView($item['created'], 'd/m/Y H:i:s');
             $cid            = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
             $ordering       = @$this->xFormInput('ordering['. $id .']', $item->ordering, array('class' => 'form-control input-xs'));
-            $created_by     = $this->user[$item->created_by]['name'];
-
+            $created_by             = $this->user[$item->created_by]['name'];
             $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
             
             // Link Action
-            $linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit', 'id' => $id));
+            $linkDetail   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail', 'id' => $id));
 
-            $controlEdit = $this->linkAdminHtml($linkEdit, array('type' => 'icon', 'title' => 'Sửa', 'class' => 'btn btn-xs yellow', 'icon' => 'fa fa-edit'));
-            $controlStatus = $this->linkAdminStatus($id, $item->status);
-            $controls = $controlStatus . $controlEdit;
-            if (!empty($item['orders_id'])) {
-                $link_category = '<a href="/xadmin/contract/detail/id/'.$item['orders_id'].'/" target="_blank"> '. $item['orders_code'] .'</a>';
-            }
-            if (!empty($item['orders_return_id'])) {
-                $link_category = '<a href="/xadmin/orders-return/detail/id/'.$item['orders_return_id'].'/" target="_blank"> '. $item['orders_return_code'] .'</a>';
-            }
             
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
     							<td class="text-center">'. $cid .'</td>
                                 <td class="text-center">'. $index .'</td>
-    							<td class="text-center">'. $item['code'] .'</td>
-    							<td class="text-bold">'.  $item['customer_name'] .'</td>
-    							<td class="text-center">'. $item['type'] .'</td>
-    							<td class="text-bold">'.$link_category.'</td>
-    							<td class="text-right mask_currency text-green">'. abs($item['price_total']) .'</td>
-    							<td class="text-right mask_currency text-purple">'. abs($item['discount']) .'</td>
-    							<td class="text-right mask_currency text-purple">'. abs($item['paid_cash']) .'</td>
-    							<td class="text-right mask_currency text-purple">'. abs($item['paid_transfer']) .'</td>
-    							<td class="text-right mask_currency text-orange">'. $item['old_debt'] .'</td>
-    							<td class="text-right mask_currency text-red">'. $item['new_debt'] .'</td>
-    							<td>'. $order_status .'</td>
-    							<td>'. $item['note'] .'</td>
+    							<td class="text-center text-bold"><a href="'. $linkDetail .'">'.  $item['code'] .'</a></td>
+    							<td class="text-center">'. $item['note'] .'</td>
+    							<td class="text-center">'.$created .'</td>
     							<td>'. $item['warehouse_name'] .'</td>
-    							<td>'. $created_by.'</br>'.$created .'</td>
+    							<td>'. $item['customer_name'] .'</td>
+    							<td class="text-right mask_currency">'. $item['price_total'] .'</td>
+    							<td>'. $created_by .'</td>
+    							<td class="text-center">'. $order_status .'</td>
     						</tr>';
         }
     }
@@ -78,20 +62,14 @@
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th width="20" class="table-checkbox text-center"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';;
     $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
-    $xhtmlHead .= '<th class="text-center" width="50">Mã phiếu</th>';
-    $xhtmlHead .= '<th width="150">Khách hàng</th>';
-    $xhtmlHead .= '<th width="130" >Loại phiếu</th>';
-    $xhtmlHead .= '<th width="130" >Danh mục</th>';
-    $xhtmlHead .= '<th width="50">Tổng tiền hàng</th>';
-    $xhtmlHead .= '<th width="50">Giảm giá</th>';
-    $xhtmlHead .= '<th width="50">Tiền mặt</th>';
-    $xhtmlHead .= '<th width="50">Chuyển khoản</th>';
-    $xhtmlHead .= '<th width="50">Nợ cũ</th>';
-    $xhtmlHead .= '<th width="50">Nợ lại</th>';
-    $xhtmlHead .= '<th width="100">Trạng thái</th>';
-    $xhtmlHead .= '<th width="100">Nội dung</th>';
-    $xhtmlHead .= '<th width="100">kho hàng</th>';
-    $xhtmlHead .= '<th width="15">Người tạo</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Mã</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">Mô tả</th>';
+    $xhtmlHead .= '<th class="text-center" width="130" class="text-center">Ngày trả</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">Kho nhập</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Khách hàng</th>';
+    $xhtmlHead .= '<th class="text-center" width="15">Tổng tiền hàng</th>';
+    $xhtmlHead .= '<th class="text-center" width="15">Người tạo</th>';
+    $xhtmlHead .= '<th class="text-center" width="15">Trạng thái</th>';
     $xhtmlHead .= '</tr>';
     
     // Control

@@ -103,6 +103,10 @@ define('TABLE_PRODUCTS_TYPE',       TABLE_PREFIX . 'products_type'); // Nhóm s�
 define('TABLE_PRODUCTS_INVENTORY',  TABLE_PREFIX . 'products_inventory'); // Tồn kho sản phẩm
 define('TABLE_PRODUCTS_PRICE',      TABLE_PREFIX . 'products_price'); // Bảng giá sản phẩm
 
+
+define('TABLE_ORDERS_RETURN',       TABLE_PREFIX . 'orders_return'); // Bảng khách hàng trả hàng
+define('TABLE_ORDERS_RETURN_DETAIL',TABLE_PREFIX . 'orders_return_detail'); // Bảng chi tiết khách hàng trả hàng
+
 // Quản lý kho sản phẩm
 define('TABLE_WAREHOUSE',       TABLE_PREFIX . 'warehouse'); // Kho hàng
 
@@ -156,8 +160,10 @@ define('COMPLETE_STATUS'  , 'complete');
 define('CANCEL_STATUS'        , 'cancel');
 
 define('KMH'    , 'KMH');
+define('KTH'    , 'KTH');
 
 define('CATEGORY_KMH'    , 'khach_mua_hang');
+define('CATEGORY_KTH'    , 'khach_tra_hang');
 
 
 

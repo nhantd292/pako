@@ -290,7 +290,53 @@ class ApiController extends ActionController {
             $viewModel->setTerminal(true);
             return $viewModel;
         }
+    }
 
+    public function loadKovProductsReturnAction() {
+        $itemPerpage = 20;
+        $curentPage = $this->_params['data']['curentPage'] ? $this->_params['data']['curentPage'] : 1;
+        $paginator = array(
+            'itemCountPerPage' => $itemPerpage,
+            'currentPageNumber' => $curentPage
+        );
+        $ssFilter = array(
+            'filter_contact_id' => $this->_params['data']['filter_contact_id'],
+            'filter_state' => 'complete',
+            'filter_numbers_return' => true,
+        );
+
+        if(!empty($this->_params['data']['filter_products_type']))
+            $ssFilter['filter_products_type'] = $this->_params['data']['filter_products_type'];
+        if(!empty($this->_params['data']['filter_keyword']))
+            $ssFilter['filter_keyword'] = $this->_params['data']['filter_keyword'];
+        if(!empty($this->_params['data']['filter_trademark']))
+            $ssFilter['filter_trademark'] = $this->_params['data']['filter_trademark'];
+
+        $param = array(
+            'paginator' => $paginator,
+            'ssFilter' => $ssFilter
+        );
+
+        $this->_viewModel['kovProducts'] = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem($param, array('task' => 'list-item'));
+        $this->_viewModel['count'] = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->countItem($param, array('task' => 'list-item'));
+        $this->_viewModel['itemPerpage'] = $itemPerpage;
+        $this->_viewModel['curentPage']  = $curentPage;
+        $this->_viewModel['contactId']  = $this->_params['data']['filter_contact_id'];
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+        return $viewModel;
+    }
+
+    public function addProductReturnToListAction() {
+        if($this->_params['data']['product_id']){
+            $product = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->getItem($this->_params['data'], array('task' => 'by-contract'));
+            $this->_viewModel['product'] = (array)$product;
+            $this->_viewModel['data'] = $this->_params['data'];
+            $viewModel = new ViewModel($this->_viewModel);
+            $viewModel->setTerminal(true);
+            return $viewModel;
+        }
     }
 
     public function checkGiftAction() {
@@ -514,7 +560,21 @@ class ApiController extends ActionController {
         if($this->getRequest()->isXmlHttpRequest()) {
             $contract_id = $this->_params['data']['contract_id'];
             $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contract_id), array('task' => 'list-ajax'));
-            $this->_viewModel['items'] = $items;$viewModel = new ViewModel($this->_viewModel);
+            $this->_viewModel['items'] = $items;
+            $viewModel = new ViewModel($this->_viewModel);
+            $viewModel->setTerminal(true);
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found'));
+        }
+        return $viewModel;
+    }
+
+    public function listProductReturnAction() {
+        if($this->getRequest()->isXmlHttpRequest()) {
+            $orders_return_id = $this->_params['data']['orders_return_id'];
+            $items = $this->getServiceLocator()->get('Admin\Model\OrdersReturnDetailTable')->listItem(array('orders_return_id' => $orders_return_id), array('task' => 'list-ajax'));
+            $this->_viewModel['items'] = $items;
+            $viewModel = new ViewModel($this->_viewModel);
             $viewModel->setTerminal(true);
         } else {
             return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found'));

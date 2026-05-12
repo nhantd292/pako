@@ -42,11 +42,12 @@ class CustomerDebtTable extends DefaultTable {
                         -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
                 }
 
-                $select -> order(array('created' => 'DESC'));
+                $select -> order(array('created' => 'DESC')); // lưu ý không được thay đổi
 
                 $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name'), 'inner')
-                        -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id'), 'inner')
-                        -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_CUSTOMER_DEBT .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner');
+                        -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id'), 'left')
+                        -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_CUSTOMER_DEBT .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner')
+                        -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array( 'orders_return_code' => 'code', 'orders_return_id' => 'id'), 'left');
 
     			
     			if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
@@ -259,10 +260,10 @@ class CustomerDebtTable extends DefaultTable {
 
         if ($options['task'] == 'update-code') {
             $id = $arrData['id'];
-            $debt_item = $this->getItem(array('id' => $id));
-            $debt_code = $action->createCode("P", $debt_item->index);
+            $item = $this->getItem(array('id' => $id));
+            $code = $action->createCode("P", $item->index);
             $data = array(
-                'code' => $debt_code,
+                'code' => $code,
             );
             try {
                 $this->tableGateway->update($data, array('id' => $id));

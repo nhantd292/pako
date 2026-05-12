@@ -327,6 +327,16 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_PRODUCTS_PRICE, $adapter, null);
                     return new \Admin\Model\ProductsPriceTable($tableGateway);
                 },
+                'Admin\Model\OrdersReturnTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_ORDERS_RETURN, $adapter, null);
+                    return new \Admin\Model\OrdersReturnTable($tableGateway);
+                },
+                'Admin\Model\OrdersReturnDetailTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_ORDERS_RETURN_DETAIL, $adapter, null);
+                    return new \Admin\Model\OrdersReturnDetailTable($tableGateway);
+                },
                 
                 // Khai báo xác thực đăng nhập
                 'AuthenticateService'	=> function ($sm) {
@@ -552,6 +562,11 @@ class Module {
                 'formAdminProductsInventory' => function($sm) {
                     $myForm	= new \Admin\Form\ProductsInventory($sm);
                     $myForm->setInputFilter(new \Admin\Filter\ProductsInventory());
+                    return $myForm;
+                },
+                'formAdminOrdersReturn' => function($sm) {
+                    $myForm	= new \Admin\Form\OrdersReturn($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\OrdersReturn());
                     return $myForm;
                 },
             )

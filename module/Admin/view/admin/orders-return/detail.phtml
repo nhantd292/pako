@@ -4,25 +4,19 @@ $debt_item = $this->debt_item;
 
 $elementsContact = array(
     array('section' => 'Thông tin khách hàng', 'boxClass' => 'col-md-12'),
-    array('element' => $this->item['name'], 'label' => 'Họ và tên', 'boxClass' => 'col-md-3'),
-    array('element' => $this->customer_type[$this->item['customer_type_id']]['name'], 'label' => 'Nhóm khách hàng', 'boxClass' => 'col-md-2'),
-    array('element' => $this->contact['phone'], 'label' => 'Số điện thoại', 'boxClass' => 'col-md-2'),
-    array('element' => $this->warehouse[$this->item['inventory_id']]['name'], 'label' => 'Kho hàng', 'boxClass' => 'col-md-2'),
-    array('element' => $this->item['sale_note'] ? $this->item['sale_note'] : '.', 'label' => 'Ghi chú', 'boxClass' => 'col-md-3'),
-    array('element' => $this->location_city[$this->item['location_city_id']]['name'], 'label' => 'Tỉnh thành', 'boxClass' => 'col-md-3'),
-    array('element' => $this->location_district[$this->item['location_district_id']]['name'], 'label' => 'Quận huyện', 'boxClass' => 'col-md-3'),
-    array('element' => $this->location_town[$this->item['location_town_id']]['name'], 'label' => 'Phường xã', 'boxClass' => 'col-md-3'),
-    array('element' => $this->item['address'], 'label' => 'Địa chỉ nơi ở', 'boxClass' => 'col-md-3')
+    array('element' => $this->item['name'], 'label' => 'Họ và tên', 'boxClass' => 'col-md-4'),
+    array('element' => $this->item['phone'], 'label' => 'Số điện thoại', 'boxClass' => 'col-md-4'),
+    array('element' => $this->customer_type[$this->item['customer_type_id']]['name'], 'label' => 'Nhóm khách hàng', 'boxClass' => 'col-md-4'),
+    array('element' => $this->warehouse[$this->item['inventory_id']]['name'], 'label' => 'Kho hàng', 'boxClass' => 'col-md-4'),
+    array('element' => $this->item['note'] ? $this->item['note'] : '.', 'label' => 'Mô tả', 'boxClass' => 'col-md-8'),
 );
 $elementsContract = array(
 
-    array('section' => 'Thông tin đơn hàng', 'boxClass' => 'col-md-12'),
-    array('element' => $this->item['code'], 'label' => 'Mã đơn hàng', 'boxClass' => 'col-md-2'),
-    array('element' => $dateFormat->formatToView($this->item['created'], 'd/m/Y H:i:s'), 'label' => 'Ngày tạo', 'boxClass' => 'col-md-2'),
-    array('element' => $this->user[$this->item['user_id']]['name'], 'label' => 'Người tạo', 'boxClass' => 'col-md-2'),
-    array('element' => $this->sale_group[$this->item['sale_group_id']]['name'], 'label' => 'Đội nhóm', 'boxClass' => 'col-md-2'),
-    array('element' => $this->sale_branch[$this->item['sale_branch_id']]['name'], 'label' => 'Cơ sở', 'boxClass' => 'col-md-2'),
-    array('element' => '<span class="text-orange">'.$this->order_status[$this->item['state']]->name.'</span> ', 'label' => 'Trạng thái', 'boxClass' => 'col-md-2'),
+    array('section' => 'Thông tin phiếu trả hàng', 'boxClass' => 'col-md-12'),
+    array('element' => $this->item['code'], 'label' => 'Mã phiếu', 'boxClass' => 'col-md-3'),
+    array('element' => $dateFormat->formatToView($this->item['created'], 'd/m/Y H:i:s'), 'label' => 'Ngày tạo', 'boxClass' => 'col-md-3'),
+    array('element' => $this->user[$this->item['created_by']]['name'], 'label' => 'Người tạo', 'boxClass' => 'col-md-3'),
+    array('element' => '<span class="text-orange">'.$this->order_status[$this->item['state']]->name.'</span> ', 'label' => 'Trạng thái', 'boxClass' => 'col-md-3'),
 );
 $elementsPrice = array(
     array('section' => 'Thông tin thanh toán', 'boxClass' => 'col-md-12'),
@@ -31,7 +25,7 @@ $elementsPrice = array(
     array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_transfer'] .'</span>', 'label' => 'Chuyển khoản (3)', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-purple">'. $this->item['discount'] .'</span>', 'label' => 'Giảm giá (4)', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-red">'. $debt_item->old_debt .'</span> ', 'label' => 'Nợ cũ (5)', 'boxClass' => 'col-md-4'),
-    array('element' => '<span class="mask_currency text-orange">'. $debt_item->new_debt .'</span> ', 'label' => 'Nợ lại:<span class="text-info text-bold" style="font-size: 10px;">5 + (1 - 2 - 3 - 4)-</span>', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-orange">'. $debt_item->new_debt .'</span> ', 'label' => 'Nợ lại:<span class="text-info text-bold" style="font-size: 10px;">5 - (1 - 2 - 3 - 4)</span>', 'boxClass' => 'col-md-4'),
 );
 $elementsProducts = array(
     array('section' => 'Danh sách sản phẩm của đơn hàng', 'boxClass' => 'col-md-12'),
@@ -92,5 +86,5 @@ $arrControl = in_array($this->item['state'], [CANCEL_STATUS, COMPLETE_STATUS]) ?
 </form>
 
 <?php $this->headScript()->captureStart() ?>
-    load_action('#load_product', '<?php echo $this->url('routeAdmin/default', array('controller' => 'api', 'action' => 'list-product'));?>', {contract_id: '<?php echo $this->item['id'];?>'});
+    load_action('#load_product', '<?php echo $this->url('routeAdmin/default', array('controller' => 'api', 'action' => 'list-product-return'));?>', {orders_return_id: '<?php echo $this->item['id'];?>'});
 <?php $this->headScript()->captureEnd() ?>

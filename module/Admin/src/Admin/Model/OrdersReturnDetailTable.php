@@ -5,7 +5,7 @@ use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Where;
 use Zend\Db\Sql\Expression;
 
-class ContractDetailTable extends DefaultTable {
+class OrdersReturnDetailTable extends DefaultTable {
 
     public function countItem($arrParam = null, $options = null){
 	    if($options['task'] == 'list-item') {
@@ -14,30 +14,30 @@ class ContractDetailTable extends DefaultTable {
                 
                 $select -> columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(1)')));
 
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
+                $select -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
 
-                $select -> order(array(TABLE_CONTRACT_DETAIL .'.contract_id' => 'DESC'));
+                $select -> order(array(TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id' => 'DESC'));
 
                 if(isset($ssFilter['filter_contact_id']) && $ssFilter['filter_contact_id'] != '') {
-                    $select->where->equalTo(TABLE_CONTRACT.'.contact_id', $ssFilter['filter_contact_id']);
+                    $select->where->equalTo(TABLE_ORDERS_RETURN.'.contact_id', $ssFilter['filter_contact_id']);
                 }
 
                 if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
-                    $select->where->equalTo(TABLE_CONTRACT.'.state', $ssFilter['filter_state']);
+                    $select->where->equalTo(TABLE_ORDERS_RETURN.'.state', $ssFilter['filter_state']);
                 }
 
                 if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] != true) {
-                    $select->where->greaterThan(TABLE_CONTRACT_DETAIL.'.numbers', TABLE_CONTRACT_DETAIL.'.numbers_return');
+                    $select->where->greaterThan(TABLE_ORDERS_RETURN_DETAIL.'.numbers', TABLE_ORDERS_RETURN_DETAIL.'.numbers_return');
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $filter_keyword = trim($ssFilter['filter_keyword']);
                     $select -> where -> NEST
-                        -> like(TABLE_CONTRACT. '.code', '%'. $filter_keyword .'%')
+                        -> like(TABLE_ORDERS_RETURN. '.code', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_CONTRACT_DETAIL. '.full_name', '%'. $filter_keyword .'%')
+                        -> like(TABLE_ORDERS_RETURN_DETAIL. '.full_name', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_CONTRACT_DETAIL. '.code', '%'. $filter_keyword .'%')
+                        -> like(TABLE_ORDERS_RETURN_DETAIL. '.code', '%'. $filter_keyword .'%')
                         -> UNNEST;
                 }
             })->current();
@@ -61,30 +61,30 @@ class ContractDetailTable extends DefaultTable {
                         -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
                 }
 
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
+                $select -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
 
-                $select -> order(array(TABLE_CONTRACT .'.created' => 'DESC'));
+                $select -> order(array(TABLE_ORDERS_RETURN .'.created' => 'DESC'));
 
                 if(isset($ssFilter['filter_contact_id']) && $ssFilter['filter_contact_id'] != '') {
-                    $select->where->equalTo(TABLE_CONTRACT.'.contact_id', $ssFilter['filter_contact_id']);
+                    $select->where->equalTo(TABLE_ORDERS_RETURN.'.contact_id', $ssFilter['filter_contact_id']);
                 }
 
                 if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
-                    $select->where->equalTo(TABLE_CONTRACT.'.state', $ssFilter['filter_state']);
+                    $select->where->equalTo(TABLE_ORDERS_RETURN.'.state', $ssFilter['filter_state']);
                 }
 
                 if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] != true) {
-                    $select->where->greaterThan(TABLE_CONTRACT_DETAIL.'.numbers', TABLE_CONTRACT_DETAIL.'.numbers_return');
+                    $select->where->greaterThan(TABLE_ORDERS_RETURN_DETAIL.'.numbers', TABLE_ORDERS_RETURN_DETAIL.'.numbers_return');
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $filter_keyword = trim($ssFilter['filter_keyword']);
                     $select -> where -> NEST
-                        -> like(TABLE_CONTRACT. '.code', '%'. $filter_keyword .'%')
+                        -> like(TABLE_ORDERS_RETURN. '.code', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_CONTRACT_DETAIL. '.full_name', '%'. $filter_keyword .'%')
+                        -> like(TABLE_ORDERS_RETURN_DETAIL. '.full_name', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_CONTRACT_DETAIL. '.code', '%'. $filter_keyword .'%')// mã sản phẩm
+                        -> like(TABLE_ORDERS_RETURN_DETAIL. '.code', '%'. $filter_keyword .'%')// mã sản phẩm
                         -> UNNEST;
                 }
     		});
@@ -95,11 +95,13 @@ class ContractDetailTable extends DefaultTable {
                 $date       = new \ZendX\Functions\Date();
 				$number     = new \ZendX\Functions\Number();
 
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code'), 'inner');
-                $select -> order(array(TABLE_CONTRACT_DETAIL .'.created' => 'DESC'));
+                $select -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id', array('contract_code' => 'code'), 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.product_id', array('products_code' => 'code', 'products_name' => 'name'), 'inner');
 
-                if(isset($arrParam['contract_id']) && $arrParam['contract_id'] != '') {
-                    $select->where->equalTo('contract_id', $arrParam['contract_id']);
+                $select -> order(array(TABLE_ORDERS_RETURN_DETAIL .'.created' => 'DESC'));
+
+                if(isset($arrParam['orders_return_id']) && $arrParam['orders_return_id'] != '') {
+                    $select->where->equalTo('orders_return_id', $arrParam['orders_return_id']);
                 }
     		});
 		}
@@ -121,9 +123,9 @@ class ContractDetailTable extends DefaultTable {
 
 		if($options['task'] == 'by-contract') {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
+                $select -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
 
-			    $select -> where -> equalTo('contract_id', $arrParam['contract_id']);
+			    $select -> where -> equalTo('orders_return_id', $arrParam['orders_return_id']);
 			    $select -> where -> equalTo('product_id', $arrParam['product_id']);
     		})->toArray();
 		}
@@ -133,26 +135,20 @@ class ContractDetailTable extends DefaultTable {
 	
 	public function saveItem($arrParam = null, $options = null){
         $arrData = $arrParam['data'];
-        $contract_id = $arrParam['contract_id'];
+        $orders_return_id = $arrParam['orders_return_id'];
 	    $gid     = new \ZendX\Functions\Gid();
 
         if($options['task'] == 'add-item') {
             $id = $gid->getId();
             $data = array(
-                'id'            => $id,
-                'contract_id'   => $contract_id,
-                'full_name'     => $arrData['full_name'],
-                'product_id'    => $arrData['product_id'],
-                'code'          => $arrData['code'],
-                'numbers'       => $arrData['numbers'],
-                'price'         => $arrData['price'],
-                'total'         => $arrData['total'],
-                'cost'          => $arrData['cost'],
-                'total_cost'    => $arrData['total_cost'],
-                'car_year'      => $arrData['car_year'],
-                'weight'        => $arrData['weight'],
-                'categoryId'    => $arrData['categoryId'],
-                'categoryName'  => $arrData['categoryName'],
+                'id'                => $id,
+                'quantity'          => $arrData['quantity'],
+                'price'             => $arrData['price'],
+                'price_total'       => $arrData['total'],
+                'note'              => $arrData['note'],
+                'orders_detail_id'  => $arrData['orders_detail_id'],
+                'orders_return_id'  => $orders_return_id,
+                'product_id'        => $arrData['product_id'],
 
                 'created'       => date('Y-m-d H:i:s'),
                 'created_by'    => $this->userInfo->getUserInfo('id'),
@@ -161,15 +157,14 @@ class ContractDetailTable extends DefaultTable {
             try {
                 $this->tableGateway->insert($data);
                 return $id;
-
             } catch (\Exception $e) {
-                throw new \Exception('Insert Contract Detail Table failed ('.$arrData['code'].'): ' . $e->getMessage());
+                throw new \Exception('Insert Orders return Detail Table failed ('.$arrData['code'].'): ' . $e->getMessage());
             }
         }
 
-        if($options['task'] == 'delete_product_by_contract_id') {
+        if($options['task'] == 'delete_product_by_orders_return_id') {
             try {
-                $sql_delete = "DELETE FROM ".TABLE_CONTRACT_DETAIL." WHERE ".TABLE_CONTRACT_DETAIL.".contract_id = '".$contract_id."'";
+                $sql_delete = "DELETE FROM ".TABLE_ORDERS_RETURN_DETAIL." WHERE ".TABLE_ORDERS_RETURN_DETAIL.".orders_return_id = '".$orders_return_id."'";
                 $this->tableGateway->getAdapter()->driver->getConnection()->execute($sql_delete);
             } catch (\Exception $e) {
                 throw new \Exception('Delete Contract Detail Table failed: ' . $e->getMessage());

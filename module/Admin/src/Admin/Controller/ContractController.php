@@ -479,7 +479,7 @@ class ContractController extends ActionController {
                     if($controlAction == 'save-new') {
                         $this->goRoute(array('action' => 'add-kov'));
                     } else if($controlAction == 'save') {
-                        $this->goRoute();
+                        $this->goRoute(array('action' => 'detail', 'id' => $contract_id));
                     } else {
                         $this->goRoute();
                     }

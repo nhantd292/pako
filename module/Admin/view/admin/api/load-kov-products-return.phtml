@@ -1,43 +1,41 @@
 <?php
-    $count = $this->count;
-    $itemPerpage = $this->itemPerpage;
-    $curentPage = $this->curentPage;
-    $textItemPerpage = $count > $itemPerpage ? $itemPerpage : $count;
-    $xhtml = '';
-    $show_infor = $count > 0 ? '<p class="page">Hiển thị '.$textItemPerpage.' / '.$count.' sản phẩm</p>' : 'Không có sản phẩm tìm kiếm';
+$count = $this->count;
+$itemPerpage = $this->itemPerpage;
+$curentPage = $this->curentPage;
+$textItemPerpage = $count > $itemPerpage ? $itemPerpage : $count;
+$xhtml = '';
+$show_infor = $count > 0 ? '<p class="page">Hiển thị '.$textItemPerpage.' / '.$count.' sản phẩm</p>' : 'Không có sản phẩm tìm kiếm';
 
-    if($count / $itemPerpage > 1){
-        $page = (int)($count / $itemPerpage);
-        if($count % $itemPerpage > 0)
-            $page = $page + 1;
+if($count / $itemPerpage > 1){
+    $page = (int)($count / $itemPerpage);
+    if($count % $itemPerpage > 0)
+        $page = $page + 1;
+}
+if($page > 1){
+    $pageText = '<ul class="pages">';
+    for($p = 1; $p <= $page; $p++){
+        $active = $p == $curentPage ? "active" : '';
+        $pageText .= '<li class="'.$active.'">'.$p.'</li>';
     }
-    if($page > 1){
-        $pageText = '<ul class="pages">';
-        for($p = 1; $p <= $page; $p++){
-            $active = $p == $curentPage ? "active" : '';
-            $pageText .= '<li class="'.$active.'">'.$p.'</li>';
-        }
-        $pageText .= '</ul>';
-    }
-    $xhtml .= '<div class="pagination">'.$show_infor.$pageText.'</div>';
-    $xhtml .= '<div class="listProduct" >';
-    foreach ($this->kovProducts as $pro) {
-        $image = unserialize($pro->images);
-        $xhtml .= '<div class="col-xl-2 col-sm-3 col-xs-6 item">
-                <div class="product col-xs-12" data-id="' . $pro->productId . '" data-branch-id="' . $pro->branch_id . '" product_return_id="' . $pro->id . '" number="' . $pro->quantity . '">
-                    <div class="img col-sm-3 col-xs-3">
-                        <img src="' . $image[0] . '" width="100%">
-                    </div>
-                    <div class="infor col-sm-9 col-xs-9">
-                        <p class="code-product text-bold">' . $pro->code .' <span class="text-green">('.$pro->contract_code. ')</span></p>
-                        <p class="name-product">' . $pro->fullName.': <br><span class="text-red">xe '.$pro->name_year . ' số lượng '.$pro->quantity.'</span></p>
-                        <p class="price-product">' . number_format($pro->basePrice) . '</p>
-                    </div>
+    $pageText .= '</ul>';
+}
+$xhtml .= '<div class="listProduct" >';
+foreach ($this->kovProducts as $pro) {
+    $xhtml .= '<div class="col-xl-2 col-sm-3 col-xs-6 item">
+            <div class="product col-xs-12" data-id= "' . $pro['id'] . '" data-product-id="' . $pro['product_id'] . '" data-contract-id="' . $pro['contract_id'] .'" >
+                <div class="infor col-sm-12 col-xs-12">
+                    <p class="name-product">' . $pro['full_name'] . '</p>
+                    <p class="code-product text-bold">Mã: ' . $pro['code'] .'</p>
+                    <p class="quantity-product">Đã bán: ' . $pro['numbers'] . '</p>
+                    <p class="price-product">Giá: ' . number_format($pro['price']) . '</p>
+                    <p class="contract-code">' . $pro['contract_code'] . '('.$pro['contract_date'].')</p>
                 </div>
-            </div>';
-    }
-    $xhtml .= '</div>';
-    echo $xhtml;
+            </div>
+        </div>';
+}
+$xhtml .= '</div>';
+$xhtml .= '<div class="pagination">'.$show_infor.$pageText.'</div>';
+echo $xhtml;
 
 ?>
 <style>
@@ -49,25 +47,22 @@
 </style>
 
 <script>
-    $('#loadProductsReturn .item .product').on('click', function () {
-        resetDiscounts();
+    $('#loadProducts .item .product').on('click', function () {
+        // resetDiscounts();
         var id = $(this).attr('data-id');
-        var branch_id = $(this).attr('data-branch-id');
-        var product_return_id = $(this).attr('product_return_id');
-        var numbers_return = $(this).attr('number');
+        var product_id = $(this).attr('data-product-id');
+        var contract_id = $(this).attr('data-contract-id');
         if ($('#tr_' + id).length) {
             var number = $('#tr_' + id).find('.numbers input').val();
-            if(number < numbers_return) {
-                var price = $('#tr_' + id).find('.price > input').val();
-                $('#tr_' + id).find('.numbers input').val(parseInt(number) + 1);
-                $('#tr_' + id).find('.total input').val(formatNumber(parseInt(unFormatNumber(price)) * (parseInt(unFormatNumber(number)) + 1)));
-                updateTotal()
-            }
+            var price = $('#tr_' + id).find('.price > input').val();
+            $('#tr_' + id).find('.numbers input').val(parseInt(number) + 1);
+            $('#tr_' + id).find('.total input').val(formatNumber(parseInt(unFormatNumber(price)) * (parseInt(unFormatNumber(number)) + 1)));
+            updateTotal()
         } else {
             $.ajax({
-                url: '/xadmin/api/add-product-to-list/',
+                url: '/xadmin/api/add-product-return-to-list/',
                 method: 'POST',
-                data: {id: id, branch_id: branch_id, product_return_id : product_return_id},
+                data: {product_id: product_id, contract_id: contract_id},
                 success: function (data) {
                     $('.list-product-contract').append(data);
                     format_to_money();
@@ -76,23 +71,12 @@
             })
         }
     });
-    $('#loadProductsReturn .pagination ul li').on('click', function () {
-        var curentPage = parseInt($(this).text());
-        var data = {categoriId: $(`select[name="kov_product_return_category"]`).val(), filter_keyword: $(`input[name="filter_keyword_return"]`).val(), curentPage : curentPage};
-        load_action('#loadProductsReturn', '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProductsReturn'));?>', data);
-    });
 
-    $("input[name='filter_keyword_return']").on('keydown', function (e) {
-        if (e.key === 'Enter' || e.keyCode === 13) {
-            var data = {categoriId: $(`select[name="kov_product_return_category"]`).val(), filter_keyword: $(this).val()};
-            load_action('#loadProductsReturn', '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProductsReturn'));?>', data);
-            return false;
-        }
-    });
-    // Load danh sach san pham theo doanh muc
-    $(`select[name="kov_product_return_category"]`).change(function () {
-        var data = {categoriId: $(this).val(), filter_keyword: $(`input[name="filter_keyword_return"]`).val()};
-        load_action('#loadProductsReturn', '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProductsReturn'));?>', data);
+    // Load sản phẩm khi chọn phân trang
+    $('#loadProducts .pagination ul li').on('click', function () {
+        var curentPage = parseInt($(this).text());
+        var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_contact_id: '<?php echo $this->contactId; ?>', curentPage : curentPage};
+        load_action('#loadProducts', '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProductsReturn'));?>', data);
     });
 
     $('body').delegate(".price > input , .numbers input",'change',function(e){
@@ -104,7 +88,49 @@
         updateTotal();
     });
 
-    $('body').delegate(".total_contract_vat input, .fee_other input, .total_contract_discount input",'change',function(e){
+    $('body').delegate(".show-price",'click',function(e){
+        $(this).parents('tr').find('.price-detail').show();
+    });
+    $('body').delegate(".close-price-detail",'click',function(e){
+        $(this).parents('tr').find('.price-detail').hide();
+    });
+
+    $('body').delegate("input.discount_value , input.unit_type",'change',function(e){
+        var tr_parent = $(this).parents('tr');
+        var numbers = unFormatNumber(tr_parent.find('.numbers input').val());
+        var price = unFormatNumber(tr_parent.find('input.listed_price').val());
+        var discount_value = unFormatNumber(tr_parent.find('input.discount_value').val());
+        var unit_type = unFormatNumber(tr_parent.find('input.unit_type:checked').val());
+        discount_value = discount_value.length ? discount_value : 0;
+        var sale_text
+        if(unit_type == 1)
+            sale_text = discount_value;
+        if(unit_type == 2)
+            sale_text = (price * discount_value / 100);
+        tr_parent.find('input.sale_text').val(formatNumber(price - sale_text));
+        tr_parent.find('input.base_price').val(formatNumber(price - sale_text));
+        tr_parent.find('.total input').val(formatNumber((price - sale_text) * numbers));
+        var unit = unit_type == 1 ? '' : ' %'
+        if(discount_value != 0) tr_parent.find('.show_discount').text('- '+formatNumber(discount_value)+ unit);
+        else tr_parent.find('.show_discount').text('');
+        updateTotal();
+    });
+
+    $('body').delegate("input.sale_text",'change',function(e){
+        var tr_parent = $(this).parents('tr');
+        var sale_text = unFormatNumber($(this).val());
+        var numbers   = unFormatNumber(tr_parent.find('.numbers input').val());
+        var listed_price    = unFormatNumber(tr_parent.find('.show-price').text());
+
+        tr_parent.find('input.base_price').val(formatNumber(sale_text));
+        tr_parent.find('.total input').val(formatNumber(sale_text * numbers));
+        if(sale_text != listed_price)
+            var op = sale_text - listed_price > 0 ? '+' : '';
+        tr_parent.find('.show_discount').text(op + formatNumber(sale_text - listed_price));
+        updateTotal();
+    });
+
+    $('body').delegate(".total_contract_vat input, .fee_other input, .total_contract_discount input, .price_deposits input",'change',function(e){
         updateTotal();
     });
 

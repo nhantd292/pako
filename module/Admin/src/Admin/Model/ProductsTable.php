@@ -270,7 +270,6 @@ class ProductsTable extends DefaultTable
                 ;
                 $select->where->equalTo(TABLE_PRODUCTS_INVENTORY.'.warehouse_id', $arrParam['warehouse_id']);
                 $select->where->equalTo(TABLE_PRODUCTS_PRICE.'.customer_type_id', $arrParam['customer_type_id']);
-
             })->current();
         }
 
@@ -319,7 +318,6 @@ class ProductsTable extends DefaultTable
             try {
                 $this->tableGateway->insert($data);
                 return $id;
-
             } catch (\Exception $e) {
                 throw new \Exception('Insert Products Table failed: ' . $e->getMessage());
             }
