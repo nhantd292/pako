@@ -82,12 +82,19 @@ class OrdersReturnTable extends DefaultTable {
 	
 		if($options == null) {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $select -> where -> equalTo(TABLE_ORDERS_RETURN.'.id', $arrParam['id']);
+    		})->current();
+		}
+
+        if($options['task'] == 'full') {
+            $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
                 $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_ORDERS_RETURN .'.customer_id', array( 'name','phone','customer_type_id'), 'inner')
-                    -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_ORDERS_RETURN .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner');
+                    -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_ORDERS_RETURN .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner')
+                    -> join(TABLE_CUSTOMER_DEBT, TABLE_CUSTOMER_DEBT .'.orders_return_id = '. TABLE_ORDERS_RETURN .'.id', array('old_debt', 'new_debt'), 'inner');
 
                 $select -> where -> equalTo(TABLE_ORDERS_RETURN.'.id', $arrParam['id']);
 
-    		})->current();
+            })->current();
 		}
 
         if($options['task'] == 'code') {
@@ -131,6 +138,8 @@ class OrdersReturnTable extends DefaultTable {
 
 	    if($options['task'] == 'add-item') {
 	        $id = $gid->getId();
+            $contract_options = array();
+            $contract_options['product']  = $arrData['contract_product'];
 
 	        $data	= array(
 	            'id'                => $id,
@@ -146,6 +155,7 @@ class OrdersReturnTable extends DefaultTable {
 	            'created_by'        => $this->userInfo->getUserInfo('id'),
                 'status'            => 1,
                 'ordering'          => 255,
+                'options'           => serialize($contract_options)
 	        );
 
             try {
@@ -160,19 +170,24 @@ class OrdersReturnTable extends DefaultTable {
 
         if($options['task'] == 'edit-item') {
             $id = $arrData['id'];
+
+            $contract_options['product']  = $arrData['contract_product'];
             $data	= array(
-                'name'              => $arrData['name'],
-                'code'              => $arrData['code'],
+                'customer_id'       => $arrData['customer_id'],
+                'inventory_id'      => $arrData['inventory_id'],
                 'note'              => $arrData['note'],
-                'percent'           => $arrData['percent'],
-                'ordering'          => $arrData['ordering'],
+                'price_total'       => $number->formatToData($arrData['price_total']),
+                'paid_cash'         => $number->formatToData($arrData['paid_transfer']),
+                'paid_transfer'     => $number->formatToData($arrData['paid_cash']),
+                'discount'          => $number->formatToData($arrData['discount']),
+                'options'           => serialize($contract_options)
             );
 
             try {
                 $this->tableGateway->update($data, array('id' => $id));
                 return $id;
             } catch (\Exception $e) {
-                throw new \Exception('Update Products Table failed: ' . $e->getMessage());
+                throw new \Exception('Update Orders Return Table failed: ' . $e->getMessage());
             }
         }
 	}

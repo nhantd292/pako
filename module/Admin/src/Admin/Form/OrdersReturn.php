@@ -96,7 +96,7 @@ class OrdersReturn extends Form
             'attributes'	=> array(
                 'class'		  => 'form-control text-red text-bold mask_currency',
                 'value'       => 0,
-                'data-value'  => null,
+                'data-value'  => isset($options->amount_owed) ? $options->amount_owed : null,
                 'readonly'    => 'readonly',
             )
         ));

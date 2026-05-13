@@ -232,7 +232,7 @@ class CustomerDebtTable extends DefaultTable {
                 }
 
                 # cập nhật lại số liệu cho các phiếu thu chi phát sinh sau
-                $debt_item_new = $this->getItem(array('orders_id' => $debt_item_old->orders_id), array('task' => 'type-id'));
+                $debt_item_new = $this->getItem(array('id' => $debt_item_old->id));
                 $value_new = $debt_item_new->price_total + $debt_item_new->discount + $debt_item_new->paid_cash + $debt_item_new->paid_transfer;
 
                 $list_debt = $this->listItem(array('customer_id' => $customer_id, 'created' => $debt_item_old->created), array('task' => 'list-update'));

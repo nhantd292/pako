@@ -36,7 +36,7 @@ $xhtmlContract = $this->partialLoop($this->params['module'] . '/partial/form-vie
 $xhtmlPrice = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementsPrice);
 $xhtmlProducts = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementsProducts);
 
-$linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit-kov', 'id' => $this->item['id']));
+$linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit', 'id' => $this->item['id']));
 $linkIndex  = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index'));
 
 $arrControlProcessing = $this->item['state'] == NEW_STATUS ? array(

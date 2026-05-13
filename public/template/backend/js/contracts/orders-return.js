@@ -46,6 +46,8 @@ function updateTotal() {
 
     $("input[name=price_total]").val(formatNumber(price_total))
     $("input[name=new_debt]").val(formatNumber(amount_owed - price_total + (paid_cash + paid_transfer + discount)))
+    console.log(amount_owed)
+    console.log(price_total)
 }
 
 function resetDiscounts() {

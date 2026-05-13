@@ -216,7 +216,7 @@ class OrdersReturnController extends ActionController{
         $id = $this->params('id');
         if($id) {
             $connection = $this->getConnection();
-            $item = $this->getTable()->getItem(array('id' => $id));
+            $item = $this->getTable()->getItem(array('id' => $id), array('task' => 'full'));
             $debt_item = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_return_id' => $id), array('task' => 'type-id'));
         } else {
             return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
@@ -322,44 +322,147 @@ class OrdersReturnController extends ActionController{
     }
 
     public function editAction() {
-        $myForm = $this->getForm();
-        $item_id = $this->params('id');
-        if (!empty($item_id)) {
-            $this->_params['data']['id'] = $item_id;
-            $item = $this->getTable()->getItem($this->_params['data']);
-            if (!empty($item)) {
-                if (!$this->getRequest()->isPost()) {
-                    $myForm->setData($item);
+        $this->_params['userInfo'] = $this->_userInfo->getUserInfo();
+        $number = new \ZendX\Functions\Number();
+        $dateFormat = new \ZendX\Functions\Date();
+        $connection = $this->getConnection();
+        $id = $this->params('id');
+
+        if(!empty($id)) {
+            $item = $this->getTable()->getItem(array('id' => $id), array('task' => 'full'));
+            if (in_array($item['state'], array(COMPLETE_STATUS, CANCEL_STATUS))) {
+                $state_text = $item['state'] == CANCEL_STATUS ? 'HỦY' : 'HOÀN THÀNH';
+                $this->flashMessenger()->addErrorMessage('Đơn hàng đã ở trạng thái "'.$state_text.'" không thể cập nhật dữ liệu!');
+                $this->goRoute(array('action' => 'detail', 'id' => $id));
+                return false;
+            }
+            $item['amount_owed'] = $item['old_debt'];
+            $orders_return_detail = $this->getServiceLocator()->get('Admin\Model\OrdersReturnDetailTable')->listItem(array('orders_return_id' => $id), array('task' => 'list-ajax'))->toArray();
+            $this->_viewModel['orders_return_detail']     = $orders_return_detail;
+
+            $myForm = new \Admin\Form\OrdersReturn($this, $item);
+            $myForm->setData($item);
+            $this->_viewModel['item']        = $item;
+        }
+        else {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'not-found'));
+        }
+
+        $customer_id = $item['customer_id'];
+        $contact_item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $customer_id));
+        if(empty($contact_item)){
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'not-found'));
+        }
+
+        if($this->getRequest()->isPost()){
+            $this->_viewModel['is_post'] = 1;
+            unset($this->_params['data']['filter_products_type']);
+            unset($this->_params['data']['filter_keyword']);
+
+            $myForm->setInputFilter(new \Admin\Filter\OrdersReturn(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
+            $myForm->setData($this->_params['data']);
+            $controlAction = $this->_params['data']['control-action'];
+            $productList = $this->_params['data']['contract_product'];
+
+            if($myForm->isValid()){
+                $contract_product = $this->_params['data']['contract_product'];
+                $check_emty_data = !empty($contract_product) ? true : false;
+
+                for ($i = 0; $i < count($contract_product['product_id']); $i++ ){
+                    if(
+                        trim($contract_product['product_id'][$i]) == "" ||
+                        trim($contract_product['price'][$i]) == "" ||
+                        trim($contract_product['contract_detail_id'][$i]) == "" ||
+                        (int)trim($contract_product['quantity'][$i]) == 0
+                    )$check_emty_data = false;
+                }
+
+                if($check_emty_data){
+                    $products_detail  = array();
+                    $total_number_product = 0;
+                    for($i = 0; $i < count($contract_product['product_id']); $i++){
+                        if(!empty($contract_product['product_id'][$i])) {
+                            $products_detail[$i]['note']            = $contract_product['note'][$i]; // Tên đầy đủ
+                            $products_detail[$i]['quantity']         = $number->formatToData($contract_product['quantity'][$i]); // số lượng của đơn hàng
+                            $products_detail[$i]['price']            = $number->formatToData($contract_product['price'][$i]); // giá bán
+                            $products_detail[$i]['total']            = $number->formatToData($contract_product['total'][$i]); // tổng tiền (chính là cột thành tiền)
+                            $products_detail[$i]['product_id']       = $contract_product['product_id'][$i]; // id sản phẩm
+                            $products_detail[$i]['orders_detail_id'] = $contract_product['contract_detail_id'][$i]; // Tên xe năm sản xuất
+
+                            $total_number_product += $number->formatToData($contract_product['quantity'][$i]);
+                        }
+                    }
+
+                    $this->_params['data']['customer_id'] = $customer_id;
+                    $this->_params['data']['total_number_product'] = $total_number_product;
+                    $this->_params['data']['total_product'] = count($products_detail);
+                    $this->_params['data']['contract_product'] = $products_detail;
+
+                    ##### begin #####
+                    $connection->beginTransaction();
+
+                    # cập phiếu trả hàng
+                    $orders_return_id = $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
+
+                    $this->_params['item'] = $contact_item;
+                    // Xóa chi tiết sản phẩm
+                    $this->getServiceLocator()->get('Admin\Model\OrdersReturnDetailTable')->saveItem(array('orders_return_id' => $id), array('task' => 'delete_product_by_orders_return_id'));
+                    // Thêm chi tiết sản phẩm
+                    foreach($products_detail as $arraydata){
+                        $this->getServiceLocator()->get('Admin\Model\OrdersReturnDetailTable')->saveItem(array('data' => $arraydata, 'orders_return_id' => $orders_return_id), array('task' => 'add-item'));
+                    }
+                    # tạo phiếu thu cho khách hàng
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_return_id' => $id), array('task' => 'type-id'));
+
+                    $discount       = $number->formatToData($this->_params['data']['discount']);
+                    $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
+                    $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
+                    $price_total    = $number->formatToData($this->_params['data']['price_total']);
+                    $new_debt       = $debt_item_old->old_debt - ($price_total - $discount - $paid_cash - $paid_transfer);
+                    $data_debt = array(
+                        'id' => $debt_item_old->id,
+                        'inventory_id' => $this->_params['data']['inventory_id'],
+                        'price_total' => $price_total,
+                        'discount' => -$discount,
+                        'paid_cash' => -$paid_cash,
+                        'paid_transfer' => -$paid_transfer,
+                        'new_debt' => $new_debt,
+                    );
+                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                    $connection->commit();
+                    ##### end #####
+
+                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
+
+
+                    if($controlAction == 'save-new') {
+                        $this->goRoute(array('action' => 'add'));
+                    } else if($controlAction == 'save') {
+                        $this->goRoute(array('action' => 'detail', 'id' => $orders_return_id));
+                    } else {
+                        $this->goRoute();
+                    }
+                }
+                else{
+                    $this->_viewModel['check_product_id'] = 'Cần nhập đầy đủ thông tin của sản phẩm';
+                    $this->_viewModel['productList'] = $this->_params['data']['contract_product'];
+                    $this->_viewModel['data']  = $this->_params['data'];
                 }
             }
             else {
-                return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'not-found'));
+                $this->_viewModel['productList']  = $productList;
+                $this->_viewModel['data']  = $this->_params['data'];
             }
         }
-        if ($this->getRequest()->isPost()) {
-            $myForm->setInputFilter(new \Admin\Filter\CustomerType());
-            $myForm->setData($this->_params['data']);
-            $controlAction = $this->_params['data']['control-action'];
-
-            if ($myForm->isValid()) {
-                $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
-                $this->_params['item'] = $item;
-                $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
-                $this->flashMessenger()->addSuccessMessage($this->caption.' đã được cập nhật');
-
-                if($controlAction == 'save-new') {
-                    $this->goRoute(array('action' => 'add'));
-                } else if($controlAction == 'save') {
-                    $this->goRoute(array('action' => 'edit', 'id' => $item_id));
-                } else {
-                    $this->goRoute();
-                }
-            }
+        else{
+            $this->_viewModel['is_post'] = 0;
         }
 
-        $this->_viewModel['myForm']     = $myForm;
-        $this->_viewModel['item']       = $item;
-        $this->_viewModel['caption']    = 'Sửa - '.$this->caption;
+        $this->_viewModel['contactId']      = $customer_id;
+        $this->_viewModel['products_type']  = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
+        $this->_viewModel['myForm']	        = $myForm;
+        $this->_viewModel['caption']        = 'Thêm mới - '.$this->caption;
         return new ViewModel($this->_viewModel);
     }
 
