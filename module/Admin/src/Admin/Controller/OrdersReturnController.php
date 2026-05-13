@@ -233,7 +233,7 @@ class OrdersReturnController extends ActionController{
                     $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
 
                     # cập nhật trạng thái phiếu thu
-                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_return_id' => $id), array('task' => 'type-id'));
                     $data_debt = array(
                         'id' => $debt_item_old->id,
                         'state' => PROCESSING_STATUS,
@@ -241,7 +241,7 @@ class OrdersReturnController extends ActionController{
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     $connection->commit();
-                    $this->flashMessenger()->addSuccessMessage('Phiếu trả hàng chuyển sang trạng thái "ĐANG XỬ LÝ"');
+                    $this->flashMessenger()->addSuccessMessage('Phiếu trả hàng đã chuyển sang trạng thái "ĐANG XỬ LÝ"');
                 }
                 if ($control_action == CANCEL_STATUS) {
                     ##### begin #####
@@ -250,7 +250,7 @@ class OrdersReturnController extends ActionController{
                     $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => CANCEL_STATUS)), array('task' => 'update-state'));
 
                     # Sửa phiếu thu chi khách hàng
-                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_return_id' => $id), array('task' => 'type-id'));
                     $data_debt = array(
                         'id' => $debt_item_old->id,
                         'price_total' => 0,
@@ -272,21 +272,25 @@ class OrdersReturnController extends ActionController{
                     $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => COMPLETE_STATUS)), array('task' => 'update-state'));
 
                     # cập nhật tồn kho cho sản phẩm.
-                    $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
+                    $products_detail = $this->getServiceLocator()->get('Admin\Model\OrdersReturnDetailTable')->listItem(array('orders_return_id' => $id), array('task' => 'list-ajax'));
                     foreach ($products_detail as $detail_item) {
-                        $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $item['inventory_id']), array('task' => 'filter'));
-                        $quantity_new = $inventory->quantity - $detail_item->numbers;
-                        if ($quantity_new < 0) {
-                            $this->flashMessenger()->addErrorMessage('Số lượng sản phẩm "'.$inventory->products_name.'" trong kho "'.$inventory->warehouse_name.'" không đủ!');
+                        // cập nhật số lượng hàng trả cho bảng contract detail
+                        $contract_detail_item_update = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->getItem(array('id' => $detail_item['orders_detail_id']));
+                        $number_return_new = $contract_detail_item_update['numbers_return'] + $detail_item['quantity'];
+                        $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem(array('data' => array('id' => $detail_item['orders_detail_id'], 'numbers_return' => $number_return_new)), array('task' => 'update-number'));
+
+                        if ($detail_item['quantity'] > $detail_item['contract_detail_quantity']) {
+                            $this->flashMessenger()->addErrorMessage('Số lượng sản phẩm "'.$detail_item['products_name'].'" trả lại nhiều hơn số lượng đã mua, số lượng mua là "'.$detail_item['contract_detail_quantity'].'" !');
                             $this->goRoute(array('action' => 'detail', 'id' => $id));
                             return false;
                         }
-
+                        $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $item->inventory_id), array('task' => 'filter'));
+                        $quantity_new = $inventory->quantity + $detail_item->quantity;
                         $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
                     }
 
                     # Sửa phiếu thu chi khách hàng
-                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_return_id' => $id), array('task' => 'type-id'));
                     $data_debt = array(
                         'id' => $debt_item_old->id,
                         'state' => COMPLETE_STATUS,
@@ -294,6 +298,7 @@ class OrdersReturnController extends ActionController{
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     $connection->commit();
+                    $this->flashMessenger()->addSuccessMessage('Phiếu trả hàng đã được hoàn thành!');
                 }
 
 

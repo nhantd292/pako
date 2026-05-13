@@ -26,8 +26,8 @@ class ContractDetailTable extends DefaultTable {
                     $select->where->equalTo(TABLE_CONTRACT.'.state', $ssFilter['filter_state']);
                 }
 
-                if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] != true) {
-                    $select->where->greaterThan(TABLE_CONTRACT_DETAIL.'.numbers', TABLE_CONTRACT_DETAIL.'.numbers_return');
+                if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] == 1) {
+                    $select->where->expression(TABLE_CONTRACT_DETAIL . '.numbers > ' . TABLE_CONTRACT_DETAIL . '.numbers_return',array());
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
@@ -73,9 +73,10 @@ class ContractDetailTable extends DefaultTable {
                     $select->where->equalTo(TABLE_CONTRACT.'.state', $ssFilter['filter_state']);
                 }
 
-                if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] != true) {
-                    $select->where->greaterThan(TABLE_CONTRACT_DETAIL.'.numbers', TABLE_CONTRACT_DETAIL.'.numbers_return');
+                if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] == 1) {
+                    $select->where->expression(TABLE_CONTRACT_DETAIL . '.numbers > ' . TABLE_CONTRACT_DETAIL . '.numbers_return',array());
                 }
+
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $filter_keyword = trim($ssFilter['filter_keyword']);
@@ -164,6 +165,20 @@ class ContractDetailTable extends DefaultTable {
 
             } catch (\Exception $e) {
                 throw new \Exception('Insert Contract Detail Table failed ('.$arrData['code'].'): ' . $e->getMessage());
+            }
+        }
+        if($options['task'] == 'update-number') {
+            $id = $arrData['id'];
+            $data = array(
+                'numbers_return' => $arrData['numbers_return'],
+            );
+
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return $id;
+
+            } catch (\Exception $e) {
+                throw new \Exception('update number return failed ('.$arrData['$id'].'): ' . $e->getMessage());
             }
         }
 

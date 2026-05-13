@@ -121,6 +121,20 @@ class OrdersReturnTable extends DefaultTable {
 	    $gid      = new \ZendX\Functions\Gid();
         $action   = new \ZendX\Controller\ActionController();
 
+        if ($options['task'] == 'update-state') {
+            $id = $arrData['id'];
+            $data = array();
+            if (isset($arrData['state'])) {
+                $data['state'] = $arrData['state'];
+            }
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Update orders return state failed: ' . $e->getMessage());
+            }
+        }
+
         if ($options['task'] == 'update-code') {
             $id = $arrData['id'];
             $item = $this->getItem(array('id' => $id));

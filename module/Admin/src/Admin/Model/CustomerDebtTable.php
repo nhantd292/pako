@@ -237,19 +237,21 @@ class CustomerDebtTable extends DefaultTable {
 
                 $list_debt = $this->listItem(array('customer_id' => $customer_id, 'created' => $debt_item_old->created), array('task' => 'list-update'));
                 $change_value = $value_old - $value_new;
-                foreach ($list_debt as $debt) {
-                    $data_update = array(
-                        'id' => $debt->id,
-                        'old_debt' => $debt->old_debt + $change_value,
-                        'new_debt' => $debt->new_debt + $change_value,
-                    );
-                    $this->saveItem(array('data' => $data_update), array('task' => 'update-value'));
+                if ($change_value != 0) {
+                    foreach ($list_debt as $debt) {
+                        $data_update = array(
+                            'id' => $debt->id,
+                            'old_debt' => $debt->old_debt + $change_value,
+                            'new_debt' => $debt->new_debt + $change_value,
+                        );
+                        $this->saveItem(array('data' => $data_update), array('task' => 'update-value'));
 
-                    $data_contact = array(
-                        'id' => $customer_id,
-                        'amount_owed' => $debt->new_debt + $change_value,
-                    );
-                    $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+                        $data_contact = array(
+                            'id' => $customer_id,
+                            'amount_owed' => $debt->new_debt + $change_value,
+                        );
+                        $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
+                    }
                 }
 
                 return $id;

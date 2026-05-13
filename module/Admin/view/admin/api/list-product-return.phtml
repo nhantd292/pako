@@ -14,6 +14,7 @@
     // Head
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th class="text-center">STT</th>';
+    $xhtmlHead .= '<th class="text-center">Đơn hàng</th>';
     $xhtmlHead .= '<th class="text-center">Mã sản phẩm</th>';
     $xhtmlHead .= '<th>Tên Sản phẩm</th>';
     $xhtmlHead .= '<th>Ghi chú</th>';
@@ -29,6 +30,7 @@
         foreach ($this->items AS $item) {
             $xhtmlItems .= '<tr>
     							<td class="text-center">'. $index++.'</td>
+    							<td class="text-center">'. $item->contract_code.'</td>
     							<td class="text-center">'. $item->products_code.'</td>
     							<td>'. $item->products_name.'</td>
     							<td>'. $item->note.'</td>

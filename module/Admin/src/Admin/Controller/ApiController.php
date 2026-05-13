@@ -302,7 +302,7 @@ class ApiController extends ActionController {
         $ssFilter = array(
             'filter_contact_id' => $this->_params['data']['filter_contact_id'],
             'filter_state' => 'complete',
-            'filter_numbers_return' => true,
+            'filter_numbers_return' => 1,
         );
 
         if(!empty($this->_params['data']['filter_products_type']))

@@ -18,6 +18,7 @@
     $xhtmlHead .= '<th>Tên Sản phẩm</th>';
     $xhtmlHead .= '<th>Tên xe năm sản xuất</th>';
     $xhtmlHead .= '<th class="text-center">Số Lượng</th>';
+    $xhtmlHead .= '<th class="text-center">Số Lượng khách trả lại</th>';
     $xhtmlHead .= '<th class="text-right">Giá bán</th>';
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
     $xhtmlHead .= '<th class="text-right">Khối lượng</th>';
@@ -34,6 +35,7 @@
     							<td>'. $item->full_name.'</td>
     							<td>'. $item->car_year.'</td>
     							<td class="text-center"><span class="mask_currency">'. $item->numbers .'</span></td>
+    							<td class="text-center"><span class="mask_currency">'. $item->numbers_return .'</span></td>
     							<td class="text-right"><span class="mask_currency">'. $item->price .'</span></td>
     							<td class="text-right"><span class="mask_currency">'. $item->total .'</span></td>
     							<td class="text-right"><span class="mask_currency">'. $item->weight .'</span></td>
