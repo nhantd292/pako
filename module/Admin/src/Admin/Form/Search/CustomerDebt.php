@@ -58,60 +58,68 @@ class CustomerDebt extends Form
             )
         ));
 
-        // Phân loại ngày tìm kiếm
+        // Loại phiếu
         $this->add(array(
-            'name' => 'filter_date_type',
-            'type' => 'Select',
-            'attributes' => array(
-                'class' => 'form-control select2 select2_basic',
-                'value' => 'date'
-            ),
-            'options' => array(
-                'value_options' => array('date' => 'Ngày tiếp nhận', 'created' => 'Ngày tạo', 'history_created' => 'Ngày chăm sóc', 'history_return' => 'Ngày hẹn chăm sóc lại', 'date_return' => 'Hẹn test/đăng ký'),
-            )
-        ));
-
-        // Cơ sở
-        $this->add(array(
-            'name' => 'filter_sale_branch',
+            'name' => 'filter_type',
             'type' => 'Select',
             'attributes' => array(
                 'class' => 'form-control select2 select2_basic',
             ),
             'options' => array(
-                'empty_option' => '- Cơ sở -',
-                'value_options' => \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+                'empty_option' => '- Loại phiếu -',
+                'value_options' => \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
             )
         ));
 
-        $data_filter = array(
-            'company_department_id' => 'marketing',
-            'sale_branch_id' => $params['filter_sale_branch'],
-            'sale_group_id' => $params['filter_sale_group'],
-        );
+        // Danh mục
         $this->add(array(
-            'name'			=> 'filter_marketer_id',
+            'name' => 'filter_category',
+            'type' => 'Select',
+            'attributes' => array(
+                'class' => 'form-control select2 select2_basic',
+            ),
+            'options' => array(
+                'empty_option' => '- Danh mục -',
+                'value_options' => \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
+            )
+        ));
+
+        $this->add(array(
+            'name'			=> 'filter_inventory_id',
             'type'			=> 'Select',
             'attributes'	=> array(
                 'class'		=> 'form-control select2 select2_basic',
             ),
             'options'		=> array(
-                'empty_option'	=> '- Nhân viên marketing -',
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\UserTable')->listItem($data_filter, array('task' => 'list-user-department')), array('key' => 'id', 'value' => 'name')),
-            )
-        ));
-
-        // Nhóm sản phẩm quan tâm
-        $this->add(array(
-            'name'			=> 'filter_product_group_id',
-            'type'			=> 'Select',
-            'attributes'	=> array(
-                'class'		=> 'form-control select2 select2_basic',
-            ),
-            'options'		=> array(
-                'empty_option'	=> '- Sản phẩm quan tâm -',
+                'empty_option'	=> '- Kho hàng -',
                 'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'product-group')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            ),
+        ));
+
+        $this->add(array(
+            'name'			=> 'filter_state',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Trạng thái -',
+                'disable_inarray_validator' => true,
+                'value_options' => \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
+            ),
+        ));
+
+        $this->add(array(
+            'name'       => 'filter_customer_id',
+            'type'       => 'Text',
+            'attributes'   => array(
+                'class'             => 'form-control select2_advance',
+                'id'                => 'customer_id',
+                'data-placeholder'  => 'Khách hàng',
+                'data-table'        => TABLE_CONTACT,
+                'data-text'         => 'name, phone',
+                'data-where-status' => 1,
             )
         ));
 

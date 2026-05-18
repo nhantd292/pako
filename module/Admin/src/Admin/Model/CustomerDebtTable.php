@@ -36,6 +36,8 @@ class CustomerDebtTable extends DefaultTable {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
                 $paginator = $arrParam['paginator'];
                 $ssFilter  = $arrParam['ssFilter'];
+                $date       = new \ZendX\Functions\Date();
+                $number     = new \ZendX\Functions\Number();
 
                 if(!isset($options['paginator']) || $options['paginator'] == true) {
                     $select -> limit($paginator['itemCountPerPage'])
@@ -49,13 +51,36 @@ class CustomerDebtTable extends DefaultTable {
                         -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_CUSTOMER_DEBT .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner')
                         -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array( 'orders_return_code' => 'code', 'orders_return_id' => 'id'), 'left');
 
-    			
-    			if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
-    			    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.status', $ssFilter['filter_status']);
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select->where->greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select->where->lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                }
+
+    			if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
+    			    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.state', $ssFilter['filter_state']);
+    			}
+
+    			if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
+    			    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.type', $ssFilter['filter_type']);
+    			}
+
+    			if(isset($ssFilter['filter_category']) && $ssFilter['filter_category'] != '') {
+    			    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.category', $ssFilter['filter_category']);
     			}
 
                 if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.customer_id', $ssFilter['filter_customer_id']);
+                }
+
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
     			
     			if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
@@ -119,22 +144,27 @@ class CustomerDebtTable extends DefaultTable {
 
         if($options['task'] == 'type-id') {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name', 'customer_phone' => 'phone', 'customer_type_id'), 'inner');
+
+                if(!empty($arrParam['id'])) {
+                    $select -> where -> equalTo(TABLE_CUSTOMER_DEBT.'.id', $arrParam['id']);
+                }
                 if(!empty($arrParam['orders_id'])) {
-                    $select -> where -> equalTo('orders_id', $arrParam['orders_id']);
+                    $select -> where -> equalTo(TABLE_CUSTOMER_DEBT.'.orders_id', $arrParam['orders_id']);
                 }
                 if(!empty($arrParam['orders_return_id'])) {
-                    $select -> where -> equalTo('orders_return_id', $arrParam['orders_return_id']);
+                    $select -> where -> equalTo(TABLE_CUSTOMER_DEBT.'.orders_return_id', $arrParam['orders_return_id']);
                 }
                 if(!empty($arrParam['warehouse_input_id'])) {
-                    $select -> where -> equalTo('warehouse_input_id', $arrParam['warehouse_input_id']);
+                    $select -> where -> equalTo(TABLE_CUSTOMER_DEBT.'.warehouse_input_id', $arrParam['warehouse_input_id']);
                 }
                 if(!empty($arrParam['warehouse_output_id'])) {
-                    $select -> where -> equalTo('warehouse_output_id', $arrParam['warehouse_output_id']);
+                    $select -> where -> equalTo(TABLE_CUSTOMER_DEBT.'.warehouse_output_id', $arrParam['warehouse_output_id']);
                 }
 
     		})->current();
 		}
-		
+
 		return $result;
 	}
 	
@@ -171,6 +201,7 @@ class CustomerDebtTable extends DefaultTable {
                 'type_transaction'      => $arrData['type_transaction'],
                 'category'              => $arrData['category'],
                 'state'                 => $arrData['state'],
+                'note'                 => $arrData['note'],
 
 	            'created'               => date('Y-m-d H:i:s'),
 	            'created_by'            => $this->userInfo->getUserInfo('id'),

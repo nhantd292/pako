@@ -1,0 +1,60 @@
+<?php
+    $myForm = $this->myForm;
+    $myForm->prepare();
+    
+    $arrControl = array(
+        array('name' => 'save', 'caption' => 'Lưu', 'link' => 'javascript:;', 'icon' => 'fa-check', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save\');', 'class' => 'btn')),
+        array('name' => 'save-new', 'caption' => 'Lưu &amp; Mới', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save-new\');', 'class' => 'btn')),
+        array('name' => 'save-close', 'caption' => 'Lưu &amp; Đóng', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save-close\');', 'class' => 'btn')),
+        array('name' => 'close', 'caption' => 'Hủy', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn')),
+    );
+    
+    $elements = array(
+        array('section' => 'Khách hàng', 'boxClass' => 'col-md-12'),
+        array('div' => '', 'boxClass' => 'col-md-12', 'id' => 'form_section', 'boxId' => 'result_check_contact'),
+        array('element' => $myForm->get('customer_id'), 'label' => 'Tên khách hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('category'), 'label' => 'Danh mục', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('inventory_id'), 'label' => 'Kho hàng thu', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('note'), 'label' => 'Nội dung', 'validate' => array('require' => true), 'boxClass' => 'col-md-12')
+    );
+
+$xhtmlTop = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+
+    $elementsBottom = array(
+        array('section' => 'Tiền thu', 'boxClass' => 'col-md-12'),
+        array('element' => $myForm->get('paid_cash'), 'label' => 'Thu tiền mặt', 'validate' => array('require' => true), 'boxClass' => 'col-md-6'),
+        array('element' => $myForm->get('paid_transfer'), 'label' => 'Thu Chuyển khoản', 'validate' => array('require' => true), 'boxClass' => 'col-md-6'),
+        array('element' => $myForm->get('amount_owed'), 'label' => 'Nợ cũ', 'boxClass' => 'col-md-6'),
+        array('element' => $myForm->get('new_debt'), 'label' => 'Nợ lại', 'boxClass' => 'col-md-6'),
+        array('element' => $myForm->get('id'), 'validate' => array('require' => true)),
+    );
+    $xhtmlBottom = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elementsBottom);
+?>
+
+<form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm" class="">
+    <div class="page-control">
+    	<div class="title pull-left">
+    		<?php echo $this->caption;?>
+    	</div>
+    	<div class="control pull-right">
+			<?php echo $this->partial($this->params['module'] . '/partial/control-default.phtml', array( 'control' => $arrControl )); ?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
+	<?php echo @$this->xViewElementErrors($elements);?>
+	
+    <div class="page-content">
+    	<div class="row" id="info_data">
+            <div class="col-md-8">
+                <?php echo $xhtmlTop;?>
+            </div>
+            <div class="col-md-4">
+                <?php echo $xhtmlBottom;?>
+            </div>
+		</div>
+	</div>
+</form>
+
+<?php $this->HeadScript()->appendFile('/public/template/backend/js/contracts/revenue.js','text/javascript');?>

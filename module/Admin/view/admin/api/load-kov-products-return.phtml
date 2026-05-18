@@ -26,7 +26,7 @@ foreach ($this->kovProducts as $pro) {
                 <div class="infor col-sm-12 col-xs-12">
                     <p class="name-product">' . $pro['full_name'] . '</p>
                     <p class="code-product text-bold">Mã: ' . $pro['code'] .'</p>
-                    <p class="quantity-product">Đã bán: ' . $pro['numbers'] . '</p>
+                    <p class="quantity-product">Đã bán: ' . ($pro['numbers'] - $pro['numbers_return']) . '</p>
                     <p class="price-product">Giá: ' . number_format($pro['price']) . '</p>
                     <p class="contract-code">' . $pro['contract_code'] . '('.$pro['contract_date'].')</p>
                 </div>

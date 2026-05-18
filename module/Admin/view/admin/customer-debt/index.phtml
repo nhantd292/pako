@@ -9,12 +9,16 @@
     $userInfo = new \ZendX\System\UserInfo();
     $curent_user = $userInfo->getUserInfo();
     $permission_ids = explode(',', $curent_user['permission_ids']);
-    
-    if(count($myForm->get('filter_sale_branch')->getValueOptions()) == 1) {
-        $myForm->get('filter_sale_branch')->setEmptyOption('');
-    }
+
     $elements = array(
-        array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_state'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_inventory_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_category'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_customer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('order')),
@@ -41,11 +45,17 @@
             $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
             
             // Link Action
-            $linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit', 'id' => $id));
+            $detail_revenue_url   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail-revenue', 'id' => $id));
+            $detail_expense_url   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail-expense', 'id' => $id));
 
-            $controlEdit = $this->linkAdminHtml($linkEdit, array('type' => 'icon', 'title' => 'Sửa', 'class' => 'btn btn-xs yellow', 'icon' => 'fa fa-edit'));
-            $controlStatus = $this->linkAdminStatus($id, $item->status);
-            $controls = $controlStatus . $controlEdit;
+            if ($item['type'] == THU)
+                $linkDetail = '<a href="'.$detail_revenue_url.'"> '. $item['code'] .'</a>';
+            elseif ($item['type'] == CHI)
+                $linkDetail = '<a href="'.$detail_expense_url.'"> '. $item['code'] .'</a>';
+            else
+                $linkDetail = $item['code'];
+
+            $link_category = '';
             if (!empty($item['orders_id'])) {
                 $link_category = '<a href="/xadmin/contract/detail/id/'.$item['orders_id'].'/" target="_blank"> '. $item['orders_code'] .'</a>';
             }
@@ -56,10 +66,10 @@
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
     							<td class="text-center">'. $cid .'</td>
                                 <td class="text-center">'. $index .'</td>
-    							<td class="text-center">'. $item['code'] .'</td>
-    							<td class="text-bold">'.  $item['customer_name'] .'</td>
-    							<td class="text-center">'. $item['type'] .'</td>
-    							<td class="text-bold">'.$link_category.'</td>
+    							<td class="text-center text-bold">'.$linkDetail.'</td>
+    							<td class="">'.  $item['customer_name'] .'</td>
+    							<td class="text-center">'. $this->debt_type[$item['type']] .'</td>
+    							<td>'.$this->debt_category[$item['category']].'</br><span class="">'.$link_category.'</span></td>
     							<td class="text-right mask_currency text-green">'. abs($item['price_total']) .'</td>
     							<td class="text-right mask_currency text-purple">'. abs($item['discount']) .'</td>
     							<td class="text-right mask_currency text-purple">'. abs($item['paid_cash']) .'</td>
@@ -79,24 +89,25 @@
     $xhtmlHead .= '<th width="20" class="table-checkbox text-center"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';;
     $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Mã phiếu</th>';
-    $xhtmlHead .= '<th width="150">Khách hàng</th>';
-    $xhtmlHead .= '<th width="130" >Loại phiếu</th>';
-    $xhtmlHead .= '<th width="130" >Danh mục</th>';
-    $xhtmlHead .= '<th width="50">Tổng tiền hàng</th>';
-    $xhtmlHead .= '<th width="50">Giảm giá</th>';
-    $xhtmlHead .= '<th width="50">Tiền mặt</th>';
-    $xhtmlHead .= '<th width="50">Chuyển khoản</th>';
-    $xhtmlHead .= '<th width="50">Nợ cũ</th>';
-    $xhtmlHead .= '<th width="50">Nợ lại</th>';
-    $xhtmlHead .= '<th width="100">Trạng thái</th>';
-    $xhtmlHead .= '<th width="100">Nội dung</th>';
-    $xhtmlHead .= '<th width="100">kho hàng</th>';
-    $xhtmlHead .= '<th width="15">Người tạo</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">Khách hàng</th>';
+    $xhtmlHead .= '<th class="text-center" width="130" >Loại phiếu</th>';
+    $xhtmlHead .= '<th class="text-center" width="130" >Danh mục</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Tổng tiền hàng</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Giảm giá</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Tiền mặt</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Chuyển khoản</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Nợ cũ</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Nợ lại</th>';
+    $xhtmlHead .= '<th class="text-center" width="100">Trạng thái</th>';
+    $xhtmlHead .= '<th class="text-center" width="100">Nội dung</th>';
+    $xhtmlHead .= '<th class="text-center" width="100">kho hàng</th>';
+    $xhtmlHead .= '<th class="text-center" width="15">Người tạo</th>';
     $xhtmlHead .= '</tr>';
     
     // Control
     $arrControl = array(
-        array( 'name' => 'add', 'caption' => 'Thêm', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn', ) ),
+        array( 'name' => 'add-expense', 'caption' => 'Thêm phiếu chi', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add-expense')), 'icon' => 'fa-minus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn red', ) ),
+        array( 'name' => 'add-revenue', 'caption' => 'Thêm phiếu thu', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add-revenue')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn green', ) ),
         array(
             'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
             'children' => array(
@@ -118,6 +129,8 @@
 		<div class="clearfix"></div>
 	</div>
     <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
+    <?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
+    <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
     <div class="page-filter">
     	<div class="row">
     		<?php echo $xhtmlFilter;?>

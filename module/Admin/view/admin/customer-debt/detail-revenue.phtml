@@ -1,0 +1,71 @@
+<?php
+$dateFormat = new \ZendX\Functions\Date();
+
+$elementsContact = array(
+    array('section' => 'Thông tin khách hàng', 'boxClass' => 'col-md-12'),
+    array('element' => $this->item['customer_name'], 'label' => 'Họ và tên', 'boxClass' => 'col-md-4'),
+    array('element' => $this->item['customer_phone'], 'label' => 'Số điện thoại', 'boxClass' => 'col-md-4'),
+    array('element' => $this->customer_type[$this->item['customer_type_id']]['name'], 'label' => 'Nhóm khách hàng', 'boxClass' => 'col-md-4'),
+    array('element' => $this->warehouse[$this->item['inventory_id']]['name'], 'label' => 'Kho hàng thu', 'boxClass' => 'col-md-4'),
+    array('element' => $this->item['note'] ? $this->item['note'] : '.', 'label' => 'Mô tả', 'boxClass' => 'col-md-8'),
+);
+$elementsContract = array(
+    array('section' => 'Thông tin phiếu thu', 'boxClass' => 'col-md-12'),
+    array('element' => $this->item['code'], 'label' => 'Mã phiếu', 'boxClass' => 'col-md-3'),
+    array('element' => $dateFormat->formatToView($this->item['created'], 'd/m/Y H:i:s'), 'label' => 'Ngày tạo', 'boxClass' => 'col-md-3'),
+    array('element' => $this->user[$this->item['created_by']]['name'], 'label' => 'Người tạo', 'boxClass' => 'col-md-3'),
+    array('element' => '<span class="text-orange">'.$this->order_status[$this->item['state']]->name.'</span> ', 'label' => 'Trạng thái', 'boxClass' => 'col-md-3'),
+);
+$elementsPrice = array(
+    array('section' => 'Thông tin thanh toán', 'boxClass' => 'col-md-12'),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_cash'] .'</span>', 'label' => 'Thu tiền mặt (1)', 'boxClass' => 'col-md-6'),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_transfer'] .'</span>', 'label' => 'Thu chuyển khoản (2)', 'boxClass' => 'col-md-6'),
+    array('element' => '<span class="mask_currency text-red">'. $this->item['old_debt'] .'</span> ', 'label' => 'Nợ cũ (3)', 'boxClass' => 'col-md-6'),
+    array('element' => '<span class="mask_currency text-orange">'. $this->item['new_debt'] .'</span> ', 'label' => 'Nợ lại:<span class="text-info text-bold" style="font-size: 10px;">3 - (1 + 2)</span>', 'boxClass' => 'col-md-6'),
+);
+
+$xhtmlContact = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementsContact);
+$xhtmlContract = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementsContract);
+$xhtmlPrice = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementsPrice);
+
+$linkIndex  = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index'));
+
+
+$arrControlAction = array(
+    array('name' => 'save-new', 'caption' => 'Hủy phiếu thu', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'cancel\', \' Bạn có chắc chắn muốn hủy đơn hàng\');', 'class' => 'btn red')),
+    array('name' => 'save-close', 'caption' => 'Hoàn thành phiếu thu', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành đơn hàng\');', 'class' => 'btn green')),
+);
+$arrControlDefault = array(
+    array('name' => 'edit', 'caption' => 'Đóng', 'link' => $linkIndex, 'onclick' => '', 'icon' => 'fa fa-pencil', 'attributes' => array('class' => 'btn default'))
+);
+$arrControl = in_array($this->item['state'], [CANCEL_STATUS, COMPLETE_STATUS]) ? $arrControlDefault : array_merge($arrControlAction, $arrControlDefault);
+?>
+
+<form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm" class="">
+    <div class="page-control">
+        <div class="title pull-left">
+            <?php echo $this->caption;?>
+        </div>
+        <div class="control pull-right">
+            <?php echo $this->partial($this->params['module'] . '/partial/control-default.phtml', array( 'control' => $arrControl )); ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
+    <?php echo $this->flashMessenger()->renderCurrent('success', array('alert', 'alert-success')); ?>
+
+    <div class="page-content">
+        <div class="row">
+            <div class="col-md-12">
+                <?php echo $xhtmlContract;?>
+            </div>
+            <div class="col-md-8">
+                <?php echo $xhtmlContact;?>
+            </div>
+            <div class="col-md-4">
+                <?php echo $xhtmlPrice;?>
+            </div>
+        </div>
+    </div>
+</form>

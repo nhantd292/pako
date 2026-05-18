@@ -426,7 +426,7 @@ var Form = function () {
         });
 
         $("input.select2_advance").select2({
-        	placeholder: "- Chọn -",
+        	placeholder: $(this).attr('data-placeholder') ? $(this).attr('data-placeholder') : "- Chọn -",
         	ajax: {
         		quietMillis: 300,
         		transport: function (params) {
@@ -504,6 +504,50 @@ var Form = function () {
             	return data.text;
             },
 			escapeMarkup: function (markup) { return markup; },
+        }).on('change', function(e) {
+            var $this = $(this);
+            var targetSelector = $this.data('target');
+            var ajaxUrl = $this.data('url');
+
+            // Chỉ chạy nếu phần tử Select2 được cấu hình thuộc tính data-target và data-url
+            if (targetSelector && ajaxUrl) {
+                var $targetInput = $(targetSelector);
+                var selectedId = e.val; // Lấy ID của đối tượng vừa chọn từ sự kiện Select2 v3
+
+                if (!selectedId) {
+                    $targetInput.val(0);
+                    if ($targetInput.hasClass('mask_currency')) {
+                        $targetInput.autoNumeric('set', 0);
+                    }
+                    return;
+                }
+
+                $.ajax({
+                    url: ajaxUrl,
+                    type: 'POST',
+                    dataType: 'json',
+                    data: { id: selectedId },
+                    beforeSend: function() {
+                        $targetInput.val('...');
+                    },
+                    success: function(response) {
+                        if (response.success) {
+                            // Tự động nhận diện nếu ô đích sử dụng plugin định dạng tiền tệ autoNumeric
+                            if ($targetInput.hasClass('mask_currency') && typeof $.fn.autoNumeric === 'function') {
+                                $targetInput.autoNumeric('set', response.value);
+                            } else {
+                                $targetInput.val(response.value);
+                            }
+                        } else {
+                            $targetInput.val(0);
+                        }
+                    },
+                    error: function() {
+                        console.log('Lỗi AJAX khi lấy dữ liệu cho target: ' + targetSelector);
+                        $targetInput.val(0);
+                    }
+                });
+            }
         });
         
         $(".select2_user").select2({

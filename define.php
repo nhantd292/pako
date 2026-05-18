@@ -159,6 +159,8 @@ define('PROCESSING_STATUS'  , 'processing');
 define('COMPLETE_STATUS'  , 'complete');
 define('CANCEL_STATUS'        , 'cancel');
 
+define('THU'    , 'REVENUE');
+define('CHI'    , 'EXPENSE');
 define('KMH'    , 'KMH');
 define('KTH'    , 'KTH');
 

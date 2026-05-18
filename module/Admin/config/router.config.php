@@ -51,19 +51,19 @@ $routeAdmin = array(
                 'defaults' => array ()
             )
         ),
-        'notify' => array(
-            'type' => 'Segment',
-            'options' => array (
-                'route' => '/[:controller[/:action[/nid/:nid[/type/:type]]]][/]',
-                'constraints' => array (
-                    'controller'    => '[a-zA-Z0-9_-]*',
-                    'action'        => '[a-zA-Z0-9_-]*',
-                    'id'            => '[a-zA-Z0-9_-]*',
-                    'code'          => '[a-zA-Z0-9_-]*',
-                ),
-                'defaults' => array ()
-            )
-        ),
+//        'notify' => array(
+//            'type' => 'Segment',
+//            'options' => array (
+//                'route' => '/[:controller[/:action[/nid/:nid[/type/:type]]]][/]',
+//                'constraints' => array (
+//                    'controller'    => '[a-zA-Z0-9_-]*',
+//                    'action'        => '[a-zA-Z0-9_-]*',
+//                    'id'            => '[a-zA-Z0-9_-]*',
+//                    'code'          => '[a-zA-Z0-9_-]*',
+//                ),
+//                'defaults' => array ()
+//            )
+//        ),
         'paginator' => array(
             'type' => 'Segment',
             'options' => array (
