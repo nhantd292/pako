@@ -164,8 +164,8 @@ define('CHI'    , 'EXPENSE');
 define('KMH'    , 'KMH');
 define('KTH'    , 'KTH');
 
-define('CATEGORY_KMH'    , 'khach_mua_hang');
-define('CATEGORY_KTH'    , 'khach_tra_hang');
+define('CATEGORY_KMH'    , 'khach-hang-mua-hang');
+define('CATEGORY_KTH'    , 'khach-hang-tra-hang');
 
 
 

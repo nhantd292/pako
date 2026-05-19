@@ -7,11 +7,11 @@ use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
 use Zend\Form\FormInterface;
 
-class ContractDetailController extends ActionController {
+class OrdersReturnDetailController extends ActionController {
     
     public function init() {
         // Thiết lập options
-        $this->_options['tableName'] = 'Admin\Model\ContractDetailTable';
+        $this->_options['tableName'] = 'Admin\Model\OrdersReturnDetailTable';
         $this->_options['formName'] = 'formAdminContractDetail';
         
         // Thiết lập session filter
@@ -104,93 +104,39 @@ class ContractDetailController extends ActionController {
     public function indexAction() {
         $ssFilter = new Container(__CLASS__.'index');
         // Phân quyền view
-        $curent_user = $this->_userInfo->getUserInfo();
-        $permission_ids = explode(',', $curent_user['permission_ids']);
-        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(MANAGER, $permission_ids)){
-            if(in_array(GDCN, $permission_ids) || in_array(SALEADMIN, $permission_ids)){
-                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
-                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
-            }
-            elseif (in_array(GROUP_SALES_LEADER, $permission_ids)){
-                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
-                $this->_params['ssFilter']['filter_sale_group'] = $curent_user['sale_group_id'];
-                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
-                $ssFilter->filter_sale_group = $curent_user['filter_sale_group'];
-            }
-            else{
-                $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
-            }
-        }
+//        $curent_user = $this->_userInfo->getUserInfo();
+//        $permission_ids = explode(',', $curent_user['permission_ids']);
+//        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(MANAGER, $permission_ids)){
+//            if(in_array(GDCN, $permission_ids) || in_array(SALEADMIN, $permission_ids)){
+//                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
+//                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
+//            }
+//            elseif (in_array(GROUP_SALES_LEADER, $permission_ids)){
+//                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
+//                $this->_params['ssFilter']['filter_sale_group'] = $curent_user['sale_group_id'];
+//                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
+//                $ssFilter->filter_sale_group = $curent_user['filter_sale_group'];
+//            }
+//            else{
+//                $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
+//            }
+//        }
 
-        $myForm	= new \Admin\Form\Search\ContractDetail($this, $this->_params);
+        $myForm	= new \Admin\Form\Search\BaseSearch($this->getServiceLocator(), $this->_params);
         $myForm->setData($this->_params['ssFilter']);
 
         $this->_viewModel['myForm']	                = $myForm;
         $this->_viewModel['items']                  = $this->getTable()->listItem($this->_params, array('task' => 'list-item'));
+//        echo "<pre>";
+//        print_r($this->_viewModel['items']->toArray());
+//        echo "</pre>";
+//        exit;
         $this->_viewModel['count']                  = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
         $this->_viewModel['user']                   = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['sale_group']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
         $this->_viewModel['sale_branch']            = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
         $this->_viewModel['order_status']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-
-        $this->_viewModel['status_check']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghtk-status')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-        $this->_viewModel['status_accounting']      = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status-acounting')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-        $this->_viewModel['status_sales']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-        $this->_viewModel['caption']                = 'Sản phẩm đơn hàng';
-        
-        return new ViewModel($this->_viewModel);
-    }
-    
-    // Danh sách
-    public function productsAction() {
-        $ssFilter = new Container(__CLASS__.'products');
-        $param_search_product = 'pageSize=100&includeInventory=true';
-        if($this->_params['ssFilter']['filter_product']){
-            $param_search_product = $param_search_product.'&name='.$this->_params['ssFilter']['filter_product'];
-        }
-        $products = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/products?'.$param_search_product);
-        $products = json_decode($products, true);
-        if($products['total'] < $products['pageSize']){
-            $product_data = $products['data'];
-        }
-        else{
-            $total = $products['total'];
-            $pageSize = $products['pageSize'];
-            $pageTotal = (int)($total / $pageSize) + 1;
-            $product_data = [];
-            for ($index = 0; $index < $pageTotal; $index++) {
-                $currentItem = $index * $pageSize;
-                $products = $this->kiotviet_call(RETAILER, $this->kiotviet_token,
-                    '/products?'.$param_search_product.'&currentItem=' . $currentItem);
-                $products = json_decode($products, true);
-                $product_data = array_merge($product_data, $products['data']);
-            }
-        }
-        $result_data = [];
-        foreach($product_data as $key => $value){
-            $result_data[$value['id']]['code'] = $value['code'];
-            $result_data[$value['id']]['name'] = $value['fullName'];
-            $result_data[$value['id']]['onHand'] = $value['inventories'][0]['onHand'];
-        }
-
-        $products_order = $this->getTable()->listItem(['query' => 'SELECT product_id, SUM(numbers) as quantity FROM x_contract_detail GROUP BY product_id order by quantity DESC'], array('task' => 'list-query'));
-        foreach($products_order as $key => $value){
-            if(array_key_exists($value['product_id'], $result_data))
-                $result_data[$value['product_id']]['order'] = $value['quantity'];
-        }
-
-        $products_ghtk = $this->getTable()->listItem(['query' => 'SELECT product_id, SUM(numbers) as quantity FROM x_contract_detail INNER JOIN x_contract ON x_contract_detail.contract_id = x_contract.id WHERE x_contract.shipped = 1 GROUP BY product_id order by quantity DESC'], array('task' => 'list-query'));
-        foreach($products_ghtk as $key => $value){
-            if(array_key_exists($value['product_id'], $result_data))
-                $result_data[$value['product_id']]['ghtk'] = $value['quantity'];
-        }
-
-        $myForm	= new \Admin\Form\Search\ContractDetail($this, $this->_params);
-        $myForm->setData($this->_params['ssFilter']);
-
-        $this->_viewModel['myForm']	                = $myForm;
-        $this->_viewModel['items']                  = $result_data;
-        $this->_viewModel['caption']                = 'Báo cáo sản phẩm';
+        $this->_viewModel['caption']                = 'Sản phẩm khách trả hàng';
         
         return new ViewModel($this->_viewModel);
     }

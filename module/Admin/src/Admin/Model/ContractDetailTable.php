@@ -61,7 +61,7 @@ class ContractDetailTable extends DefaultTable {
                         -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
                 }
 
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
+                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_id' => 'id', 'contract_code' => 'code', 'contract_date'=> 'date', 'state'), 'inner');
 
                 $select -> order(array(TABLE_CONTRACT .'.created' => 'DESC'));
 

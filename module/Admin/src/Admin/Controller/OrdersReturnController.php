@@ -20,8 +20,12 @@ class OrdersReturnController extends ActionController{
         $ssFilter = new Container(__CLASS__ . $this->_params['action']);
         $this->_params['ssFilter']['order_by']                  = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'ordering';
         $this->_params['ssFilter']['order']                     = !empty($ssFilter->order) ? $ssFilter->order : 'DESC';
-        $this->_params['ssFilter']['filter_status']             = $ssFilter->filter_status;
+        $this->_params['ssFilter']['filter_state']              = $ssFilter->filter_state;
         $this->_params['ssFilter']['filter_keyword']            = $ssFilter->filter_keyword;
+        $this->_params['ssFilter']['filter_date_begin']         = $ssFilter->filter_date_begin;
+        $this->_params['ssFilter']['filter_date_end']           = $ssFilter->filter_date_end;
+        $this->_params['ssFilter']['filter_inventory_id']       = $ssFilter->filter_inventory_id;
+        $this->_params['ssFilter']['filter_customer_id']        = $ssFilter->filter_customer_id;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage']               = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : 50;
@@ -44,8 +48,12 @@ class OrdersReturnController extends ActionController{
             $ssFilter->pagination_option        = intval($data['pagination_option']);
             $ssFilter->order_by                 = $data['order_by'];
             $ssFilter->order                    = $data['order'];
-            $ssFilter->filter_status            = $data['filter_status'];
+            $ssFilter->filter_state             = $data['filter_state'];
             $ssFilter->filter_keyword           = $data['filter_keyword'];
+            $ssFilter->filter_date_begin        = $data['filter_date_begin'];
+            $ssFilter->filter_date_end          = $data['filter_date_end'];
+            $ssFilter->filter_inventory_id      = $data['filter_inventory_id'];
+            $ssFilter->filter_customer_id       = $data['filter_customer_id'];
         }
 
         if (!empty($this->_params['route']['id'])) {
@@ -56,7 +64,7 @@ class OrdersReturnController extends ActionController{
     }
 
     public function indexAction() {
-        $myForm    = new \Admin\Form\Search\BaseSearch($this->getServiceLocator(), $this->_params['ssFilter']);
+        $myForm    = new \Admin\Form\Search\OrdersRetrun($this, $this->_params['ssFilter']);
         $myForm->setData($this->_params['ssFilter']);
         // Danh sách data
         $items = $this->getTable()->listItem($this->_params, array('task' => 'list-item'));

@@ -93,6 +93,32 @@ class Contract extends Form{
             ),
         ));
 
+        $this->add(array(
+            'name'       => 'filter_customer_id',
+            'type'       => 'Text',
+            'attributes'   => array(
+                'class'             => 'form-control select2_advance',
+                'id'                => 'customer_id',
+                'data-placeholder'  => 'Khách hàng',
+                'data-table'        => TABLE_CONTACT,
+                'data-text'         => 'name, phone',
+                'data-where-status' => 1,
+            )
+        ));
+
+        $this->add(array(
+            'name'			=> 'filter_state',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Trạng thái -',
+                'disable_inarray_validator' => true,
+                'value_options' => \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
+            ),
+        ));
+
         // Shipper
 //        $this->add(array(
 //            'name'			=> 'filter_shipper_id',

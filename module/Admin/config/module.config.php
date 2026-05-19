@@ -67,6 +67,7 @@ return array (
             'Admin\Controller\ProductsPrice'          => Controller\ProductsPriceController::class,
             'Admin\Controller\ProductsInventory'      => Controller\ProductsInventoryController::class,
             'Admin\Controller\OrdersReturn'           => Controller\OrdersReturnController::class,
+            'Admin\Controller\OrdersReturnDetail'     => Controller\OrdersReturnDetailController::class,
 		)
 	),
 	'view_manager' => array(

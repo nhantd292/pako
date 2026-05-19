@@ -10,11 +10,16 @@
     $curent_user = $userInfo->getUserInfo();
     $permission_ids = explode(',', $curent_user['permission_ids']);
     
-    if(count($myForm->get('filter_sale_branch')->getValueOptions()) == 1) {
-        $myForm->get('filter_sale_branch')->setEmptyOption('');
-    }
+//    if(count($myForm->get('filter_sale_branch')->getValueOptions()) == 1) {
+//        $myForm->get('filter_sale_branch')->setEmptyOption('');
+//    }
     $elements = array(
         array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_state'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_inventory_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_customer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('order')),
@@ -64,10 +69,10 @@
     $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Mã</th>';
     $xhtmlHead .= '<th class="text-center" width="150">Mô tả</th>';
-    $xhtmlHead .= '<th class="text-center" width="130" class="text-center">Ngày trả</th>';
-    $xhtmlHead .= '<th class="text-center" width="150">Kho nhập</th>';
+    $xhtmlHead .= '<th class="text-center" width="130" class="text-center">Ngày trả hàng</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">Kho nhận hàng</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Khách hàng</th>';
-    $xhtmlHead .= '<th class="text-center" width="15">Tổng tiền hàng</th>';
+    $xhtmlHead .= '<th class="text-center" width="15">Tổng tiền hàng trả</th>';
     $xhtmlHead .= '<th class="text-center" width="15">Người tạo</th>';
     $xhtmlHead .= '<th class="text-center" width="15">Trạng thái</th>';
     $xhtmlHead .= '</tr>';

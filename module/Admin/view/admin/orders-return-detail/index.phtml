@@ -47,8 +47,6 @@
         }
         foreach ($this->items AS $key => $item) {
         	$stt++;
-        	$cid                    = @$this->xFormInput('cid[]', $item->id, array('type' => 'checkbox', 'class' => 'checkboxes'));
-        	
         	$id                     = $item->id;
         	$code                   = $item->code;
             $date                   = $dateFormat->formatToView($item->date);
@@ -69,36 +67,37 @@
             $bill_code              = $item->bill_code;
             $product_return         = $item->product_return;
             $shipper_id             = $this->user[$item->shipper_id]['name'];
+            $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
 
             $status_sales           = $item->status_id ? $this->status_sales[$item->status_id]['name'] : '';
             $status_check           = $item->ghtk_status ? $this->status_check[$item->ghtk_status]['name'] : '';
             $status_acccounting     = $item->status_acounting_id ? $this->status_accounting[$item->status_acounting_id]['name'] : '';
 
             $status = 'Sales: '.$status_sales.'<br>'.'Giục đơn: '.$status_check.'<br>'.'Kế toán: '.$status_acccounting;
-            $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
 
             $sale_group_id          = $item->sale_group_id ? '<br>'. $this->sale_group[$item->sale_group_id]['name'] : '';
             $sale_branch_id         = $item->sale_branch_id ? ' - '. $this->sale_branch[$item->sale_branch_id]['name'] : '';
-            $contract_date                = $dateFormat->formatToView($item->contract_date, 'd/m/Y');
+            $created                = $dateFormat->formatToView($item->created, 'd/m/Y');
+            $orders_return_created  = $dateFormat->formatToView($item->orders_return_created, 'd/m/Y');
 
             $user                   = $this->user[$item->user_id]['name'];
             $created_by             = $this->user[$item->created_by]['name'];
 
             $linkContract = $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'detail', 'id' => $item->contract_id));
+            $linkOrdersReturn = $this->url('routeAdmin/default', array('controller' => 'orders-return', 'action' => 'detail', 'id' => $item->orders_return_id));
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'">
                                 <td class="text-center">'. $stt .'</td>
-                                <td ><a href="'.$linkContract.'">'. $item->contract_code .'</a></td>
-							    <td class="text-center">'. $contract_date .'</td>
+                                <td class="text-center"><a href="'.$linkOrdersReturn.'">'. $item->orders_return_code .'</a></td>
+							    <td class="text-center">'. $orders_return_created .'</td>
 							    <td class="text-center">'. $order_status .'</td>
-    							<td >'. $item->code .'</td>
-    							<td >'. $item->full_name .'</td>
-    							<td class="text-center">'. number_format($item->numbers) .'</td>
+    							<td ><a href="'.$linkContract.'">'. $item->contract_code .'</a></td>
+    							<td >'. $item->products_code .'</td>
+    							<td >'. $item->products_name .'</td>
+    							<td class="text-center">'. number_format($item->quantity) .'</td>
     							<td class="text-right">'. number_format($item->price) .'</td>
-    							<td class="text-right">'. number_format($item->total) .'</td>
-    							<td class="text-right">'. number_format($item->cost) .'</td>
-    							<td class="text-right">'. number_format($item->weight) .'</td>
-    							<td >'. $item->categoryName .'</td>
+    							<td class="text-right">'. number_format($item->price_total) .'</td>
+    							<td>'.$item->note .'</td>
 							    <td >'. $created_by .'</td>
                             </tr>';
         }
@@ -107,17 +106,16 @@
     // Head
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th class="text-center">STT</th>';
-    $xhtmlHead .= '<th class="text-center">Đơn hàng</th>';
+    $xhtmlHead .= '<th class="text-center">Phiếu trả hàng</th>';
     $xhtmlHead .= '<th class="text-center">Ngày</th>';
     $xhtmlHead .= '<th class="text-center">Trạng thái</th>';
+    $xhtmlHead .= '<th>Mã đơn hàng</th>';
     $xhtmlHead .= '<th>Mã sản phẩm</th>';
     $xhtmlHead .= '<th>Tên sản phẩm</th>';
     $xhtmlHead .= '<th class="text-center">số lượng</th>';
-    $xhtmlHead .= '<th class="text-right">Giá bán</th>';
+    $xhtmlHead .= '<th class="text-right">Giá trả</th>';
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
-    $xhtmlHead .= '<th class="text-right">Giá vốn</th>';
-    $xhtmlHead .= '<th class="text-right">Trọng lượng</th>';
-    $xhtmlHead .= '<th>Danh mục</th>';
+    $xhtmlHead .= '<th>Ghi chú</th>';
     $xhtmlHead .= '<th>Người tạo</th>';
     $xhtmlHead .= '</tr>';
 ?>

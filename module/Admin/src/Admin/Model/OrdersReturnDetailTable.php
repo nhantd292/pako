@@ -14,9 +14,11 @@ class OrdersReturnDetailTable extends DefaultTable {
                 
                 $select -> columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(1)')));
 
-                $select -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
+                $select -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id', array('orders_return_code' => 'code', 'orders_return_created' => 'created', 'state'), 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.product_id', array('products_code' => 'code', 'products_name' => 'name'), 'inner');
+                $select -> join(TABLE_CONTRACT_DETAIL, TABLE_CONTRACT_DETAIL .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_detail_id', array('products_code' => 'code'), 'inner');
+                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
 
-                $select -> order(array(TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id' => 'DESC'));
 
                 if(isset($ssFilter['filter_contact_id']) && $ssFilter['filter_contact_id'] != '') {
                     $select->where->equalTo(TABLE_ORDERS_RETURN.'.contact_id', $ssFilter['filter_contact_id']);
@@ -35,9 +37,9 @@ class OrdersReturnDetailTable extends DefaultTable {
                     $select -> where -> NEST
                         -> like(TABLE_ORDERS_RETURN. '.code', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_ORDERS_RETURN_DETAIL. '.full_name', '%'. $filter_keyword .'%')
+                        -> like(TABLE_PRODUCTS. '.name', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_ORDERS_RETURN_DETAIL. '.code', '%'. $filter_keyword .'%')
+                        -> like(TABLE_PRODUCTS. '.code', '%'. $filter_keyword .'%')// mã sản phẩm
                         -> UNNEST;
                 }
             })->current();
@@ -61,10 +63,10 @@ class OrdersReturnDetailTable extends DefaultTable {
                         -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
                 }
 
-                $select -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
-                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.product_id', array('products_code' => 'code'), 'inner');
+                $select -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id', array('orders_return_id' => 'id','orders_return_code' => 'code', 'orders_return_created' => 'created', 'state'), 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.product_id', array('products_code' => 'code', 'products_name' => 'name'), 'inner');
                 $select -> join(TABLE_CONTRACT_DETAIL, TABLE_CONTRACT_DETAIL .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_detail_id', array('products_code' => 'code'), 'inner');
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code'), 'inner');
+                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code', 'contract_date'=> 'date', 'contract_id'=>'id'), 'inner');
 
                 $select -> order(array(TABLE_ORDERS_RETURN .'.created' => 'DESC'));
 
@@ -85,9 +87,9 @@ class OrdersReturnDetailTable extends DefaultTable {
                     $select -> where -> NEST
                         -> like(TABLE_ORDERS_RETURN. '.code', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_ORDERS_RETURN_DETAIL. '.full_name', '%'. $filter_keyword .'%')
+                        -> like(TABLE_PRODUCTS. '.name', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_ORDERS_RETURN_DETAIL. '.code', '%'. $filter_keyword .'%')// mã sản phẩm
+                        -> like(TABLE_PRODUCTS. '.code', '%'. $filter_keyword .'%')// mã sản phẩm
                         -> UNNEST;
                 }
     		});

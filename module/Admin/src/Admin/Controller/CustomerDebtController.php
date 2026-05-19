@@ -16,7 +16,7 @@ class CustomerDebtController extends ActionController{
         $this->_options['tableName'] = 'Admin\Model\CustomerDebtTable';
         $this->_options['formName'] = 'formAdminCustomerDebt';
         // Thiết lập session filter
-        $action = str_replace('-', '_', $this->_params['action']);
+        $action = !empty($this->getRequest()->getPost('filter_action')) ? str_replace('-', '_', $this->getRequest()->getPost('filter_action')) : 'index';
         $ssFilter = new Container(__CLASS__ . $action);
 
         $this->_params['ssFilter']['order_by']                  = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'ordering';
@@ -396,4 +396,85 @@ class CustomerDebtController extends ActionController{
         $this->flashMessenger()->addErrorMessage('Không thể xóa thu chi khách hàng!');
         $this->goRoute(array('action' => 'index'));
     }
+
+    public function exportAction() {
+
+        $dateFormat = new \ZendX\Functions\Date();
+        $file_name = 'thu_chi_khach_hang_ '.date('Y_m_d').'.xlsx';
+        $items = $this->getTable()->listItem($this->_params, array('task' => 'list-item', 'paginator' => false));
+        $debt_type      = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $debt_category  = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+
+        require_once PATH_VENDOR . '/Excel/PHPExcel.php';
+
+        $config = array('sheetData' => 0, 'headRow' => 1, 'startRow' => 2, 'startColumn' => 0);
+        $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
+
+        $arrData = array(
+            array('field' => 'code', 'title' => 'Mã phiếu'),
+            array('field' => 'customer_name', 'title' => 'Tên khách hàng'),
+            array('field' => 'type', 'title' => 'Loại phiếu', 'type' => 'data_source', 'data_source' => $debt_type),
+            array('field' => 'category', 'title' => 'Danh mục thu chi', 'type' => 'data_source', 'data_source' => $debt_category),
+            array('field' => 'price_total', 'type' => 'abs', 'title' => 'Tổng tiền hàng'),
+            array('field' => 'discount', 'type' => 'abs', 'title' => 'Giảm giá'),
+            array('field' => 'paid_cash', 'type' => 'abs', 'title' => 'Tiền mặt'),
+            array('field' => 'paid_transfer', 'type' => 'abs', 'title' => 'Chuyển khoản'),
+            array('field' => 'old_debt', 'title' => 'Nợ cũ'),
+            array('field' => 'new_debt', 'title' => 'Nợ lại'),
+            array('field' => 'create', 'type' => 'date', 'title' => 'Ngày tạo')
+        );
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->getProperties()->setCreator($this->_userInfo->getUserInfo('name'))->setTitle("Export");
+
+        // Dữ liệu tiêu đề
+        $startColumn = $config['startColumn'];
+        foreach ($arrData AS $key => $data) {
+            $colLetter = $arrColumn[$startColumn];
+            $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $config['headRow'], $data['title']);
+            $objPHPExcel->getActiveSheet()->getStyle($colLetter . $config['headRow'])->getFont()->setBold(true);
+            $startColumn++;
+        }
+
+        // Dữ liệu data
+        $startRow = $config['startRow'];
+        foreach ($items AS $item) {
+            $startColumn = $config['startColumn'];
+            foreach ($arrData AS $key => $data) {
+                $colLetter = $arrColumn[$startColumn];
+                switch ($data['type']) {
+                    case 'date':
+                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
+                        $value      = $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        break;
+                    case 'abs':
+                        $value      = abs($item[$data['field']]);
+                        break;
+                    case 'data_source':
+                        $field = $data['data_source_field'] ? $data['data_source_field'] : 'name';
+                        $value = $data['data_source'][$item[$data['field']]][$field];
+                        break;
+                    default:
+                        $value = $item[$data['field']];
+                }
+
+                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value);
+                $startColumn++;
+            }
+            $startRow++;
+        }
+
+        $lastColumnIndex = $config['startColumn'] + count($arrData) - 1;
+        for ($i = $config['startColumn']; $i <= $lastColumnIndex; $i++) {
+            $objPHPExcel->getActiveSheet()->getColumnDimension($arrColumn[$i])->setAutoSize(true);
+        }
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.$file_name.'"');
+
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+
 }

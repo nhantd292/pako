@@ -46,8 +46,6 @@ class ContractTable extends DefaultTable {
                         -> like(TABLE_CONTRACT. '.phone', '%'. $filter_keyword .'%')
                         ->Or
                         -> equalTo(TABLE_CONTRACT. '.code', $filter_keyword) // mã đơn
-                        ->Or
-                        -> like(TABLE_CONTRACT. '.ghtk_code', '%'. $filter_keyword .'%') // mã đơn ghtk
                         -> UNNEST;
 
                 }
@@ -134,6 +132,14 @@ class ContractTable extends DefaultTable {
 
                 if(!empty($ssFilter['filter_category'])) {
                     $select -> where -> like(TABLE_CONTRACT .'.options', '%'.$ssFilter['filter_category'].'%');
+                }
+
+                if(!empty($ssFilter['filter_state'])) {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state']);
+                }
+
+                if(!empty($ssFilter['filter_customer_id'])) {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.contact_id', $ssFilter['filter_customer_id']);
                 }
 
                 if (!empty($ssFilter['filter_send_ghtk'])) {
@@ -671,8 +677,6 @@ class ContractTable extends DefaultTable {
                         -> like(TABLE_CONTRACT. '.phone', '%'. $filter_keyword .'%')
                         ->Or
                         -> equalTo(TABLE_CONTRACT. '.code', $filter_keyword) // mã đơn
-                        ->Or
-                        -> like(TABLE_CONTRACT. '.ghtk_code', '%'. $filter_keyword .'%') // mã đơn ghtk
                         -> UNNEST;
 
                 }
@@ -752,6 +756,14 @@ class ContractTable extends DefaultTable {
 
                 if(!empty($ssFilter['filter_category'])) {
                     $select -> where -> like(TABLE_CONTRACT .'.options', '%'.$ssFilter['filter_category'].'%');
+                }
+
+                if(!empty($ssFilter['filter_customer_id'])) {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.contact_id', $ssFilter['filter_customer_id']);
+                }
+
+                if(!empty($ssFilter['filter_state'])) {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state']);
                 }
 
                 if(!empty($ssFilter['filter_product'])) {

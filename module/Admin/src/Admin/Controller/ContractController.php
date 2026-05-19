@@ -37,6 +37,7 @@ class ContractController extends ActionController {
         $this->_params['ssFilter']['filter_bill_code']      = $ssFilter->filter_bill_code;
         $this->_params['ssFilter']['filter_status_type']    = $ssFilter->filter_status_type;
         $this->_params['ssFilter']['filter_status']         = $ssFilter->filter_status;
+        $this->_params['ssFilter']['filter_state']          = $ssFilter->filter_state;
         $this->_params['ssFilter']['filter_coincider']      = $ssFilter->filter_coincider;
         $this->_params['ssFilter']['filter_unit_transport'] = $ssFilter->filter_unit_transport;
         $this->_params['ssFilter']['filter_returned']       = $ssFilter->filter_returned;
@@ -50,6 +51,7 @@ class ContractController extends ActionController {
         $this->_params['ssFilter']['filter_marketer_status']= $ssFilter->filter_marketer_status;
         $this->_params['ssFilter']['filter_marketer_id']    = $ssFilter->filter_marketer_id;
         $this->_params['ssFilter']['filter_inventory_id']   = $ssFilter->filter_inventory_id;
+        $this->_params['ssFilter']['filter_customer_id']   = $ssFilter->filter_customer_id;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : $this->_paginator['itemCountPerPage'];
@@ -83,6 +85,7 @@ class ContractController extends ActionController {
             $ssFilter->filter_product 	        = $data['filter_product'];
             $ssFilter->filter_status_type       = $data['filter_status_type'];
             $ssFilter->filter_status            = $data['filter_status'];
+            $ssFilter->filter_state             = $data['filter_state'];
             $ssFilter->filter_user              = $data['filter_user'];
             $ssFilter->filter_delivery_id       = $data['filter_delivery_id'];
             $ssFilter->filter_action            = $data['filter_action'];
@@ -99,6 +102,7 @@ class ContractController extends ActionController {
             $ssFilter->filter_marketer_status 	= $data['filter_marketer_status'];
             $ssFilter->filter_marketer_id 	    = $data['filter_marketer_id'];
             $ssFilter->filter_inventory_id 	    = $data['filter_inventory_id'];
+            $ssFilter->filter_customer_id 	    = $data['filter_customer_id'];
 
             $ssFilter->filter_sale_group = $data['filter_sale_group'];
             if(!empty($data['filter_sale_branch'])) {
@@ -175,10 +179,6 @@ class ContractController extends ActionController {
         $this->_viewModel['status_accounting']      = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status-acounting')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['status_sales']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['order_status']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-//        echo "<pre>";
-//        print_r($this->_viewModel['order_status']['new']->name);
-//        echo "</pre>";
-//        exit;
         $this->_viewModel['fee_type_list']          = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['caption']                = 'Danh sách - '.$this->caption;
 

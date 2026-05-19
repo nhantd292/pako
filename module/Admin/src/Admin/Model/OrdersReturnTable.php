@@ -10,16 +10,39 @@ class OrdersReturnTable extends DefaultTable {
 	    if($options['task'] == 'list-item') {
 	        $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
                 $ssFilter  = $arrParam['ssFilter'];
+                $date       = new \ZendX\Functions\Date();
+                $number     = new \ZendX\Functions\Number();
 
-                if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
-                    $select->where->equalTo('status', $ssFilter['filter_status']);
+                $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_ORDERS_RETURN .'.customer_id', array( 'customer_name' => 'name'), 'inner')
+                    -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_ORDERS_RETURN .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner');
+
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_ORDERS_RETURN .'.created', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_ORDERS_RETURN .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select->where->greaterThanOrEqualTo(TABLE_ORDERS_RETURN .'.created', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select->where->lessThanOrEqualTo(TABLE_ORDERS_RETURN .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                }
+
+                if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
+                    $select->where->equalTo('state', $ssFilter['filter_state']);
+                }
+
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo('inventory_id', $ssFilter['filter_inventory_id']);
+                }
+
+                if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
+                    $select->where->equalTo('customer_id', $ssFilter['filter_customer_id']);
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $select->where->NEST
-                        ->like('name', '%'. $ssFilter['filter_keyword'] . '%')
-                        ->or
-                        ->equalTo('code', $ssFilter['filter_keyword'])
+                        ->like(TABLE_ORDERS_RETURN .'.code', '%'.$ssFilter['filter_keyword'].'%')
                         ->UNNEST;
                 }
             })->count();
@@ -34,6 +57,8 @@ class OrdersReturnTable extends DefaultTable {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
                 $paginator = $arrParam['paginator'];
                 $ssFilter  = $arrParam['ssFilter'];
+                $date       = new \ZendX\Functions\Date();
+                $number     = new \ZendX\Functions\Number();
 
                 if(!isset($options['paginator']) || $options['paginator'] == true) {
                     $select -> limit($paginator['itemCountPerPage'])
@@ -45,16 +70,33 @@ class OrdersReturnTable extends DefaultTable {
                 $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_ORDERS_RETURN .'.customer_id', array( 'customer_name' => 'name'), 'inner')
                     -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_ORDERS_RETURN .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner');
 
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_ORDERS_RETURN .'.created', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_ORDERS_RETURN .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select->where->greaterThanOrEqualTo(TABLE_ORDERS_RETURN .'.created', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select->where->lessThanOrEqualTo(TABLE_ORDERS_RETURN .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                }
 
-                if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
-    			    $select->where->equalTo('status', $ssFilter['filter_status']);
+                if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
+    			    $select->where->equalTo('state', $ssFilter['filter_state']);
+    			}
+
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+    			    $select->where->equalTo('inventory_id', $ssFilter['filter_inventory_id']);
+    			}
+
+                if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
+    			    $select->where->equalTo('customer_id', $ssFilter['filter_customer_id']);
     			}
     			
     			if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
     		        $select->where->NEST
-                			      ->like('name', '%'. $ssFilter['filter_keyword'] . '%')
-                			      ->or
-                			      ->equalTo('code', $ssFilter['filter_keyword'])
+                        ->like(TABLE_ORDERS_RETURN .'.code', '%'.$ssFilter['filter_keyword'].'%')
                 			      ->UNNEST;
     			}
     		});
