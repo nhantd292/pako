@@ -378,5 +378,11 @@ class Contact extends Form
             'name' => 'order_by',
             'type' => 'Hidden',
         ));
+
+        // Action
+        $this->add(array(
+            'name'			=> 'filter_action',
+            'type'			=> 'Hidden',
+        ));
     }
 }

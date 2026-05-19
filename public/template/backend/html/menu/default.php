@@ -215,16 +215,16 @@
                     <i class="fa fa-retweet"></i> <span class="title">Thu chi khách hàng</span><span class="arrow"></span>
                 </a>
             </li>
-<!--            <li>-->
-<!--                <a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'customer-debt', 'action' => 'index'));?><!--" target="_self">-->
-<!--                    <i class="fa fa-money"></i> <span class="title">Công nợ phải thu</span><span class="arrow"></span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'customer-debt', 'action' => 'index'));?><!--" target="_self">-->
-<!--                    <i class="fa fa-money"></i> <span class="title">Công nợ phải trả</span><span class="arrow"></span>-->
-<!--                </a>-->
-<!--            </li>-->
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contact', 'action' => 'receivable'));?>" target="_self">
+                    <i class="fa fa-money"></i> <span class="title">Công nợ phải thu</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contact', 'action' => 'return'));?>" target="_self">
+                    <i class="fa fa-money"></i> <span class="title">Công nợ phải trả</span><span class="arrow"></span>
+                </a>
+            </li>
         </ul>
     </li>
     <li class="parent">

@@ -1,0 +1,129 @@
+<?php
+    $dateFormat = new \ZendX\Functions\Date();
+    
+    $myForm = $this->myForm;
+    $myForm->prepare();
+
+    $permission_ids = explode(',', $curent_user['permission_ids']);
+    $encode_phone = explode(',', $curent_user['encode_phone']);
+    $phone_code = true;
+    if(in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || !in_array('sale_contact', $encode_phone)) {
+        $phone_code = false;
+    }
+    
+    if(count($myForm->get('filter_sale_branch')->getValueOptions()) == 1) {
+        $myForm->get('filter_sale_branch')->setEmptyOption('');
+    }
+    if(count($myForm->get('filter_sale_group')->getValueOptions()) == 1) {
+        $myForm->get('filter_sale_group')->setEmptyOption('');
+    }
+    if(count($myForm->get('filter_user')->getValueOptions()) == 1) {
+        $myForm->get('filter_user')->setEmptyOption('');
+    }
+    $myForm->get('filter_action')->setValue($this->params['action']);
+    $elements = array(
+        array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_customer_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('order')),
+        array('element' => $myForm->get('order_by')),
+        array('element' => $myForm->get('filter_action')),
+    );
+    $xhtmlFilter = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+    
+    // Danh sách
+    $xhtmlItems = '';
+    $total_cost_ads = 0;
+    $index = 0;
+    if($this->items->count() > 0) {
+        foreach ($this->items AS $item) {
+            $index++;
+            $cid                    = @$this->xFormInput('cid[]', $item->id, array('type' => 'checkbox', 'class' => 'checkboxes'));
+            
+            $id                     = $item->id;
+            $date                   = $dateFormat->formatToView($item->date, 'd/m/Y H:i');
+            $phone                  = $item->phone;
+            $name                   = $item->name;
+            $amount_owed            = $item->amount_owed;
+            $user_id                = $item->user_id ? $this->user[$item->user_id]['name'] : '';
+            $sale_group_id          = $item->sale_group_id ? '<br>'. $this->sale_group[$item->sale_group_id]['name'] : '';
+            $sale_branch_id         = $item->sale_branch_id ? ' - '. $this->sale_branch[$item->sale_branch_id]['name'] : '';
+            $customer_type          = $this->customer_type[$item->customer_type_id]['name'];
+            $address = $item->address;
+            $location_city = !empty($item->location_city_id) ?  ' '.$this->location_city[$item->location_city_id]['name'] : '';
+            $location_district = !empty($item->location_district_id) ? ' '.$this->location_district[$item->location_district_id]['name'] : '';
+            $location_town = !empty($item->location_town_id) ?  ' '.$this->location_town[$item->location_town_id]['name'] : '';
+
+            $xhtmlItems .= '<tr id="tr_'. $id .'">';
+            $xhtmlItems .= '<td class="text-center">'. $index .'</td>';
+            $xhtmlItems .= '<td>'. $name .'</td>';
+            $xhtmlItems .= '<td class="" style="inline-size: 200px;overflow-wrap: break-word;">'. $location_town.' - '.$location_district.' - '.$location_city.'</td>';
+            $xhtmlItems .= '<td>'. $phone .'</td>';
+            $xhtmlItems .= '<td><div class="col-100 text-wrap">'. $customer_type.'</div></td>';
+            $xhtmlItems .= '<td class="mask_currency text-right text-bold text-red">'. abs($amount_owed) .'</td>';
+            $xhtmlItems .= '<td></td>';
+    		$xhtmlItems .= '</tr>';
+        }
+    }
+    $total_amount_owed = $this->sum_debt->total_amount_owed;
+    // Head
+    $xhtmlHead  = '<tr>';
+    $xhtmlHead .= '<th class="text-center" width="30">STT</th>';
+    $xhtmlHead .= '<th>Tên</th>';
+    $xhtmlHead .= '<th>Địa chỉ</th>';
+    $xhtmlHead .= '<th>Điện thoại</th>';
+    $xhtmlHead .= '<th>Nhóm Khách hàng</th>';
+    $xhtmlHead .= '<th class="text-right">Tổng Nợ phải trả: <span class="mask_currency text-red">'.abs($total_amount_owed).'</span></th>';
+    $xhtmlHead .= '<th></th>';
+    $xhtmlHead .= '</tr>';
+    
+    // Control
+    $arrControl = array(
+        array(
+            'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
+            'children' => array(
+                array( 'name' => 'transfer', 'caption' => 'Chuyển quyền quản lý', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:contactChangeUser();') ),
+            ),
+            'children-class' => 'dropdown-menu pull-right'
+        ),
+    );
+?>
+<form action="<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'filter')); ?>" name="adminFormFilter" id="adminFormFilter" method="post">
+    <div class="page-control">
+    	<div class="title pull-left">
+    		<?php echo $this->caption;?>
+    	</div>
+    	<div class="control pull-right">
+<!--			--><?php //echo $this->partial($this->params['module'] . '/partial/control-index.phtml', array( 'control' => $arrControl, 'params' => $this->params));?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
+    <div class="page-filter">
+    	<div class="row">
+    		<?php echo $xhtmlFilter;?>
+    	</div>
+    </div>
+    <div class="page-content">
+    	<div class="table-manager" id="table-manager">
+    		<div class="table-scrollable">
+    			<table class="table table-striped table-bordered table-hover">
+    				<thead>
+    					<?php echo $xhtmlHead;?>
+    				</thead>
+    				<tbody>
+    					<?php echo $xhtmlItems;?>
+    				</tbody>
+    			</table>
+    		</div>
+    		<?php
+            	echo $this->paginationControl(\ZendX\Paginator\Paginator::createPaginator($this->count, $this->params['paginator']), 'sliding', $this->params['module'] . '/partial/paginator.phtml', array('currentURL' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'options' => $this->params['paginator']['options'])); 
+            ?>
+    	</div>
+	</div>
+</form>
+
+<?php $this->headScript()->captureStart() ?>
+<!--    resize_col_table('#table-manager');-->
+<?php $this->headScript()->captureEnd() ?>

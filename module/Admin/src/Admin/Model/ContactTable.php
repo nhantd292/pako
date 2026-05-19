@@ -133,7 +133,73 @@ class ContactTable extends DefaultTable {
     			}
             })->current();
 	    }
-	    
+
+	    if($options['task'] == 'list-debt') {
+	        $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $ssFilter   = $arrParam['ssFilter'];
+                $date       = new \ZendX\Functions\Date();
+                $number     = new \ZendX\Functions\Number();
+
+                $select -> columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(1)')));
+
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $filter_keyword = trim($ssFilter['filter_keyword']);
+                    $select->where->NEST
+                        ->like('name', '%' . $filter_keyword . '%')
+                        ->Or
+                        ->like('phone', '%' . $filter_keyword . '%')
+                        ->UNNEST;
+                }
+
+                if(!empty($ssFilter['filter_customer_type'])) {
+                    $select -> where -> equalTo('customer_type_id', $ssFilter['filter_customer_type']);
+                }
+
+                if(!empty($ssFilter['filter_debt_type'])) {
+                    if ($ssFilter['filter_debt_type'] == 'receivable') {
+                        $select -> where -> greaterThan('amount_owed', 0);
+                    }
+                    else{
+                        $select -> where -> lessThan('amount_owed', 0);
+                    }
+
+                }
+            })->current();
+	    }
+
+        if($options['task'] == 'sum-debt') {
+            $result    = $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $ssFilter   = $arrParam['ssFilter'];
+
+                $select->columns(array(
+                    'total_amount_owed' => new \Zend\Db\Sql\Expression('SUM(amount_owed)')
+                ));
+
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $filter_keyword = trim($ssFilter['filter_keyword']);
+                    $select->where->NEST
+                        ->like('name', '%' . $filter_keyword . '%')
+                        ->Or
+                        ->like('phone', '%' . $filter_keyword . '%')
+                        ->UNNEST;
+                }
+
+                if(!empty($ssFilter['filter_customer_type'])) {
+                    $select -> where -> equalTo('customer_type_id', $ssFilter['filter_customer_type']);
+                }
+
+                if(!empty($ssFilter['filter_debt_type'])) {
+                    if ($ssFilter['filter_debt_type'] == 'receivable') {
+                        $select -> where -> greaterThan('amount_owed', 0);
+                    }
+                    else{
+                        $select -> where -> lessThan('amount_owed', 0);
+                    }
+                }
+            })->current();
+            return $result;
+        }
+
 	    return $result->count;
 	}
 	
@@ -276,6 +342,44 @@ class ContactTable extends DefaultTable {
     			}
     		});
 		}
+
+        if($options['task'] == 'list-debt') {
+            $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options) {
+                $paginator = $arrParam['paginator'];
+                $ssFilter = $arrParam['ssFilter'];
+                $date = new \ZendX\Functions\Date();
+                $number = new \ZendX\Functions\Number();
+
+                if (!isset($options['paginator']) || $options['paginator'] == true) {
+                    $select->limit($paginator['itemCountPerPage'])
+                        ->offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
+                }
+
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $filter_keyword = trim($ssFilter['filter_keyword']);
+                    $select->where->NEST
+                        ->like('name', '%' . $filter_keyword . '%')
+                        ->Or
+                        ->like('phone', '%' . $filter_keyword . '%')
+                        ->UNNEST;
+                }
+
+                if(!empty($ssFilter['filter_customer_type'])) {
+                    $select -> where -> equalTo('customer_type_id', $ssFilter['filter_customer_type']);
+                }
+
+                if(!empty($ssFilter['filter_debt_type'])) {
+                    if ($ssFilter['filter_debt_type'] == 'receivable') {
+                        $select -> where -> greaterThan('amount_owed', 0);
+                        $select->order(array('amount_owed DESC'));
+                    }
+                    else{
+                        $select -> where -> lessThan('amount_owed', 0);
+                        $select->order(array('amount_owed ASC'));
+                    }
+                }
+            });
+        }
 		
 		if($options['task'] == 'search') {
 		    $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){

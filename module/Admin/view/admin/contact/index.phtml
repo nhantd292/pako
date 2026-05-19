@@ -131,7 +131,7 @@
             if($this->sale_history_type[$options['history_type_id']]['alias'] != DA_CHOT){
                 $addContract = '';
             }
-            $OrderReturnProducts    = $this->linkAdminHtml($linkReturnContract, array('type' => 'icon', 'title' => 'Tạo đơn hàng', 'target' => '_blank', 'class' => 'btn btn-xs dark', 'icon' => 'fa fa-minus'));
+            $OrderReturnProducts    = $this->linkAdminHtml($linkReturnContract, array('type' => 'icon', 'title' => 'Trả hàng', 'target' => '_blank', 'class' => 'btn btn-xs dark', 'icon' => 'fa fa-minus'));
 
             $controls               = $controlView . $controlEdit.$controlHistory. $addContract.'<br>'. $OrderReturnProducts;
 

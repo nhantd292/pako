@@ -18,7 +18,9 @@ class ContactController extends ActionController
         $this->_options['formName']  = 'formAdminContact';
 
         // Thiết lập session filter
-        $ssFilter                                              = new Container(__CLASS__);
+        $action = str_replace('-', '_', $this->_params['action']);
+        $ssFilter = new Container(__CLASS__. $action);
+
         $this->_params['ssFilter']['order_by']                 = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'date';
         $this->_params['ssFilter']['order']                    = !empty($ssFilter->order) ? $ssFilter->order : 'DESC';
         $this->_params['ssFilter']['filter_type']              = $ssFilter->filter_type;
@@ -60,8 +62,12 @@ class ContactController extends ActionController
 
     public function filterAction()
     {
-        $ssFilter = new Container(__CLASS__);
+//        $ssFilter = new Container(__CLASS__);
         $data     = $this->_params['data'];
+
+        $action = !empty($this->getRequest()->getPost('filter_action')) ? str_replace('-', '_', $this->getRequest()->getPost('filter_action')) : 'index';
+        $ssFilter	= new Container(__CLASS__ . $action);
+
 
         if ($this->getRequest()->isPost()) {
 
@@ -117,12 +123,12 @@ class ContactController extends ActionController
             $ssFilter->filter_history_status = 'no';
         }
 
-        $this->goRoute();
+        $this->goRoute(['action' => $action]);
     }
 
     public function indexAction()
     {
-        $ssFilter = new Container(__CLASS__);
+        $ssFilter = new Container(__CLASS__.'index');
         $user_id = $this->_userInfo->getUserInfo('id');
         if(!empty($this->_params['route']['nid'])) {
             $id_item = $this->_params['route']['nid'];
@@ -190,6 +196,56 @@ class ContactController extends ActionController
 
 
         $this->_viewModel['caption']             = 'Liên hệ - Danh sách';
+        return new ViewModel($this->_viewModel);
+    }
+
+    # công nợ phải thu của khách hàng
+    public function receivableAction()
+    {
+        $myForm = new \Admin\Form\Search\Contact($this->getServiceLocator(), $this->_params['ssFilter']);
+        $myForm->setData($this->_params['ssFilter']);
+        $this->_params['ssFilter']['filter_debt_type'] = 'receivable';
+
+        $this->_viewModel['myForm']              = $myForm;
+        $this->_viewModel['items']               = $this->getTable()->listItem($this->_params, array('task' => 'list-debt'));
+        $this->_viewModel['count']               = $this->getTable()->countItem($this->_params, array('task' => 'list-debt'));
+        $this->_viewModel['sum_debt']            = $this->getTable()->countItem($this->_params, array('task' => 'sum-debt'));
+        $this->_viewModel['user']                = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['sale_group']          = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
+        $this->_viewModel['sale_branch']         = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $this->_viewModel['userInfo']            = $this->_userInfo->getUserInfo();
+        $this->_viewModel['customer_type']       = $this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['location_city']       = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
+        $this->_viewModel['location_district']   = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
+        $this->_viewModel['location_town']       = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 3), array('task' => 'cache'));
+
+
+        $this->_viewModel['caption']             = 'Danh sách công nợ phải thu';
+        return new ViewModel($this->_viewModel);
+    }
+
+    # công nợ phải trả của khách hàng
+    public function returnAction()
+    {
+        $myForm = new \Admin\Form\Search\Contact($this->getServiceLocator(), $this->_params['ssFilter']);
+        $myForm->setData($this->_params['ssFilter']);
+        $this->_params['ssFilter']['filter_debt_type'] = 'return';
+
+        $this->_viewModel['myForm']              = $myForm;
+        $this->_viewModel['items']               = $this->getTable()->listItem($this->_params, array('task' => 'list-debt'));
+        $this->_viewModel['count']               = $this->getTable()->countItem($this->_params, array('task' => 'list-debt'));
+        $this->_viewModel['sum_debt']            = $this->getTable()->countItem($this->_params, array('task' => 'sum-debt'));
+        $this->_viewModel['user']                = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['sale_group']          = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
+        $this->_viewModel['sale_branch']         = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $this->_viewModel['userInfo']            = $this->_userInfo->getUserInfo();
+        $this->_viewModel['customer_type']       = $this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['location_city']       = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
+        $this->_viewModel['location_district']   = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
+        $this->_viewModel['location_town']       = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 3), array('task' => 'cache'));
+
+
+        $this->_viewModel['caption']             = 'Danh sách công nợ phải trả';
         return new ViewModel($this->_viewModel);
     }
 
