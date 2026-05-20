@@ -22,13 +22,13 @@ if($page > 1){
 $xhtml .= '<div class="listProduct" >';
 foreach ($this->kovProducts as $pro) {
     $num_status = $pro['quantity'] > 0 ? $pro['quantity'] : 'Hết hàng'  ;
-    $xhtml .= '<div class="col-xl-2 col-sm-3 col-xs-6 item">
+    $xhtml .= '<div class="col-xl-3 col-sm-4 col-xs-6 item">
             <div class="product col-xs-12" data-id="' . $pro['id'] . '" data-warehouse-id="' . $pro['warehouse_id'] .'" data-customer-type-id="' . $pro['customer_type_id']. '" >
                 <div class="infor col-sm-12 col-xs-12">
-                    <p class="code-product text-bold">' . $pro['code'] .'</span> (<span class="text-green text-bold">' . $num_status . '</span>)</p>
+                    <p class="code-product text-bold">Mã: ' . $pro['code'] .'</span> </p>
                     <p class="name-product">' . $pro['name'] . '</p>
-                    <p class="price-product">Giá: ' . number_format($pro['price']) . '</p>
-                    <p class=""><span><span>'.$pro['length'].'-'.$pro['width'].'-'.$pro['height'].' (cm) - '.($pro['weight']/1000).' (kg)</span></p>
+                    <p class="price-product">Giá: ' . number_format($pro['price']) . ' vnđ</p>
+                    <p>Tồn kho: ' . $num_status . '<span class="text-info"> ('.($pro['weight']/1000).' kg)</span></p>
                 </div>
             </div>
         </div>';

@@ -21,7 +21,7 @@ if($page > 1){
 }
 $xhtml .= '<div class="listProduct" >';
 foreach ($this->kovProducts as $pro) {
-    $xhtml .= '<div class="col-xl-2 col-sm-3 col-xs-6 item">
+    $xhtml .= '<div class="col-xl-3 col-sm-4 col-xs-6 item">
             <div class="product col-xs-12" data-id= "' . $pro['id'] . '" data-product-id="' . $pro['product_id'] . '" data-contract-id="' . $pro['contract_id'] .'" >
                 <div class="infor col-sm-12 col-xs-12">
                     <p class="name-product">' . $pro['full_name'] . '</p>

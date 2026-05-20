@@ -7,10 +7,10 @@ $xhtml = '
         <td class="car_year"><input class="form-control text-right" type="text" name="contract_product[car_year][]" value="" ></td>
         <td class="numbers"><input class="form-control text-right w-60 p5" type="number" name="contract_product[numbers][]" value="1" min="1"></td>
         <td class="price text-middle text-right box-price">
-            <input class="form-control text-right money base_price" name="contract_product[price][]" type="text" value="'.number_format($this->product['price']).'" min="0">
+            <input class="form-control text-right money base_price w-100" name="contract_product[price][]" type="text" value="'.number_format($this->product['price']).'" min="0">
         </td>
         <td class="total">
-            <input class="form-control text-right" type="text" name="contract_product[total][]" readonly value="'.number_format($this->product['price']).'">
+            <input class="form-control text-right w-100" type="text" name="contract_product[total][]" readonly value="'.number_format($this->product['price']).'">
         </td>
         <td class="length hidden">
             <input class="form-control text-right w-60 p5" type="number" name="contract_product[length][]" value="'.$this->product['length'].'" required min="1" max="300">

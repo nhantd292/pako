@@ -80,18 +80,18 @@ class FormData extends Form {
 //        ));
 
         // Nhóm sản phẩm
-        $this->add(array(
-            'name'			=> 'product_group_id',
-            'type'			=> 'Select',
-            'attributes'	=> array(
-                'class'		=> 'form-control select2 select2_basic',
-            ),
-            'options'		=> array(
-                'empty_option'	=> '- Sản phẩm quan tâm -',
-                'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'product-group')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
-            )
-        ));
+//        $this->add(array(
+//            'name'			=> 'product_group_id',
+//            'type'			=> 'Select',
+//            'attributes'	=> array(
+//                'class'		=> 'form-control select2 select2_basic',
+//            ),
+//            'options'		=> array(
+//                'empty_option'	=> '- Sản phẩm quan tâm -',
+//                'disable_inarray_validator' => true,
+//                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'product-group')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+//            )
+//        ));
 		
 		// Sex
 		$this->add(array(

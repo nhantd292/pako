@@ -2,6 +2,9 @@
     .col-xl-2 {
         width: 20%;
     }
+    .col-xl-3 {
+        width: 25%;
+    }
 }
 tfoot tr {
     border-bottom: 1px solid #d8d8d8;
@@ -29,8 +32,23 @@ tfoot tr {
 .form-control {
     /*min-width: 80px;*/
 }
+.w-50{
+    width: 50px;
+}
 .w-60{
     width: 60px;
+}
+.w-80{
+    width: 80px;
+}
+.w-100{
+    width: 100px;
+}
+.w-120{
+    width: 120px;
+}
+.w-150{
+    width: 150px;
 }
 .p5{
     padding:5px;
