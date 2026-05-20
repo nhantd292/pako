@@ -316,6 +316,17 @@
                     <i class="fa fa-list-ul"></i> <span class="title">Danh sách kho</span><span class="arrow"></span>
                 </a>
             </li>
+            <li class="divider"></li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-input', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-list-ul"></i> <span class="title">Nhập hàng từ nhà cung cấp</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-input-detail', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm nhập từ NCC</span><span class="arrow"></span>
+                </a>
+            </li>
         </ul>
     </li>
 <?php //if($is_system){?>

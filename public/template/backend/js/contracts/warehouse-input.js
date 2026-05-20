@@ -1,52 +1,8 @@
 
-var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_customer_type: $(`select[name="customer_type_id"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val()};
-load_action('#loadProducts', '/xadmin/api/loadKovProducts/', data);
-// Xử lý load tỉnh thành
-$('select[name="location_city_id"]').change(function () {
-    var select = 'input[name="location_district_id"]';
-    var parent = $(select).parent();
-    $('.select2-container', parent).select2('val', '');
-    $(select).attr('data-parent', $(this).val());
+var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val()};
+load_action('#loadProducts', '/xadmin/api/loadProductsWarehouseInput/', data);
 
-    var select_x = 'input[name="location_town_id"]';
-    var parent_x = $(select_x).parent();
-    $('.select2-container', parent_x).select2('val', '');
-    $(select_x).attr('data-parent', $(this).val());
-});
-$('input[name="location_district_id"]').change(function() {
-    var select = 'input[name="location_town_id"]';
-    var parent = $(select).parent();
-    $('.select2-container', parent).select2('val', '');
-    $(select).attr('data-parent', $(this).val());
-});
-
-$('select[name="unit_transport"]').change(function() {
-    var unit = $(this).val();
-    if(unit == '5sauto'){
-        $('.unit-child').addClass('hidden')
-        $('.'+unit).addClass('hidden')
-    }
-
-    var select = 'input[name="location_town_id"]';
-    var parent = $(select).parent();
-    $('.select2-container', parent).select2('val', '');
-    $(select).attr('data-parent', $(this).val());
-});
-
-var contactPhone = $('#contactPhone').text().trim();
-if (contactPhone) {
-    load_action('#load_contract', '/xadmin/api/list-contract-by-phone/', {phone: contactPhone});
-}
-
-// Kiểm tra thông tin khách hàng
-var contactId = $('#contactId').text().trim();
-if (contactId) {
-    checkContactToElement(contactId, 'element');
-}
-
-
-
-$('input[name="paid_cash"] , input[name="paid_transfer"], input[name="discount"]').change(function() {
+$('input[name="paid_cash"] , input[name="paid_transfer"], input[name="discount"], input[name="amount_owed"]').change(function() {
     updateTotal();
 });
 
@@ -82,7 +38,7 @@ function updateTotal() {
     $(".total_contract_product input").val(formatNumber(total_contract_product));
 
     $("input[name=price_total]").val(formatNumber(price_total))
-    $("input[name=new_debt]").val(formatNumber(amount_owed + price_total - (paid_cash + paid_transfer + discount)))
+    $("input[name=new_debt]").val(formatNumber(amount_owed - price_total + (paid_cash + paid_transfer + discount)))
 }
 
 function resetDiscounts() {

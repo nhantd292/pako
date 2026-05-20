@@ -62,12 +62,16 @@
             if (!empty($item['orders_return_id'])) {
                 $link_category = '<a href="/xadmin/orders-return/detail/id/'.$item['orders_return_id'].'/" target="_blank"> '. $item['orders_return_code'] .'</a>';
             }
+            if (!empty($item['warehouse_input_id'])) {
+                $link_category = '<a href="/xadmin/warehouse-input/detail/id/'.$item['warehouse_input_id'].'/" target="_blank"> '. $item['warehouse_input_code'] .'</a>';
+            }
             
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
     							<td class="text-center">'. $cid .'</td>
                                 <td class="text-center">'. $index .'</td>
     							<td class="text-center text-bold">'.$linkDetail.'</td>
     							<td class="">'.  $item['customer_name'] .'</td>
+    							<td class="text-center">'.  $item['customer_phone'] .'</td>
     							<td class="text-center">'. $this->debt_type[$item['type']] .'</td>
     							<td>'.$this->debt_category[$item['category']].'</br><span class="">'.$link_category.'</span></td>
     							<td class="text-right mask_currency text-green">'. abs($item['price_total']) .'</td>
@@ -90,6 +94,7 @@
     $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Mã phiếu</th>';
     $xhtmlHead .= '<th class="text-center" width="150">Khách hàng</th>';
+    $xhtmlHead .= '<th class="text-center" width="80">Điện thoại</th>';
     $xhtmlHead .= '<th class="text-center" width="130" >Loại phiếu</th>';
     $xhtmlHead .= '<th class="text-center" width="130" >Danh mục</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Tổng tiền hàng</th>';

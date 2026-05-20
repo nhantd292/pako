@@ -534,9 +534,9 @@ var Form = function () {
                         if (response.success) {
                             // Tự động nhận diện nếu ô đích sử dụng plugin định dạng tiền tệ autoNumeric
                             if ($targetInput.hasClass('mask_currency') && typeof $.fn.autoNumeric === 'function') {
-                                $targetInput.autoNumeric('set', response.value);
+                                $targetInput.autoNumeric('set', response.value).trigger('change');
                             } else {
-                                $targetInput.val(response.value);
+                                $targetInput.val(response.value).trigger('change');
                             }
                         } else {
                             $targetInput.val(0);

@@ -108,7 +108,13 @@ define('TABLE_ORDERS_RETURN',       TABLE_PREFIX . 'orders_return'); // Bảng k
 define('TABLE_ORDERS_RETURN_DETAIL',TABLE_PREFIX . 'orders_return_detail'); // Bảng chi tiết khách hàng trả hàng
 
 // Quản lý kho sản phẩm
-define('TABLE_WAREHOUSE',       TABLE_PREFIX . 'warehouse'); // Kho hàng
+define('TABLE_WAREHOUSE',                   TABLE_PREFIX . 'warehouse'); // Kho hàng
+define('TABLE_WAREHOUSE_INPUT',             TABLE_PREFIX . 'warehouse_input'); // nhập hàng từ nhà cung cấp
+define('TABLE_WAREHOUSE_INPUT_DETAIL',      TABLE_PREFIX . 'warehouse_input_detail'); // Chi tiết sản phẩm nhập
+define('TABLE_WAREHOUSE_OUTPUT',            TABLE_PREFIX . 'warehouse_output'); // trả hàng nhà cung cấp
+define('TABLE_WAREHOUSE_OUTPUT_DETAIL',     TABLE_PREFIX . 'warehouse_output_detail'); // Chi tiết sản phẩm trả
+define('TABLE_WAREHOUSE_ROTATION',          TABLE_PREFIX . 'warehouse_rotation'); // Phiếu luân chuyển kho
+define('TABLE_WAREHOUSE_ROTATION_DETAIL',   TABLE_PREFIX . 'warehouse_rotation_detail'); // Chi tiết sản phẩm luân chuyển kho
 
 // Bảng Kiotviet
 define('TABLE_KOV_BRANCHES',        TABLE_PREFIX . 'kov_branches'); // Kho hàng
@@ -163,11 +169,13 @@ define('THU'    , 'REVENUE');
 define('CHI'    , 'EXPENSE');
 define('KMH'    , 'KMH');
 define('KTH'    , 'KTH');
+define('PNH'    , 'PNH');
+define('PTH'    , 'PTH');
 
 define('CATEGORY_KMH'    , 'khach-hang-mua-hang');
 define('CATEGORY_KTH'    , 'khach-hang-tra-hang');
-
-
+define('CATEGORY_PNH'    , 'nhap-hang-tu-nha-cung-cap');
+define('CATEGORY_PTH'    , 'tra-hang-nha-cung-cap');
 
 // Phân loại lịch sử chăm sóc
 define('DA_CHOT'    , 'da-chot');

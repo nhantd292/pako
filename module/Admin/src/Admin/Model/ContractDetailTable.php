@@ -15,6 +15,7 @@ class ContractDetailTable extends DefaultTable {
                 $select -> columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(1)')));
 
                 $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_CONTRACT_DETAIL .'.product_id', array(), 'inner');
 
                 $select -> order(array(TABLE_CONTRACT_DETAIL .'.contract_id' => 'DESC'));
 
@@ -28,6 +29,10 @@ class ContractDetailTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] == 1) {
                     $select->where->expression(TABLE_CONTRACT_DETAIL . '.numbers > ' . TABLE_CONTRACT_DETAIL . '.numbers_return',array());
+                }
+
+                if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
@@ -62,6 +67,7 @@ class ContractDetailTable extends DefaultTable {
                 }
 
                 $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_id' => 'id', 'contract_code' => 'code', 'contract_date'=> 'date', 'state'), 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_CONTRACT_DETAIL .'.product_id', array(), 'inner');
 
                 $select -> order(array(TABLE_CONTRACT .'.created' => 'DESC'));
 
@@ -77,6 +83,9 @@ class ContractDetailTable extends DefaultTable {
                     $select->where->expression(TABLE_CONTRACT_DETAIL . '.numbers > ' . TABLE_CONTRACT_DETAIL . '.numbers_return',array());
                 }
 
+                if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
+                }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $filter_keyword = trim($ssFilter['filter_keyword']);

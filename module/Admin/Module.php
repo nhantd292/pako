@@ -312,6 +312,36 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_WAREHOUSE, $adapter, null);
                     return new \Admin\Model\WarehouseTable($tableGateway);
                 },
+                'Admin\Model\WarehouseInputTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_WAREHOUSE_INPUT, $adapter, null);
+                    return new \Admin\Model\WarehouseInputTable($tableGateway);
+                },
+                'Admin\Model\WarehouseInputDetailTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_WAREHOUSE_INPUT_DETAIL, $adapter, null);
+                    return new \Admin\Model\WarehouseInputDetailTable($tableGateway);
+                },
+                'Admin\Model\WarehouseOutputTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_WAREHOUSE_OUTPUT, $adapter, null);
+                    return new \Admin\Model\WarehouseOutputTable($tableGateway);
+                },
+                'Admin\Model\WarehouseOutputDetailTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_WAREHOUSE_OUTPUT_DETAIL, $adapter, null);
+                    return new \Admin\Model\WarehouseOutputDetailTable($tableGateway);
+                },
+                'Admin\Model\WarehouseRotationTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_WAREHOUSE_ROTATION, $adapter, null);
+                    return new \Admin\Model\WarehouseRotationTable($tableGateway);
+                },
+                'Admin\Model\WarehouseRotationDetailTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_WAREHOUSE_ROTATION_DETAIL, $adapter, null);
+                    return new \Admin\Model\WarehouseRotationDetailTable($tableGateway);
+                },
                 'Admin\Model\ProductsTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig');
                     $tableGateway = new TableGateway(TABLE_PRODUCTS, $adapter, null);
@@ -547,6 +577,21 @@ class Module {
                 'formAdminWarehouse' => function($sm) {
                     $myForm	= new \Admin\Form\Warehouse($sm);
                     $myForm->setInputFilter(new \Admin\Filter\Warehouse());
+                    return $myForm;
+                },
+                'formAdminWarehouseInput' => function($sm) {
+                    $myForm	= new \Admin\Form\WarehouseInput($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\WarehouseInput());
+                    return $myForm;
+                },
+                'formAdminWarehouseOutput' => function($sm) {
+                    $myForm	= new \Admin\Form\WarehouseOutput($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\WarehouseOutput());
+                    return $myForm;
+                },
+                'formAdminWarehouseRotation' => function($sm) {
+                    $myForm	= new \Admin\Form\WarehouseRotation($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\WarehouseRotation());
                     return $myForm;
                 },
                 'formAdminProducts' => function($sm) {

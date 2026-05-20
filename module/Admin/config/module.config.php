@@ -61,9 +61,13 @@ return array (
 		    'Admin\Controller\ZaloNotifyResult'       => Controller\ZaloNotifyResultController::class,
             'Admin\Controller\CustomerType'           => Controller\CustomerTypeController::class,
             'Admin\Controller\CustomerDebt'           => Controller\CustomerDebtController::class,
-            'Admin\Controller\ProductsType'           => Controller\ProductsTypeController::class,
+
             'Admin\Controller\Warehouse'              => Controller\WarehouseController::class,
+            'Admin\Controller\WarehouseInput'         => Controller\WarehouseInputController::class,
+            'Admin\Controller\WarehouseInputDetail'   => Controller\WarehouseInputDetailController::class,
+
             'Admin\Controller\Products'               => Controller\ProductsController::class,
+            'Admin\Controller\ProductsType'           => Controller\ProductsTypeController::class,
             'Admin\Controller\ProductsPrice'          => Controller\ProductsPriceController::class,
             'Admin\Controller\ProductsInventory'      => Controller\ProductsInventoryController::class,
             'Admin\Controller\OrdersReturn'           => Controller\OrdersReturnController::class,
