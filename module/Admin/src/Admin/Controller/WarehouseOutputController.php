@@ -84,7 +84,7 @@ class WarehouseOutputController extends ActionController{
     public function addAction() {
         $this->_params['userInfo'] = $this->_userInfo->getUserInfo();
         $number = new \ZendX\Functions\Number();
-        $myForm = new \Admin\Form\warehouseOutput($this, $this->_params);
+        $myForm = new \Admin\Form\WarehouseOutput($this, $this->_params);
         $connection = $this->getConnection();
 
         if($this->getRequest()->isPost()){
@@ -92,7 +92,7 @@ class WarehouseOutputController extends ActionController{
             unset($this->_params['data']['filter_products_type']);
             unset($this->_params['data']['filter_keyword']);
 
-            $myForm->setInputFilter(new \Admin\Filter\warehouseOutput(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
+            $myForm->setInputFilter(new \Admin\Filter\WarehouseOutput(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
             $productList = $this->_params['data']['products_list'];
@@ -142,7 +142,7 @@ class WarehouseOutputController extends ActionController{
 
                     // Thêm chi tiết sản phẩm
                     foreach($products_detail as $arraydata){
-                        $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->saveItem(array('data' => $arraydata, 'warehouse_output_id' => $warehouse_output_id), array('task' => 'add-item'));
+                        $this->getServiceLocator()->get('Admin\Model\WarehouseOutputDetailTable')->saveItem(array('data' => $arraydata, 'warehouse_output_id' => $warehouse_output_id), array('task' => 'add-item'));
                     }
                     # tạo phiếu thu cho khách hàng
                     $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
@@ -270,7 +270,7 @@ class WarehouseOutputController extends ActionController{
                     $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => COMPLETE_STATUS)), array('task' => 'update-state'));
 
                     # cập nhật tồn kho cho sản phẩm.
-                    $products_detail = $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->listItem(array('warehouse_output_id' => $id), array('task' => 'list-ajax'));
+                    $products_detail = $this->getServiceLocator()->get('Admin\Model\WarehouseOutputDetailTable')->listItem(array('warehouse_output_id' => $id), array('task' => 'list-ajax'));
 
                     foreach ($products_detail as $detail_item) {
                         $warehouse_input_detail = $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->getItem(array('id' => $detail_item['warehouse_input_detail_id']));
@@ -342,10 +342,10 @@ class WarehouseOutputController extends ActionController{
                 return false;
             }
             $item['amount_owed'] = $item['old_debt'];
-            $products_detail = $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->listItem(array('warehouse_output_id' => $id), array('task' => 'list-ajax'))->toArray();
+            $products_detail = $this->getServiceLocator()->get('Admin\Model\WarehouseOutputDetailTable')->listItem(array('warehouse_output_id' => $id), array('task' => 'list-ajax'))->toArray();
             $this->_viewModel['products_detail']     = $products_detail;
 
-            $myForm = new \Admin\Form\warehouseOutput($this, $item);
+            $myForm = new \Admin\Form\WarehouseOutput($this, $item);
             $myForm->setData($item);
             $this->_viewModel['item']        = $item;
         }
@@ -364,7 +364,7 @@ class WarehouseOutputController extends ActionController{
             unset($this->_params['data']['filter_products_type']);
             unset($this->_params['data']['filter_keyword']);
 
-            $myForm->setInputFilter(new \Admin\Filter\warehouseOutput(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
+            $myForm->setInputFilter(new \Admin\Filter\WarehouseOutput(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
             $productList = $this->_params['data']['products_list'];
@@ -403,10 +403,10 @@ class WarehouseOutputController extends ActionController{
                     # Sửa phiếu trả hàng
                     $warehouse_output_id = $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
                     // Xóa chi tiết sản phẩm
-                    $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->saveItem(array('warehouse_output_id' => $warehouse_output_id), array('task' => 'delete_product_by_warehouse_output_id'));
+                    $this->getServiceLocator()->get('Admin\Model\WarehouseOutputDetailTable')->saveItem(array('warehouse_output_id' => $warehouse_output_id), array('task' => 'delete_product_by_warehouse_output_id'));
                     // Thêm chi tiết sản phẩm
                     foreach($products_detail as $arraydata){
-                        $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->saveItem(array('data' => $arraydata, 'warehouse_output_id' => $warehouse_output_id), array('task' => 'add-item'));
+                        $this->getServiceLocator()->get('Admin\Model\WarehouseOutputDetailTable')->saveItem(array('data' => $arraydata, 'warehouse_output_id' => $warehouse_output_id), array('task' => 'add-item'));
                     }
                     # Sửa phiếu thu cho khách hàng
                     $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_output_id' => $warehouse_output_id), array('task' => 'type-id'));
