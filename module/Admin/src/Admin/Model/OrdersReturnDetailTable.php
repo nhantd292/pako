@@ -102,7 +102,7 @@ class OrdersReturnDetailTable extends DefaultTable {
 
                 $select -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
                 $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.product_id', array('products_code' => 'code', 'products_name' => 'name'), 'inner');
-                $select -> join(TABLE_CONTRACT_DETAIL, TABLE_CONTRACT_DETAIL .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_detail_id', array('products_code' => 'code', 'contract_detail_quantity' => 'numbers'), 'inner');
+                $select -> join(TABLE_CONTRACT_DETAIL, TABLE_CONTRACT_DETAIL .'.id = '. TABLE_ORDERS_RETURN_DETAIL .'.orders_detail_id', array('products_code' => 'code', 'contract_detail_quantity' => 'numbers', 'contract_detail_quantity_return' => 'numbers_return'), 'inner');
                 $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code', 'contract_inventory' => 'inventory_id'), 'inner');
 
 

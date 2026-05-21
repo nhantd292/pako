@@ -65,6 +65,9 @@
             if (!empty($item['warehouse_input_id'])) {
                 $link_category = '<a href="/xadmin/warehouse-input/detail/id/'.$item['warehouse_input_id'].'/" target="_blank"> '. $item['warehouse_input_code'] .'</a>';
             }
+            if (!empty($item['warehouse_output_id'])) {
+                $link_category = '<a href="/xadmin/warehouse-output/detail/id/'.$item['warehouse_output_id'].'/" target="_blank"> '. $item['warehouse_output_code'] .'</a>';
+            }
             
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
     							<td class="text-center">'. $cid .'</td>

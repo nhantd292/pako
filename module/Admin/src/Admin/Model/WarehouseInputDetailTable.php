@@ -31,8 +31,8 @@ class WarehouseInputDetailTable extends DefaultTable {
                     $select->where->equalTo(TABLE_WAREHOUSE_INPUT.'.state', $ssFilter['filter_state']);
                 }
 
-                if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] != true) {
-                    $select->where->greaterThan(TABLE_WAREHOUSE_INPUT_DETAIL.'.quantity', TABLE_WAREHOUSE_INPUT_DETAIL.'.quantity_return');
+                if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] == 1) {
+                    $select->where->expression(TABLE_WAREHOUSE_INPUT_DETAIL.'.quantity >' . TABLE_WAREHOUSE_INPUT_DETAIL.'.quantity_return', array());
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
@@ -84,8 +84,8 @@ class WarehouseInputDetailTable extends DefaultTable {
                     $select->where->equalTo(TABLE_WAREHOUSE_INPUT.'.state', $ssFilter['filter_state']);
                 }
 
-                if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] != true) {
-                    $select->where->greaterThan(TABLE_WAREHOUSE_INPUT_DETAIL.'.quantity', TABLE_WAREHOUSE_INPUT_DETAIL.'.quantity_return');
+                if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] == 1) {
+                    $select->where->expression(TABLE_WAREHOUSE_INPUT_DETAIL.'.quantity >' . TABLE_WAREHOUSE_INPUT_DETAIL.'.quantity_return', array());
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
@@ -133,12 +133,22 @@ class WarehouseInputDetailTable extends DefaultTable {
     		})->toArray();
 		}
 
-		if($options['task'] == 'by-contract') {
+		if($options['task'] == 'search') {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
-                $select -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_WAREHOUSE_INPUT_DETAIL .'.warehouse_input_id', array('contract_code' => 'code', 'contract_date'=> 'date'), 'inner');
+                $select -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_WAREHOUSE_INPUT_DETAIL .'.warehouse_input_id', array('warehouse_input_code' => 'code', 'warehouse_input_date'=> 'created'), 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_WAREHOUSE_INPUT_DETAIL .'.products_id', array('products_code' => 'code', 'products_name'=> 'name'), 'inner');
 
-			    $select -> where -> equalTo('warehouse_input_id', $arrParam['warehouse_input_id']);
-			    $select -> where -> equalTo('product_id', $arrParam['product_id']);
+                if (!empty($arrParam['id'])) {
+                    $select -> where -> equalTo(TABLE_WAREHOUSE_INPUT_DETAIL .'.id', $arrParam['id']);
+                }
+                if (!empty($arrParam['warehouse_input_id'])) {
+                    $select -> where -> equalTo(TABLE_WAREHOUSE_INPUT_DETAIL .'.warehouse_input_id', $arrParam['warehouse_input_id']);
+                }
+                if (!empty($arrParam['product_id'])) {
+                    $select -> where -> equalTo(TABLE_WAREHOUSE_INPUT_DETAIL .'.product_id', $arrParam['product_id']);
+                }
+
+
     		})->toArray();
 		}
 			
@@ -170,6 +180,21 @@ class WarehouseInputDetailTable extends DefaultTable {
                 return $id;
             } catch (\Exception $e) {
                 throw new \Exception('Insert Orders return Detail Table failed ('.$arrData['code'].'): ' . $e->getMessage());
+            }
+        }
+
+        if($options['task'] == 'update-quantity') {
+            $id = $arrData['id'];
+            $data = array(
+                'quantity_return' => $arrData['quantity_return'],
+            );
+
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return $id;
+
+            } catch (\Exception $e) {
+                throw new \Exception('update number return failed ('.$arrData['$id'].'): ' . $e->getMessage());
             }
         }
 

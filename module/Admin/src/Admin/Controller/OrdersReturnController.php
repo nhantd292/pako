@@ -286,9 +286,9 @@ class OrdersReturnController extends ActionController{
                         $contract_detail_item_update = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->getItem(array('id' => $detail_item['orders_detail_id']));
                         $number_return_new = $contract_detail_item_update['numbers_return'] + $detail_item['quantity'];
                         $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem(array('data' => array('id' => $detail_item['orders_detail_id'], 'numbers_return' => $number_return_new)), array('task' => 'update-number'));
-
-                        if ($detail_item['quantity'] > $detail_item['contract_detail_quantity']) {
-                            $this->flashMessenger()->addErrorMessage('Số lượng sản phẩm "'.$detail_item['products_name'].'" trả lại nhiều hơn số lượng đã mua, số lượng mua là "'.$detail_item['contract_detail_quantity'].'" !');
+                        $net_number = $detail_item['contract_detail_quantity'] - $detail_item['contract_detail_quantity_return'];
+                        if ($detail_item['quantity'] > $net_number) {
+                            $this->flashMessenger()->addErrorMessage('Số lượng sản phẩm "'.$detail_item['products_name'].'" trả lại nhiều hơn số lượng đã mua, số lượng mua là "'.$net_number.'" !');
                             $this->goRoute(array('action' => 'detail', 'id' => $id));
                             return false;
                         }

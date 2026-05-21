@@ -9,12 +9,12 @@ use Zend\Session\Container;
 use Zend\Form\FormInterface;
 use ZendX\System\UserInfo;
 
-class WarehouseInputController extends ActionController{
-    public $caption = 'Nhập hàng từ nhà cung cấp';
+class WarehouseOutputController extends ActionController{
+    public $caption = 'Trả hàng nhà cung cấp';
     public function init() {
         // Thiết lập options
-        $this->_options['tableName'] = 'Admin\Model\WarehouseInputTable';
-        $this->_options['formName'] = 'formAdminWarehouseInput';
+        $this->_options['tableName'] = 'Admin\Model\WarehouseOutputTable';
+        $this->_options['formName'] = 'formAdminWarehouseOutput';
 
         // Thiết lập session filter
         $ssFilter = new Container(__CLASS__ . $this->_params['action']);
@@ -64,7 +64,7 @@ class WarehouseInputController extends ActionController{
     }
 
     public function indexAction() {
-        $myForm    = new \Admin\Form\Search\WarehouseInput($this, $this->_params['ssFilter']);
+        $myForm    = new \Admin\Form\Search\warehouseOutput($this, $this->_params['ssFilter']);
         $myForm->setData($this->_params['ssFilter']);
         // Danh sách data
         $items = $this->getTable()->listItem($this->_params, array('task' => 'list-item'));
@@ -84,7 +84,7 @@ class WarehouseInputController extends ActionController{
     public function addAction() {
         $this->_params['userInfo'] = $this->_userInfo->getUserInfo();
         $number = new \ZendX\Functions\Number();
-        $myForm = new \Admin\Form\WarehouseInput($this, $this->_params);
+        $myForm = new \Admin\Form\warehouseOutput($this, $this->_params);
         $connection = $this->getConnection();
 
         if($this->getRequest()->isPost()){
@@ -92,7 +92,7 @@ class WarehouseInputController extends ActionController{
             unset($this->_params['data']['filter_products_type']);
             unset($this->_params['data']['filter_keyword']);
 
-            $myForm->setInputFilter(new \Admin\Filter\WarehouseInput(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
+            $myForm->setInputFilter(new \Admin\Filter\warehouseOutput(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
             $productList = $this->_params['data']['products_list'];
@@ -113,7 +113,6 @@ class WarehouseInputController extends ActionController{
 
                 if($check_emty_data){
                     $products_detail  = array();
-                    $total_number_product = 0;
                     $price_total = 0;
                     for($i = 0; $i < count($productList['products_id']); $i++){
                         if(!empty($productList['products_id'][$i])) {
@@ -122,23 +121,28 @@ class WarehouseInputController extends ActionController{
                             $products_detail[$i]['price']            = $number->formatToData($productList['price'][$i]); // giá bán
                             $products_detail[$i]['total']            = $number->formatToData($productList['quantity'][$i]) * $number->formatToData($productList['price'][$i]) ; // tổng tiền (chính là cột thành tiền)
                             $products_detail[$i]['products_id']      = $productList['products_id'][$i]; // id sản phẩm
+                            $products_detail[$i]['warehouse_input_detail_id']      = $productList['warehouse_input_detail_id'][$i]; // id sản phẩm
 
-                            $total_number_product += $number->formatToData($productList['quantity'][$i]);
                             $price_total += $products_detail[$i]['total'];
                         }
                     }
                     $this->_params['data']['price_total'] = $price_total;
                     $this->_params['data']['state'] = NEW_STATUS;
+//                    echo "<pre>";
+//                    print_r($this->_params['data']);
+//                    print_r($products_detail);
+//                    echo "</pre>";
+//                    exit;
 
                     ##### begin #####
                     $connection->beginTransaction();
 
                     # tạo phiếu trả hàng
-                    $warehouse_input_id = $this->getTable()->saveItem($this->_params, array('task' => 'add-item'));
+                    $warehouse_output_id = $this->getTable()->saveItem($this->_params, array('task' => 'add-item'));
 
                     // Thêm chi tiết sản phẩm
                     foreach($products_detail as $arraydata){
-                        $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->saveItem(array('data' => $arraydata, 'warehouse_input_id' => $warehouse_input_id), array('task' => 'add-item'));
+                        $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->saveItem(array('data' => $arraydata, 'warehouse_output_id' => $warehouse_output_id), array('task' => 'add-item'));
                     }
                     # tạo phiếu thu cho khách hàng
                     $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
@@ -156,20 +160,20 @@ class WarehouseInputController extends ActionController{
                     $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
                     $price_total    = $number->formatToData($this->_params['data']['price_total']);
-                    $new_debt       = $old_debt - ($price_total - $discount - $paid_cash - $paid_transfer);
+                    $new_debt       = $old_debt - ( $discount + $paid_cash + $paid_transfer - $price_total);
                     $data_debt = array(
                         'customer_id' => $customer_id,
-                        'type' => PNH,
-                        'warehouse_input_id' => $warehouse_input_id,
+                        'type' => PTH,
+                        'warehouse_output_id' => $warehouse_output_id,
                         'inventory_id' => $this->_params['data']['inventory_id'],
-                        'price_total' => $price_total,
-                        'discount' => -$discount,
-                        'paid_cash' => -$paid_cash,
-                        'paid_transfer' => -$paid_transfer,
+                        'price_total' => -$price_total,
+                        'discount' => $discount,
+                        'paid_cash' => $paid_cash,
+                        'paid_transfer' => $paid_transfer,
                         'old_debt' => $old_debt,
                         'new_debt' => $new_debt,
                         'state' => NEW_STATUS,
-                        'category' => CATEGORY_PNH,
+                        'category' => CATEGORY_PTH,
                     );
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
 
@@ -182,7 +186,7 @@ class WarehouseInputController extends ActionController{
                     if($controlAction == 'save-new') {
                         $this->goRoute(array('action' => 'add'));
                     } else if($controlAction == 'save') {
-                        $this->goRoute(array('action' => 'detail', 'id' => $warehouse_input_id));
+                        $this->goRoute(array('action' => 'detail', 'id' => $warehouse_output_id));
                     } else {
                         $this->goRoute();
                     }
@@ -211,7 +215,7 @@ class WarehouseInputController extends ActionController{
         if($id) {
             $connection = $this->getConnection();
             $item = $this->getTable()->getItem(array('id' => $id), array('task' => 'full'));
-            $debt_item = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_input_id' => $id), array('task' => 'type-id'));
+            $debt_item = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_output_id' => $id), array('task' => 'type-id'));
         } else {
             return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
         }
@@ -219,7 +223,7 @@ class WarehouseInputController extends ActionController{
             $control_action = $this->_params['data']['control-action'];
             if (in_array($item['state'], array(COMPLETE_STATUS, CANCEL_STATUS))) {
                 $state_text = $item['state'] == CANCEL_STATUS ? 'HỦY' : 'HOÀN THÀNH';
-                $this->flashMessenger()->addErrorMessage('Phiếu nhập hàng đã ở trạng thái "'.$state_text.'" không thể cập nhật dữ liệu!');
+                $this->flashMessenger()->addErrorMessage('Phiếu trả hàng đã ở trạng thái "'.$state_text.'" không thể cập nhật dữ liệu!');
             }
             else{
                 if ($control_action == PROCESSING_STATUS) {
@@ -227,7 +231,7 @@ class WarehouseInputController extends ActionController{
                     $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
 
                     # cập nhật trạng thái phiếu thu
-                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_input_id' => $id), array('task' => 'type-id'));
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_output_id' => $id), array('task' => 'type-id'));
                     $data_debt = array(
                         'id' => $debt_item_old->id,
                         'state' => PROCESSING_STATUS,
@@ -244,7 +248,7 @@ class WarehouseInputController extends ActionController{
                     $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => CANCEL_STATUS)), array('task' => 'update-state'));
 
                     # Sửa phiếu thu chi khách hàng
-                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_input_id' => $id), array('task' => 'type-id'));
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_output_id' => $id), array('task' => 'type-id'));
                     $data_debt = array(
                         'id' => $debt_item_old->id,
                         'price_total' => 0,
@@ -257,7 +261,7 @@ class WarehouseInputController extends ActionController{
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     $connection->commit();
-                    $this->flashMessenger()->addSuccessMessage('Hủy đơn hàng thành công!');
+                    $this->flashMessenger()->addSuccessMessage('Hủy phiếu trả hàng thành công!');
                 }
                 if ($control_action == COMPLETE_STATUS) {
                     ##### begin #####
@@ -266,16 +270,28 @@ class WarehouseInputController extends ActionController{
                     $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => COMPLETE_STATUS)), array('task' => 'update-state'));
 
                     # cập nhật tồn kho cho sản phẩm.
-                    $products_detail = $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->listItem(array('warehouse_input_id' => $id), array('task' => 'list-ajax'));
+                    $products_detail = $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->listItem(array('warehouse_output_id' => $id), array('task' => 'list-ajax'));
 
                     foreach ($products_detail as $detail_item) {
+                        $warehouse_input_detail = $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->getItem(array('id' => $detail_item['warehouse_input_detail_id']));
+                        $quantity_return_new = $warehouse_input_detail['quantity_return'] + $detail_item['quantity'];
+                        $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->saveItem(array('data' => array('id' => $detail_item['warehouse_input_detail_id'], 'quantity_return' => $quantity_return_new)), array('task' => 'update-quantity'));
+                        $net_number = $detail_item['warehouse_input_detail_quantity'] - $detail_item['warehouse_input_detail_quantity_return'];
+
+                        if ($detail_item['quantity'] > $net_number) {
+                            $this->flashMessenger()->addErrorMessage('Số lượng sản phẩm "'.$detail_item['products_name'].'" trả lại nhiều hơn số lượng đã mua, số lượng mua là "'.$detail_item['contract_detail_quantity'].'" !');
+                            $this->goRoute(array('action' => 'detail', 'id' => $id));
+                            return false;
+                        }
+
+
                         $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->products_id, 'warehouse_id' => $item->inventory_id), array('task' => 'filter'));
-                        $quantity_new = $inventory->quantity + $detail_item->quantity;
+                        $quantity_new = $inventory->quantity - $detail_item->quantity;
                         $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
                     }
 
                     # Sửa phiếu thu chi khách hàng
-                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_input_id' => $id), array('task' => 'type-id'));
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_output_id' => $id), array('task' => 'type-id'));
                     $data_debt = array(
                         'id' => $debt_item_old->id,
                         'state' => COMPLETE_STATUS,
@@ -283,7 +299,7 @@ class WarehouseInputController extends ActionController{
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     $connection->commit();
-                    $this->flashMessenger()->addSuccessMessage('Phiếu nhập hàng đã được hoàn thành!');
+                    $this->flashMessenger()->addSuccessMessage('Phiếu trả hàng đã được hoàn thành!');
                 }
 
                 $item = $this->getTable()->getItem(array('id' => $id), array('task' => 'full'));
@@ -326,10 +342,10 @@ class WarehouseInputController extends ActionController{
                 return false;
             }
             $item['amount_owed'] = $item['old_debt'];
-            $products_detail = $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->listItem(array('warehouse_input_id' => $id), array('task' => 'list-ajax'))->toArray();
+            $products_detail = $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->listItem(array('warehouse_output_id' => $id), array('task' => 'list-ajax'))->toArray();
             $this->_viewModel['products_detail']     = $products_detail;
 
-            $myForm = new \Admin\Form\WarehouseInput($this, $item);
+            $myForm = new \Admin\Form\warehouseOutput($this, $item);
             $myForm->setData($item);
             $this->_viewModel['item']        = $item;
         }
@@ -348,7 +364,7 @@ class WarehouseInputController extends ActionController{
             unset($this->_params['data']['filter_products_type']);
             unset($this->_params['data']['filter_keyword']);
 
-            $myForm->setInputFilter(new \Admin\Filter\WarehouseInput(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
+            $myForm->setInputFilter(new \Admin\Filter\warehouseOutput(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
             $productList = $this->_params['data']['products_list'];
@@ -374,6 +390,7 @@ class WarehouseInputController extends ActionController{
                             $products_detail[$i]['price']            = $number->formatToData($productList['price'][$i]); // giá bán
                             $products_detail[$i]['total']            = $number->formatToData($productList['quantity'][$i]) * $number->formatToData($productList['price'][$i]) ; // tổng tiền (chính là cột thành tiền)
                             $products_detail[$i]['products_id']      = $productList['products_id'][$i]; // id sản phẩm
+                            $products_detail[$i]['warehouse_input_detail_id']      = $productList['warehouse_input_detail_id'][$i]; // id sản phẩm
 
                             $price_total += $products_detail[$i]['total'];
                         }
@@ -384,28 +401,28 @@ class WarehouseInputController extends ActionController{
                     $connection->beginTransaction();
 
                     # Sửa phiếu trả hàng
-                    $warehouse_input_id = $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
+                    $warehouse_output_id = $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
                     // Xóa chi tiết sản phẩm
-                    $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->saveItem(array('warehouse_input_id' => $warehouse_input_id), array('task' => 'delete_product_by_warehouse_input_id'));
+                    $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->saveItem(array('warehouse_output_id' => $warehouse_output_id), array('task' => 'delete_product_by_warehouse_output_id'));
                     // Thêm chi tiết sản phẩm
                     foreach($products_detail as $arraydata){
-                        $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->saveItem(array('data' => $arraydata, 'warehouse_input_id' => $warehouse_input_id), array('task' => 'add-item'));
+                        $this->getServiceLocator()->get('Admin\Model\warehouseOutputDetailTable')->saveItem(array('data' => $arraydata, 'warehouse_output_id' => $warehouse_output_id), array('task' => 'add-item'));
                     }
                     # Sửa phiếu thu cho khách hàng
-                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_input_id' => $warehouse_input_id), array('task' => 'type-id'));
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('warehouse_output_id' => $warehouse_output_id), array('task' => 'type-id'));
 
                     $discount       = $number->formatToData($this->_params['data']['discount']);
                     $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
                     $price_total    = $number->formatToData($this->_params['data']['price_total']);
-                    $new_debt       = $debt_item_old->old_debt - ($price_total - $discount - $paid_cash - $paid_transfer);
+                    $new_debt       = $debt_item_old->old_debt - ($discount + $paid_cash + $paid_transfer -$price_total);
                     $data_debt = array(
                         'id' => $debt_item_old->id,
                         'inventory_id' => $this->_params['data']['inventory_id'],
-                        'price_total' => $price_total,
-                        'discount' => -$discount,
-                        'paid_cash' => -$paid_cash,
-                        'paid_transfer' => -$paid_transfer,
+                        'price_total' => -$price_total,
+                        'discount' => $discount,
+                        'paid_cash' => $paid_cash,
+                        'paid_transfer' => $paid_transfer,
                         'new_debt' => $new_debt,
                     );
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
@@ -419,7 +436,7 @@ class WarehouseInputController extends ActionController{
                     if($controlAction == 'save-new') {
                         $this->goRoute(array('action' => 'add'));
                     } else if($controlAction == 'save') {
-                        $this->goRoute(array('action' => 'detail', 'id' => $warehouse_input_id));
+                        $this->goRoute(array('action' => 'detail', 'id' => $warehouse_output_id));
                     } else {
                         $this->goRoute();
                     }

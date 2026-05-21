@@ -65,6 +65,8 @@ return array (
             'Admin\Controller\Warehouse'              => Controller\WarehouseController::class,
             'Admin\Controller\WarehouseInput'         => Controller\WarehouseInputController::class,
             'Admin\Controller\WarehouseInputDetail'   => Controller\WarehouseInputDetailController::class,
+            'Admin\Controller\WarehouseOutput'        => Controller\WarehouseOutputController::class,
+            'Admin\Controller\WarehouseOutputDetail'  => Controller\WarehouseOutputDetailController::class,
 
             'Admin\Controller\Products'               => Controller\ProductsController::class,
             'Admin\Controller\ProductsType'           => Controller\ProductsTypeController::class,

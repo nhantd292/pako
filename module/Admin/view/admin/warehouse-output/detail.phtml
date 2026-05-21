@@ -1,0 +1,90 @@
+<?php
+$dateFormat = new \ZendX\Functions\Date();
+$debt_item = $this->debt_item;
+
+$elementsContact = array(
+    array('section' => 'Thông tin nhà cung cấp', 'boxClass' => 'col-md-12'),
+    array('element' => $this->item['name'], 'label' => 'Họ và tên', 'boxClass' => 'col-md-4'),
+    array('element' => $this->item['phone'], 'label' => 'Số điện thoại', 'boxClass' => 'col-md-4'),
+//    array('element' => $this->customer_type[$this->item['customer_type_id']]['name'], 'label' => 'Nhóm khách hàng', 'boxClass' => 'col-md-4'),
+    array('element' => $this->warehouse[$this->item['inventory_id']]['name'], 'label' => 'Kho trả hàng', 'boxClass' => 'col-md-4'),
+    array('element' => $this->item['note'] ? $this->item['note'] : '.', 'label' => 'Mô tả', 'boxClass' => 'col-md-12'),
+);
+$elementsContract = array(
+
+    array('section' => 'Thông tin phiếu trả hàng', 'boxClass' => 'col-md-12'),
+    array('element' => $this->item['code'], 'label' => 'Mã phiếu', 'boxClass' => 'col-md-3'),
+    array('element' => $dateFormat->formatToView($this->item['created'], 'd/m/Y H:i:s'), 'label' => 'Ngày tạo', 'boxClass' => 'col-md-3'),
+    array('element' => $this->user[$this->item['created_by']]['name'], 'label' => 'Người tạo', 'boxClass' => 'col-md-3'),
+    array('element' => '<span class="text-orange">'.$this->order_status[$this->item['state']]->name.'</span> ', 'label' => 'Trạng thái', 'boxClass' => 'col-md-3'),
+);
+$elementsPrice = array(
+    array('section' => 'Thông tin thanh toán', 'boxClass' => 'col-md-12'),
+    array('element' => '<span class="mask_currency text-green">'. $this->item['price_total'] .'</span> ', 'label' => 'Tổng tiền hàng (1)', 'boxClass' => 'col-md-4',),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_cash'] .'</span>', 'label' => 'Trả tiền mặt (2)', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_transfer'] .'</span>', 'label' => 'Chuyển khoản (3)', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['discount'] .'</span>', 'label' => 'Giảm giá (4)', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-red">'. $debt_item->old_debt .'</span> ', 'label' => 'Nợ cũ (5)', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-orange">'. $debt_item->new_debt .'</span> ', 'label' => 'Nợ lại:<span class="text-info text-bold" style="font-size: 10px;">5 - (2 + 3 + 4 -1)</span>', 'boxClass' => 'col-md-4'),
+);
+$elementsProducts = array(
+    array('section' => 'Danh sách sản phẩm của phiếu trả hàng', 'boxClass' => 'col-md-12'),
+    array('div' => '', 'boxClass' => 'col-md-12', 'boxId' => 'load_product'),
+);
+$xhtmlContact = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementsContact);
+$xhtmlContract = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementsContract);
+$xhtmlPrice = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementsPrice);
+$xhtmlProducts = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementsProducts);
+
+$linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit', 'id' => $this->item['id']));
+$linkIndex  = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index'));
+
+$arrControlProcessing = $this->item['state'] == NEW_STATUS ? array(
+    array('name' => 'save', 'caption' => 'Xử lý đơn', 'link' => 'javascript:;', 'icon' => 'fa-check', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'processing\', \' Bạn có chắc chắn muốn chuyển trạng thái xử lý phiếu trả hàng\');', 'class' => 'btn blue')),
+) : array();
+$arrControlAction = array(
+    array('name' => 'save-new', 'caption' => 'Hủy phiếu trả hàng', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'cancel\', \' Bạn có chắc chắn muốn hủy phiếu trả hàng\');', 'class' => 'btn red')),
+    array('name' => 'save-close', 'caption' => 'Hoàn thành', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành phiếu trả hàng\');', 'class' => 'btn green')),
+    array('name' => 'close', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow')),
+);
+$arrControlDefault = array(
+    array('name' => 'edit', 'caption' => 'Đóng', 'link' => $linkIndex, 'onclick' => '', 'icon' => 'fa fa-pencil', 'attributes' => array('class' => 'btn default'))
+);
+$arrControl = in_array($this->item['state'], [CANCEL_STATUS, COMPLETE_STATUS]) ? $arrControlDefault : array_merge($arrControlProcessing,$arrControlAction, $arrControlDefault);
+?>
+
+<form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm" class="">
+    <div class="page-control">
+        <div class="title pull-left">
+            <?php echo $this->caption;?>
+        </div>
+        <div class="control pull-right">
+            <?php echo $this->partial($this->params['module'] . '/partial/control-default.phtml', array( 'control' => $arrControl )); ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
+    <?php echo $this->flashMessenger()->renderCurrent('success', array('alert', 'alert-success')); ?>
+
+    <div class="page-content">
+        <div class="row">
+            <div class="col-md-12">
+                <?php echo $xhtmlContract;?>
+            </div>
+            <div class="col-md-8">
+                <?php echo $xhtmlContact;?>
+            </div>
+            <div class="col-md-4">
+                <?php echo $xhtmlPrice;?>
+            </div>
+            <div class="col-md-12">
+                <?php echo $xhtmlProducts;?>
+            </div>
+        </div>
+    </div>
+</form>
+
+<?php $this->headScript()->captureStart() ?>
+    load_action('#load_product', '<?php echo $this->url('routeAdmin/default', array('controller' => 'api', 'action' => 'list-product-warehouse-output'));?>', {warehouse_output_id: '<?php echo $this->item['id'];?>'});
+<?php $this->headScript()->captureEnd() ?>

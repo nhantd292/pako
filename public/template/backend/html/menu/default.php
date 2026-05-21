@@ -279,23 +279,23 @@
         <ul class="dropdown-menu">
             <li>
                 <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'index'));?>" target="_self">
-                    <i class="fa fa-file-text-o"></i> <span class="title">Đơn hàng</span><span class="arrow"></span>
+                    <i class="fa fa-book"></i> <span class="title">Đơn hàng</span><span class="arrow"></span>
                 </a>
             </li>
             <li>
                 <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract-detail', 'action' => 'index'));?>" target="_self">
-                    <i class="fa fa-file-text-o"></i> <span class="title">Sản phẩm đã bán</span><span class="arrow"></span>
+                    <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm đã bán</span><span class="arrow"></span>
                 </a>
             </li>
             <li class="divider"></li>
             <li>
                 <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'orders-return', 'action' => 'index'));?>" target="_self">
-                    <i class="fa fa-file-text-o"></i> <span class="title">Phiếu KH trả hàng</span><span class="arrow"></span>
+                    <i class="fa fa-reply-all"></i> <span class="title">Phiếu KH trả hàng</span><span class="arrow"></span>
                 </a>
             </li>
             <li>
                 <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'orders-return-detail', 'action' => 'index'));?>" target="_self">
-                    <i class="fa fa-file-text-o"></i> <span class="title">Sản phẩm KH trả hàng</span><span class="arrow"></span>
+                    <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm KH trả hàng</span><span class="arrow"></span>
                 </a>
             </li>
 
@@ -308,7 +308,7 @@
     </li>
     <li class="parent">
         <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
-            <i class="fa fa-product-hunt"></i> <span class="title">Quản lý kho</span><span class="arrow"></span>
+            <i class="fa fa-database"></i> <span class="title">Quản lý kho</span><span class="arrow"></span>
         </a>
         <ul class="dropdown-menu">
             <li>
@@ -319,7 +319,7 @@
             <li class="divider"></li>
             <li>
                 <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-input', 'action' => 'index'));?>" target="_self">
-                    <i class="fa fa-list-ul"></i> <span class="title">Nhập hàng từ nhà cung cấp</span><span class="arrow"></span>
+                    <i class="fa fa-sign-in"></i> <span class="title">Nhập hàng từ nhà cung cấp</span><span class="arrow"></span>
                 </a>
             </li>
             <li>
@@ -327,6 +327,28 @@
                     <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm nhập từ NCC</span><span class="arrow"></span>
                 </a>
             </li>
+            <li class="divider"></li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-output', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa fa-repeat"></i> <span class="title">Trả hàng nhà cung cấp</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-output-detail', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm đã trả hàng NCC</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li class="divider"></li>
+<!--            <li>-->
+<!--                <a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'warehouse-output', 'action' => 'index'));?><!--" target="_self">-->
+<!--                    <i class="fa fa fa-refresh"></i> <span class="title">Phiếu luân chuyển kho</span><span class="arrow"></span>-->
+<!--                </a>-->
+<!--            </li>-->
+<!--            <li>-->
+<!--                <a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'warehouse-output-detail', 'action' => 'index'));?><!--" target="_self">-->
+<!--                    <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm đã luân chuyển</span><span class="arrow"></span>-->
+<!--                </a>-->
+<!--            </li>-->
         </ul>
     </li>
 <?php //if($is_system){?>

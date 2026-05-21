@@ -50,7 +50,8 @@ class CustomerDebtTable extends DefaultTable {
                         -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id'), 'left')
                         -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_CUSTOMER_DEBT .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner')
                         -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array( 'orders_return_code' => 'code', 'orders_return_id' => 'id'), 'left')
-                        -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_input_id', array( 'warehouse_input_code' => 'code', 'warehouse_input_id' => 'id'), 'left');
+                        -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_input_id', array( 'warehouse_input_code' => 'code', 'warehouse_input_id' => 'id'), 'left')
+                        -> join(TABLE_WAREHOUSE_OUTPUT, TABLE_WAREHOUSE_OUTPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_output_id', array( 'warehouse_output_code' => 'code', 'warehouse_output_id' => 'id'), 'left');
 
                 if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
                     $select -> where -> NEST

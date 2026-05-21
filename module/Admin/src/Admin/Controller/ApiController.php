@@ -319,7 +319,6 @@ class ApiController extends ActionController
         $viewModel->setTerminal(true);
         return $viewModel;
     }
-
     public function addProductToListAction()
     {
         if ($this->_params['data']['id']) {
@@ -368,7 +367,6 @@ class ApiController extends ActionController
         $viewModel->setTerminal(true);
         return $viewModel;
     }
-
     public function addProductReturnToListAction()
     {
         if ($this->_params['data']['product_id']) {
@@ -412,11 +410,58 @@ class ApiController extends ActionController
         $viewModel->setTerminal(true);
         return $viewModel;
     }
-
     public function addProductToWarehouseInputAction()
     {
         if ($this->_params['data']['id']) {
             $product = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem($this->_params['data'], array('task' => 'filter'));
+            $this->_viewModel['product'] = (array)$product;
+            $this->_viewModel['data'] = $this->_params['data'];
+            $viewModel = new ViewModel($this->_viewModel);
+            $viewModel->setTerminal(true);
+            return $viewModel;
+        }
+    }
+
+    public function loadProductsWarehouseOutputAction()
+    {
+        $itemPerpage = 20;
+        $curentPage = $this->_params['data']['curentPage'] ? $this->_params['data']['curentPage'] : 1;
+        $paginator = array(
+            'itemCountPerPage' => $itemPerpage,
+            'currentPageNumber' => $curentPage
+        );
+        $ssFilter = array(
+            'filter_customer_id' => $this->_params['data']['filter_customer_id'] ? $this->_params['data']['filter_customer_id'] : 'customer_id',
+            'filter_state' => 'complete',
+            'filter_numbers_return' => 1,
+        );
+
+        if (!empty($this->_params['data']['filter_products_type']))
+            $ssFilter['filter_products_type'] = $this->_params['data']['filter_products_type'];
+        if (!empty($this->_params['data']['filter_keyword']))
+            $ssFilter['filter_keyword'] = $this->_params['data']['filter_keyword'];
+        if (!empty($this->_params['data']['filter_trademark']))
+            $ssFilter['filter_trademark'] = $this->_params['data']['filter_trademark'];
+
+        $param = array(
+            'paginator' => $paginator,
+            'ssFilter' => $ssFilter
+        );
+
+        $this->_viewModel['kovProducts'] = $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->listItem($param, array('task' => 'list-item'));
+        $this->_viewModel['count'] = $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->countItem($param, array('task' => 'list-item'));
+        $this->_viewModel['itemPerpage'] = $itemPerpage;
+        $this->_viewModel['curentPage'] = $curentPage;
+        $this->_viewModel['contactId'] = $this->_params['data']['filter_contact_id'];
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+        return $viewModel;
+    }
+    public function addProductWarehouseOutputToListAction()
+    {
+        if ($this->_params['data']['id']) {
+            $product = $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->getItem($this->_params['data'], array('task' => 'search'));
             $this->_viewModel['product'] = (array)$product;
             $this->_viewModel['data'] = $this->_params['data'];
             $viewModel = new ViewModel($this->_viewModel);
@@ -680,6 +725,20 @@ class ApiController extends ActionController
         if ($this->getRequest()->isXmlHttpRequest()) {
             $warehouse_input_id = $this->_params['data']['warehouse_input_id'];
             $items = $this->getServiceLocator()->get('Admin\Model\WarehouseInputDetailTable')->listItem(array('warehouse_input_id' => $warehouse_input_id), array('task' => 'list-ajax'));
+            $this->_viewModel['items'] = $items;
+            $viewModel = new ViewModel($this->_viewModel);
+            $viewModel->setTerminal(true);
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found'));
+        }
+        return $viewModel;
+    }
+
+    public function listProductWarehouseOutputAction()
+    {
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            $warehouse_output_id = $this->_params['data']['warehouse_output_id'];
+            $items = $this->getServiceLocator()->get('Admin\Model\WarehouseOutputDetailTable')->listItem(array('warehouse_output_id' => $warehouse_output_id), array('task' => 'list-ajax'));
             $this->_viewModel['items'] = $items;
             $viewModel = new ViewModel($this->_viewModel);
             $viewModel->setTerminal(true);

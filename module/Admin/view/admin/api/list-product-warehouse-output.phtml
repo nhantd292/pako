@@ -14,10 +14,10 @@
     // Head
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th class="text-center">STT</th>';
+    $xhtmlHead .= '<th class="text-center">Phiếu nhập hàng</th>';
     $xhtmlHead .= '<th class="text-center">Mã sản phẩm</th>';
     $xhtmlHead .= '<th>Tên Sản phẩm</th>';
-    $xhtmlHead .= '<th class="text-center">Số Lượng nhập</th>';
-    $xhtmlHead .= '<th class="text-center">Số Lượng trả lại</th>';
+    $xhtmlHead .= '<th class="text-center">Số Lượng</th>';
     $xhtmlHead .= '<th class="text-right">Giá nhập</th>';
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
 	$xhtmlHead .= '</tr>';
@@ -29,10 +29,10 @@
         foreach ($this->items AS $item) {
             $xhtmlItems .= '<tr>
     							<td class="text-center">'. $index++.'</td>
+    							<td class="text-center"><a href="/xadmin/warehouse-input/detail/id/'.$item->warehouse_out_id.'">'. $item->warehouse_output_code.'</a></td>
     							<td class="text-center">'. $item->products_code.'</td>
     							<td>'. $item->products_name.'</td>
     							<td class="text-center"><span class="mask_currency">'. $item->quantity .'</span></td>
-    							<td class="text-center"><span class="mask_currency">'. $item->quantity_return .'</span></td>
     							<td class="text-right"><span class="mask_currency">'. $item->price .'</span></td>
     							<td class="text-right"><span class="mask_currency">'. $item->price_total .'</span></td>
     						</tr>';
