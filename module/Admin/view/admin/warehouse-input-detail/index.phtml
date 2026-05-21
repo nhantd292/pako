@@ -14,17 +14,9 @@
     if(in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(GDCN, $permission_ids) || in_array(MANAGER, $permission_ids)){
         $elements = array(
             array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_send_ghtk'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_sale_branch'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_sale_group'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_user'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_status_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_status'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_coincider'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_category'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_product'), 'boxClass' => 'col-md-5 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_inventory_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_customer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_state'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('order')),
@@ -78,26 +70,25 @@
             $sale_group_id          = $item->sale_group_id ? '<br>'. $this->sale_group[$item->sale_group_id]['name'] : '';
             $sale_branch_id         = $item->sale_branch_id ? ' - '. $this->sale_branch[$item->sale_branch_id]['name'] : '';
             $created                = $dateFormat->formatToView($item->created, 'd/m/Y');
-            $orders_return_created  = $dateFormat->formatToView($item->orders_return_created, 'd/m/Y');
+            $warehouse_input_created  = $dateFormat->formatToView($item->warehouse_input_created, 'd/m/Y');
 
             $user                   = $this->user[$item->user_id]['name'];
             $created_by             = $this->user[$item->created_by]['name'];
 
             $linkContract = $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'detail', 'id' => $item->contract_id));
-            $linkOrdersReturn = $this->url('routeAdmin/default', array('controller' => 'orders-return', 'action' => 'detail', 'id' => $item->orders_return_id));
+            $linkOrdersReturn = $this->url('routeAdmin/default', array('controller' => 'warehouse-input', 'action' => 'detail', 'id' => $item->warehouse_input_id));
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'">
                                 <td class="text-center">'. $stt .'</td>
-                                <td class="text-center"><a href="'.$linkOrdersReturn.'">'. $item->orders_return_code .'</a></td>
-							    <td class="text-center">'. $orders_return_created .'</td>
+                                <td class="text-center"><a href="'.$linkOrdersReturn.'">'. $item->warehouse_input_code .'</a></td>
+							    <td class="text-center">'. $warehouse_input_created .'</td>
 							    <td class="text-center">'. $order_status .'</td>
-    							<td ><a href="'.$linkContract.'">'. $item->contract_code .'</a></td>
     							<td >'. $item->products_code .'</td>
     							<td >'. $item->products_name .'</td>
     							<td class="text-center">'. number_format($item->quantity) .'</td>
     							<td class="text-right">'. number_format($item->price) .'</td>
-    							<td class="text-right">'. number_format($item->price_total) .'</td>
-    							<td>'.$item->note .'</td>
+							    <td >'. $this->warehouse[$item->inventory_id]['name'] .'</td>
+							    <td >'. $item->customer_name .'</td>
 							    <td >'. $created_by .'</td>
                             </tr>';
         }
@@ -106,16 +97,15 @@
     // Head
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th class="text-center">STT</th>';
-    $xhtmlHead .= '<th class="text-center">Phiếu trả hàng</th>';
-    $xhtmlHead .= '<th class="text-center">Ngày</th>';
+    $xhtmlHead .= '<th class="text-center">Phiếu nhập hàng</th>';
+    $xhtmlHead .= '<th class="text-center">Ngày nhập</th>';
     $xhtmlHead .= '<th class="text-center">Trạng thái</th>';
-    $xhtmlHead .= '<th>Mã đơn hàng</th>';
     $xhtmlHead .= '<th>Mã sản phẩm</th>';
     $xhtmlHead .= '<th>Tên sản phẩm</th>';
     $xhtmlHead .= '<th class="text-center">số lượng</th>';
-    $xhtmlHead .= '<th class="text-right">Giá trả</th>';
-    $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
-    $xhtmlHead .= '<th>Ghi chú</th>';
+    $xhtmlHead .= '<th class="text-right">Giá nhập</th>';
+    $xhtmlHead .= '<th>Kho nhận</th>';
+    $xhtmlHead .= '<th>Nhà cung cấp</th>';
     $xhtmlHead .= '<th>Người tạo</th>';
     $xhtmlHead .= '</tr>';
 ?>

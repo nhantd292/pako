@@ -14,12 +14,17 @@ class WarehouseInputDetailTable extends DefaultTable {
                 
                 $select -> columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(1)')));
 
-                $select -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_WAREHOUSE_INPUT_DETAIL .'.warehouse_input_id', array('orders_return_code' => 'code', 'orders_return_created' => 'created', 'state'), 'inner');
+                $select -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_WAREHOUSE_INPUT_DETAIL .'.warehouse_input_id', array('warehouse_input_code' => 'code', 'warehouse_input_created' => 'created', 'state'), 'inner');
                 $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_WAREHOUSE_INPUT_DETAIL .'.products_id', array('products_code' => 'code', 'products_name' => 'name'), 'inner');
+                $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_WAREHOUSE_INPUT .'.customer_id', array('customer_name' => 'name'), 'inner');
 
 
-                if(isset($ssFilter['filter_contact_id']) && $ssFilter['filter_contact_id'] != '') {
-                    $select->where->equalTo(TABLE_WAREHOUSE_INPUT.'.contact_id', $ssFilter['filter_contact_id']);
+                if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_INPUT.'.customer_id', $ssFilter['filter_customer_id']);
+                }
+
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_INPUT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
 
                 if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
@@ -61,13 +66,18 @@ class WarehouseInputDetailTable extends DefaultTable {
                         -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
                 }
 
-                $select -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_WAREHOUSE_INPUT_DETAIL .'.warehouse_input_id', array('warehouse_input_id' => 'id','orders_return_code' => 'code', 'orders_return_created' => 'created', 'state'), 'inner');
+                $select -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_WAREHOUSE_INPUT_DETAIL .'.warehouse_input_id', array('warehouse_input_id' => 'id','warehouse_input_code' => 'code', 'warehouse_input_created' => 'created', 'state', 'inventory_id'), 'inner');
                 $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_WAREHOUSE_INPUT_DETAIL .'.products_id', array('products_code' => 'code', 'products_name' => 'name'), 'inner');
+                $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_WAREHOUSE_INPUT .'.customer_id', array('customer_name' => 'name'), 'inner');
 
                 $select -> order(array(TABLE_WAREHOUSE_INPUT .'.created' => 'DESC'));
 
-                if(isset($ssFilter['filter_contact_id']) && $ssFilter['filter_contact_id'] != '') {
-                    $select->where->equalTo(TABLE_WAREHOUSE_INPUT.'.contact_id', $ssFilter['filter_contact_id']);
+                if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_INPUT.'.customer_id', $ssFilter['filter_customer_id']);
+                }
+
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_INPUT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
 
                 if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {

@@ -11,8 +11,8 @@ class WarehouseInputDetailController extends ActionController {
     
     public function init() {
         // Thiết lập options
-        $this->_options['tableName'] = 'Admin\Model\OrdersReturnDetailTable';
-        $this->_options['formName'] = 'formAdminContractDetail';
+        $this->_options['tableName'] = 'Admin\Model\WarehouseInputDetailTable';
+        $this->_options['formName'] = 'formAdminWarehouseInputDetail';
         
         // Thiết lập session filter
         $action = str_replace('-', '_', $this->_params['action']);
@@ -21,20 +21,9 @@ class WarehouseInputDetailController extends ActionController {
         $this->_params['ssFilter']['order_by']              = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'date';
         $this->_params['ssFilter']['order']                 = !empty($ssFilter->order) ? $ssFilter->order : 'DESC';
         $this->_params['ssFilter']['filter_keyword']        = $ssFilter->filter_keyword;
-        $this->_params['ssFilter']['filter_date_begin']     = $ssFilter->filter_date_begin;
-        $this->_params['ssFilter']['filter_date_end']       = $ssFilter->filter_date_end;
-        $this->_params['ssFilter']['filter_date_type']      = $ssFilter->filter_date_type;
-        $this->_params['ssFilter']['filter_sale_branch']    = $ssFilter->filter_sale_branch;
-        $this->_params['ssFilter']['filter_sale_group']     = $ssFilter->filter_sale_group;
-        $this->_params['ssFilter']['filter_user']           = $ssFilter->filter_user;
-        $this->_params['ssFilter']['filter_product'] 	    = $ssFilter->filter_product;
-        $this->_params['ssFilter']['filter_bill_code']      = $ssFilter->filter_bill_code;
-        $this->_params['ssFilter']['filter_status_type']    = $ssFilter->filter_status_type;
-        $this->_params['ssFilter']['filter_status']         = $ssFilter->filter_status;
-        $this->_params['ssFilter']['filter_coincider']      = $ssFilter->filter_coincider;
-        $this->_params['ssFilter']['filter_send_ghtk']      = $ssFilter->filter_send_ghtk;
-        $this->_params['ssFilter']['filter_category']       = $ssFilter->filter_category;
-        $this->_params['ssFilter']['filter_product']        = $ssFilter->filter_product;
+        $this->_params['ssFilter']['filter_state']          = $ssFilter->filter_state;
+        $this->_params['ssFilter']['filter_inventory_id']   = $ssFilter->filter_inventory_id;
+        $this->_params['ssFilter']['filter_customer_id']    = $ssFilter->filter_customer_id;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : $this->_paginator['itemCountPerPage'];
@@ -61,18 +50,9 @@ class WarehouseInputDetailController extends ActionController {
             $ssFilter->order_by                 = $data['order_by'];
             $ssFilter->order                    = $data['order'];
             $ssFilter->filter_keyword           = $data['filter_keyword'];
-            $ssFilter->filter_date_begin        = $data['filter_date_begin'];
-            $ssFilter->filter_date_end          = $data['filter_date_end'];
-            $ssFilter->filter_date_type         = $data['filter_date_type'];
-            $ssFilter->filter_product 	        = $data['filter_product'];
-            $ssFilter->filter_status_type       = $data['filter_status_type'];
-            $ssFilter->filter_status            = $data['filter_status'];
-            $ssFilter->filter_user              = $data['filter_user'];
-            $ssFilter->filter_action            = $data['filter_action'];
-            $ssFilter->filter_coincider 	    = $data['filter_coincider'];
-            $ssFilter->filter_send_ghtk 	    = $data['filter_send_ghtk'];
-            $ssFilter->filter_category 	        = $data['filter_category'];
-            $ssFilter->filter_product 	        = $data['filter_product'];
+            $ssFilter->filter_state             = $data['filter_state'];
+            $ssFilter->filter_inventory_id      = $data['filter_inventory_id'];
+            $ssFilter->filter_customer_id       = $data['filter_customer_id'];
 
             $ssFilter->filter_sale_group = $data['filter_sale_group'];
             if(!empty($data['filter_sale_branch'])) {
@@ -103,26 +83,8 @@ class WarehouseInputDetailController extends ActionController {
     // Danh sách
     public function indexAction() {
         $ssFilter = new Container(__CLASS__.'index');
-        // Phân quyền view
-//        $curent_user = $this->_userInfo->getUserInfo();
-//        $permission_ids = explode(',', $curent_user['permission_ids']);
-//        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(MANAGER, $permission_ids)){
-//            if(in_array(GDCN, $permission_ids) || in_array(SALEADMIN, $permission_ids)){
-//                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
-//                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
-//            }
-//            elseif (in_array(GROUP_SALES_LEADER, $permission_ids)){
-//                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
-//                $this->_params['ssFilter']['filter_sale_group'] = $curent_user['sale_group_id'];
-//                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
-//                $ssFilter->filter_sale_group = $curent_user['filter_sale_group'];
-//            }
-//            else{
-//                $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
-//            }
-//        }
 
-        $myForm	= new \Admin\Form\Search\BaseSearch($this->getServiceLocator(), $this->_params);
+        $myForm	= new \Admin\Form\Search\WarehouseInputDetail($this->getServiceLocator(), $this->_params);
         $myForm->setData($this->_params['ssFilter']);
 
         $this->_viewModel['myForm']	                = $myForm;
@@ -132,6 +94,7 @@ class WarehouseInputDetailController extends ActionController {
 //        echo "</pre>";
 //        exit;
         $this->_viewModel['count']                  = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
+        $this->_viewModel['warehouse']              = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['user']                   = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['sale_group']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
         $this->_viewModel['sale_branch']            = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));

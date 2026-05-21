@@ -5,7 +5,7 @@ namespace Admin\Form\Search;
 use kcfinder\zipFolder;
 use \Zend\Form\Form as Form;
 
-class BaseSearch extends Form
+class WarehouseInputDetail extends Form
 {
 
     public function __construct($sm, $params)
