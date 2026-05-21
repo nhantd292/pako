@@ -64,7 +64,7 @@ class WarehouseOutputController extends ActionController{
     }
 
     public function indexAction() {
-        $myForm    = new \Admin\Form\Search\warehouseOutput($this, $this->_params['ssFilter']);
+        $myForm    = new \Admin\Form\Search\WarehouseOutput($this, $this->_params['ssFilter']);
         $myForm->setData($this->_params['ssFilter']);
         // Danh sách data
         $items = $this->getTable()->listItem($this->_params, array('task' => 'list-item'));
