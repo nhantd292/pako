@@ -67,6 +67,8 @@ return array (
             'Admin\Controller\WarehouseInputDetail'   => Controller\WarehouseInputDetailController::class,
             'Admin\Controller\WarehouseOutput'        => Controller\WarehouseOutputController::class,
             'Admin\Controller\WarehouseOutputDetail'  => Controller\WarehouseOutputDetailController::class,
+            'Admin\Controller\WarehouseRotation'      => Controller\WarehouseRotationController::class,
+            'Admin\Controller\WarehouseRotationDetail'  => Controller\WarehouseRotationDetailController::class,
 
             'Admin\Controller\Products'               => Controller\ProductsController::class,
             'Admin\Controller\ProductsType'           => Controller\ProductsTypeController::class,

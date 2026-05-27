@@ -339,16 +339,16 @@
                 </a>
             </li>
             <li class="divider"></li>
-<!--            <li>-->
-<!--                <a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'warehouse-output', 'action' => 'index'));?><!--" target="_self">-->
-<!--                    <i class="fa fa fa-refresh"></i> <span class="title">Phiếu luân chuyển kho</span><span class="arrow"></span>-->
-<!--                </a>-->
-<!--            </li>-->
-<!--            <li>-->
-<!--                <a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'warehouse-output-detail', 'action' => 'index'));?><!--" target="_self">-->
-<!--                    <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm đã luân chuyển</span><span class="arrow"></span>-->
-<!--                </a>-->
-<!--            </li>-->
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-rotation', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa fa-refresh"></i> <span class="title">Phiếu luân chuyển kho</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-rotation-detail', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm đã luân chuyển</span><span class="arrow"></span>
+                </a>
+            </li>
         </ul>
     </li>
 <?php //if($is_system){?>
