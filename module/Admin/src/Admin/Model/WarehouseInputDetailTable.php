@@ -213,3 +213,4 @@ class WarehouseInputDetailTable extends DefaultTable {
 
 
 
+

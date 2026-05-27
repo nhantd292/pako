@@ -239,6 +239,7 @@ class CustomerDebtController extends ActionController{
     }
 
     public function addExpenseAction() {
+        $this->_params['type'] = 'thu';
         $myForm = new \Admin\Form\CustomerDebt($this, $this->_params);
         $number = new \ZendX\Functions\Number();
         $connection = $this->getConnection();
