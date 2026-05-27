@@ -2075,6 +2075,15 @@ class ContractController extends ActionController {
             $dt['data']['id'] = $itm['id'];
             $dt['data']['status_id'] = DANG_DONG_GOI;
             $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem($dt, array('task' => 'update-status'));
+            if (!in_array($itm['state'], array(COMPLETE_STATUS, CANCEL_STATUS))) {
+                $this->getTable()->saveItem(array('data' => array('id' => $itm['id'], 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
+                $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $itm['id']), array('task' => 'type-id'));
+                $data_debt = array(
+                    'id' => $debt_item_old->id,
+                    'state' => PROCESSING_STATUS,
+                );
+                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+            }
         }
         $contact    = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $items['contact_id']), null);
 
