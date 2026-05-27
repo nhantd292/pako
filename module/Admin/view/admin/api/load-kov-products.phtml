@@ -22,7 +22,7 @@ if($page > 1){
 $xhtml .= '<div class="listProduct" >';
 foreach ($this->kovProducts as $pro) {
     $num_status = $pro['quantity'] > 0 ? $pro['quantity'] : 'Hết hàng'  ;
-    $xhtml .= '<div class="col-xl-3 col-sm-4 col-xs-6 item">
+    $xhtml .= '<div class="col-xl-4 col-sm-4 col-xs-6 item">
             <div class="product col-xs-12" data-id="' . $pro['id'] . '" data-warehouse-id="' . $pro['warehouse_id'] .'" data-customer-type-id="' . $pro['customer_type_id']. '" >
                 <div class="infor col-sm-12 col-xs-12">
                     <p class="code-product text-bold">Mã: ' . $pro['code'] .'</span> </p>
