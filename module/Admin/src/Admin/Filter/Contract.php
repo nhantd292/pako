@@ -156,5 +156,10 @@ class Contract extends InputFilter {
             )
         ));
 
+        $this->add(array(
+            'name'		=> 'fee_other_type',
+            'required'	=> false,
+        ));
+
 	}
 }

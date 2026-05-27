@@ -303,6 +303,11 @@
                     <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm KH trả hàng</span><span class="arrow"></span>
                 </a>
             </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'fee-other-type', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-sitemap"></i> <span class="title">Loại thu khác</span><span class="arrow"></span>
+                </a>
+            </li>
 
             <!--			<li>-->
             <!--				<a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'contract-detail', 'action' => 'products'));?><!--" target="_self">-->

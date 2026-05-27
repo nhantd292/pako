@@ -70,6 +70,8 @@ class Contract extends Form {
 		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache')), array('key' => 'code', 'value' => 'name')),
 		    ),
 		));
+
+
 		
 		// Quận huyện
 		$this->add(array(
@@ -175,6 +177,29 @@ class Contract extends Form {
 		        'data-value'  => 0,
 		    )
 		));
+
+		$this->add(array(
+		    'name'			=> 'fee_other',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		  => 'form-control text-green text-bold mask_currency',
+		        'value'       => 0,
+		        'data-value'  => 0,
+		    )
+		));
+
+        $this->add(array(
+            'name'			=> 'fee_other_type',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Chọn -',
+                'disable_inarray_validator' => true,
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-other-type', 'type' => $type)), array('task' => 'list-all')), array('key' => 'alias', 'value' => 'name')),
+            )
+        ));
 		
 		// Ghi chú sales
 		$this->add(array(

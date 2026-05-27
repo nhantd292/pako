@@ -26,12 +26,14 @@ $elementsContract = array(
 );
 $elementsPrice = array(
     array('section' => 'Thông tin thanh toán', 'boxClass' => 'col-md-12'),
-    array('element' => '<span class="mask_currency text-green">'. $this->item['price_total'] .'</span> ', 'label' => 'Tổng tiền hàng (1)', 'boxClass' => 'col-md-4',),
-    array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_cash'] .'</span>', 'label' => 'Trả tiền mặt (2)', 'boxClass' => 'col-md-4'),
-    array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_transfer'] .'</span>', 'label' => 'Chuyển khoản (3)', 'boxClass' => 'col-md-4'),
-    array('element' => '<span class="mask_currency text-purple">'. $this->item['discount'] .'</span>', 'label' => 'Giảm giá (4)', 'boxClass' => 'col-md-4'),
-    array('element' => '<span class="mask_currency text-red">'. $debt_item->old_debt .'</span> ', 'label' => 'Nợ cũ (5)', 'boxClass' => 'col-md-4'),
-    array('element' => '<span class="mask_currency text-orange">'. $debt_item->new_debt .'</span> ', 'label' => 'Nợ lại:<span class="text-info text-bold" style="font-size: 10px;">5 + (1 - 2 - 3 - 4)-</span>', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-green">'. $this->item['price_total'] .'</span> ', 'label' => 'Tổng tiền hàng (1)', 'boxClass' => 'col-md-3',),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_cash'] .'</span>', 'label' => 'Trả tiền mặt (2)', 'boxClass' => 'col-md-3'),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_transfer'] .'</span>', 'label' => 'Chuyển khoản (3)', 'boxClass' => 'col-md-3'),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['discount'] .'</span>', 'label' => 'Giảm giá (4)', 'boxClass' => 'col-md-3'),
+    array('element' => '<span class="mask_currency text-purple">'. $this->fee_other_type[$this->item['fee_other_type']]->name .'</span>', 'label' => 'Loại thu khác', 'boxClass' => 'col-md-3'),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['fee_other'] .'</span>', 'label' => 'thu khác', 'boxClass' => 'col-md-3'),
+    array('element' => '<span class="mask_currency text-red">'. $debt_item->old_debt .'</span> ', 'label' => 'Nợ cũ (5)', 'boxClass' => 'col-md-3'),
+    array('element' => '<span class="mask_currency text-orange">'. $debt_item->new_debt .'</span> ', 'label' => 'Nợ lại:<span class="text-info text-bold" style="font-size: 10px;">5 + (1 - 2 - 3 - 4)-</span>', 'boxClass' => 'col-md-3'),
 );
 $elementsProducts = array(
     array('section' => 'Danh sách sản phẩm của đơn hàng', 'boxClass' => 'col-md-12'),
@@ -78,10 +80,10 @@ $arrControl = in_array($this->item['state'], [CANCEL_STATUS, COMPLETE_STATUS]) ?
             <div class="col-md-12">
                 <?php echo $xhtmlContract;?>
             </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
                 <?php echo $xhtmlContact;?>
             </div>
-            <div class="col-md-4">
+            <div class="col-md-5">
                 <?php echo $xhtmlPrice;?>
             </div>
             <div class="col-md-12">
