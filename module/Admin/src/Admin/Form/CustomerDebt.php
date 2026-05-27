@@ -9,12 +9,13 @@ class CustomerDebt extends Form
 
     public function __construct($sm, $options)
     {
-        if ($options['action'] == 'edit-revenue') {
+        if ($options['action'] == 'add-expense') {
             $type = 'chi';
         }
         if ($options['action'] == 'add-revenue') {
             $type = 'thu';
         }
+
         parent::__construct();
 
         // FORM Attribute
@@ -43,7 +44,7 @@ class CustomerDebt extends Form
             'options'		=> array(
                 'empty_option'	=> '- Chọn -',
                 'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category', 'type' => $type)), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category', 'type' => $type)), array('task' => 'list-all')), array('key' => 'alias', 'value' => 'name')),
             )
         ));
 
