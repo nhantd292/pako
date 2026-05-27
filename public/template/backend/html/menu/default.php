@@ -202,6 +202,11 @@
                             <i class="fa fa-sitemap"></i> <span class="title">Danh mục thu chi</span><span class="arrow"></span>
                         </a>
                     </li>
+                    <li>
+                        <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-fund', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-sitemap"></i> <span class="title">Sổ quỹ</span><span class="arrow"></span>
+                        </a>
+                    </li>
                 </ul>
             </li>
             <li class="divider"></li>

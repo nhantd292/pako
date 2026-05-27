@@ -109,6 +109,7 @@ define('TABLE_ORDERS_RETURN_DETAIL',TABLE_PREFIX . 'orders_return_detail'); // B
 
 // Quản lý kho sản phẩm
 define('TABLE_WAREHOUSE',                   TABLE_PREFIX . 'warehouse'); // Kho hàng
+define('TABLE_WAREHOUSE_FUND',              TABLE_PREFIX . 'warehouse_fund'); // sổ quỹ theo kho
 define('TABLE_WAREHOUSE_INPUT',             TABLE_PREFIX . 'warehouse_input'); // nhập hàng từ nhà cung cấp
 define('TABLE_WAREHOUSE_INPUT_DETAIL',      TABLE_PREFIX . 'warehouse_input_detail'); // Chi tiết sản phẩm nhập
 define('TABLE_WAREHOUSE_OUTPUT',            TABLE_PREFIX . 'warehouse_output'); // trả hàng nhà cung cấp

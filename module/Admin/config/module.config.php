@@ -63,6 +63,7 @@ return array (
             'Admin\Controller\CustomerDebt'           => Controller\CustomerDebtController::class,
 
             'Admin\Controller\Warehouse'              => Controller\WarehouseController::class,
+            'Admin\Controller\WarehouseFund'          => Controller\WarehouseFundController::class,
             'Admin\Controller\WarehouseInput'         => Controller\WarehouseInputController::class,
             'Admin\Controller\WarehouseInputDetail'   => Controller\WarehouseInputDetailController::class,
             'Admin\Controller\WarehouseOutput'        => Controller\WarehouseOutputController::class,

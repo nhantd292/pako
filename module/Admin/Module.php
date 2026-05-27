@@ -342,6 +342,11 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_WAREHOUSE_ROTATION_DETAIL, $adapter, null);
                     return new \Admin\Model\WarehouseRotationDetailTable($tableGateway);
                 },
+                'Admin\Model\WarehouseFundTable'	=> function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_WAREHOUSE_FUND, $adapter, null);
+                    return new \Admin\Model\WarehouseFundTable($tableGateway);
+                },
                 'Admin\Model\ProductsTable'	=> function ($sm) {
                     $adapter = $sm->get('dbConfig');
                     $tableGateway = new TableGateway(TABLE_PRODUCTS, $adapter, null);
@@ -592,6 +597,11 @@ class Module {
                 'formAdminWarehouseRotation' => function($sm) {
                     $myForm	= new \Admin\Form\WarehouseRotation($sm);
                     $myForm->setInputFilter(new \Admin\Filter\WarehouseRotation());
+                    return $myForm;
+                },
+                'formAdminWarehouseFund' => function($sm) {
+                    $myForm	= new \Admin\Form\WarehouseFund($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\WarehouseFund());
                     return $myForm;
                 },
                 'formAdminProducts' => function($sm) {
