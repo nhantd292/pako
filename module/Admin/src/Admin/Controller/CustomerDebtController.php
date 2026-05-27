@@ -413,6 +413,7 @@ class CustomerDebtController extends ActionController{
 
         $arrData = array(
             array('field' => 'code', 'title' => 'Mã phiếu'),
+            array('field' => 'state', 'title' => 'Trạng thái'),
             array('field' => 'customer_name', 'title' => 'Tên khách hàng'),
             array('field' => 'type', 'title' => 'Loại phiếu', 'type' => 'data_source', 'data_source' => $debt_type),
             array('field' => 'category', 'title' => 'Danh mục thu chi', 'type' => 'data_source', 'data_source' => $debt_category),
@@ -422,7 +423,7 @@ class CustomerDebtController extends ActionController{
             array('field' => 'paid_transfer', 'type' => 'abs', 'title' => 'Chuyển khoản'),
             array('field' => 'old_debt', 'title' => 'Nợ cũ'),
             array('field' => 'new_debt', 'title' => 'Nợ lại'),
-            array('field' => 'create', 'type' => 'date', 'title' => 'Ngày tạo')
+            array('field' => 'created', 'type' => 'datetime', 'title' => 'Ngày tạo')
         );
 
         $objPHPExcel = new \PHPExcel();
@@ -446,6 +447,10 @@ class CustomerDebtController extends ActionController{
                 switch ($data['type']) {
                     case 'date':
                         $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
+                        $value      = $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        break;
+                    case 'datetime':
+                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y H:i:s';
                         $value      = $dateFormat->formatToView($item[$data['field']], $formatDate);
                         break;
                     case 'abs':
