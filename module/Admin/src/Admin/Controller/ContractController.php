@@ -686,124 +686,6 @@ class ContractController extends ActionController {
     }
 
     // Sửa Đơn hàng
-    public function editKovV1Action() {
-        $dateFormat = new \ZendX\Functions\Date();
-        $numberFormat = new \ZendX\Functions\Number();
-        $myForm = new \Admin\Form\Contract($this, $this->_params);
-        if(!empty($this->params('id'))) {
-            $id = $this->params('id');
-            $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id));
-
-            $contract_options = !empty($contract['options']) ? unserialize($contract['options']) : array();
-            $contract['date'] = $dateFormat->formatToView($contract['date']);
-            $contract = array_merge($contract, $contract_options);
-
-            $contact_old = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $contract['contact_id']));
-            $myForm->setData($contract);
-            $this->_viewModel['contract']           = $contract;
-            $this->_viewModel['option_product']     = $contract_options['product'];
-            if($contract['lock']){
-                return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'not-found'));
-            }
-        } else {
-            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'not-found'));
-        }
-
-        // nếu đơn hàng đã gửi sang giao hàng tiết kiệm thì không cho sửa nữa
-        $curent_user = $this->_userInfo->getUserInfo();
-        $permission_ids = explode(',', $curent_user['permission_ids']);
-
-        if(!in_array(SYSTEM, $permission_ids)) {
-            if (!empty($contract['ghtk_code'])) {
-                return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'not-found'));
-            }
-            // nếu đơn có trạng thái đã đóng gói và nhân viên có quyền sửa đơn hàng thì vẫn được sửa
-            else{
-                if($contract['status_id'] == DANG_DONG_GOI && !in_array(EDIT_CONTRACT, $permission_ids)){
-                    return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'not-found'));
-                }
-            }
-        }
-
-        if($this->getRequest()->isPost()){
-            $myForm->setInputFilter(new \Admin\Filter\Contract(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
-            $myForm->setData($this->_params['data']);
-            $controlAction = $this->_params['data']['control-action'];
-            if($myForm->isValid()){
-                $this->_params['item'] = $contract;
-                $this->_params['contact_old'] = $contact_old;
-
-                $contract_product = $this->_params['data']['contract_product'];
-                $check_emty_data = true;// kiểm tra thông tin sản phẩm của đơn hàng đã đầy đủ chưa
-
-                for ($i = 0; $i < count($contract_product['product_id']); $i++ ){
-                    if(
-                        trim($contract_product['product_id'][$i]) == "" ||
-                        trim($contract_product['car_year'][$i]) == "" ||
-                        trim($contract_product['weight'][$i]) == "" ||
-                        (int)trim($contract_product['length'][$i]) == 0 ||
-                        (int)trim($contract_product['width'][$i]) == 0 ||
-                        (int)trim($contract_product['height'][$i]) == 0 ||
-//                        (int)trim($contract_product['price'][$i]) == 0 ||
-                        trim($contract_product['price'][$i]) == "" ||
-                        (int)trim($contract_product['numbers'][$i]) == 0
-                    )$check_emty_data = false;
-                }
-                if($check_emty_data){
-                    $this->_params['contact_new'] = $contact_old;
-
-                    $result_kov = $this->createOrderKov($this->_params['data'], 'PUT');
-                    if((int)$result_kov['id']) {
-                        // Lấy ra đơn hàng chưa thành công của khách hàng đang lên đơn
-                        $contract_coincider = $this->getTable()->listItem(['phone' => $this->_params['data']['phone'], 'ghtk_status_not_success'=> true, 'not_id'=> $id], array('task' => 'list-params'))->toArray();
-                        if(!empty($contract_coincider)){
-                            $this->_params['data']['coincider_code']    = $contract_coincider[0]['code'];
-                        }
-
-                        $result = $this->getTable()->saveItem($this->_params, array('task' => 'edit-kov-item'));
-                        $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
-
-                        // cập nhật mã đơn hàng trên crm lên ghi chú đơn hàng kov
-                        $contract_new = $this->getTable()->getItem(array('id' => $result));
-                        $order_data['description'] = $this->_params['data']['sale_note'].'(Đơn hàng đẩy từ CRM '.$contract_new['code'].')';
-                        $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/orders/'.$contract_new['id_kov'], $order_data, 'PUT');
-
-                        if ($controlAction == 'save-new') {
-                            $this->goRoute(array('action' => 'add-kov'));
-                        } else if ($controlAction == 'save') {
-                            $this->goRoute();
-                        } else {
-                            $this->goRoute();
-                        }
-                    }
-                    else{
-                        $mesage = $result_kov['responseStatus']['message'];
-                        $this->_viewModel['check_product_id'] = 'Đồng bộ đơn hàng lên hệ thống Kiotviet thất bại: '.$mesage;
-                        $this->_viewModel['productList'] = $this->_params['data']['contract_product'];
-                    }
-                }
-                else{
-                    $this->_viewModel['check_product_id'] = 'Cần nhập đầy đủ thông tin của sản phẩm';
-                    $this->_viewModel['productList'] = $this->_params['data']['contract_product'];
-                    $this->_viewModel['total_contract_vat'] = $this->_params['data']['total_contract_vat'];
-                }
-            }
-            else {
-                $this->_viewModel['productList']  = $this->_params['data']['contract_product'];
-                $this->_viewModel['total_contract_vat']  = $this->_params['data']['total_contract_vat'];
-            }
-        }
-
-        $categories = $this->kiotviet_call(RETAILER, $this->kiotviet_token, '/categories?pageSize=100&hierachicalData=true');
-        $categories = json_decode($categories, true)['data'];
-        $this->_viewModel['categories'] = $this->getNameCat($this->addNew($categories), $result);
-
-        $this->_viewModel['myForm']	        = $myForm;
-        $this->_viewModel['caption']        = 'Sửa đơn hàng '.$contract['code'];
-        return new ViewModel($this->_viewModel);
-    }
-
-    // Sửa Đơn hàng
     public function editProductAction() {
         $dateFormat = new \ZendX\Functions\Date();
         $numberFormat = new \ZendX\Functions\Number();
@@ -3743,6 +3625,121 @@ class ContractController extends ActionController {
         $this->_viewModel['caption']                = 'Đơn hàng đã xóa - Danh sách';
 
         return new ViewModel($this->_viewModel);
+    }
+
+    // Xuất mẫu hóa đơn VAT
+    public function exportVATAction() {
+        $dateFormat             = new \ZendX\Functions\Date();
+        $items      = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('ssFilter' => $this->_params['data']), array('task' => 'list-item', 'paginator' => false))->toArray();
+
+        $units         = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache'));
+
+        require_once PATH_VENDOR . '/Excel/PHPExcel.php';
+
+        $config = array('sheetData' => 0, 'headRow' => 1, 'startRow' => 2, 'startColumn' => 0);
+        $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
+
+        $arrData = array(
+            array('field' => 'stt', 'title' => 'Số thứ tự hóa đơn'),
+            array('field' => 'contract_date', 'title' => 'Ngày hóa đơn', 'type' => 'date'),
+            array('field' => 'company_name', 'title' => 'Tên khách hàng'),
+            array('field' => 'company_address', 'title' => 'Địa chỉ'),
+            array('field' => 'company_mst', 'title' => 'Mã số thuế'),
+            array('field' => 'customer_name', 'title' => 'Người mua hàng'),
+            array('field' => 'company_email', 'title' => 'Email'),
+            array('field' => 'pay_type', 'title' => 'Hình thức thanh toán'),
+            array('field' => 'percent_vat', 'title' => 'Thuế suất GTGT (%)'),
+            array('field' => 'contract_vat', 'title' => 'Tiền thuế GTGT'),
+            array('field' => 'products_name_vat', 'title' => 'Tên hàng hóa/dịch vụ (*)'),
+            array('field' => 'products_unit_id', 'title' => 'Đơn vị', 'type' => 'data_source', 'data_source' => $units),
+            array('field' => 'numbers', 'title' => 'Số lượng'),
+            array('field' => 'price', 'title' => 'Đơn giá'),
+            array('field' => 'total', 'title' => 'Thành tiền'),
+        );
+
+        // Create new PHPExcel object
+        $objPHPExcel = new \PHPExcel();
+
+        // Set document properties
+        $objPHPExcel->getProperties()->setCreator($this->_userInfo->getUserInfo('name'))
+            ->setLastModifiedBy($this->_userInfo->getUserInfo('username'))
+            ->setTitle("mau_vat_".date('d-m-Y'));
+
+        // Dữ liệu tiêu đề cột
+        $startColumn = $config['startColumn'];
+        foreach ($arrData AS $key => $data) {
+            $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($arrColumn[$startColumn] . $config['headRow'], $data['title']);
+            $objPHPExcel->getActiveSheet()->getStyle($arrColumn[$startColumn] . $config['headRow'])->getFont()->setBold(true);
+            $objPHPExcel->getActiveSheet()->getColumnDimension($arrColumn[$startColumn])->setAutoSize(true);
+            $startColumn++;
+        }
+
+        // Dữ liệu data
+        $startRow = $config['startRow'];
+        $i = 1;
+        $contract_id = '';
+        foreach ($items AS $item) {
+
+            if ($item['contract_id'] != $contract_id) {
+                $contract_id = $item['contract_id'];
+                $item['stt'] = $i;
+                $i++;
+            }
+            else{
+                $item['stt'] = $i-1;
+                $item['contract_date'] =
+                $item['company_name'] =
+                $item['company_address'] =
+                $item['company_mst'] =
+                $item['customer_name'] =
+                $item['company_email'] =
+                $item['pay_type'] =
+                $item['percent_vat'] =
+                $item['contract_vat'] = '';
+            }
+
+
+            $net_numbers = $item['numbers'] - $item['numbers_return'];
+            $item['numbers'] = $net_numbers;
+            $item['total'] = $net_numbers * $item['price'];
+
+            $startColumn = $config['startColumn'];
+            foreach ($arrData AS $key => $data) {
+                $colLetter = $arrColumn[$startColumn];
+                switch ($data['type']) {
+                    case 'date':
+                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
+                        $value      = $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        break;
+                    case 'data_source':
+                        $field = $data['data_source_field'] ? $data['data_source_field'] : 'name';
+                        $value = $data['data_source'][$item[$data['field']]][$field];
+                        break;
+                    default:
+                        $value = $item[$data['field']];
+                }
+
+                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value);
+                $startColumn++;
+            }
+
+            $startRow++;
+        }
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.'Don_xuat_vat_'.date('d-m-Y').'.xlsx"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+        header ('Cache-Control: cache, must-revalidate');
+        header ('Pragma: public');
+
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+
+        return $this->response;
     }
 }
 

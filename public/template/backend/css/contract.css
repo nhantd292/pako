@@ -36,13 +36,13 @@ tfoot tr {
     width: 50px;
 }
 .w-60{
-    width: 60px;
+    min-width: 60px;
 }
 .w-80{
     width: 80px;
 }
 .w-100{
-    width: 100px;
+    min-width: 100px;
 }
 .w-120{
     width: 120px;

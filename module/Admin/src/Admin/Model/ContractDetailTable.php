@@ -66,8 +66,19 @@ class ContractDetailTable extends DefaultTable {
                         -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
                 }
 
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_id' => 'id', 'contract_code' => 'code', 'contract_date'=> 'date', 'state'), 'inner');
-                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_CONTRACT_DETAIL .'.product_id', array(), 'inner');
+                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id',
+                    array(
+                        'contract_code' => 'code',
+                        'contract_date'=> 'date',
+                        'contract_vat' => 'vat',
+                        'customer_name' => 'name',
+                        'company_name',
+                        'company_mst',
+                        'company_address',
+                        'company_email',
+                        'state')
+                    , 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_CONTRACT_DETAIL .'.product_id', array('products_unit_id' => 'unit_id', 'products_name_vat' => 'name_vat'), 'inner');
 
                 $select -> order(array(TABLE_CONTRACT .'.created' => 'DESC'));
 
@@ -85,6 +96,10 @@ class ContractDetailTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
                     $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
+                }
+
+                if(isset($ssFilter['cid']) && $ssFilter['cid'] != '') {
+                    $select -> where -> in(TABLE_CONTRACT .'.id', $ssFilter['cid']);
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {

@@ -168,10 +168,10 @@
                                                         <td class="car_year '.$check_car_year.'"><input class="form-control text-right" type="text" name="contract_product[car_year][]" value="'.$productList['car_year'][$i].'" ></td>
                                                         <td class="numbers '.$check_number.'"><input class="form-control text-right w-60 p5" type="number" name="contract_product[numbers][]" value="'.$productList['numbers'][$i].'" min="1"></td>
                                                         <td class="price text-middle text-right box-price '.$check_price.'">
-                                                            <input class="form-control text-right money base_price" name="contract_product[price][]" type="text" value="'.$productList['price'][$i].'" min="0">
+                                                            <input class="form-control text-right money base_price w-100" name="contract_product[price][]" type="text" value="'.$productList['price'][$i].'" min="0">
                                                         </td>
                                                         <td class="text-middle text-right hidden">'.number_format($productList['listed_price'][$i]).'</td>
-                                                        <td class="total"><input class="form-control text-right" type="text" name="contract_product[total][]" value="'.$productList['total'][$i].'" readonly></td>
+                                                        <td class="total"><input class="form-control text-right w-100" type="text" name="contract_product[total][]" value="'.$productList['total'][$i].'" readonly></td>
                                                         <td class="length hidden">
                                                             <input class="form-control text-right w-60 p5 '.$check_length.'" type="number" name="contract_product[length][]" value="'.$productList['length'][$i].'" required min="1" max="300">
                                                         </td>
@@ -210,9 +210,9 @@
                                                     <td class="car_year"><input class="form-control text-right" type="text" name="contract_product[car_year][]" value="'.$pro_item['car_year'].'" ></td>
                                                     <td class="numbers "><input class="form-control text-right w-60 p5" type="number" name="contract_product[numbers][]" value="'.$pro_item['numbers'].'" min="1"></td>
                                                     <td class="price text-middle text-right box-price">
-                                                        <input class="form-control text-right money base_price" name="contract_product[price][]" type="text" value="'.number_format($pro_item['price']).'" min="0">
+                                                        <input class="form-control text-right money base_price w-100" name="contract_product[price][]" type="text" value="'.number_format($pro_item['price']).'" min="0">
                                                     </td>
-                                                    <td class="total"><input class="form-control text-right" type="text" name="contract_product[total][]" value="'.number_format($pro_item['total']).'" readonly></td>
+                                                    <td class="total"><input class="form-control text-right w-100" type="text" name="contract_product[total][]" value="'.number_format($pro_item['total']).'" readonly></td>
                                                     <td class="length hidden">
                                                         <input class="form-control text-right w-60 p5" type="number" name="contract_product[length][]" value="'.$pro_item['length'].'" required min="1" max="300">
                                                     </td>

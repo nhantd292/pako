@@ -414,7 +414,9 @@ function contractPrint(target="") {
 		var ajaxUrl = jQuery(formAdmin).attr('action').replace('/filter', '/print-multi');
 		submitForm(ajaxUrl, target);
 		jQuery(formAdmin).attr('action', jQuery(formAdmin).attr('action').replace('/print-multi', '/filter'));
-		location.reload();
+		setTimeout(function() {
+			location.reload();
+		}, 1000);
 	} else {
 		xToastr('error', xMessage['no-checked'], '');
 	}
