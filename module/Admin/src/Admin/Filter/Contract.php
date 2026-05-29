@@ -157,7 +157,103 @@ class Contract extends InputFilter {
         ));
 
         $this->add(array(
-            'name'		=> 'fee_other_type',
+            'name'		=> 'paid_cash',
+            'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                )
+            )
+        ));
+
+        $this->add(array(
+            'name'		=> 'paid_transfer',
+            'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                )
+            )
+        ));
+
+        $this->add(array(
+            'name'		=> 'discount',
+            'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                )
+            )
+        ));
+
+        $this->add(array(
+            'name'		=> 'vat',
+            'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                )
+            )
+        ));
+
+        $this->add(array(
+            'name'		=> 'fee_other',
+            'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                )
+            )
+        ));
+
+        $this->add(array(
+            'name'		=> 'fee_shipp',
+            'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                )
+            )
+        ));
+
+        $this->add(array(
+            'name'		=> 'invoice_type',
             'required'	=> false,
         ));
 

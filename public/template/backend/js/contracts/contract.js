@@ -20,23 +20,23 @@ $('input[name="location_district_id"]').change(function() {
     $(select).attr('data-parent', $(this).val());
 });
 
-$('select[name="unit_transport"]').change(function() {
-    var unit = $(this).val();
-    if(unit == '5sauto'){
-        $('.unit-child').addClass('hidden')
-        $('.'+unit).addClass('hidden')
-    }
+// $('select[name="unit_transport"]').change(function() {
+//     var unit = $(this).val();
+//     if(unit == '5sauto'){
+//         $('.unit-child').addClass('hidden')
+//         $('.'+unit).addClass('hidden')
+//     }
+//
+//     var select = 'input[name="location_town_id"]';
+//     var parent = $(select).parent();
+//     $('.select2-container', parent).select2('val', '');
+//     $(select).attr('data-parent', $(this).val());
+// });
 
-    var select = 'input[name="location_town_id"]';
-    var parent = $(select).parent();
-    $('.select2-container', parent).select2('val', '');
-    $(select).attr('data-parent', $(this).val());
-});
-
-var contactPhone = $('#contactPhone').text().trim();
-if (contactPhone) {
-    load_action('#load_contract', '/xadmin/api/list-contract-by-phone/', {phone: contactPhone});
-}
+// var contactPhone = $('#contactPhone').text().trim();
+// if (contactPhone) {
+//     load_action('#load_contract', '/xadmin/api/list-contract-by-phone/', {phone: contactPhone});
+// }
 
 // Kiểm tra thông tin khách hàng
 var contactId = $('#contactId').text().trim();
@@ -46,7 +46,7 @@ if (contactId) {
 
 
 
-$('input[name="paid_cash"] , input[name="paid_transfer"], input[name="discount"], input[name="fee_other"]').change(function() {
+$('input[name="paid_cash"] , input[name="paid_transfer"], input[name="discount"], input[name="vat"], input[name="fee_other"], input[name="fee_shipp"]').change(function() {
     updateTotal();
 });
 
@@ -54,40 +54,24 @@ updateTotal()
 
 function updateTotal() {
     var total_contract = 0;
-    var total_contract_product = 0;
-    var total_contract_vat = $('.total_contract_vat input').val() ? $('.total_contract_vat input').val() : 0;
-    var total_contract_discount = $('.total_contract_discount input').val() ? $('.total_contract_discount input').val() : 0;
-    var price_deposits = $('.price_deposits input').val() ? $('.price_deposits input').val() : 0;
     var amount_owed = $("input[name=amount_owed]").val() ? parseInt(unFormatNumber($("input[name=amount_owed]").val())) : 0;
     var paid_cash = $("input[name=paid_cash]").val() ? parseInt(unFormatNumber($("input[name=paid_cash]").val())) : 0;
     var paid_transfer = $("input[name=paid_transfer]").val() ? parseInt(unFormatNumber($("input[name=paid_transfer]").val())) : 0;
     var discount = $("input[name=discount]").val() ? parseInt(unFormatNumber($("input[name=discount]").val())) : 0;
+    var vat = $("input[name=vat]").val() ? parseInt(unFormatNumber($("input[name=vat]").val())) : 0;
     var fee_other = $("input[name=fee_other]").val() ? parseInt(unFormatNumber($("input[name=fee_other]").val())) : 0;
+    var fee_shipp = $("input[name=fee_shipp]").val() ? parseInt(unFormatNumber($("input[name=fee_shipp]").val())) : 0;
 
     $.each($('.list-product-contract tr'), function (index, value) {
         var price = $(this).find('.price > input').val() ? $(this).find('.price > input').val() : 0;
         var number = $(this).find('.numbers input').val() ? $(this).find('.numbers input').val() : 0;
-        total_contract_product += parseInt(unFormatNumber(price) * unFormatNumber(number));
         total_contract += parseInt(unFormatNumber(price) * unFormatNumber(number));
     });
-    total_contract += parseInt(unFormatNumber(total_contract_vat));
-    total_contract += parseInt(unFormatNumber(fee_other));
-    total_contract -= parseInt(unFormatNumber(total_contract_discount));
+    // total_contract += parseInt(unFormatNumber(vat));
+    // total_contract += parseInt(unFormatNumber(fee_other));
+    // total_contract += parseInt(unFormatNumber(fee_shipp));
     var price_total = total_contract;
-    total_contract -= parseInt(unFormatNumber(price_deposits));
-    $(".total_contract_vat input").val(formatNumber(total_contract_vat));
-    $(".price_owed span").text(formatNumber(total_contract));
-    $(".price_owed input").val(formatNumber(total_contract));
-    $(".total_contract_product span").text(formatNumber(total_contract_product));
-    $(".total_contract_product input").val(formatNumber(total_contract_product));
-
-    console.log(fee_other)
 
     $("input[name=price_total]").val(formatNumber(price_total))
-    $("input[name=new_debt]").val(formatNumber(amount_owed + price_total - (paid_cash + paid_transfer + discount)))
-}
-
-function resetDiscounts() {
-    $('.total_contract_discount input').val(0)
-    $('tr.product_gif').remove()
+    $("input[name=new_debt]").val(formatNumber(amount_owed + (price_total + vat + fee_shipp + fee_other) - (paid_cash + paid_transfer + discount)))
 }

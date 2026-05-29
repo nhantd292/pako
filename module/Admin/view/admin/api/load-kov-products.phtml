@@ -80,57 +80,10 @@ echo $xhtml;
     });
 
     $('body').delegate(".price > input , .numbers input",'change',function(e){
-        var total = 0;
         var tr_parent = $(this).parents('tr');
         var number = tr_parent.find('.numbers input').val().replace(/,/gm,'');
         var price = tr_parent.find('.price > input').val().replace(/,/gm,'');
         tr_parent.find('.total input').val(formatNumber(parseInt(number) * parseInt(price)));
-        updateTotal();
-    });
-
-    $('body').delegate(".show-price",'click',function(e){
-        $(this).parents('tr').find('.price-detail').show();
-    });
-    $('body').delegate(".close-price-detail",'click',function(e){
-        $(this).parents('tr').find('.price-detail').hide();
-    });
-
-    $('body').delegate("input.discount_value , input.unit_type",'change',function(e){
-        var tr_parent = $(this).parents('tr');
-        var numbers = unFormatNumber(tr_parent.find('.numbers input').val());
-        var price = unFormatNumber(tr_parent.find('input.listed_price').val());
-        var discount_value = unFormatNumber(tr_parent.find('input.discount_value').val());
-        var unit_type = unFormatNumber(tr_parent.find('input.unit_type:checked').val());
-        discount_value = discount_value.length ? discount_value : 0;
-        var sale_text
-        if(unit_type == 1)
-            sale_text = discount_value;
-        if(unit_type == 2)
-            sale_text = (price * discount_value / 100);
-        tr_parent.find('input.sale_text').val(formatNumber(price - sale_text));
-        tr_parent.find('input.base_price').val(formatNumber(price - sale_text));
-        tr_parent.find('.total input').val(formatNumber((price - sale_text) * numbers));
-        var unit = unit_type == 1 ? '' : ' %'
-        if(discount_value != 0) tr_parent.find('.show_discount').text('- '+formatNumber(discount_value)+ unit);
-        else tr_parent.find('.show_discount').text('');
-        updateTotal();
-    });
-
-    $('body').delegate("input.sale_text",'change',function(e){
-        var tr_parent = $(this).parents('tr');
-        var sale_text = unFormatNumber($(this).val());
-        var numbers   = unFormatNumber(tr_parent.find('.numbers input').val());
-        var listed_price    = unFormatNumber(tr_parent.find('.show-price').text());
-
-        tr_parent.find('input.base_price').val(formatNumber(sale_text));
-        tr_parent.find('.total input').val(formatNumber(sale_text * numbers));
-        if(sale_text != listed_price)
-            var op = sale_text - listed_price > 0 ? '+' : '';
-            tr_parent.find('.show_discount').text(op + formatNumber(sale_text - listed_price));
-        updateTotal();
-    });
-
-    $('body').delegate(".total_contract_vat input, .fee_other input, .total_contract_discount input, .price_deposits input",'change',function(e){
         updateTotal();
     });
 
@@ -141,7 +94,6 @@ echo $xhtml;
 
     function deleteTr(tr_parent){
         tr_parent.remove();
-        resetDiscounts();
         updateTotal();
     }
 </script>

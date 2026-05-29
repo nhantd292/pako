@@ -396,6 +396,7 @@ class ContractController extends ActionController {
                     $products_detail  = array();
                     $total_number_product = 0;
                     $cost_price_total = 0;
+                    $products_price_total = 0;
                     for($i = 0; $i < count($contract_product['product_id']); $i++){
                         if(!empty($contract_product['product_id'][$i])) {
                             $products_detail[$i]['full_name']        = $contract_product['full_name'][$i]; // Tên đầy đủ
@@ -416,6 +417,7 @@ class ContractController extends ActionController {
 
                             $total_number_product += $number->formatToData($contract_product['numbers'][$i]);
                             $cost_price_total += ($number->formatToData($contract_product['numbers'][$i]) * $number->formatToData($contract_product['cost'][$i]));
+                            $products_price_total += ($number->formatToData($contract_product['numbers'][$i]) * $number->formatToData($contract_product['price'][$i]));
                         }
                     }
 
@@ -452,7 +454,13 @@ class ContractController extends ActionController {
                     $discount       = $number->formatToData($this->_params['data']['discount']);
                     $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
-                    $price_total    = $number->formatToData($this->_params['data']['price_total']);
+
+                    $vat            = $number->formatToData($this->_params['data']['vat']);
+                    $fee_shipp      = $number->formatToData($this->_params['data']['fee_shipp']);
+                    $fee_other      = $number->formatToData($this->_params['data']['fee_other']);
+
+//                    $price_total    = $number->formatToData($this->_params['data']['price_total']);
+                    $price_total    = $products_price_total + $vat + $fee_shipp + $fee_other;
                     $new_debt       = $old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
                     $data_debt = array(
                         'customer_id' => $customer_id,
@@ -576,6 +584,7 @@ class ContractController extends ActionController {
                     $products_detail  = array();
                     $total_number_product = 0;
                     $cost_price_total = 0;
+                    $products_price_total = 0;
                     for($i = 0; $i < count($contract_product['product_id']); $i++){
                         if(!empty($contract_product['product_id'][$i])) {
                             $products_detail[$i]['full_name']        = $contract_product['full_name'][$i]; // Tên đầy đủ
@@ -596,6 +605,7 @@ class ContractController extends ActionController {
 
                             $total_number_product += $number->formatToData($contract_product['numbers'][$i]);
                             $cost_price_total += ($number->formatToData($contract_product['numbers'][$i]) * $number->formatToData($contract_product['cost'][$i]));
+                            $products_price_total += ($number->formatToData($contract_product['numbers'][$i]) * $number->formatToData($contract_product['price'][$i]));
                         }
                     }
 
@@ -625,7 +635,13 @@ class ContractController extends ActionController {
                     $discount       = $number->formatToData($this->_params['data']['discount']);
                     $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
-                    $price_total    = $number->formatToData($this->_params['data']['price_total']);
+
+                    $vat            = $number->formatToData($this->_params['data']['vat']);
+                    $fee_shipp      = $number->formatToData($this->_params['data']['fee_shipp']);
+                    $fee_other      = $number->formatToData($this->_params['data']['fee_other']);
+
+//                    $price_total    = $number->formatToData($this->_params['data']['price_total']);
+                    $price_total    = $products_price_total + $vat + $fee_shipp + $fee_other;
                     $new_debt       = $debt_item_old->old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
                     $data_debt = array(
                         'id' => $debt_item_old->id,
@@ -637,36 +653,6 @@ class ContractController extends ActionController {
                         'new_debt' => $new_debt,
                     );
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
-
-//                    # cập nhật amount_owed (nợ hiện tại) của khách hàng
-//                    $data_contact = array(
-//                        'id' => $customer_id,
-//                        'amount_owed' => $new_debt,
-//                    );
-//                    $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
-
-
-//                    # cập nhật lại số liệu cho các phiếu thu chi phát sinh sau
-//                    $debt_item_new = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
-//                    $value_new = $debt_item_new->price_total + $debt_item_new->discount + $debt_item_new->paid_cash + $debt_item_new->paid_transfer;
-//
-//                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('customer_id' => $customer_id, 'created' => $debt_item_old->created), array('task' => 'list-update'));
-//                    $change_value = $value_old - $value_new;
-//                    foreach ($list_debt as $debt) {
-//                        $data_update = array(
-//                            'id' => $debt->id,
-//                            'old_debt' => $debt->old_debt + $change_value,
-//                            'new_debt' => $debt->new_debt + $change_value,
-//                        );
-//
-//                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_update), array('task' => 'update-value'));
-//
-//                        $data_contact = array(
-//                            'id' => $customer_id,
-//                            'amount_owed' => $debt->new_debt + $change_value,
-//                        );
-//                        $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
-//                    }
                     $connection->commit();
                     ##### end #####
 

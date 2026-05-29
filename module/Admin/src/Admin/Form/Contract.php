@@ -113,6 +113,51 @@ class Contract extends Form {
 		        'class'		=> 'form-control',
 		    )
 		));
+
+        $this->add(array(
+            'name'			=> 'invoice_type',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Chọn -',
+                'disable_inarray_validator' => true,
+                'value_options'	=> ['vat'=>"Hóa đơn VAT", 'pos'=>"Máy tính tiền" ],
+            )
+        ));
+
+		$this->add(array(
+		    'name'			=> 'company_name',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		=> 'form-control',
+		    )
+		));
+
+		$this->add(array(
+		    'name'			=> 'company_mst',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		=> 'form-control',
+		    )
+		));
+
+		$this->add(array(
+		    'name'			=> 'company_address',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		=> 'form-control',
+		    )
+		));
+
+		$this->add(array(
+		    'name'			=> 'company_email',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		=> 'form-control',
+		    )
+		));
 		
 		// Thành tiền
 		$this->add(array(
@@ -179,6 +224,16 @@ class Contract extends Form {
 		));
 
 		$this->add(array(
+		    'name'			=> 'vat',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		  => 'form-control text-green text-bold mask_currency',
+		        'value'       => 0,
+		        'data-value'  => 0,
+		    )
+		));
+
+		$this->add(array(
 		    'name'			=> 'fee_other',
 		    'type'			=> 'Text',
 		    'attributes'	=> array(
@@ -188,18 +243,15 @@ class Contract extends Form {
 		    )
 		));
 
-        $this->add(array(
-            'name'			=> 'fee_other_type',
-            'type'			=> 'Select',
-            'attributes'	=> array(
-                'class'		=> 'form-control select2 select2_basic',
-            ),
-            'options'		=> array(
-                'empty_option'	=> '- Chọn -',
-                'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-other-type', 'type' => $type)), array('task' => 'list-all')), array('key' => 'alias', 'value' => 'name')),
-            )
-        ));
+		$this->add(array(
+		    'name'			=> 'fee_shipp',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		  => 'form-control text-green text-bold mask_currency',
+		        'value'       => 0,
+		        'data-value'  => 0,
+		    )
+		));
 		
 		// Ghi chú sales
 		$this->add(array(

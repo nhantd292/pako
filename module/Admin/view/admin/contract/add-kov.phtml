@@ -28,20 +28,27 @@
         array('element' => $myForm->get('location_district_id'), 'label' => 'Quận huyện', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
         array('element' => $myForm->get('location_town_id'), 'label' => 'Phường xã', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
         array('element' => $myForm->get('address'), 'label' => 'Địa chỉ nơi ở', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
+        array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12'),
+        array('element' => $myForm->get('invoice_type'), 'label' => 'Xuất hóa đơn', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('company_name'), 'label' => 'Tên công ty', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('company_mst'), 'label' => 'Mã số thuế', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('company_address'), 'label' => 'Địa chỉ', 'validate' => array('require' => false), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('company_email'), 'label' => 'Email', 'validate' => array('require' => false), 'boxClass' => 'col-md-2'),
     );
     
     $xhtmlTop = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elementsTop);
 
     $elementsBottom = array(
         array('section' => 'Thành tiền hóa đơn', 'boxClass' => 'col-md-12'),
-        array('element' => $myForm->get('price_total'), 'label' => 'Tổng tiền hàng', 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('paid_cash'), 'label' => 'Trả tiền mặt', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('paid_transfer'), 'label' => 'Chuyển khoản', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('discount'), 'label' => 'giảm giá', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('fee_other_type'), 'label' => 'Loại thu khác', 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('fee_other'), 'label' => 'Thu khác', 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('amount_owed'), 'label' => 'Nợ cũ', 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('new_debt'), 'label' => 'Nợ lại', 'boxClass' => 'col-md-3'),
+        array('element' => $myForm->get('price_total'), 'label' => 'Tổng tiền hàng', 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('vat'), 'label' => 'VAT', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('fee_shipp'), 'label' => 'Phí giao hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('fee_other'), 'label' => 'Thu khác', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('paid_cash'), 'label' => 'Trả tiền mặt', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('paid_transfer'), 'label' => 'Chuyển khoản', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('discount'), 'label' => 'giảm giá', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('amount_owed'), 'label' => 'Nợ cũ', 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('new_debt'), 'label' => 'Nợ lại', 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('id'), 'validate' => array('require' => true)),
     );
     $xhtmlBottom = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elementsBottom);
@@ -64,10 +71,10 @@
 	
     <div class="page-content">
     	<div class="row">
-            <div class="col-md-7">
+            <div class="col-md-8">
 			<?php echo $xhtmlTop;?>
             </div>
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <?php echo $xhtmlBottom;?>
             </div>
             <div class="col-md-10">
@@ -158,7 +165,7 @@
                                                             <td width="100px" class="text-bold text-red text-middle">'.$productList['code'][$i].'</td>
                                                             <td width="100px" class="text-middle">'.$productList['full_name'][$i].'</td>
                                                             <td class="car_year '.$check_car_year.'"><input class="form-control text-right" type="text" name="contract_product[car_year][]" value="'.$productList['car_year'][$i].'" ></td>
-                                                            <td class="numbers '.$check_number.'"><input class="form-control text-right money w-60 p5" type="text" name="contract_product[numbers][]" value="'.$productList['numbers'][$i].'" min="1"></td>
+                                                            <td class="numbers '.$check_number.'"><input class="form-control text-right money w-60 p5" type="number" name="contract_product[numbers][]" value="'.$productList['numbers'][$i].'" min="1"></td>
                                                             <td class="price text-middle text-right box-price '.$check_price.'">
                                                                 <input class="form-control text-right money base_price " name="contract_product[price][]" type="text" value="'.$productList['price'][$i].'" min="0">
                                                             </td>
