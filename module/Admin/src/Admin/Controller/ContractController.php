@@ -3640,21 +3640,21 @@ class ContractController extends ActionController {
         $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
 
         $arrData = array(
-            array('field' => 'stt', 'title' => 'Số thứ tự hóa đơn'),
-            array('field' => 'contract_date', 'title' => 'Ngày hóa đơn', 'type' => 'date'),
+            array('field' => 'stt', 'title' => 'Số thứ tự hóa đơn', 'align' => 'center'),
+            array('field' => 'contract_date', 'title' => 'Ngày hóa đơn', 'type' => 'date', 'align' => 'center'),
             array('field' => 'company_name', 'title' => 'Tên khách hàng'),
             array('field' => 'company_address', 'title' => 'Địa chỉ'),
-            array('field' => 'company_mst', 'title' => 'Mã số thuế'),
+            array('field' => 'company_mst', 'title' => 'Mã số thuế', 'align' => 'center'),
             array('field' => 'customer_name', 'title' => 'Người mua hàng'),
             array('field' => 'company_email', 'title' => 'Email'),
-            array('field' => 'pay_type', 'title' => 'Hình thức thanh toán'),
-            array('field' => 'percent_vat', 'title' => 'Thuế suất GTGT (%)'),
-            array('field' => 'contract_vat', 'title' => 'Tiền thuế GTGT'),
+            array('field' => 'pay_type', 'title' => 'Hình thức thanh toán', 'align' => 'center'),
+            array('field' => 'percent_vat', 'title' => 'Thuế suất GTGT (%)', 'align' => 'right', 'format_code' => '#,##0'),
+            array('field' => 'contract_vat', 'title' => 'Tiền thuế GTGT', 'align' => 'right', 'format_code' => '#,##0'),
             array('field' => 'products_name_vat', 'title' => 'Tên hàng hóa/dịch vụ (*)'),
-            array('field' => 'products_unit_id', 'title' => 'Đơn vị', 'type' => 'data_source', 'data_source' => $units),
-            array('field' => 'numbers', 'title' => 'Số lượng'),
-            array('field' => 'price', 'title' => 'Đơn giá'),
-            array('field' => 'total', 'title' => 'Thành tiền'),
+            array('field' => 'products_unit_id', 'title' => 'Đơn vị', 'type' => 'data_source', 'data_source' => $units, 'align' => 'center'),
+            array('field' => 'numbers', 'title' => 'Số lượng', 'align' => 'right', 'format_code' => '#,##0'),
+            array('field' => 'price', 'title' => 'Đơn giá', 'align' => 'right', 'format_code' => '#,##0'),
+            array('field' => 'total', 'title' => 'Thành tiền', 'align' => 'right', 'format_code' => '#,##0'),
         );
 
         // Create new PHPExcel object
@@ -3685,7 +3685,7 @@ class ContractController extends ActionController {
                 $item['stt'] = $i;
                 $i++;
             }
-            else{
+            else {
                 $item['stt'] = $i-1;
                 $item['contract_date'] =
                 $item['company_name'] =
@@ -3698,7 +3698,6 @@ class ContractController extends ActionController {
                 $item['contract_vat'] = '';
             }
 
-
             $net_numbers = $item['numbers'] - $item['numbers_return'];
             $item['numbers'] = $net_numbers;
             $item['total'] = $net_numbers * $item['price'];
@@ -3706,6 +3705,8 @@ class ContractController extends ActionController {
             $startColumn = $config['startColumn'];
             foreach ($arrData AS $key => $data) {
                 $colLetter = $arrColumn[$startColumn];
+                $cellCoordinate = $colLetter . $startRow; // Tạo tọa độ ô (VD: A2, B2)
+
                 switch ($data['type']) {
                     case 'date':
                         $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
@@ -3719,7 +3720,32 @@ class ContractController extends ActionController {
                         $value = $item[$data['field']];
                 }
 
-                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value);
+                // 1. Ghi dữ liệu vào ô
+                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($cellCoordinate, $value);
+
+                // Lấy style của ô hiện tại để cấu hình nâng cao
+                $cellStyle = $objPHPExcel->getActiveSheet()->getStyle($cellCoordinate);
+
+                // 2. Xử lý Căn lề (Align) nếu được định nghĩa
+                if (isset($data['align'])) {
+                    switch ($data['align']) {
+                        case 'center':
+                            $cellStyle->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                            break;
+                        case 'right':
+                            $cellStyle->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                            break;
+                        case 'left':
+                            $cellStyle->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                            break;
+                    }
+                }
+
+                // 3. Xử lý Định dạng số / tiền tệ (Format Code) nếu được định nghĩa và ô có giá trị
+                if (isset($data['format_code']) && $value !== '') {
+                    $cellStyle->getNumberFormat()->setFormatCode($data['format_code']);
+                }
+
                 $startColumn++;
             }
 
