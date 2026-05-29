@@ -72,6 +72,7 @@ class ContractDetailTable extends DefaultTable {
                         'contract_date'=> 'date',
                         'contract_vat' => 'vat',
                         'customer_name' => 'name',
+                        'customer_phone' => 'phone',
                         'company_name',
                         'company_mst',
                         'company_address',
