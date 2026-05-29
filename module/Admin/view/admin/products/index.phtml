@@ -50,8 +50,9 @@
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
     							<td class="text-center">'. $cid .'</td>
                                 <td class="text-center">'. $index .'</td>
-    							<td class="text-center">'. $item['code'] .'</td>
+    							<td>'. $item['code'] .'</td>
     							<td class="text-bold"><a href="'. $linkEdit .'">'.  $item['name'] .'</a></td>
+    							<td>'. $item['name_vat'] .'</td>
     							<td>'. $products_type .'</td>
     							<td>'. $products_unit .'</td>
     							<td>'. $products_trademark .'</td>
@@ -67,6 +68,7 @@
     $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Mã</th>';
     $xhtmlHead .= '<th width="150">Tên</th>';
+    $xhtmlHead .= '<th width="150">Tên xuất hóa đơn</th>';
     $xhtmlHead .= '<th width="130">Nhóm</th>';
     $xhtmlHead .= '<th width="130">Đơn vị</th>';
     $xhtmlHead .= '<th width="130">Thương hiệu</th>';

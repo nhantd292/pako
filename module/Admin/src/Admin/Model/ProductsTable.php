@@ -122,7 +122,7 @@ class ProductsTable extends DefaultTable
         if ($options['task'] == 'list-full') {
             $result = $this->tableGateway->select(function (Select $select) use ($arrParam, $options) {
                 $ssFilter = $arrParam['ssFilter'];
-                $columns = [ 'id', 'code', 'name', 'products_type_id', 'trademark_id', 'unit_id', 'cost_price', 'min', 'max', 'length', 'width', 'height', 'weight'];
+                $columns = [ 'id', 'code', 'name', 'name_vat', 'products_type_id', 'trademark_id', 'unit_id', 'cost_price', 'min', 'max', 'length', 'width', 'height', 'weight'];
 
                 // 2. Build cột động cho Giá
                 foreach ($arrParam['customer_type'] as $id => $alias) {
@@ -292,6 +292,7 @@ class ProductsTable extends DefaultTable
             $data = array(
                 'id' => $id,
                 'name' => $arrData['name'],
+                'name_vat' => $arrData['name_vat'],
                 'code' => $arrData['code'],
                 'products_type_id' => $arrData['products_type_id'],
                 'trademark_id' => $arrData['trademark_id'],
@@ -330,6 +331,9 @@ class ProductsTable extends DefaultTable
 
             if(isset($arrData['name'])) {
                 $data['name'] = $arrData['name'];
+            }
+            if(isset($arrData['name_vat'])) {
+                $data['name_vat'] = $arrData['name_vat'];
             }
             if(isset($arrData['code'])) {
                 $data['code'] = $arrData['code'];

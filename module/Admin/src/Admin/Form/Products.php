@@ -38,6 +38,17 @@ class Products extends Form
             ),
         ));
 
+        // name
+        $this->add(array(
+            'name'			=> 'name_vat',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'			=> 'form-control',
+                'id'			=> 'name',
+                'placeholder'	=> 'Tên',
+            ),
+        ));
+
         $this->add(array(
             'name'			=> 'code',
             'type'			=> 'Text',

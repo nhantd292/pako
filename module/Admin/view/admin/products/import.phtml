@@ -58,6 +58,7 @@
             						<th class="col-50">STT</th>
                                     <th>Mã SP <span class="text-red">*</span></th>
             						<th>Tên SP <span class="text-red">*</span></th>
+            						<th>Tên xuất hóa đơn</th>
             						<th>Nhóm SP <span class="text-red">*</span></th>
             						<th>Thương hiệu <span class="text-red">*</span></th>
             						<th>Đơn vị <span class="text-red">*</span></th>
@@ -96,16 +97,17 @@
         							<td><?php echo $index;?></td>
                                     <td><span class="code"><?php echo trim($val['A']);?></span></td>
                                     <td><span class="name"><?php echo trim($val['B']);?></span></td>
-        							<td><span class="products_type_id"><?php echo trim($val['C']);?></span></td>
-        							<td><span class="trademark_id"><?php echo trim($val['D']);?></span></td>
-        							<td><span class="unit_id"><?php echo trim($val['E']);?></span></td>
-        							<td><span class="cost_price"><?php echo trim($val['F']);?></span></td>
-                                    <td><span class="min"><?php echo trim($val['G']);?></span></td>
-        							<td><span class="max"><?php echo trim($val['H']);?></span></td>
-        							<td><span class="length"><?php echo trim($val['I']);?></span></td>
-        							<td><span class="width"><?php echo trim($val['J']);?></span></td>
-        							<td><span class="height"><?php echo trim($val['K']);?></span></td>
-        							<td><span class="weight"><?php echo trim($val['L']);?></span></td>
+                                    <td><span class="name_vat"><?php echo trim($val['C']);?></span></td>
+        							<td><span class="products_type_id"><?php echo trim($val['D']);?></span></td>
+        							<td><span class="trademark_id"><?php echo trim($val['E']);?></span></td>
+        							<td><span class="unit_id"><?php echo trim($val['F']);?></span></td>
+        							<td><span class="cost_price"><?php echo trim($val['G']);?></span></td>
+                                    <td><span class="min"><?php echo trim($val['H']);?></span></td>
+        							<td><span class="max"><?php echo trim($val['I']);?></span></td>
+        							<td><span class="length"><?php echo trim($val['J']);?></span></td>
+        							<td><span class="width"><?php echo trim($val['K']);?></span></td>
+        							<td><span class="height"><?php echo trim($val['L']);?></span></td>
+        							<td><span class="weight"><?php echo trim($val['M']);?></span></td>
                                     <?php echo $tbody_custom; ?>
         						</tr>
         						<?php

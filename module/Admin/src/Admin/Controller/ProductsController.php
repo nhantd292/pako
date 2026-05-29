@@ -353,6 +353,7 @@ class ProductsController extends ActionController{
         $arrData = array(
             array('field' => 'code', 'title' => 'Mã sản phẩm'),
             array('field' => 'name', 'title' => 'Tên sản phẩm'),
+            array('field' => 'name_vat', 'title' => 'Tên xuất hóa đơn'),
             array('field' => 'products_type_id', 'title' => 'Nhóm sản phẩm', 'type' => 'data_source', 'data_source' => $products_type),
             array('field' => 'trademark_id', 'title' => 'Thương hiệu', 'type' => 'data_source', 'data_source' => $trademarks),
             array('field' => 'unit_id', 'title' => 'Đơn vị', 'type' => 'data_source', 'data_source' => $units),
