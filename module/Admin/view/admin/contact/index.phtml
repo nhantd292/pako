@@ -89,6 +89,11 @@
 
             $note                   = nl2br($options['note']);
             $content                = nl2br($options['content']);
+            $vat_text = "";
+            $vat_text .= !empty($item->company_name) ? "Công ty: {$item->company_name} <br> " : "";
+            $vat_text .= !empty($item->company_mst) ? "MST: {$item->company_mst} <br> " : "";
+            $vat_text .= !empty($item->company_address) ? "Địa chỉ: {$item->company_address} <br> " : "";
+            $vat_text .= !empty($item->company_email) ? "Tmail: {$item->company_email} <br> " : "";
 
             $color_text_row = '';
             if($contract_number > 0){
@@ -148,6 +153,7 @@
             $xhtmlItems .= '<td><div class="col-190 text-wrap">'. $content .'</div></td>';
             $xhtmlItems .= '<td class="text-center">'. $hisstory_success .'</td>';
             $xhtmlItems .= '<td class="mask_currency text-right">'. $cost_ads .'</td>';
+            $xhtmlItems .= '<td><div class="col-300 text-wrap">'. $vat_text .'</div></td>';
             $xhtmlItems .= '<td><div class="col-300 text-wrap">'. $x_history .'</div></td>';
             $xhtmlItems .= '<td>'. $history_return .'</td>';
             $xhtmlItems .= '<td>'. $care_id .'<br>'.$care_date.'</td>';
@@ -170,6 +176,7 @@
     $xhtmlHead .= '<th width ="220">Nội dung tư vấn</th>';
     $xhtmlHead .= '<th width ="150">Số lần được chăm sóc</th>';
     $xhtmlHead .= '<th width ="150" class="text-right">Chi phí ADS: <span class="mask_currency text-red">'.$total_cost_ads.'</span></th>';
+    $xhtmlHead .= '<th width ="200">Thông tin xuất hóa đơn</th>';
     $xhtmlHead .= '<th width ="310">Lịch sử chăm sóc cuối</th>';
     $xhtmlHead .= '<th width ="90">Chăm sóc lại</th>';
     $xhtmlHead .= '<th width ="200">NV chăm sóc</th>';

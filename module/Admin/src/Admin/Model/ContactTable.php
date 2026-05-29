@@ -554,6 +554,12 @@ class ContactTable extends DefaultTable {
 				'user_id'               => $arrData['user_id'] ? $arrData['user_id'] : $this->userInfo->getUserInfo('id'),
 				'sale_branch_id'        => $arrData['sale_branch_id'] ? $arrData['sale_branch_id'] : $this->userInfo->getUserInfo('sale_branch_id'),
 				'sale_group_id'         => $arrData['sale_group_id'] ? $arrData['sale_group_id'] : $this->userInfo->getUserInfo('sale_group_id'),
+
+                'company_name'          => $arrData['company_name'],
+                'company_mst'           => $arrData['company_mst'],
+                'company_address'       => $arrData['company_address'],
+                'company_email'         => $arrData['company_email'],
+
 			    'options'               => !empty($item_options) ? serialize($item_options) : null,
 				'created'               => date('Y-m-d H:i:s'),
 				'created_by'            => $this->userInfo->getUserInfo('id'),
@@ -848,6 +854,20 @@ class ContactTable extends DefaultTable {
 		    if(!empty($item_options)) {
 		        $data['options'] = serialize($item_options);
 		    }
+
+		    if(!empty($arrData['company_name'])) {
+                $data['company_name'] = $arrData['company_name'];
+            }
+		    if(!empty($arrData['company_mst'])) {
+                $data['company_mst'] = $arrData['company_mst'];
+            }
+		    if(!empty($arrData['company_address'])) {
+                $data['company_address'] = $arrData['company_address'];
+            }
+		    if(!empty($arrData['company_email'])) {
+                $data['company_email'] = $arrData['company_email'];
+            }
+
 		    $this->tableGateway->update($data, array('id' => $id));
 		    
 		    // Thêm lịch sử hệ thống

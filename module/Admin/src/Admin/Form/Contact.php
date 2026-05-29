@@ -459,6 +459,36 @@ class Contact extends Form {
             )
         ));
 
+        // company_name
+        $this->add(array(
+            'name'			=> 'company_name',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'		=> 'form-control',
+            ),
+        ));
+        $this->add(array(
+            'name'			=> 'company_mst',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'		=> 'form-control',
+            ),
+        ));
+        $this->add(array(
+            'name'			=> 'company_address',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'		=> 'form-control',
+            ),
+        ));
+        $this->add(array(
+            'name'			=> 'company_email',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'		=> 'form-control',
+            ),
+        ));
+
         // Trạng thái chăm sóc
 //        $this->add(array(
 //            'name'			=> 'marketer_id',
