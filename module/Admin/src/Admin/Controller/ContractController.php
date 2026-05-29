@@ -3640,7 +3640,7 @@ class ContractController extends ActionController {
         $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
 
         $arrData = array(
-            array('field' => 'stt', 'title' => 'Số thứ tự hóa đơn', 'align' => 'center'),
+            array('field' => 'stt', 'title' => 'Số thứ tự hóa đơn (*)', 'align' => 'center'),
             array('field' => 'contract_date', 'title' => 'Ngày hóa đơn', 'type' => 'date', 'align' => 'center'),
             array('field' => 'company_name', 'title' => 'Tên khách hàng'),
             array('field' => 'company_address', 'title' => 'Địa chỉ'),
@@ -3670,6 +3670,7 @@ class ContractController extends ActionController {
         foreach ($arrData AS $key => $data) {
             $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($arrColumn[$startColumn] . $config['headRow'], $data['title']);
             $objPHPExcel->getActiveSheet()->getStyle($arrColumn[$startColumn] . $config['headRow'])->getFont()->setBold(true);
+            $objPHPExcel->getActiveSheet()->getStyle($arrColumn[$startColumn] . $config['headRow'])->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             $objPHPExcel->getActiveSheet()->getColumnDimension($arrColumn[$startColumn])->setAutoSize(true);
             $startColumn++;
         }
@@ -3764,8 +3765,6 @@ class ContractController extends ActionController {
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
         exit;
-
-        return $this->response;
     }
 }
 
