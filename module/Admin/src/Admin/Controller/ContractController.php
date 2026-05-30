@@ -51,7 +51,8 @@ class ContractController extends ActionController {
         $this->_params['ssFilter']['filter_marketer_status']= $ssFilter->filter_marketer_status;
         $this->_params['ssFilter']['filter_marketer_id']    = $ssFilter->filter_marketer_id;
         $this->_params['ssFilter']['filter_inventory_id']   = $ssFilter->filter_inventory_id;
-        $this->_params['ssFilter']['filter_customer_id']   = $ssFilter->filter_customer_id;
+        $this->_params['ssFilter']['filter_customer_id']    = $ssFilter->filter_customer_id;
+        $this->_params['ssFilter']['filter_invoice_type']   = $ssFilter->filter_invoice_type;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : $this->_paginator['itemCountPerPage'];
@@ -103,6 +104,7 @@ class ContractController extends ActionController {
             $ssFilter->filter_marketer_id 	    = $data['filter_marketer_id'];
             $ssFilter->filter_inventory_id 	    = $data['filter_inventory_id'];
             $ssFilter->filter_customer_id 	    = $data['filter_customer_id'];
+            $ssFilter->filter_invoice_type 	    = $data['filter_invoice_type'];
 
             $ssFilter->filter_sale_group = $data['filter_sale_group'];
             if(!empty($data['filter_sale_branch'])) {
@@ -960,6 +962,7 @@ class ContractController extends ActionController {
         $this->_viewModel['sex']                        = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sex')), array('task' => 'cache-alias'));
         $this->_viewModel['fee_other_type']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-other-type')), array('task' => 'cache-alias'));
         $this->_viewModel['status']                     = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status')), array('task' => 'cache'));
+        $this->_viewModel['invoice_type']               = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'invoice-type')), array('task' => 'cache-alias'));
         $this->_viewModel['order_status']               = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['production_type']            = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'production-type')), array('task' => 'cache')), array('key' => 'id', 'value' => 'object'));
         $this->_viewModel['caption']                    = 'Chi tiết - '.$this->caption. ' - '. $item['code'];

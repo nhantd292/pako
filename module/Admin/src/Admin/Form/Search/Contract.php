@@ -56,6 +56,19 @@ class Contract extends Form{
 		    )
 		));
 
+        // Loại xuất hóa đơn
+        $this->add(array(
+            'name'			=> 'filter_invoice_type',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Loại hóa đơn -',
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'invoice-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
+            )
+        ));
+
 		// Cơ sở
 		$this->add(array(
 		    'name'			=> 'filter_unit_transport',

@@ -282,6 +282,19 @@
             <i class="fa fa-money"></i> <span class="title">Bán hàng</span><span class="arrow"></span>
         </a>
         <ul class="dropdown-menu">
+            <li class="dropdown-submenu">
+                <a href="javascript:;" target="_self">
+                    <i class="fa fa-link"></i> <span class="title">Thiết lập</span><span class="arrow"></span>
+                </a>
+                <ul class="dropdown-menu" style="display: none;">
+                    <li>
+                        <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'invoice-type', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-sitemap"></i> <span class="title">Kiểu xuất hóa đơn</span><span class="arrow"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="divider"></li>
             <li>
                 <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'index'));?>" target="_self">
                     <i class="fa fa-book"></i> <span class="title">Đơn hàng</span><span class="arrow"></span>
@@ -303,11 +316,7 @@
                     <i class="fa fa-list-ul"></i> <span class="title">Sản phẩm KH trả hàng</span><span class="arrow"></span>
                 </a>
             </li>
-            <li>
-                <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'fee-other-type', 'action' => 'index'));?>" target="_self">
-                    <i class="fa fa-sitemap"></i> <span class="title">Loại thu khác</span><span class="arrow"></span>
-                </a>
-            </li>
+
 
             <!--			<li>-->
             <!--				<a href="--><?php //echo $this->url('routeAdmin/default', array('controller' => 'contract-detail', 'action' => 'products'));?><!--" target="_self">-->

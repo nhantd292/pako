@@ -218,6 +218,10 @@ class ContractTable extends DefaultTable {
                 if(!empty($ssFilter['filter_shipper_id'])) {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.ghtk_code', $ssFilter['filter_shipper_id']);
                 }
+
+                if(!empty($ssFilter['filter_invoice_type'])) {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.invoice_type', $ssFilter['filter_invoice_type']);
+                }
             })->current();
 	    }
 
@@ -848,6 +852,10 @@ class ContractTable extends DefaultTable {
 
                 if(!empty($ssFilter['filter_shipper_id'])) {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.ghtk_code', $ssFilter['filter_shipper_id']);
+                }
+
+                if(!empty($ssFilter['filter_invoice_type'])) {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.invoice_type', $ssFilter['filter_invoice_type']);
                 }
 //                echo "<pre>";
 //                print_r($select->getSqlString());

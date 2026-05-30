@@ -123,7 +123,7 @@ class Contract extends Form {
             'options'		=> array(
                 'empty_option'	=> '- Chọn -',
                 'disable_inarray_validator' => true,
-                'value_options'	=> ['vat'=>"Hóa đơn VAT", 'pos'=>"Máy tính tiền" ],
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'invoice-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
             )
         ));
 

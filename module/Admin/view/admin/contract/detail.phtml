@@ -1,7 +1,7 @@
 <?php
 $dateFormat = new \ZendX\Functions\Date();
 $debt_item = $this->debt_item;
-$invoice_type = ['vat'=>"Hóa đơn VAT", 'pos'=>"Máy tính tiền" ];
+$invoice_type = $this->invoice_type;
 
 $elementsContact = array(
     array('section' => 'Thông tin khách hàng', 'boxClass' => 'col-md-12'),
@@ -15,7 +15,7 @@ $elementsContact = array(
     array('element' => $this->location_town[$this->item['location_town_id']]['name'], 'label' => 'Phường xã', 'boxClass' => 'col-md-3'),
     array('element' => $this->item['address'], 'label' => 'Địa chỉ nơi ở', 'boxClass' => 'col-md-3'),
     array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12'),
-    array('element' => $invoice_type[$this->item['invoice_type']], 'label' => 'Xuất hóa đơn', 'boxClass' => 'col-md-2'),
+    array('element' => $invoice_type[$this->item['invoice_type']]['name'], 'label' => 'Xuất hóa đơn', 'boxClass' => 'col-md-2'),
     array('element' => $this->item['company_name'], 'label' => 'Tên công ty', 'boxClass' => 'col-md-2'),
     array('element' => $this->item['company_mst'], 'label' => 'Mã số thuế', 'boxClass' => 'col-md-2'),
     array('element' => $this->item['company_address'], 'label' => 'Địa chỉ', 'boxClass' => 'col-md-4'),
