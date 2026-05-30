@@ -72,7 +72,7 @@ function updateTotal(auto_vat = true) {
     console.log(auto_vat)
 
     if (auto_vat == true){
-        vat = price_total * percent_vat / 100;
+        vat = Math.round(price_total * percent_vat / 100);
         $("input[name=vat]").val(formatNumber(vat))
     }
 
