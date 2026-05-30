@@ -488,6 +488,21 @@ class Contact extends Form {
                 'class'		=> 'form-control',
             ),
         ));
+        $this->add(array(
+            'name'			=> 'company_user',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'		=> 'form-control',
+            )
+        ));
+
+        $this->add(array(
+            'name'			=> 'company_phone',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'		=> 'form-control',
+            )
+        ));
 
         // Trạng thái chăm sóc
 //        $this->add(array(

@@ -559,6 +559,8 @@ class ContactTable extends DefaultTable {
                 'company_mst'           => $arrData['company_mst'],
                 'company_address'       => $arrData['company_address'],
                 'company_email'         => $arrData['company_email'],
+                'company_user'          => $arrData['company_user'],
+                'company_phone'         => $arrData['company_phone'],
 
 			    'options'               => !empty($item_options) ? serialize($item_options) : null,
 				'created'               => date('Y-m-d H:i:s'),
@@ -866,6 +868,12 @@ class ContactTable extends DefaultTable {
             }
 		    if(!empty($arrData['company_email'])) {
                 $data['company_email'] = $arrData['company_email'];
+            }
+		    if(!empty($arrData['company_user'])) {
+                $data['company_user'] = $arrData['company_user'];
+            }
+		    if(!empty($arrData['company_phone'])) {
+                $data['company_phone'] = $arrData['company_phone'];
             }
 
 		    $this->tableGateway->update($data, array('id' => $id));

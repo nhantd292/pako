@@ -15,11 +15,12 @@ $elementsContact = array(
     array('element' => $this->location_town[$this->item['location_town_id']]['name'], 'label' => 'Phường xã', 'boxClass' => 'col-md-3'),
     array('element' => $this->item['address'], 'label' => 'Địa chỉ nơi ở', 'boxClass' => 'col-md-3'),
     array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12'),
-    array('element' => $invoice_type[$this->item['invoice_type']]['name'], 'label' => 'Xuất hóa đơn', 'boxClass' => 'col-md-2'),
     array('element' => $this->item['company_name'], 'label' => 'Tên công ty', 'boxClass' => 'col-md-2'),
     array('element' => $this->item['company_mst'], 'label' => 'Mã số thuế', 'boxClass' => 'col-md-2'),
-    array('element' => $this->item['company_address'], 'label' => 'Địa chỉ', 'boxClass' => 'col-md-4'),
+    array('element' => $this->item['company_address'], 'label' => 'Địa chỉ', 'boxClass' => 'col-md-2'),
     array('element' => $this->item['company_email'], 'label' => 'Email công ty', 'boxClass' => 'col-md-2'),
+    array('element' => $this->item['company_user'], 'label' => 'Nhân viên', 'boxClass' => 'col-md-2'),
+    array('element' => $this->item['company_phone'], 'label' => 'ĐT công ty', 'boxClass' => 'col-md-2'),
 );
 $elementsContract = array(
 
@@ -35,11 +36,12 @@ $elementsPrice = array(
     array('section' => 'Thông tin thanh toán', 'boxClass' => 'col-md-12'),
     array('element' => '<span class="mask_currency text-green">'. $this->item['price_total'] .'</span> ', 'label' => 'Tổng tiền hàng (1)', 'boxClass' => 'col-md-4',),
     array('element' => '<span class="mask_currency text-green">'. $this->item['vat'] .'</span>', 'label' => 'VAT', 'boxClass' => 'col-md-4'),
-    array('element' => '<span class="mask_currency text-green">'. $this->item['fee_shipp'] .'</span>', 'label' => 'Phí giao hàng', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-green">'. $this->item['fee_shipp'] .'</span>', 'label' => 'Phí giao hàng', 'boxClass' => 'col-md-4 hidden'),
     array('element' => '<span class="mask_currency text-green">'. $this->item['fee_other'] .'</span>', 'label' => 'Thu khác', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_cash'] .'</span>', 'label' => 'Trả tiền mặt (2)', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_transfer'] .'</span>', 'label' => 'Chuyển khoản (3)', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-purple">'. $this->item['discount'] .'</span>', 'label' => 'Giảm giá (4)', 'boxClass' => 'col-md-4'),
+    array('element' => $invoice_type[$this->item['invoice_type']]['name'], 'label' => 'Xuất hóa đơn', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-red">'. $debt_item->old_debt .'</span> ', 'label' => 'Nợ cũ (5)', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-orange">'. $debt_item->new_debt .'</span> ', 'label' => 'Nợ lại:', 'boxClass' => 'col-md-4'),
 );

@@ -44,16 +44,24 @@ if (contactId) {
     checkContactToElement(contactId, 'element');
 }
 
+var percent_vat = $('#vatvalue').text().trim();
 
 
 $('input[name="paid_cash"] , input[name="paid_transfer"], input[name="discount"], input[name="vat"], input[name="fee_other"], input[name="fee_shipp"]').change(function() {
-    updateTotal();
+    updateTotal(false);
 });
 
-updateTotal()
+updateTotal(false)
 
-function updateTotal() {
+function updateTotal(auto_vat = true) {
     var total_contract = 0;
+    $.each($('.list-product-contract tr'), function (index, value) {
+        var price = $(this).find('.price > input').val() ? $(this).find('.price > input').val() : 0;
+        var number = $(this).find('.numbers input').val() ? $(this).find('.numbers input').val() : 0;
+        total_contract += parseInt(unFormatNumber(price) * unFormatNumber(number));
+    });
+    var price_total = total_contract;
+
     var amount_owed = $("input[name=amount_owed]").val() ? parseInt(unFormatNumber($("input[name=amount_owed]").val())) : 0;
     var paid_cash = $("input[name=paid_cash]").val() ? parseInt(unFormatNumber($("input[name=paid_cash]").val())) : 0;
     var paid_transfer = $("input[name=paid_transfer]").val() ? parseInt(unFormatNumber($("input[name=paid_transfer]").val())) : 0;
@@ -61,16 +69,13 @@ function updateTotal() {
     var vat = $("input[name=vat]").val() ? parseInt(unFormatNumber($("input[name=vat]").val())) : 0;
     var fee_other = $("input[name=fee_other]").val() ? parseInt(unFormatNumber($("input[name=fee_other]").val())) : 0;
     var fee_shipp = $("input[name=fee_shipp]").val() ? parseInt(unFormatNumber($("input[name=fee_shipp]").val())) : 0;
+    console.log(auto_vat)
 
-    $.each($('.list-product-contract tr'), function (index, value) {
-        var price = $(this).find('.price > input').val() ? $(this).find('.price > input').val() : 0;
-        var number = $(this).find('.numbers input').val() ? $(this).find('.numbers input').val() : 0;
-        total_contract += parseInt(unFormatNumber(price) * unFormatNumber(number));
-    });
-    // total_contract += parseInt(unFormatNumber(vat));
-    // total_contract += parseInt(unFormatNumber(fee_other));
-    // total_contract += parseInt(unFormatNumber(fee_shipp));
-    var price_total = total_contract;
+    if (auto_vat == true){
+        vat = price_total * percent_vat / 100;
+        $("input[name=vat]").val(formatNumber(vat))
+    }
+
 
     $("input[name=price_total]").val(formatNumber(price_total))
     $("input[name=new_debt]").val(formatNumber(amount_owed + (price_total + vat + fee_shipp + fee_other) - (paid_cash + paid_transfer + discount)))

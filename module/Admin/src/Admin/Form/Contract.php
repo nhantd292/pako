@@ -158,6 +158,22 @@ class Contract extends Form {
 		        'class'		=> 'form-control',
 		    )
 		));
+
+		$this->add(array(
+		    'name'			=> 'company_user',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		=> 'form-control',
+		    )
+		));
+
+		$this->add(array(
+		    'name'			=> 'company_phone',
+		    'type'			=> 'Text',
+		    'attributes'	=> array(
+		        'class'		=> 'form-control',
+		    )
+		));
 		
 		// Thành tiền
 		$this->add(array(

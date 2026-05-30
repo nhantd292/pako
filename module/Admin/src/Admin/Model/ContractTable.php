@@ -2450,6 +2450,8 @@ class ContractTable extends DefaultTable {
                 'company_mst'               => $arrData['company_mst'],
                 'company_address'           => $arrData['company_address'],
                 'company_email'             => $arrData['company_email'],
+                'company_user'              => $arrData['company_user'],
+                'company_phone'             => $arrData['company_phone'],
 
                 'contact_id'              => $arrItem['id'],
                 'marketer_id'             => $arrItem['marketer_id'],
@@ -2534,6 +2536,8 @@ class ContractTable extends DefaultTable {
                 'company_mst'               => $arrData['company_mst'],
                 'company_address'           => $arrData['company_address'],
                 'company_email'             => $arrData['company_email'],
+                'company_user'              => $arrData['company_user'],
+                'company_phone'             => $arrData['company_phone'],
                 'options'                 => serialize($contract_options)
             );
 
