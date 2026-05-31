@@ -457,12 +457,11 @@ class ContractController extends ActionController {
                     $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
 
-                    $vat            = $number->formatToData($this->_params['data']['vat']);
                     $fee_shipp      = $number->formatToData($this->_params['data']['fee_shipp']);
                     $fee_other      = $number->formatToData($this->_params['data']['fee_other']);
 
 //                    $price_total    = $number->formatToData($this->_params['data']['price_total']);
-                    $price_total    = $products_price_total + $vat + $fee_shipp + $fee_other;
+                    $price_total    = $products_price_total + $fee_shipp + $fee_other;
                     $new_debt       = $old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
                     $data_debt = array(
                         'customer_id' => $customer_id,
@@ -506,10 +505,11 @@ class ContractController extends ActionController {
             }
         }
         else{
-            $this->_viewModel['contactPhone']   = $contact_item['phone'];
-            $this->_viewModel['contactId']      = $contact_item['id'];
+            $this->_viewModel['contactPhone']       = $contact_item['phone'];
+            $this->_viewModel['contactId']          = $contact_item['id'];
         }
 
+        $this->_viewModel['customer_type_id']   = $contact_item['customer_type_id'];
         $this->_viewModel['products_type']  = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
         $this->_viewModel['myForm']	        = $myForm;
         $this->_viewModel['caption']        = 'Thêm mới - '.$this->caption;
@@ -638,12 +638,11 @@ class ContractController extends ActionController {
                     $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
 
-                    $vat            = $number->formatToData($this->_params['data']['vat']);
                     $fee_shipp      = $number->formatToData($this->_params['data']['fee_shipp']);
                     $fee_other      = $number->formatToData($this->_params['data']['fee_other']);
 
 //                    $price_total    = $number->formatToData($this->_params['data']['price_total']);
-                    $price_total    = $products_price_total + $vat + $fee_shipp + $fee_other;
+                    $price_total    = $products_price_total + $fee_shipp + $fee_other;
                     $new_debt       = $debt_item_old->old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
                     $data_debt = array(
                         'id' => $debt_item_old->id,
@@ -681,6 +680,7 @@ class ContractController extends ActionController {
             }
         }
 
+        $this->_viewModel['customer_type_id']   = $contact_item['customer_type_id'];
         $this->_viewModel['products_type']  = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
         $this->_viewModel['myForm']	        = $myForm;
         $this->_viewModel['caption']        = 'Cập nhật - '.$this->caption;

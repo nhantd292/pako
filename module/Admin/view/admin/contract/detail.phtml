@@ -2,25 +2,27 @@
 $dateFormat = new \ZendX\Functions\Date();
 $debt_item = $this->debt_item;
 $invoice_type = $this->invoice_type;
+$show_invoice_vat = $this->item['invoice_type'] == 'vat' ? '' : 'hidden';
 
 $elementsContact = array(
     array('section' => 'Thông tin khách hàng', 'boxClass' => 'col-md-12'),
     array('element' => $this->item['name'], 'label' => 'Họ và tên', 'boxClass' => 'col-md-3'),
-    array('element' => $this->customer_type[$this->item['customer_type_id']]['name'], 'label' => 'Nhóm khách hàng', 'boxClass' => 'col-md-2'),
+//    array('element' => $this->customer_type[$this->item['customer_type_id']]['name'], 'label' => 'Nhóm khách hàng', 'boxClass' => 'col-md-2'),
     array('element' => $this->contact['phone'], 'label' => 'Số điện thoại', 'boxClass' => 'col-md-2'),
     array('element' => $this->warehouse[$this->item['inventory_id']]['name'], 'label' => 'Kho hàng', 'boxClass' => 'col-md-2'),
+    array('element' => $this->sale_branch[$this->item['sale_branch_id']]['name'], 'label' => 'Chi nhánh', 'boxClass' => 'col-md-2'),
     array('element' => $this->item['sale_note'] ? $this->item['sale_note'] : '.', 'label' => 'Ghi chú', 'boxClass' => 'col-md-3'),
     array('element' => $this->location_city[$this->item['location_city_id']]['name'], 'label' => 'Tỉnh thành', 'boxClass' => 'col-md-3'),
     array('element' => $this->location_district[$this->item['location_district_id']]['name'], 'label' => 'Quận huyện', 'boxClass' => 'col-md-3'),
     array('element' => $this->location_town[$this->item['location_town_id']]['name'], 'label' => 'Phường xã', 'boxClass' => 'col-md-3'),
     array('element' => $this->item['address'], 'label' => 'Địa chỉ nơi ở', 'boxClass' => 'col-md-3'),
     array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12'),
-    array('element' => $this->item['company_name'], 'label' => 'Tên công ty', 'boxClass' => 'col-md-2'),
-    array('element' => $this->item['company_mst'], 'label' => 'Mã số thuế', 'boxClass' => 'col-md-2'),
-    array('element' => $this->item['company_address'], 'label' => 'Địa chỉ', 'boxClass' => 'col-md-2'),
-    array('element' => $this->item['company_email'], 'label' => 'Email công ty', 'boxClass' => 'col-md-2'),
-    array('element' => $this->item['company_user'], 'label' => 'Nhân viên', 'boxClass' => 'col-md-2'),
+    array('element' => $this->item['company_user'], 'label' => 'Họ và tên', 'boxClass' => 'col-md-2'),
     array('element' => $this->item['company_phone'], 'label' => 'ĐT công ty', 'boxClass' => 'col-md-2'),
+    array('element' => $this->item['company_name'], 'label' => 'Tên công ty', 'boxClass' => 'col-md-2 '.$show_invoice_vat),
+    array('element' => $this->item['company_mst'], 'label' => 'Mã số thuế', 'boxClass' => 'col-md-2 '.$show_invoice_vat),
+    array('element' => $this->item['company_address'], 'label' => 'Địa chỉ', 'boxClass' => 'col-md-2'),
+    array('element' => $this->item['company_email'], 'label' => 'Email công ty', 'boxClass' => 'col-md-2 '.$show_invoice_vat),
 );
 $elementsContract = array(
 
@@ -29,7 +31,7 @@ $elementsContract = array(
     array('element' => $dateFormat->formatToView($this->item['created'], 'd/m/Y H:i:s'), 'label' => 'Ngày tạo', 'boxClass' => 'col-md-2'),
     array('element' => $this->user[$this->item['user_id']]['name'], 'label' => 'Người tạo', 'boxClass' => 'col-md-2'),
     array('element' => $this->sale_group[$this->item['sale_group_id']]['name'], 'label' => 'Đội nhóm', 'boxClass' => 'col-md-2'),
-    array('element' => $this->sale_branch[$this->item['sale_branch_id']]['name'], 'label' => 'Cơ sở', 'boxClass' => 'col-md-2'),
+//    array('element' => $this->sale_branch[$this->item['sale_branch_id']]['name'], 'label' => 'Cơ sở', 'boxClass' => 'col-md-2'),
     array('element' => '<span class="text-orange">'.$this->order_status[$this->item['state']]->name.'</span> ', 'label' => 'Trạng thái', 'boxClass' => 'col-md-2'),
 );
 $elementsPrice = array(

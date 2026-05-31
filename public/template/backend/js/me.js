@@ -199,7 +199,13 @@ function loadDataToElement(data, option) {
 						if(parent_name) {
 							$(this).attr('data-parent', data[parent_name]);
 						}
-						$(this).select2('val', data[name]);
+						var data_value = $(this).attr('data-value');
+						if(data_value == ''){
+							$(this).select2('val', data_value);
+						}
+						else{
+							$(this).select2('val', data[name]);
+						}
 					} else {
 						var value = $(this).attr('data-value');
 

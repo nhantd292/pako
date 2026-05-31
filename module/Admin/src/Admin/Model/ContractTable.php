@@ -2438,7 +2438,6 @@ class ContractTable extends DefaultTable {
                 'vat'                     => $number->formatToData($arrData['vat']),
                 'fee_other'               => $number->formatToData($arrData['fee_other']),
                 'fee_shipp'               => $number->formatToData($arrData['fee_shipp']),
-//                'fee_other_type'          => $arrData['fee_other_type'],
                 'cost_price_total'        => $number->formatToData($arrData['cost_price_total']),
                 'total_number_product'    => $number->formatToData($arrData['total_number_product']),
                 'total_product'           => $number->formatToData($arrData['total_product']),
@@ -2457,7 +2456,7 @@ class ContractTable extends DefaultTable {
                 'marketer_id'             => $arrItem['marketer_id'],
 
                 'user_id'                 => $this->userInfo->getUserInfo('id'),
-                'sale_branch_id'          => $this->userInfo->getUserInfo('sale_branch_id'),
+                'sale_branch_id'          => $arrData['sale_branch_id'],
                 'sale_group_id'           => $this->userInfo->getUserInfo('sale_group_id'),
 
                 'created'                 => date('Y-m-d H:i:s'),
@@ -2538,6 +2537,9 @@ class ContractTable extends DefaultTable {
                 'company_email'             => $arrData['company_email'],
                 'company_user'              => $arrData['company_user'],
                 'company_phone'             => $arrData['company_phone'],
+
+                'sale_branch_id'          => $arrData['sale_branch_id'],
+
                 'options'                 => serialize($contract_options)
             );
 

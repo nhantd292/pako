@@ -6,8 +6,6 @@ class Contract extends Form {
 	
 	public function __construct($sm, $options){
 		parent::__construct();
-        $userInfo = new \ZendX\System\UserInfo();
-        $sale_branch_id = $userInfo->getUserInfo('sale_branch_id');
 		
 		// FORM Attribute
 		$this->setAttributes(array(
@@ -44,18 +42,18 @@ class Contract extends Form {
 		));
 
         // Nhóm khách hàng
-        $this->add(array(
-            'name'			=> 'customer_type_id',
-            'type'			=> 'Select',
-            'attributes'	=> array(
-                'class'		=> 'form-control select2 select2_basic',
-            ),
-            'options'		=> array(
-                'empty_option'	=> '- Chọn -',
-                'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
-            ),
-        ));
+//        $this->add(array(
+//            'name'			=> 'customer_type_id',
+//            'type'			=> 'Select',
+//            'attributes'	=> array(
+//                'class'		=> 'form-control select2 select2_basic',
+//            ),
+//            'options'		=> array(
+//                'empty_option'	=> '- Chọn -',
+//                'disable_inarray_validator' => true,
+//                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+//            ),
+//        ));
 
 		// Tỉnh thành
 		$this->add(array(
@@ -113,6 +111,20 @@ class Contract extends Form {
 		        'class'		=> 'form-control',
 		    )
 		));
+
+        $this->add(array(
+            'name'			=> 'sale_branch_id',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+                'data-value'  => "",
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Chọn -',
+                'disable_inarray_validator' => true,
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            )
+        ));
 
         $this->add(array(
             'name'			=> 'invoice_type',
@@ -246,6 +258,7 @@ class Contract extends Form {
 		        'class'		  => 'form-control text-green text-bold mask_currency',
 		        'value'       => 0,
 		        'data-value'  => 0,
+                'readonly'    => 'readonly',
 		    )
 		));
 
@@ -288,82 +301,6 @@ class Contract extends Form {
                 'value' => ''
 		    )
 		));
-
-//        // Kích thước đóng hàng
-//        $this->add(array(
-//            'name'			=> 'size_product_id',
-//            'type'			=> 'Select',
-//            'attributes'	=> array(
-//                'class'		=> 'form-control select2 select2_basic',
-//            ),
-//            'options'		=> array(
-//                'empty_option'	=> '- Kích thước đóng hàng -',
-//                'disable_inarray_validator' => true,
-//                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'size-product')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
-//            )
-//        ));
-
-
-        // Kho gửi hàng
-//        $groupaddress = json_decode($sm->ghtk_call('/services/shipment/list_pick_add'), true)['data'];
-//        $inventorys = \ZendX\Functions\CreateArray::create($groupaddress, array('key' => 'pick_address_id', 'value' => 'pick_name,address', 'sprintf' =>'%s - %s'));
-
-//        $branch = $sm->getServiceLocator()->get('Admin\Model\DocumentTable')->getItem(array('id' => $sale_branch_id));
-//        $warehouse_id = explode(',', $branch['inventory_ids']);
-//        $this->add(array(
-//            'name'			=> 'groupaddressId',
-//            'type'			=> 'Select',
-//            'attributes'	=> array(
-//                'class'		=> 'form-control select2 select2_basic',
-//            ),
-//            'options'		=> array(
-//                'empty_option'	=> '- Kho gửi hàng -',
-//                'disable_inarray_validator' => true,
-////                'value_options'	=> $inventorys,
-//                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'warehouses', 'id' => $warehouse_id)), array('task' => 'list-all-multil')), array('key' => 'id', 'value' => 'name,phone,address', 'sprintf' =>'%s - %s - %s')),
-//            )
-//        ));
-
-//        $this->add(array(
-//            'name'			=> 'pick_work_shift',
-//            'type'			=> 'Select',
-//            'attributes'	=> array(
-//                'class'		=> 'form-control select2 select2_basic',
-//            ),
-//            'options'		=> array(
-////                'empty_option'	=> '- Kho gửi hàng -',
-//                'disable_inarray_validator' => true,
-//                'value_options'	=> ['1'=>"Sáng", '2'=>"Chiều", '3'=>"Tối", ],
-//            )
-//        ));
-
-//        $this->add(array(
-//            'name'			=> 'deliver_work_shift',
-//            'type'			=> 'Select',
-//            'attributes'	=> array(
-//                'class'		=> 'form-control select2 select2_basic',
-//            ),
-//            'options'		=> array(
-//                'empty_option'	=> '- Thời gian giao hàng-',
-//                'disable_inarray_validator' => true,
-//                'value_options'	=> ['1' => "Sáng", '2' => "Chiều", '3' => "Tối", ],
-//            )
-//        ));
-
-
-        // Loại đơn sản xuất
-//        $this->add(array(
-//            'name'			=> 'production_type_id',
-//            'type'			=> 'Select',
-//            'attributes'	=> array(
-//                'class'		=> 'form-control select2 select2_basic',
-//            ),
-//            'options'		=> array(
-//                'empty_option'	=> '- Chọn -',
-//                'disable_inarray_validator' => true,
-//                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "production-type" )), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
-//            ),
-//        ));
 
         // Kho xuất hàng
         $this->add(array(

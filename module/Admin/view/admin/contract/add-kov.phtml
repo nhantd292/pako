@@ -20,21 +20,22 @@
     $elementsTop = array(
         array('section' => 'Thông tin khách hàng', 'boxClass' => 'col-md-12'),
         array('element' => $myForm->get('name'), 'label' => 'Họ và tên', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('customer_type_id'), 'label' => 'Nhóm khách hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+//        array('element' => $myForm->get('customer_type_id'), 'label' => 'Nhóm khách hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('phone'), 'label' => 'Số điện thoại', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('inventory_id'), 'label' => 'Kho hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+        array('element' => $myForm->get('sale_branch_id'), 'label' => 'Chi nhánh', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('sale_note'), 'label' => 'Ghi chú', 'boxClass' => 'col-md-3'),
         array('element' => $myForm->get('location_city_id'), 'label' => 'Tỉnh thành', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
         array('element' => $myForm->get('location_district_id'), 'label' => 'Quận huyện', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
         array('element' => $myForm->get('location_town_id'), 'label' => 'Phường xã', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
         array('element' => $myForm->get('address'), 'label' => 'Địa chỉ nơi ở', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
-        array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12'),
-        array('element' => $myForm->get('company_name'), 'label' => 'Tên công ty', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
-        array('element' => $myForm->get('company_mst'), 'label' => 'Mã số thuế', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
-        array('element' => $myForm->get('company_address'), 'label' => 'Địa chỉ', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
-        array('element' => $myForm->get('company_email'), 'label' => 'Email', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
-        array('element' => $myForm->get('company_user'), 'label' => 'Tên nhân viên', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
-        array('element' => $myForm->get('company_phone'), 'label' => 'Điện thoại', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+        array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12 vat pos hidden invoice_info'),
+        array('element' => $myForm->get('company_user'), 'label' => 'Họ và tên', 'validate' => array('require' => true), 'boxClass' => 'col-md-2 vat pos hidden invoice_info'),
+        array('element' => $myForm->get('company_phone'), 'label' => 'Điện thoại', 'validate' => array('require' => true), 'boxClass' => 'col-md-2 vat pos hidden invoice_info'),
+        array('element' => $myForm->get('company_name'), 'label' => 'Tên công ty', 'validate' => array('require' => true), 'boxClass' => 'col-md-2 vat hidden invoice_info'),
+        array('element' => $myForm->get('company_mst'), 'label' => 'Mã số thuế', 'validate' => array('require' => true), 'boxClass' => 'col-md-2 vat hidden invoice_info'),
+        array('element' => $myForm->get('company_address'), 'label' => 'Địa chỉ', 'validate' => array('require' => true), 'boxClass' => 'col-md-2 vat pos hidden invoice_info'),
+        array('element' => $myForm->get('company_email'), 'label' => 'Email', 'validate' => array('require' => true), 'boxClass' => 'col-md-2 vat hidden invoice_info'),
     );
     
     $xhtmlTop = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elementsTop);
@@ -207,35 +208,14 @@
         </div>
 	</div>
 </form>
-<div class="hidden" id="contactPhone">
-    <?php echo $this->contactPhone;?>
-</div>
-<div class="hidden" id="contactId">
-    <?php echo $this->contactId;?>
-</div>
-<div class="hidden" id="vatvalue">
-    <?php echo $this->params['settings']['General.System.Vat']['value'];?>
-</div>
 
 <link href="/public/template/backend/css/contract.css?v=<?php echo date('dmYHis');?>" media="screen" rel="stylesheet" type="text/css">
 
 <?php $this->headScript()->captureStart() ?>
-var params = JSON.parse('<?php echo json_encode($this->discounts_params); ?>');
-
-
-$("input[name='filter_keyword']").on('keydown', function (e) {
-    if (e.key === 'Enter' || e.keyCode === 13) {
-        var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_customer_type: $(`select[name="customer_type_id"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val()};
-        load_action('#loadProducts', '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProducts'));?>', data);
-        return false;
-    }
-});
-
-$(`select[name="filter_products_type"], select[name="customer_type_id"], select[name="inventory_id"]`).change(function () {
-    var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_customer_type: $(`select[name="customer_type_id"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val()};
-    load_action('#loadProducts', '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProducts'));?>', data);
-});
-
+var customer_type_id = <?php echo json_encode($this->customer_type_id); ?>;
+var contactId = <?php echo json_encode($this->contactId);?>;
+var percent_vat = <?php echo json_encode($this->params['settings']['General.System.Vat']['value']);?>;
+var url_loadProduct = '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProducts'));?>';
 <?php $this->headScript()->captureEnd() ?>
 
 

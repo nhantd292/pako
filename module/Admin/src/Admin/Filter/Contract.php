@@ -125,7 +125,7 @@ class Contract extends InputFilter {
         ));
 
         $this->add(array(
-            'name'		=> 'customer_type_id',
+            'name'		=> 'sale_branch_id',
             'required'	=> true,
             'validators'	=> array(
                 array(
@@ -139,6 +139,22 @@ class Contract extends InputFilter {
                 )
             )
         ));
+
+//        $this->add(array(
+//            'name'		=> 'customer_type_id',
+//            'required'	=> true,
+//            'validators'	=> array(
+//                array(
+//                    'name'		=> 'NotEmpty',
+//                    'options'	=> array(
+//                        'messages'	=> array(
+//                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+//                        )
+//                    ),
+//                    'break_chain_on_failure'	=> true
+//                )
+//            )
+//        ));
 
         $this->add(array(
             'name'		=> 'inventory_id',
@@ -205,22 +221,6 @@ class Contract extends InputFilter {
         ));
 
         $this->add(array(
-            'name'		=> 'vat',
-            'required'	=> true,
-            'validators'	=> array(
-                array(
-                    'name'		=> 'NotEmpty',
-                    'options'	=> array(
-                        'messages'	=> array(
-                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-                        )
-                    ),
-                    'break_chain_on_failure'	=> true
-                )
-            )
-        ));
-
-        $this->add(array(
             'name'		=> 'fee_other',
             'required'	=> true,
             'validators'	=> array(
@@ -270,7 +270,7 @@ class Contract extends InputFilter {
 
         $this->add(array(
             'name'		=> 'company_name',
-            'required'	=> true,
+            'required'	=> $optionData['invoice_type'] == 'vat' ? true : false,
             'validators'	=> array(
                 array(
                     'name'		=> 'NotEmpty',
@@ -286,7 +286,7 @@ class Contract extends InputFilter {
 
         $this->add(array(
             'name'		=> 'company_mst',
-            'required'	=> true,
+            'required'	=> $optionData['invoice_type'] == 'vat' ? true : false,
             'validators'	=> array(
                 array(
                     'name'		=> 'NotEmpty',
@@ -318,7 +318,7 @@ class Contract extends InputFilter {
 
         $this->add(array(
             'name'		=> 'company_email',
-            'required'	=> true,
+            'required'	=> $optionData['invoice_type'] == 'vat' ? true : false,
             'validators'	=> array(
                 array(
                     'name'		=> 'NotEmpty',
