@@ -11,10 +11,10 @@
 
     // Set lại các giá trị của từng element
     $myForm->get('location_district_id')->setAttributes(array('data-parent' => $myForm->get('location_city_id')->getValue()));
-    $myForm->get('location_town_id')->setAttributes(array('data-parent' => $myForm->get('location_district_id')->getValue()));
+//    $myForm->get('location_town_id')->setAttributes(array('data-parent' => $myForm->get('location_district_id')->getValue()));
     if(!empty($this->item['location_district_id'])) {
         $myForm->get('location_district_id')->setAttributes(array('data-text-label' => $this->document[$this->item['location_district_id']]['name']));
-        $myForm->get('location_town_id')->setAttributes(array('data-text-label' => $this->document[$this->item['location_town_id']]['name']));
+//        $myForm->get('location_town_id')->setAttributes(array('data-text-label' => $this->document[$this->item['location_town_id']]['name']));
     }
     
     $elementsTop = array(
@@ -26,9 +26,9 @@
         array('element' => $myForm->get('sale_branch_id'), 'label' => 'Chi nhánh', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('sale_note'), 'label' => 'Ghi chú', 'boxClass' => 'col-md-3'),
         array('element' => $myForm->get('location_city_id'), 'label' => 'Tỉnh thành', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('location_district_id'), 'label' => 'Quận huyện', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
-        array('element' => $myForm->get('location_town_id'), 'label' => 'Phường xã', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
+        array('element' => $myForm->get('location_district_id'), 'label' => 'Phường xã', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
         array('element' => $myForm->get('address'), 'label' => 'Địa chỉ nơi ở', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
+        array('element' => $myForm->get('invoice_type'), 'label' => 'Xuất hóa đơn', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
         array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12 vat pos hidden invoice_info'),
         array('element' => $myForm->get('company_user'), 'label' => 'Họ và tên', 'validate' => array('require' => true), 'boxClass' => 'col-md-2 vat pos hidden invoice_info'),
         array('element' => $myForm->get('company_phone'), 'label' => 'Điện thoại', 'validate' => array('require' => true), 'boxClass' => 'col-md-2 vat pos hidden invoice_info'),
@@ -49,7 +49,6 @@
         array('element' => $myForm->get('paid_cash'), 'label' => 'Trả tiền mặt', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('paid_transfer'), 'label' => 'Chuyển khoản', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('discount'), 'label' => 'giảm giá', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
-        array('element' => $myForm->get('invoice_type'), 'label' => 'Xuất hóa đơn', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('amount_owed'), 'label' => 'Nợ cũ', 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('new_debt'), 'label' => 'Nợ lại', 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('id'), 'validate' => array('require' => true)),

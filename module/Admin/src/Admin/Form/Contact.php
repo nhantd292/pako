@@ -150,20 +150,20 @@ class Contact extends Form {
 		));
 
         // phường xã
-        $this->add(array(
-            'name'          => 'location_town_id',
-            'type'          => 'Text',
-            'attributes'    => array(
-                'class'               => 'form-control select2 select2_advance',
-                'value'               => '',
-                'data-table'          => TABLE_LOCATIONS,
-                'data-id'             => 'code',
-                'data-text'           => 'fullname',
-                'data-parent'         => '',
-                'data-parent-field'   => 'parent',
-                'data-parent-name'    => 'location_district_id',
-            ),
-        ));
+//        $this->add(array(
+//            'name'          => 'location_town_id',
+//            'type'          => 'Text',
+//            'attributes'    => array(
+//                'class'               => 'form-control select2 select2_advance',
+//                'value'               => '',
+//                'data-table'          => TABLE_LOCATIONS,
+//                'data-id'             => 'code',
+//                'data-text'           => 'fullname',
+//                'data-parent'         => '',
+//                'data-parent-field'   => 'parent',
+//                'data-parent-name'    => 'location_district_id',
+//            ),
+//        ));
 
 		// Address
 		$this->add(array(
