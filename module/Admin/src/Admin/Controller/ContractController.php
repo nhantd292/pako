@@ -427,6 +427,7 @@ class ContractController extends ActionController {
                     $this->_params['data']['total_number_product'] = $total_number_product;
                     $this->_params['data']['total_product'] = count($products_detail);
                     $this->_params['data']['contract_product'] = $products_detail;
+                    $this->_params['data']['customer_type_id'] = $contact_item['customer_type_id'];
                     $this->_params['data']['state'] = NEW_STATUS;
 
                     $this->_params['item'] = $contact_item;
@@ -616,6 +617,7 @@ class ContractController extends ActionController {
                     $this->_params['data']['total_product'] = count($products_detail);
                     $this->_params['data']['contract_product'] = $products_detail;
                     $this->_params['data']['state'] = NEW_STATUS;
+                    $this->_params['data']['customer_type_id'] = $contact_item['customer_type_id'];
 
                     $this->_params['item'] = $contact_item;
 
