@@ -3653,7 +3653,7 @@ class ContractController extends ActionController {
             array('field' => 'customer_name', 'title' => 'Người mua hàng'),
             array('field' => 'company_email', 'title' => 'Email'),
             array('field' => 'pay_type', 'title' => 'Hình thức thanh toán', 'align' => 'center'),
-            array('field' => 'percent_vat', 'title' => 'Thuế suất GTGT (%)', 'align' => 'right', 'format_code' => '#,##0'),
+            array('field' => 'percent_vat', 'title' => 'Thuế suất GTGT (%)', 'align' => 'center', 'format_code' => '#,##0'),
             array('field' => 'contract_vat', 'title' => 'Tiền thuế GTGT', 'align' => 'right', 'format_code' => '#,##0'),
             array('field' => 'products_name_vat', 'title' => 'Tên hàng hóa/dịch vụ (*)'),
             array('field' => 'products_unit_id', 'title' => 'Đơn vị', 'type' => 'data_source', 'data_source' => $units, 'align' => 'center'),
@@ -3685,6 +3685,10 @@ class ContractController extends ActionController {
         $i = 1;
         $contract_id = '';
         foreach ($items AS $item) {
+            $net_numbers = $item['numbers'] - $item['numbers_return'];
+            $item['numbers'] = $net_numbers;
+            $item['total'] = $net_numbers * $item['price'];
+            $item['percent_vat'] = $this->_params['settings']['General.System.Vat']['value'];
 
             if ($item['contract_id'] != $contract_id) {
                 $contract_id = $item['contract_id'];
@@ -3703,10 +3707,6 @@ class ContractController extends ActionController {
                 $item['percent_vat'] =
                 $item['contract_vat'] = '';
             }
-
-            $net_numbers = $item['numbers'] - $item['numbers_return'];
-            $item['numbers'] = $net_numbers;
-            $item['total'] = $net_numbers * $item['price'];
 
             $startColumn = $config['startColumn'];
             foreach ($arrData AS $key => $data) {
@@ -3827,6 +3827,10 @@ class ContractController extends ActionController {
         $i = 1;
         $contract_id = '';
         foreach ($items AS $item) {
+            $net_numbers = $item['numbers'] - $item['numbers_return'];
+            $item['numbers'] = $net_numbers;
+            $item['total'] = $net_numbers * $item['price'];
+            $item['percent_vat'] = $this->_params['settings']['General.System.Vat']['value'];
 
             if ($item['contract_id'] != $contract_id) {
                 $contract_id = $item['contract_id'];
@@ -3847,10 +3851,6 @@ class ContractController extends ActionController {
                 $item['percent_vat'] =
                 $item['contract_vat'] = '';
             }
-
-            $net_numbers = $item['numbers'] - $item['numbers_return'];
-            $item['numbers'] = $net_numbers;
-            $item['total'] = $net_numbers * $item['price'];
 
             $startColumn = $config['startColumn'];
             foreach ($arrData AS $key => $data) {
