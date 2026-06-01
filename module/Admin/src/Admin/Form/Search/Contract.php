@@ -144,6 +144,20 @@ class Contract extends Form{
 //                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'list-positons-care')), array('key' => 'id', 'value' => 'name')),
 //            )
 //        ));
+
+        // đơn đã xuất kho
+        $this->add(array(
+            'name' => 'filter_option_vat',
+            'type' => 'Select',
+            'attributes' => array(
+                'class' => 'form-control select2 select2_basic',
+            ),
+            'options' => array(
+                'empty_option'	=> '- VAT -',
+                'value_options' => array('yes' => 'Lấy VAT', 'no' => 'Không lấy VAT',),
+            )
+        ));
+
         // đơn đã xuất kho
         $this->add(array(
             'name' => 'filter_status_shipped',

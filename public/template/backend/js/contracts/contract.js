@@ -43,6 +43,21 @@ $('select[name="invoice_type"]').change(function() {
     $('.'+invoice_type).removeClass('hidden')
 });
 
+var option_vat_value = $('select[name="option_vat"]').val()
+if(option_vat_value) {
+    $('.' + option_vat_value).removeClass('hidden')
+}
+$('select[name="option_vat"]').change(function() {
+    var option_vat = $(this).val();
+    $('.vat_infor').addClass('hidden')
+    $('.'+option_vat).removeClass('hidden')
+    $('select[name="invoice_type"]').select2('val', '');
+
+    var invoice_type = $('select[name="invoice_type"]').val()
+    $('.invoice_info').addClass('hidden')
+    $('.'+invoice_type).removeClass('hidden')
+});
+
 
 // Kiểm tra thông tin khách hàng
 if (contactId) {

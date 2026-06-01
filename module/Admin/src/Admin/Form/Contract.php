@@ -123,6 +123,19 @@ class Contract extends Form {
             )
         ));
 
+        $this->add(array(
+            'name'			=> 'option_vat',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Chọn -',
+                'disable_inarray_validator' => true,
+                'value_options'	=>  array('yes' => 'Lấy VAT', 'no' => 'Không lấy VAT'),
+            )
+        ));
+
 		$this->add(array(
 		    'name'			=> 'company_name',
 		    'type'			=> 'Text',

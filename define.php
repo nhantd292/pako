@@ -143,7 +143,7 @@ define('SYSTEM', 'system');
 define('ADMIN', 'admin');
 define('MANAGER', 'manager');
 define('GDCN', 'ch'); // Giám đốc chi nhánh
-define('ACCOUNTING', 'accounting'); // Giám đốc chi nhánh
+define('ACCOUNTING', 'accounting'); // kế toán
 define('SALEADMIN', 'saleadmin'); // Sale admim
 define('SALES', 'sales'); // Nhân viên sale
 define('MARKETINGADMIN', 'admin_marketing'); // Mkt admin

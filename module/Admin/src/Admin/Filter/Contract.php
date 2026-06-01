@@ -11,6 +11,11 @@ class Contract extends InputFilter {
 	    $optionId      = $options['id'];
 	    $optionData    = $options['data'];
 	    $optionRoute   = $options['route'];
+
+	    $require_invoice_type = false;
+	    if ($optionData['option_vat'] == 'yes') {
+            $require_invoice_type = true;
+	    }
 	    
 		// Phone
 		$this->add(array(
@@ -123,22 +128,6 @@ class Contract extends InputFilter {
             )
         ));
 
-//        $this->add(array(
-//            'name'		=> 'customer_type_id',
-//            'required'	=> true,
-//            'validators'	=> array(
-//                array(
-//                    'name'		=> 'NotEmpty',
-//                    'options'	=> array(
-//                        'messages'	=> array(
-//                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-//                        )
-//                    ),
-//                    'break_chain_on_failure'	=> true
-//                )
-//            )
-//        ));
-
         $this->add(array(
             'name'		=> 'inventory_id',
             'required'	=> true,
@@ -236,8 +225,24 @@ class Contract extends InputFilter {
         ));
 
         $this->add(array(
-            'name'		=> 'invoice_type',
+            'name'		=> 'option_vat',
             'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                )
+            )
+        ));
+
+        $this->add(array(
+            'name'		=> 'invoice_type',
+            'required'	=> $require_invoice_type,
             'validators'	=> array(
                 array(
                     'name'		=> 'NotEmpty',
@@ -284,22 +289,6 @@ class Contract extends InputFilter {
         ));
 
         $this->add(array(
-            'name'		=> 'company_address',
-            'required'	=> true,
-            'validators'	=> array(
-                array(
-                    'name'		=> 'NotEmpty',
-                    'options'	=> array(
-                        'messages'	=> array(
-                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-                        )
-                    ),
-                    'break_chain_on_failure'	=> true
-                )
-            )
-        ));
-
-        $this->add(array(
             'name'		=> 'company_email',
             'required'	=> $optionData['invoice_type'] == 'vat' ? true : false,
             'validators'	=> array(
@@ -316,8 +305,24 @@ class Contract extends InputFilter {
         ));
 
         $this->add(array(
+            'name'		=> 'company_address',
+            'required'	=> $require_invoice_type == true ? true : false,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                )
+            )
+        ));
+
+        $this->add(array(
             'name'		=> 'company_user',
-            'required'	=> true,
+            'required'	=> $require_invoice_type == true ? true : false,
             'validators'	=> array(
                 array(
                     'name'		=> 'NotEmpty',
@@ -333,7 +338,7 @@ class Contract extends InputFilter {
 
         $this->add(array(
             'name'		=> 'company_phone',
-            'required'	=> true,
+            'required'	=> $require_invoice_type == true ? true : false,
             'validators'	=> array(
                 array(
                     'name'		=> 'NotEmpty',
