@@ -219,7 +219,7 @@ var url_loadProduct = '<?php echo $this->url('routeAdmin/default',array('control
 <?php $this->headScript()->captureEnd() ?>
 
 
-<?php $this->HeadScript()->appendFile('/public/template/backend/js/contracts/contract.js','text/javascript');?>
+<?php $this->HeadScript()->appendFile('/public/template/backend/js/contracts/contract.js?v='.time(),'text/javascript');?>
 
 
 
