@@ -3,6 +3,7 @@ $dateFormat = new \ZendX\Functions\Date();
 $debt_item = $this->debt_item;
 $invoice_type = $this->invoice_type;
 $show_invoice_vat = $this->item['invoice_type'] == 'vat' ? '' : 'hidden';
+$show_option_vat = $this->item['option_vat'] == 'yes' ? '' : 'hidden';
 
 $elementsContact = array(
     array('section' => 'Thông tin khách hàng', 'boxClass' => 'col-md-12'),
@@ -16,12 +17,12 @@ $elementsContact = array(
     array('element' => $this->location_district[$this->item['location_district_id']]['name'], 'label' => 'Phường xã', 'boxClass' => 'col-md-3'),
     array('element' => $this->item['address'], 'label' => 'Địa chỉ nơi ở', 'boxClass' => 'col-md-3'),
     array('element' => $invoice_type[$this->item['invoice_type']]['name'], 'label' => 'Xuất hóa đơn', 'boxClass' => 'col-md-3'),
-    array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12'),
-    array('element' => $this->item['company_user'], 'label' => 'Họ và tên', 'boxClass' => 'col-md-2'),
-    array('element' => $this->item['company_phone'], 'label' => 'ĐT công ty', 'boxClass' => 'col-md-2'),
+    array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12 '.$show_option_vat),
+    array('element' => $this->item['company_user'], 'label' => 'Họ và tên', 'boxClass' => 'col-md-2 '.$show_option_vat),
+    array('element' => $this->item['company_phone'], 'label' => 'ĐT công ty', 'boxClass' => 'col-md-2 '.$show_option_vat),
     array('element' => $this->item['company_name'], 'label' => 'Tên công ty', 'boxClass' => 'col-md-2 '.$show_invoice_vat),
     array('element' => $this->item['company_mst'], 'label' => 'Mã số thuế', 'boxClass' => 'col-md-2 '.$show_invoice_vat),
-    array('element' => $this->item['company_address'], 'label' => 'Địa chỉ', 'boxClass' => 'col-md-2'),
+    array('element' => $this->item['company_address'], 'label' => 'Địa chỉ', 'boxClass' => 'col-md-2 '.$show_option_vat),
     array('element' => $this->item['company_email'], 'label' => 'Email công ty', 'boxClass' => 'col-md-2 '.$show_invoice_vat),
 );
 $elementsContract = array(
@@ -37,14 +38,14 @@ $elementsContract = array(
 $elementsPrice = array(
     array('section' => 'Thông tin thanh toán', 'boxClass' => 'col-md-12'),
     array('element' => '<span class="mask_currency text-green">'. $this->item['price_total'] .'</span> ', 'label' => 'Tổng tiền hàng (1)', 'boxClass' => 'col-md-4',),
-    array('element' => '<span class="mask_currency text-green">'. $this->item['vat'] .'</span>', 'label' => 'VAT', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-green">'. $this->item['vat'] .'</span>', 'label' => 'VAT', 'boxClass' => 'col-md-4 '.$show_option_vat),
     array('element' => '<span class="mask_currency text-green">'. $this->item['fee_shipp'] .'</span>', 'label' => 'Phí giao hàng', 'boxClass' => 'col-md-4 hidden'),
     array('element' => '<span class="mask_currency text-green">'. $this->item['fee_other'] .'</span>', 'label' => 'Thu khác', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_cash'] .'</span>', 'label' => 'Trả tiền mặt (2)', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_transfer'] .'</span>', 'label' => 'Chuyển khoản (3)', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-purple">'. $this->item['discount'] .'</span>', 'label' => 'Giảm giá (4)', 'boxClass' => 'col-md-4'),
-    array('element' => '<span class="mask_currency text-red">'. $debt_item->old_debt .'</span> ', 'label' => 'Nợ cũ (5)', 'boxClass' => 'col-md-4'),
-    array('element' => '<span class="mask_currency text-orange">'. $debt_item->new_debt .'</span> ', 'label' => 'Nợ lại:', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-red">'. $debt_item->old_debt .'</span> ', 'label' => 'Nợ cũ (5)', 'boxClass' => 'col-md-6'),
+    array('element' => '<span class="mask_currency text-orange">'. $debt_item->new_debt .'</span> ', 'label' => 'Nợ lại:', 'boxClass' => 'col-md-6'),
 );
 $elementsProducts = array(
     array('section' => 'Danh sách sản phẩm của đơn hàng', 'boxClass' => 'col-md-12'),
