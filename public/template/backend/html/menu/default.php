@@ -370,6 +370,58 @@
             </li>
         </ul>
     </li>
+    <!--Tài chính-->
+    <li class="parent">
+        <a href="<?php echo $this->url('routeHome');?>" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">
+            <i class="fa fa-archive"></i> <span class="title">Tài chính</span><span class="arrow"></span>
+        </a>
+        <ul class="dropdown-menu">
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'funds', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-list-alt"></i> <span class="title">Sổ tài khoản</span><span class="arrow"></span>
+                </a>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'accountant-bill', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-undo"></i> <span class="title">Quản lý thu-chi</span><span class="arrow"></span>
+                </a>
+            </li>
+
+            <li class="dropdown-submenu">
+                <a href="javascript:;" target="_self">
+                    <i class="fa fa-folder-o"></i> <span class="title">Cấu hình</span><span class="arrow"></span>
+                </a>
+                <ul class="dropdown-menu" style="display: none;">
+                    <li>
+                        <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'accountant-transaction-type', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-sitemap"></i> <span class="title">Nghiệp vụ</span><span class="arrow"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'accountant-transaction-category', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-sitemap"></i> <span class="title">Loại nghiệp vụ</span><span class="arrow"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'accountant-category', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-sitemap"></i> <span class="title">Danh mục</span><span class="arrow"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'accountant-content', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-sitemap"></i> <span class="title">Nội dung</span><span class="arrow"></span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="<?php echo $this->url('routeAdminDocument/default', array('slug' => 'accountant-transaction-form', 'action' => 'index'));?>" target="_self">
+                            <i class="fa fa-sitemap"></i> <span class="title">Hình thức giao dịch</span><span class="arrow"></span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </li>
+
 <?php //if($is_system){?>
 <!--	<li class="parent">-->
 <!--	    <a href="javascript:;" target="_self" data-toggle="dropdown" data-hover="dropdown" data-close-others="true" class="dropdown-toggle">-->

@@ -11,17 +11,51 @@ class CustomerDebtTable extends DefaultTable {
 	        $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
                 $ssFilter  = $arrParam['ssFilter'];
 
-                if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
-                    $select->where->equalTo('status', $ssFilter['filter_status']);
+                $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name', 'customer_phone' => 'phone'), 'inner')
+                    -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id'), 'left')
+                    -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_CUSTOMER_DEBT .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner')
+                    -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array( 'orders_return_code' => 'code', 'orders_return_id' => 'id'), 'left')
+                    -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_input_id', array( 'warehouse_input_code' => 'code', 'warehouse_input_id' => 'id'), 'left')
+                    -> join(TABLE_WAREHOUSE_OUTPUT, TABLE_WAREHOUSE_OUTPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_output_id', array( 'warehouse_output_code' => 'code', 'warehouse_output_id' => 'id'), 'left');
+
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select->where->greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select->where->lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                }
+
+                if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.state', $ssFilter['filter_state']);
+                }
+                else{
+                    $select->where->notEqualTo(TABLE_CUSTOMER_DEBT.'.state', CANCEL_STATUS);
+                }
+
+                if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.type', $ssFilter['filter_type']);
+                }
+
+                if(isset($ssFilter['filter_category']) && $ssFilter['filter_category'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.category', $ssFilter['filter_category']);
                 }
 
                 if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
-                    $select->where->equalTo('customer_id', $ssFilter['filter_customer_id']);
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.customer_id', $ssFilter['filter_customer_id']);
+                }
+
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $select->where->NEST
-                        ->like('code', '%'. $ssFilter['filter_keyword'] . '%')
+                        ->like(TABLE_CUSTOMER_DEBT.'.code', '%'. $ssFilter['filter_keyword'] . '%')
                         ->UNNEST;
                 }
             })->count();
@@ -68,6 +102,9 @@ class CustomerDebtTable extends DefaultTable {
     			if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
     			    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.state', $ssFilter['filter_state']);
     			}
+    			else{
+                    $select->where->notEqualTo(TABLE_CUSTOMER_DEBT.'.state', CANCEL_STATUS);
+                }
 
     			if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
     			    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.type', $ssFilter['filter_type']);
@@ -146,7 +183,13 @@ class CustomerDebtTable extends DefaultTable {
 
         if($options['task'] == 'type-id') {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
-                $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name', 'customer_phone' => 'phone', 'customer_type_id'), 'inner');
+//                $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name', 'customer_phone' => 'phone', 'customer_type_id'), 'inner');
+                $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name', 'customer_phone' => 'phone', 'customer_type_id'), 'inner')
+                    -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id'), 'left')
+                    -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_CUSTOMER_DEBT .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner')
+                    -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array( 'orders_return_code' => 'code', 'orders_return_id' => 'id'), 'left')
+                    -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_input_id', array( 'warehouse_input_code' => 'code', 'warehouse_input_id' => 'id'), 'left')
+                    -> join(TABLE_WAREHOUSE_OUTPUT, TABLE_WAREHOUSE_OUTPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_output_id', array( 'warehouse_output_code' => 'code', 'warehouse_output_id' => 'id'), 'left');
 
                 if(!empty($arrParam['id'])) {
                     $select -> where -> equalTo(TABLE_CUSTOMER_DEBT.'.id', $arrParam['id']);
@@ -321,6 +364,18 @@ class CustomerDebtTable extends DefaultTable {
             } catch (\Exception $e) {
                 throw new \Exception('Update Debt value failed: ' . $e->getMessage());
             }
+        }
+
+        if($options['task'] == 'update-item') {
+            $id = $arrData['id'];
+            $data = [];
+
+            if(isset($arrData['accept'])){
+                $data['accept'] = $arrData['accept'];
+            }
+
+            $this->tableGateway->update($data, array('id' => $id));
+            return $id;
         }
 	}
 	

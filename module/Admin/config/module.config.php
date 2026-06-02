@@ -77,6 +77,9 @@ return array (
             'Admin\Controller\ProductsInventory'      => Controller\ProductsInventoryController::class,
             'Admin\Controller\OrdersReturn'           => Controller\OrdersReturnController::class,
             'Admin\Controller\OrdersReturnDetail'     => Controller\OrdersReturnDetailController::class,
+
+            'Admin\Controller\Funds'                  => Controller\FundsController::class,
+            'Admin\Controller\AccountantBill'         => Controller\AccountantBillController::class,
 		)
 	),
 	'view_manager' => array(

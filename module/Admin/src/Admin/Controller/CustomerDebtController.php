@@ -483,4 +483,89 @@ class CustomerDebtController extends ActionController{
         exit;
     }
 
+    // Vào sổ thanh toán
+    public function acceptAction() {
+        if(!empty($this->_params['data']['id'])) {
+            $item    = $this->getTable()->getItem(array('id' => $this->_params['data']['id']), array('task' => 'type-id'));
+            $contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $item['customer_id']));
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+        }
+        if($this->getRequest()->isPost()){
+            $dateFomart = new \ZendX\Functions\Date();
+            $myForm  = new \Admin\Form\CustomerDebt\Accept($this->getServiceLocator());
+            $myForm->setInputFilter(new \Admin\Filter\CustomerDebt\Accept($this->_params['data']));
+            if (in_array($item['type'], [KMH,PTH,THU])) {
+                $arrData = array(
+                    'id'                        => $item['id'],
+                    'date'                      => $dateFomart->formatToView($item['date']), // Ngày thu chi = Ngày thanh toán thực tế
+                    'transaction_type_id'       => 'thu', // Nghiệp vụ
+                    'content'                   => $item['content'], // Nội dung
+                    'submitter_name'            => $item['customer_name'], // Người nộp
+                    'submitter_phone'           => $item['customer_phone'], // Điện thoại
+                    'transaction_category_id'   => 'giao-dich',
+//                    'transaction_form_id'       => 'tien-mat',
+                    'paid_cash'                 => abs($item['paid_cash']),
+                    'paid_transfer'             => abs($item['paid_transfer']),
+                    'accrued_cash'              => 0,
+                    'accrued_transfer'          => 0,
+                );
+            }
+            if (in_array($item['type'], [KTH,PNH,CHI])) {
+                $arrData = array(
+                    'id'                        => $item['id'],
+                    'date'                      => $dateFomart->formatToView($item['date']), // Ngày thu chi = Ngày thanh toán thực tế
+                    'transaction_type_id'       => 'chi', // Nghiệp vụ
+                    'content'                   => $item['content'], // Nội dung
+                    'submitter_name'            => $item['customer_name'], // Người nộp
+                    'submitter_phone'           => $item['customer_phone'], // Điện thoại
+                    'transaction_category_id'   => 'giao-dich',
+//                    'transaction_form_id'       => 'tien-mat',
+                    'paid_cash'                 => 0,
+                    'paid_transfer'             => 0,
+                    'accrued_cash'              => abs($item['paid_cash']),
+                    'accrued_transfer'          => abs($item['paid_transfer']),
+                );
+            }
+
+            $myForm->setData($arrData);
+
+            if($this->_params['data']['modal'] == 'success') {
+                $myForm->setData($this->_params['data']);
+                if($myForm->isValid()){
+                    $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
+                    $this->_params['data']['customer_debt_id'] = $item['id'];
+                    $this->_params['data']['inventory_id'] = $item['inventory_id'];
+
+                    $this->_params['item'] = $item;
+                    echo "<pre>";
+                    print_r($this->_params['data']);
+                    echo "</pre>";
+                    exit;
+
+                    // Vào sổ tài khoản thanh toán
+                    $this->getServiceLocator()->get('Admin\Model\AccountantBillTable')->saveItem($this->_params, array('task' => 'add-item'));
+                    $this->getTable()->saveItem(array('data' => array('id' => $item['id'], 'accept' => 1)), array('task' => 'update-item'));
+                    $this->flashMessenger()->addMessage('Vào sổ tài khoản thành công');
+                    echo 'success';
+                    return $this->response;
+                }
+            }
+        }
+        else {
+            return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+        }
+
+        $this->_viewModel['myForm']       = $myForm;
+        $this->_viewModel['item']         = $item;
+        $this->_viewModel['contact']      = $contact;
+        $this->_viewModel['bill_type']    = array('paid' => 'Thu', 'accrued' => 'Chi', 'surcharge' => 'Phụ phí');
+        $this->_viewModel['paid_type']    = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array("table" => "document", "where" => array("code" => "bill-type-paid"), "order" => array("ordering" => "ASC", "created" => "ASC", "name" => "ASC"), "view" => array("key" => "id", "value" => "name", "sprintf" => "%s")), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $this->_viewModel['caption']      = 'Vào sổ tài khoản - thanh toán';
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+        return $viewModel;
+    }
+
 }

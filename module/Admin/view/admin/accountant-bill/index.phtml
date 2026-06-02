@@ -1,0 +1,283 @@
+<?php
+    $dateFormart = new ZendX\Functions\Date();
+    $numberFormart = new ZendX\Functions\Number();
+    
+    // Filter
+    $myForm				= $this->myForm;
+    $myForm->prepare();
+    if(count($myForm->get('filter_accountant_funds')->getValueOptions()) == 1) {
+        $myForm->get('filter_accountant_funds')->setEmptyOption('');
+    }
+    
+    $elements = array(
+        array('element' => $myForm->get('filter_accountant_funds'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_transaction_category'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_transaction_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_sale_branch_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_transaction_form'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_category'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_status'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('order')),
+        array('element' => $myForm->get('order_by')),
+    );
+    $xhtmlFilter = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+    
+    // Tỉnh tổng
+    $total_paid     = 0;
+    $total_accrued  = 0;
+    foreach ($this->item_all AS $key => $value) {
+        if($this->category[$value['category_id']]['type'] == 1) {
+            $total_paid += $value['paid'];
+            $total_accrued += $value['accrued'];
+        }
+    }
+    
+    // Head
+    $xhtmlHead  = '';
+    $xhtmlHead .= '<tr>';
+    $xhtmlHead .= '<th class="table-checkbox col-40"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';
+    $xhtmlHead .= '<th class="col-50">STT</th>';
+    $xhtmlHead .= '<th class="col-80">Công cụ</th>';
+    $xhtmlHead .= '<th>Ngày thu/chi</th>';
+    $xhtmlHead .= '<th>Số chứng từ</th>';
+    $xhtmlHead .= '<th>Cơ sở</th>';
+    $xhtmlHead .= '<th>Sổ quỹ</th>';
+    $xhtmlHead .= '<th>Loại nghiệp vụ</th>';
+    $xhtmlHead .= '<th>Nghiệp vụ</th>';
+    $xhtmlHead .= '<th>Hình thức giao dịch</th>';
+    $xhtmlHead .= '<th class="text-center">Số tiền thu<br><span class="mask_currency text-right text-bold text-green">'. $total_paid .'</span></th>';
+    $xhtmlHead .= '<th class="text-center">Số tiền chi<br><span class="mask_currency text-right text-bold text-red">'. $total_accrued .'</span></th>';
+    $xhtmlHead .= '<th>Tồn</th>';
+    $xhtmlHead .= '<th>Nội dung</th>';
+    $xhtmlHead .= '<th>Danh mục</th>';
+    $xhtmlHead .= '<th>Người lập phiếu thu/chi</th>';
+    $xhtmlHead .= '<th>Tên người nộp/nhận</th>';
+    $xhtmlHead .= '<th>Điện thoại người nộp/nhận</th>';
+    $xhtmlHead .= '<th>Ghi chú</th>';
+    $xhtmlHead .= '<th>Ngày tạo</th>';
+    $xhtmlHead .= '<th>Người tạo</th>';
+	$xhtmlHead .= '</tr>';
+
+    // Danh sách
+    $xhtmlItems = '';
+    if($this->items->count() > 0) {
+        $stt = 0;
+        foreach ($this->items AS $index => $item) {
+            $stt++;
+            $id                   = $item->id;
+            $date                 = $dateFormart->formatToView($item->date);
+            $code                 = $item->code;
+            $sale_branch_id       = $this->sale_branch[$item->sale_branch_id];
+            $company_branch       = $this->company_branch[$item->company_branch_id]['name'];
+            $accountant_funds     = $this->funds[$item->accountant_funds_id]['name'];
+            $transaction_category = $this->transaction_category[$item->transaction_category_id]['name'];
+            $transaction_type     = $this->transaction_type[$item->transaction_type_id]['name'];
+            $transaction_form     = $this->transaction_form[$item->transaction_form_id]['name'];
+            $content              = $item->content;
+            $paid                 = $item->paid;
+            $accrued              = $item->accrued;
+            $funds                = $item->funds;
+            $category             = $this->category[$item->category_id]['name'];
+            $created_item         = $this->user[$item->created_item_id]['name'];
+            $submitter_name       = $item->submitter_name;
+            $submitter_phone      = $item->submitter_phone;
+            $note                 = $item->note;
+            $created              = $dateFormart->formatToView($item->created, 'd/m/Y H:i:s');
+            $created_by           = $this->user[$item->created_by]['name'];
+            $ordering             = @$this->xFormInput('ordering[' . $id . ']', $item->ordering, array('class' => 'form-control input-xs'));
+            $cid                  = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
+            // Link Action
+            $linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'form', 'id' => $id));
+            $linkCopy   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'form', 'id' => $id, 'code' => 'copy'));
+            $linkDelete = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'delete', 'id' => $id));
+            $linkPrint  = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'print', 'id' => $id));
+            // Control Action
+            $controlEdit   = $this->linkAdminHtml($linkEdit, array('type' => 'icon', 'title' => 'Sửa', 'class' => 'btn btn-xs yellow', 'icon' => 'fa fa-edit'));
+            $controlCopy   = $this->linkAdminHtml($linkCopy, array('type' => 'icon', 'title' => 'Copy', 'class' => 'btn btn-xs default', 'icon' => 'fa fa-copy'));
+            $controlDelete = $this->linkAdminHtml($linkDelete, array('type' => 'icon', 'title' => 'Xóa', 'class' => 'btn btn-xs red', 'icon' => 'fa fa-trash'));
+            $controlStatus = $this->linkAdminStatus($id, $item->status);
+            $controlPrint  = $this->linkAdminHtml($linkPrint, array('type' => 'icon', 'title' => 'In hóa đơn', 'class' => 'btn btn-xs blue', 'icon' => 'fa fa-print', 'target' => '_blank'));
+            $controls      = $controlDelete . $controlStatus . $controlEdit . $controlCopy . $controlPrint;
+            
+            $xhtmlItems .= '<tr id="tr_'. $id .'" class="tr_'. $index .'" data-id="'. $id .'">
+    							<td>'. $cid .'</td>
+    							<td>'. $stt .'</td>
+							    <td>'. $controls .'</td>
+							    <td>'. $date .'</td>
+							    <td class="code">'. $code .'</td>
+    							<td class="company_branch">'. $sale_branch_id .'</td>
+    							<td>'. $accountant_funds .'</td>
+    							<td>'. $transaction_category .'</td>
+    							<td>'. $transaction_type .'</td>
+    							<td>'. $transaction_form .'</td>
+    							<td class="mask_currency text-right">'. $paid .'</td>
+    							<td class="mask_currency text-right">'. $accrued .'</td>
+    							<td class="mask_currency text-right">'. $funds .'</td>
+    							<td>'. $content .'</td>
+    							<td>'. $category .'</td>
+    							<td>'. $created_by .'</td>
+    							<td>'. $submitter_name .'</td>
+    							<td>'. $submitter_phone .'</td>
+    							<td>'. $note .'</td>
+    							<td>'. $created .'</td>
+    							<td>'. $created_by .'</td>
+    						</tr>';
+        }
+    }
+    
+    // Control
+    $arrControl = array(
+        array( 'name' => 'add', 'caption' => 'Thêm', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'form')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => '', 'class' => 'btn', ) ),
+        array( 'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
+               'children' => array(
+                       array(
+                               'name' => 'sort',
+                               'caption' => 'Sắp xếp',
+                               'link' => 'javascript:;',
+                               'icon' => 'fa-sort-alpha-asc',
+                               'attributes' => array( 'onclick' => 'javascript:changeOrdering();', ) ), array( 'name' => 'divider' ), array( 'name' => 'active', 'caption' => 'Hiển thị', 'link' => 'javascript:;', 'icon' => 'fa-check-square-o', 'attributes' => array( 'onclick' => 'javascript:changeStatus(\'multi\', 0);', ) ), array( 'name' => 'inactive', 'caption' => 'Không hiển thị', 'link' => 'javascript:;', 'icon' => 'fa-circle-o', 'attributes' => array( 'onclick' => 'javascript:changeStatus(\'multi\', 1);', ) ), array( 'name' => 'divider' ), array( 'name' => 'delete', 'caption' => 'Xóa', 'link' => 'javascript:;', 'icon' => 'fa-trash', 'attributes' => array( 'onclick' => 'javascript:deleteItem(\'multi\', \'all\');', ) ), array( 'name' => 'divider' ), array( 'name' => 'export', 'caption' => 'Xuất bản excel', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'export')), 'icon' => 'fa-file-excel-o', 'attributes' => array( 'onclick' => 'javascript:exportList();', ) ), ), 'children-class' => 'dropdown-menu pull-right' ),
+    );
+?>
+<form action="<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'filter')); ?>" name="adminForm" id="adminForm" method="post">
+    <div class="page-control">
+    	<div class="title pull-left">
+    		<?php echo $this->caption;?>
+    	</div>
+    	<div class="control pull-right">
+			<?php echo $this->partial($this->params['module'] . '/partial/control-index.phtml', array( 'control' => $arrControl, 'params' => $this->params));?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+    <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
+    <?php echo $this->flashMessenger()->renderCurrent('success', array('alert', 'alert-success')); ?>
+    <div class="page-filter">
+    	<div class="row">
+    		<?php echo $xhtmlFilter;?>
+    	</div>
+    </div>
+    <div class="page-content">
+    	<div class="table-manager" id="table-manager">
+    		<div class="table-scrollable table-fixed">
+    			<table class="table table-striped table-bordered table-hover">
+    				<thead>
+    					<?php echo $xhtmlHead;?>
+    				</thead>
+    				<tbody>
+    					<?php echo $xhtmlItems;?>
+    				</tbody>
+    			</table>
+    		</div>
+    		<?php
+            	echo $this->paginationControl(\ZendX\Paginator\Paginator::createPaginator($this->count, $this->params['paginator']), 'sliding', $this->params['module'] . '/partial/paginator.phtml', array('currentURL' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'options' => $this->params['paginator']['options'])); 
+            ?>
+    	</div>
+    	<div class="row">
+            <div class="col-sm-6">
+                <div class="report">
+                    <div class="report-control">
+                    	<div class="title pull-left">Thống kê tài khoản</div>
+                	</div>
+                	<div class="report-wrapper" style="padding: 10px;">
+                    	<div>
+                            <table class="table table-striped table-bordered table-hover">
+                				<thead>
+                				    <tr>
+                					   <th>Tên tài khoản</th>
+                					   <th>Cơ sở</th>
+                					   <th>Số dư hiện tại</th>
+                					</tr>
+                				</thead>
+                				<tbody>
+                					<?php
+                					$total_funds = 0;
+                					foreach ($this->funds AS $funds) {
+                					    $sale_branch = $this->sale_branch[$funds->company_branch_id];
+                					    $total_funds += $funds['price'];
+                					?>
+                					<tr>
+                					    <td><?php echo $funds['name'];?></td>
+                					    <td><?php echo $sale_branch;?></td>
+                					    <td class="text-red mask_currency"><?php echo $funds['price'];?></td>
+                					</tr>
+                					<?php
+                					} 
+                					?>
+                					<tr class="text-bold">
+                					    <td colspan="2" style="text-align: right;">TỔNG</td>
+                					    <td class="text-red mask_currency"><?php echo $total_funds;?></td>
+                					</tr>
+                				</tbody>
+                			</table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+    	</div>
+	</div>
+</form>
+<style>
+    thead tr th{
+        vertical-align: middle !important;
+    }
+</style>
+
+<?php $this->headScript()->captureStart() ?>
+    $('#adminForm select').change(function() {
+		$('#adminForm').submit();
+    });
+    
+    function startUpdateBill(index, total) {
+		var item = '.tr_'+ index;
+		
+		if(index < total) {
+		    if($(item + ' .product').text() != '' && $(item + ' .company_branch').text() == '') {
+                $.ajax({
+        			url: "<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'update'));?>",
+        			type: 'POST',
+        			data: {
+        				'id': $(item).attr('data-id'),
+                        'code': $(item + ' .code').text(),
+        			},
+        			beforeSend: function() {
+        				$(item + ' .company_branch').html('<span class="btn btn-xs yellow">Load</span>');
+        			},
+        			success: function(result) {
+        				setTimeout(function(){
+        					if(result != '') {
+        					    $(item + ' .company_branch').html('<span class="btn btn-xs green">'+ result +'</span>');
+        					} else {
+        						$(item + ' .company_branch').html('<span class="btn btn-xs red">Không tìm thấy</span>');
+        					}
+        				    index = index + 1;
+        				    startUpdateBill(index, total); 
+        			    }, 100);
+        			}
+        		});
+    		} else {
+    		    if($(item + ' .company_branch').text() == '') {
+        		    $(item + ' .company_branch').html('<span class="btn btn-xs red">Loại</span>');
+        		    index = index + 1;
+    			    startUpdateBill(index, total); 
+			    } else {
+			        index = index + 1;
+    			    startUpdateBill(index, total); 
+			    }
+    		}
+		} else {
+		    alert('Đã import thành công');
+		}
+	}
+	
+	$(document).ready(function() {
+    	/*$('.table th').click(function(){
+    	    var total = $('.table tbody tr').length;
+            startUpdateBill(0, total);
+        });*/
+	});
+	
+<?php $this->headScript()->captureEnd() ?>

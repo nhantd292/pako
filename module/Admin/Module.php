@@ -372,6 +372,16 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_ORDERS_RETURN_DETAIL, $adapter, null);
                     return new \Admin\Model\OrdersReturnDetailTable($tableGateway);
                 },
+                'Admin\Model\FundsTable' => function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_FUNDS, $adapter, null);
+                    return new \Admin\Model\FundsTable($tableGateway);
+                },
+                'Admin\Model\AccountantBillTable' => function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_ACCOUNTANT_BILL, $adapter, null);
+                    return new \Admin\Model\AccountantBillTable($tableGateway);
+                },
                 
                 // Khai báo xác thực đăng nhập
                 'AuthenticateService'	=> function ($sm) {
@@ -622,6 +632,16 @@ class Module {
                 'formAdminOrdersReturn' => function($sm) {
                     $myForm	= new \Admin\Form\OrdersReturn($sm);
                     $myForm->setInputFilter(new \Admin\Filter\OrdersReturn());
+                    return $myForm;
+                },
+                'formAdminAccountantBill' => function($sm) {
+                    $myForm	= new \Admin\Form\AccountantBill($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\AccountantBill());
+                    return $myForm;
+                },
+                'formAdminFunds' => function($sm) {
+                    $myForm = new \Admin\Form\Funds($sm);
+                    $myForm->setInputFilter(new \Admin\Filter\Funds());
                     return $myForm;
                 },
             )

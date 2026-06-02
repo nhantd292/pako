@@ -1,0 +1,115 @@
+<?php
+    $myForm             = $this->myForm;
+    $myForm->prepare();
+    
+    $arrControl = array(
+        //array('name' => 'save-copy', 'caption' => 'Lưu &amp; Copy', 'link' => 'javascript:;', 'icon' => 'fa-copy', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save-copy\');', 'class' => 'btn')),
+        array('name' => 'save-new', 'caption' => 'Lưu &amp; Mới', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save-new\');', 'class' => 'btn')),
+        array('name' => 'save-close', 'caption' => 'Lưu &amp; Đóng', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save-close\');', 'class' => 'btn')),
+        array('name' => 'close', 'caption' => 'Hủy', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn')),
+    );
+    
+    if(count($myForm->get('accountant_funds_id')->getValueOptions()) == 1) {
+        $myForm->get('accountant_funds_id')->setEmptyOption(null);
+    }
+    
+    $class_paid = '';
+    $class_accrued = ' box-hidden';
+    if($myForm->get('transaction_type_id')->getValue() == 'chi') {
+        $class_paid = ' box-hidden';
+        $class_accrued = '';
+    }
+    
+    $class_accountant_funds = '';
+    if(!empty($myForm->get('id')->getValue())) {
+        $class_accountant_funds = ' box-hidden';
+    }
+    
+    $class_status = '';
+    if(!empty($this->item['status'])) {
+        $class_status = ' box-hidden';
+    }
+    
+    $class_created = '';
+    if($this->userInfo['id'] != '0000000000-0000-0000-0000-111111111111') {
+        $class_created = ' box-hidden';
+    }
+    
+    $elements = array(
+        array('element' => $myForm->get('created'), 'label' => 'Ngày nhập', 'boxClass' => 'col-sm-3'. $class_created),
+        array('element' => $myForm->get('date'), 'label' => 'Ngày thu/chi', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
+        array('element' => $myForm->get('code'), 'label' => 'Số chứng từ', 'boxClass' => 'col-sm-3'),
+        array('element' => $myForm->get('accountant_funds_id'), 'label' => 'Sổ quỹ', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'. $class_accountant_funds),
+        array('element' => $myForm->get('transaction_category_id'), 'label' => 'Loại nghiệp vụ', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
+        array('element' => $myForm->get('transaction_type_id'), 'label' => 'Nghiệp vụ', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'. $class_status),
+        array('element' => $myForm->get('transaction_form_id'), 'label' => 'Hình thức giao dịch', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
+        array('element' => $myForm->get('category_id'), 'label' => 'Danh mục thu/chi', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
+        array('element' => $myForm->get('created_item_id'), 'label' => 'Người lập phiếu Thu/Chi', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
+//        array('element' => $myForm->get('treasurer_id'), 'label' => 'Thủ quỹ', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
+        array('element' => $myForm->get('submitter_name'), 'label' => 'Người nộp/nhận', 'boxClass' => 'col-sm-3'),
+        array('element' => $myForm->get('submitter_phone'), 'label' => 'Điện thoại người nộp/nhận', 'boxClass' => 'col-sm-3', 'boxId' => 'submitter_phone'),
+        array('element' => $myForm->get('paid'), 'label' => 'Số tiền thu', 'validate' => array('require' => true), 'boxId' => 'box-paid', 'boxClass' => 'col-sm-3'. $class_paid . $class_status),
+        array('element' => $myForm->get('accrued'), 'label' => 'Số tiền chi', 'validate' => array('require' => true), 'boxId' => 'box-accrued', 'boxClass' => 'col-sm-3'. $class_accrued . $class_status),
+        array('element' => $myForm->get('content_select'), 'label' => 'Nội dung chọn', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
+        array('div' => '', 'boxClass' => 'col-sm-12'),
+        array('element' => $myForm->get('content'), 'label' => 'Nội dung nhập', 'validate' => array('require' => true), 'boxClass' => 'col-sm-6'),
+        array('element' => $myForm->get('note'), 'label' => 'Ghi chú thêm', 'boxClass' => 'col-sm-6'),
+
+        array('element' => $myForm->get('id'), 'validate' => array('require' => true)),
+    );
+    
+    $xhtml = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+?>
+
+<form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm">
+    <div class="page-control">
+        <div class="title pull-left">
+            <?php echo $this->caption;?>
+        </div>
+        <div class="control pull-right">
+            <?php echo $this->partial($this->params['module'] . '/partial/control-default.phtml', array( 'control' => $arrControl )); ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+
+    <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
+    <?php echo $this->flashMessenger()->renderCurrent('success', array('alert', 'alert-success')); ?>
+
+    <?php echo @$this->xViewElementErrors($elements);?>
+    
+    <div class="page-content">
+        <div class="row">
+            <div class="col-sm-12">
+                <?php echo $xhtml;?>
+            </div>
+        </div>
+    </div>
+</form>
+
+<?php $this->headScript()->captureStart() ?>  
+    <?php
+    if(empty($this->item['status'])) { 
+    ?>
+    // Nghiệp vụ
+    function transaction_type(value) {
+        if(value == 'thu') {
+            $('#box-paid').removeClass('box-hidden');
+            $('#box-accrued').addClass('box-hidden');
+            $('#submitter_phone .required').show();
+            $('input[name="accrued"]').val('');
+        } else {
+            $('#box-paid').addClass('box-hidden');
+            $('#box-accrued').removeClass('box-hidden');
+            $('#submitter_phone .required').hide();
+            $('input[name="paid"]').val('');
+        }
+    }
+    transaction_type('<?php echo $myForm->get('transaction_type_id')->getValue();?>');
+    $('select[name="transaction_type_id"]').change(function() {
+        console.log($(this).val());
+        transaction_type($(this).val());
+    });
+    <?php
+    } 
+    ?>
+<?php $this->headScript()->captureEnd() ?>

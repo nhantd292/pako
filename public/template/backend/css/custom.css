@@ -444,7 +444,26 @@ div.table-fixed tbody th {
 	border-bottom: none;
 	margin-top: 3px;
 }
-
+.btn-pending {
+	background: #ff9900;
+	padding: 2px 5px;
+	width: 100px;
+	display: inline-block;
+	text-align: center;
+	color: #fff;
+	border-radius: 3px !important;
+	cursor: pointer;
+}
+.btn-accepted {
+	background: #2dc285;
+	padding: 2px 5px;
+	width: 100px;
+	display: inline-block;
+	text-align: center;
+	color: #fff;
+	border-radius: 3px !important;
+	cursor: pointer;
+}
 /*Cố định thead của bảng*/
 #table-manager div.table-fixed-head table thead{
 	display: block;

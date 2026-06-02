@@ -1,0 +1,28 @@
+<?php
+    $arrControl = array(
+        array('name' => 'save-close', 'caption' => 'Xác nhận xóa', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitForm(\'save-close\');', 'class' => 'btn')),
+        array('name' => 'close', 'caption' => 'Hủy', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn')),
+    );
+?>
+
+<form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm">
+    <div class="page-control">
+    	<div class="title pull-left">
+    		<?php echo $this->caption;?>
+    	</div>
+    	<div class="control pull-right">
+			<?php echo $this->partial($this->params['module'] . '/partial/control-default.phtml', array( 'control' => $arrControl )); ?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+
+    <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
+    <?php echo $this->flashMessenger()->renderCurrent('success', array('alert', 'alert-success')); ?>
+
+	<div class="alert alert-danger">Xác nhận xóa phiếu mã: <b><?php echo $this->item['code'];?></b></div>
+    <div class="page-content">
+    	<div class="row">
+			<div class="col-sm-12"><input type="hidden" name="id" value="<?php echo $this->item['id'];?>"></div>
+		</div>
+	</div>
+</form>

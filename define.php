@@ -127,6 +127,9 @@ define('TABLE_PRODUCT_RETURN_KOV',  TABLE_PREFIX . 'product_return_kov'); // Qu�
 define('TABLE_KOV_ORDERS',          TABLE_PREFIX . 'kov_orders'); // Đơn hàng
 define('TABLE_KOV_INVOICES',        TABLE_PREFIX . 'kov_invoices'); // Hóa đơn
 
+define('TABLE_FUNDS',               TABLE_PREFIX . 'funds');
+define('TABLE_ACCOUNTANT_BILL',     TABLE_PREFIX . 'accountant_bill');
+
 // Hội đồng Anh
 define('TABLE_BC',                  TABLE_PREFIX . 'bc');
 define('TABLE_BC_BILL',             TABLE_PREFIX . 'bc_bill');

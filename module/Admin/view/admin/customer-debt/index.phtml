@@ -68,10 +68,17 @@
             if (!empty($item['warehouse_output_id'])) {
                 $link_category = '<a href="/xadmin/warehouse-output/detail/id/'.$item['warehouse_output_id'].'/" target="_blank"> '. $item['warehouse_output_code'] .'</a>';
             }
-            
+
+            if($item['state'] == COMPLETE_STATUS and ($item['paid_cash'] != 0 or $item['paid_transfer'] != 0))
+                $accept = !empty($item['accept']) ? '<sapn class="btn-accepted">Đã vào sổ quỹ</sapn>' : '<sapn class="btn-pending">Chờ vào sổ quỹ</sapn>';
+            else
+                $accept = '';
+            $linkPopupAccept = empty($item['accept']) ? 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'accept')) . '\', {\'id\': \'' . $item['id'] . '\'});' : '#';
+
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
     							<td class="text-center">'. $cid .'</td>
                                 <td class="text-center">'. $index .'</td>
+    							<td class="text-center"><a href="javascript:;" onclick="'.$linkPopupAccept.'">'. $accept .'</a></td>
     							<td class="text-center text-bold">'.$linkDetail.'</td>
     							<td class="">'.  $item['customer_name'] .'</td>
     							<td class="text-center">'.  $item['customer_phone'] .'</td>
@@ -95,6 +102,7 @@
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th width="20" class="table-checkbox text-center"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';;
     $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
+    $xhtmlHead .= '<th class="text-center">Nhập sổ quỹ</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Mã phiếu</th>';
     $xhtmlHead .= '<th class="text-center" width="150">Khách hàng</th>';
     $xhtmlHead .= '<th class="text-center" width="80">Điện thoại</th>';
