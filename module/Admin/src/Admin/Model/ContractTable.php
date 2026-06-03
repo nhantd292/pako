@@ -1919,7 +1919,7 @@ class ContractTable extends DefaultTable {
 			$id = $arrData['id'];
             $data = array();
             if (!empty($arrData['fee'])) {
-                $data['fee_shipp'] = $number->formatToData($arrData['fee']);
+                $data['fee_shipp'] = $arrItem['fee_shipp'] + $number->formatToData($arrData['fee']);
             }
             if (!empty($arrData['ghtk_code'])) {
                 $data['ghtk_code'] = $arrData['ghtk_code'];
