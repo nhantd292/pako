@@ -54,6 +54,8 @@ class ContractController extends ActionController {
         $this->_params['ssFilter']['filter_customer_id']    = $ssFilter->filter_customer_id;
         $this->_params['ssFilter']['filter_invoice_type']   = $ssFilter->filter_invoice_type;
         $this->_params['ssFilter']['filter_option_vat']     = $ssFilter->filter_option_vat;
+        $this->_params['ssFilter']['filter_invoiced']       = $ssFilter->filter_invoiced;
+        $this->_params['ssFilter']['filter_status_shipped'] = $ssFilter->filter_status_shipped;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : $this->_paginator['itemCountPerPage'];
@@ -106,6 +108,8 @@ class ContractController extends ActionController {
             $ssFilter->filter_customer_id 	    = $data['filter_customer_id'];
             $ssFilter->filter_invoice_type 	    = $data['filter_invoice_type'];
             $ssFilter->filter_option_vat 	    = $data['filter_option_vat'];
+            $ssFilter->filter_invoiced 	        = $data['filter_invoiced'];
+            $ssFilter->filter_status_shipped 	= $data['filter_status_shipped'];
 
             $ssFilter->filter_sale_group = $data['filter_sale_group'];
             if(!empty($data['filter_sale_branch'])) {
@@ -974,7 +978,263 @@ class ContractController extends ActionController {
         exit;
     }
 
+    # xuất file excel import vtp
+    public function exportToVTPAction() {
+        $dateFormat             = new \ZendX\Functions\Date();
+        $items      = $this->getServiceLocator()->get('Admin\Model\ContractTable')->listItem(array('ids' => $this->_params['data']['cid']), array('task' => 'list-print-multi'))->toArray();
 
+        $location_city          = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
+        $location_district      = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
+        $location_town          = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 3), array('task' => 'cache'));
+        //Include PHPExcel
+        require_once PATH_VENDOR . '/Excel/PHPExcel.php';
+
+        // Config
+        $config = array(
+            'sheetData' => 0,
+            'headRow' => 1,
+            'startRow' => 2,
+            'startColumn' => 0,
+        );
+
+        // Column
+        $arrColumn = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ','BA','BB','BC','BD','BE','BF','BG','BH','BI','BJ','BK','BL','BM','BN','BO','BP','BQ','BR','BS','BT','BU','BV','BW','BX','BY','BZ');
+
+        // Data Export
+        $arrData = array(
+            array('field' => 'stt', 'title' => 'STT'),
+            array('field' => 'shipped_date', 'type'=>'date', 'title' => 'NGÀY','format'=>'d/m/Y'),
+            array('field' => 'code', 'title' => 'Mã đơn hàng'),
+            array('field' => 'name', 'title' => 'Tên người nhận(*)'),
+            array('field' => 'phone', 'title' => 'Số ĐT ngươi nhận(*)'),
+            array('field' => 'address', 'title' => 'Địa chỉ(*)'),
+            array('field' => 'product_name', 'title' => 'Tên hàng hóa(*)'),
+            array('field' => 'product_numbers', 'title' => 'Số lượng'),
+            array('field' => 'product_weight', 'title' => 'Trọng lượng(gam)'),
+            array('field' => 'product_price', 'title' => 'Giá trị hàng(VND)(*)'),
+            array('field' => 'product_total', 'title' => 'Tiền thu hộ COD(VND)'),
+//            array('field' => 'price_owed', 'title' => 'Tiền thu hộ COD(VND)'),
+            array('field' => 'product_type', 'title' => 'Loại hàng hóa)(*)'),
+            array('field' => 'special', 'title' => 'Tính chất đặc biệt'),
+            array('field' => 'service', 'title' => 'Dịch vụ(*)'),
+            array('field' => 'service_other', 'title' => 'Dịch vụ cộng thêm'),
+            array('field' => 'money', 'title' => 'Thu tiền xem hàng'),
+            array('field' => 'product_length', 'title' => 'Dài(cm)'),
+            array('field' => 'product_width', 'title' => 'Rộng(cm)'),
+            array('field' => 'product_height', 'title' => 'Cao(cm)'),
+            array('field' => 'user_fee', 'title' => 'Người trả cước'),
+            array('field' => 'require_other', 'title' => 'Yêu cầu khác'),
+            array('field' => 'delivery_time_note', 'title' => 'Thời gian hẹn lấy'),
+            array('field' => 'delivery_time', 'title' => 'Thời gian giao')
+        );
+
+        // Create new PHPExcel object
+        $objPHPExcel = new \PHPExcel();
+
+        // Set document properties
+        $objPHPExcel->getProperties()->setCreator($this->_userInfo->getUserInfo('name'))
+            ->setLastModifiedBy($this->_userInfo->getUserInfo('username'))
+            ->setTitle("Don_kinh_doanh_".date('d-m-Y'));
+
+        // Dữ liệu tiêu đề cột
+        $startColumn = $config['startColumn'];
+        foreach ($arrData AS $key => $data) {
+            $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($arrColumn[$startColumn] . $config['headRow'], $data['title']);
+            $objPHPExcel->getActiveSheet()->getStyle($arrColumn[$startColumn] . $config['headRow'])->getFont()->setBold(true);
+            $objPHPExcel->getActiveSheet()->getColumnDimension($arrColumn[$startColumn])->setAutoSize(true);
+            $startColumn++;
+        }
+
+        // Dữ liệu data
+        $startRow = $config['startRow'];
+        $i = 1;
+
+        foreach ($items AS $item) {
+            $item['stt'] = $i;
+            $options = unserialize($item['options']);
+            $item['address'] = $item['address'].', '.$location_district[$item['location_district_id']]['name'].', '.$location_city[$item['location_city_id']]['name'];
+
+            $item['user_fee'] = 'Người gửi trả';
+            if ($item['deliver_work_shift'] == 1)
+                $item['delivery_time'] = 'Buổi sáng';
+            elseif ($item['deliver_work_shift'] == 2)
+                $item['delivery_time'] = 'Buổi chiều';
+            elseif ($item['deliver_work_shift'] == 3)
+                $item['delivery_time'] = 'Buổi tối';
+            else
+                $item['delivery_time'] = 'Cả ngày';
+            $item['product_name'] = '';
+            $item['product_numbers'] = $item['product_numbers'] = $item['product_weight'] = $item['product_price'] = $item['product_total'] = $item['product_length'] = $item['product_width'] = $item['product_height'] = 0;
+
+            foreach($options['product'] as $product){
+                $item['product_name']       .= $product['full_name'].' + ';
+                $item['product_numbers']    += $product['numbers'];
+                $item['product_weight']     += $product['weight'];
+                $item['product_price']      += $product['total'];
+                $item['product_total']      += $product['total'];
+                $item['product_length']     += $product['weight'] > 1 ? $product['length'] : 0;
+                $item['product_width']      += $product['weight'] > 1 ? $product['width'] : 0;
+                $item['product_height']     += $product['weight'] > 1 ? $product['height'] : 0;
+            }
+            $item['product_weight'] = $item['product_weight'] * 1000;
+
+            $item['product_total'] = $item['product_total'] - $item['paid_cash'] - $item['paid_transfer'] - $item['discount'] + $item['fee_other'];
+
+            $startColumn = $config['startColumn'];
+            foreach ($arrData AS $key => $data) {
+                switch ($data['type']) {
+                    case 'date':
+//                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
+//                        $value = '\''.date($formatDate,strtotime($item[$data['field']]));// $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        $value = $dateFormat->formatToView($item[$data['field']], 'd/m/Y');
+                        break;
+                    default:
+                        $value = $item[$data['field']];
+                }
+                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($arrColumn[$startColumn] . $startRow, $value);
+                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->getStyle($arrColumn[$startColumn] . $startRow)->getAlignment()->setWrapText(true);
+                $startColumn++;
+            }
+
+            $startRow++;
+            $i++;
+        }
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.'Don_xuat_viettel_post_'.date('d-m-Y').'.xlsx"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+        header ('Cache-Control: cache, must-revalidate');
+        header ('Pragma: public');
+
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+
+        return $this->response;
+    }
+
+    // Xác nhận đã xuất kho
+    public function shippedAction() {
+        if($this->getRequest()->isPost()) {
+            if(!empty($this->_params['data']['cid'])) {
+                $cid = $this->_params['data']['cid'];
+                $count_update = 0;
+                foreach ($cid as $id){
+                    $contract = $this->getTable()->getItem(array('id' => $id));
+                    // Chỉ lấy ra những đơn hàng đang xử lý
+                    if($contract['state'] == PROCESSING_STATUS && $contract['shipped'] == 0){
+                        $params['data']['id']       = $id;
+                        $params['data']['shipped']  = 1;
+                        $count_update += 1;
+                        $this->getTable()->saveItem($params, array('task' => 'update-shipped'));
+                    }
+                }
+                $message = ' Đã xác nhận '. $count_update .' đơn hàng được xuất kho';
+                $this->flashMessenger()->addSuccessMessage($message);
+            }
+        }
+        $this->goRoute(array('action' => 'index'));
+    }
+
+    // Xác nhận đã xuất hóa đơn
+    public function invoicedAction() {
+        if($this->getRequest()->isPost()) {
+            if(!empty($this->_params['data']['cid'])) {
+                $cid = $this->_params['data']['cid'];
+                $count_update = 0;
+                foreach ($cid as $id){
+                    $contract = $this->getTable()->getItem(array('id' => $id));
+                    // Chỉ lấy ra những đơn hàng hoàn thành
+                    if($contract['state'] == COMPLETE_STATUS && $contract['invoiced'] == 0){
+                        $params['data']['id']       = $id;
+                        $params['data']['invoiced']  = 1;
+                        $count_update += 1;
+                        $this->getTable()->saveItem($params, array('task' => 'update-invoiced'));
+                    }
+                }
+                $message = ' Đã xác nhận '. $count_update .' đơn hàng được xuất hóa đơn';
+                $this->flashMessenger()->addSuccessMessage($message);
+            }
+        }
+        $this->goRoute(array('action' => 'index'));
+    }
+
+    public function importFeeAction()
+    {
+        $myForm = new \Admin\Form\Contract\Import($this->getServiceLocator(), $this->_params);
+        $myForm->setInputFilter(new \Admin\Filter\Contract\Import($this->_params));
+        $this->_viewModel['caption'] = 'Nhập phụ phí phát sinh';
+        $this->_viewModel['myForm']  = $myForm;
+        $viewModel                   = new ViewModel($this->_viewModel);
+        $date       = new \ZendX\Functions\Date();
+        $number     = new \ZendX\Functions\Number();
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            if ($this->getRequest()->isPost()) {
+                if(!empty($this->_params['data']['ghtk_code'])){
+                    $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('ghtk_code' => $this->_params['data']['ghtk_code']), array('task' => 'ghtk-code'));
+                    if(empty($contract)){
+                        $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('code' => $this->_params['data']['code']), array('task' => 'by-code'));
+                    }
+                    if (empty($contract)) {
+                        echo 'Đơn hàng không tồn tại';
+                    } else {
+                        $check_date = $date->check_date_format_to_data($this->_params['data']['date']);
+                        if($check_date == true) {
+                            $date = $date->formatToData($this->_params['data']['date'], 'Y-m-d');
+                            $fee = $number->formatToData($this->_params['data']['fee']);
+                            $check_exist = $this->getServiceLocator()->get('Admin\Model\ContractFeeTable')->countItem(['ssFilter' => ['filter_date' => $date, 'filter_contract_id' => $contract['id']]], array('task' => 'list-item'));
+                            if ($check_exist == 0) {
+                                $params_data = array(
+                                    'contract_id' => $contract['id'],
+                                    'date' => $date,
+                                    'fee' => $fee,
+                                );
+                                $id = $this->getServiceLocator()->get('Admin\Model\ContractFeeTable')->saveItem(array('data' => $params_data), array('task' => 'add-item'));
+                                if($id){
+                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('item' => $contract, 'data' => array('id' => $contract['id'], 'fee' => $fee, 'ghtk_code' => $this->_params['data']['ghtk_code'])), array('task' => 'update-ship-ext'));
+                                    echo 'Hoàn thành';
+                                }
+                            } else {
+                                echo 'Tồn tại';
+                            }
+                        }
+                        else{
+                            echo 'Sai định dạng ngày';
+                        }
+                    }
+                }
+                else{
+                    echo 'Nhập mã vận đơn';
+                }
+                return $this->response;
+            }
+        }
+        else {
+            if ($this->getRequest()->isPost()) {
+                $myForm->setData($this->_params['data']);
+                if ($myForm->isValid()) {
+                    if (!empty($this->_params['data']['file_import']['tmp_name'])) {
+                        $upload      = new \ZendX\File\Upload();
+                        $file_import = $upload->uploadFile('file_import', PATH_FILES . '/import/', array());
+                    }
+                    $viewModel->setVariable('file_import', $file_import);
+                    $viewModel->setVariable('import', true);
+
+                    require_once PATH_VENDOR . '/Excel/PHPExcel/IOFactory.php';
+                    $objPHPExcel = \PHPExcel_IOFactory::load(PATH_FILES . '/import/' . $file_import);
+
+                    $sheetData = $objPHPExcel->getActiveSheet(1)->toArray(null, true, true, true);
+                    $viewModel->setVariable('sheetData', $sheetData);
+                }
+            }
+        }
+
+        return $viewModel;
+    }
 
 
 //    // Danh sách đơn hàng giục đơn
@@ -2360,79 +2620,7 @@ class ContractController extends ActionController {
 //        return $viewModel;
 //    }
 //
-//    public function importFeeAction()
-//    {
-//        $myForm = new \Admin\Form\Contract\Import($this->getServiceLocator(), $this->_params);
-//        $myForm->setInputFilter(new \Admin\Filter\Contract\Import($this->_params));
-//        $this->_viewModel['caption'] = 'Nhập phụ phí phát sinh';
-//        $this->_viewModel['myForm']  = $myForm;
-//        $viewModel                   = new ViewModel($this->_viewModel);
-//        $date       = new \ZendX\Functions\Date();
-//        $number     = new \ZendX\Functions\Number();
-//
-//        if ($this->getRequest()->isXmlHttpRequest()) {
-//            if ($this->getRequest()->isPost()) {
-//                if(!empty($this->_params['data']['ghtk_code'])){
-//                    $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('ghtk_code' => $this->_params['data']['ghtk_code']), array('task' => 'ghtk-code'));
-//                    if(empty($contract)){
-//                        $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('code' => $this->_params['data']['code']), array('task' => 'by-code'));
-//                    }
-//                    if (empty($contract)) {
-//                        echo 'Đơn hàng không tồn tại';
-//                    } else {
-//                        $check_date = $date->check_date_format_to_data($this->_params['data']['date']);
-//                        if($check_date == true) {
-//                            $date = $date->formatToData($this->_params['data']['date'], 'Y-m-d');
-//                            $fee = $number->formatToData($this->_params['data']['fee']);
-//                            $check_exist = $this->getServiceLocator()->get('Admin\Model\ContractFeeTable')->countItem(['ssFilter' => ['filter_date' => $date, 'filter_contract_id' => $contract['id']]], array('task' => 'list-item'));
-//                            if ($check_exist == 0) {
-//                                $params_data = array(
-//                                    'contract_id' => $contract['id'],
-//                                    'date' => $date,
-//                                    'fee' => $fee,
-//                                );
-//                                $id = $this->getServiceLocator()->get('Admin\Model\ContractFeeTable')->saveItem(array('data' => $params_data), array('task' => 'add-item'));
-//                                if($id){
-//                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('item' => $contract, 'data' => array('id' => $contract['id'], 'fee' => $fee)), array('task' => 'update-ship-ext'));
-//                                    echo 'Hoàn thành';
-//                                }
-//                            } else {
-//                                echo 'Tồn tại';
-//                            }
-//                        }
-//                        else{
-//                            echo 'Sai định dạng ngày';
-//                        }
-//                    }
-//                }
-//                else{
-//                    echo 'Nhập mã vận đơn';
-//                }
-//                return $this->response;
-//            }
-//        }
-//        else {
-//            if ($this->getRequest()->isPost()) {
-//                $myForm->setData($this->_params['data']);
-//                if ($myForm->isValid()) {
-//                    if (!empty($this->_params['data']['file_import']['tmp_name'])) {
-//                        $upload      = new \ZendX\File\Upload();
-//                        $file_import = $upload->uploadFile('file_import', PATH_FILES . '/import/', array());
-//                    }
-//                    $viewModel->setVariable('file_import', $file_import);
-//                    $viewModel->setVariable('import', true);
-//
-//                    require_once PATH_VENDOR . '/Excel/PHPExcel/IOFactory.php';
-//                    $objPHPExcel = \PHPExcel_IOFactory::load(PATH_FILES . '/import/' . $file_import);
-//
-//                    $sheetData = $objPHPExcel->getActiveSheet(1)->toArray(null, true, true, true);
-//                    $viewModel->setVariable('sheetData', $sheetData);
-//                }
-//            }
-//        }
-//
-//        return $viewModel;
-//    }
+
 //
 //    // cập nhật công nợ khách hàng
 //    public function editPricePaidAction() {
@@ -2735,140 +2923,7 @@ class ContractController extends ActionController {
 //        return $this->response;
 //    }
 //
-//    # xuất file excel import vtp
-//    public function exportToVTPAction() {
-//        $dateFormat             = new \ZendX\Functions\Date();
-//        $items      = $this->getServiceLocator()->get('Admin\Model\ContractTable')->listItem(array('ids' => $this->_params['data']['cid']), array('task' => 'list-print-multi'))->toArray();
-//
-//        $location_city          = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
-//        $location_district      = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
-//        $location_town          = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 3), array('task' => 'cache'));
-//        //Include PHPExcel
-//        require_once PATH_VENDOR . '/Excel/PHPExcel.php';
-//
-//        // Config
-//        $config = array(
-//            'sheetData' => 0,
-//            'headRow' => 1,
-//            'startRow' => 2,
-//            'startColumn' => 0,
-//        );
-//
-//        // Column
-//        $arrColumn = array('A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z','AA','AB','AC','AD','AE','AF','AG','AH','AI','AJ','AK','AL','AM','AN','AO','AP','AQ','AR','AS','AT','AU','AV','AW','AX','AY','AZ','BA','BB','BC','BD','BE','BF','BG','BH','BI','BJ','BK','BL','BM','BN','BO','BP','BQ','BR','BS','BT','BU','BV','BW','BX','BY','BZ');
-//
-//        // Data Export
-//        $arrData = array(
-//            array('field' => 'stt', 'title' => 'STT'),
-//            array('field' => 'shipped_date', 'type'=>'date', 'title' => 'NGÀY','format'=>'d/m/Y'),
-//            array('field' => 'code', 'title' => 'Mã đơn hàng'),
-//            array('field' => 'name', 'title' => 'Tên người nhận(*)'),
-//            array('field' => 'phone', 'title' => 'Số ĐT ngươi nhận(*)'),
-//            array('field' => 'address', 'title' => 'Địa chỉ(*)'),
-//            array('field' => 'product_name', 'title' => 'Tên hàng hóa(*)'),
-//            array('field' => 'product_numbers', 'title' => 'Số lượng'),
-//            array('field' => 'product_weight', 'title' => 'Trọng lượng(gam)'),
-//            array('field' => 'product_price', 'title' => 'Giá trị hàng(VND)(*)'),
-////            array('field' => 'product_total', 'title' => 'Tiền thu hộ COD(VND)'),
-//            array('field' => 'price_owed', 'title' => 'Tiền thu hộ COD(VND)'),
-//            array('field' => 'product_type', 'title' => 'Loại hàng hóa)(*)'),
-//            array('field' => 'special', 'title' => 'Tính chất đặc biệt'),
-//            array('field' => 'service', 'title' => 'Dịch vụ(*)'),
-//            array('field' => 'service_other', 'title' => 'Dịch vụ cộng thêm'),
-//            array('field' => 'money', 'title' => 'Thu tiền xem hàng'),
-//            array('field' => 'product_length', 'title' => 'Dài(cm)'),
-//            array('field' => 'product_width', 'title' => 'Rộng(cm)'),
-//            array('field' => 'product_height', 'title' => 'Cao(cm)'),
-//            array('field' => 'user_fee', 'title' => 'Người trả cước'),
-//            array('field' => 'require_other', 'title' => 'Yêu cầu khác'),
-//            array('field' => 'delivery_time', 'title' => 'Thời gian giao')
-//        );
-//
-//        // Create new PHPExcel object
-//        $objPHPExcel = new \PHPExcel();
-//
-//        // Set document properties
-//        $objPHPExcel->getProperties()->setCreator($this->_userInfo->getUserInfo('name'))
-//        							 ->setLastModifiedBy($this->_userInfo->getUserInfo('username'))
-//        							 ->setTitle("Don_kinh_doanh_".date('d-m-Y'));
-//
-//        // Dữ liệu tiêu đề cột
-//        $startColumn = $config['startColumn'];
-//        foreach ($arrData AS $key => $data) {
-//            $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($arrColumn[$startColumn] . $config['headRow'], $data['title']);
-//            $objPHPExcel->getActiveSheet()->getStyle($arrColumn[$startColumn] . $config['headRow'])->getFont()->setBold(true);
-//            $objPHPExcel->getActiveSheet()->getColumnDimension($arrColumn[$startColumn])->setAutoSize(true);
-//            $startColumn++;
-//        }
-//
-//        // Dữ liệu data
-//        $startRow = $config['startRow'];
-//        $i = 1;
-//
-//        foreach ($items AS $item) {
-//            $item['stt'] = $i;
-//            $options = unserialize($item['options']);
-//            $item['address'] = $item['address'].', '.$location_town[$item['location_town_id']]['name'].', '.$location_district[$item['location_district_id']]['name'].', '.$location_city[$item['location_city_id']]['name'];
-//
-//            $item['user_fee'] = 'Người gửi trả';
-//            if ($item['deliver_work_shift'] == 1)
-//                $item['delivery_time'] = 'Buổi sáng';
-//            elseif ($item['deliver_work_shift'] == 2)
-//                $item['delivery_time'] = 'Buổi chiều';
-//            elseif ($item['deliver_work_shift'] == 3)
-//                $item['delivery_time'] = 'Buổi tối';
-//            else
-//                $item['delivery_time'] = 'Cả ngày';
-//            $item['product_name'] = '';
-//            $item['product_numbers'] = $item['product_numbers'] = $item['product_weight'] = $item['product_price'] = $item['product_total'] = $item['product_length'] = $item['product_width'] = $item['product_height'] = 0;
-//
-//            foreach($options['product'] as $product){
-//                $item['product_name']       .= $product['full_name'].' + ';
-//                $item['product_numbers']    += $product['numbers'];
-//                $item['product_weight']     += $product['weight'];
-//                $item['product_price']      += $product['total'];
-//                $item['product_total']      += $product['total'];
-//                $item['product_length']     += $product['weight'] > 1 ? $product['length'] : 0;
-//                $item['product_width']      += $product['weight'] > 1 ? $product['width'] : 0;
-//                $item['product_height']     += $product['weight'] > 1 ? $product['height'] : 0;
-//            }
-//            $item['product_weight'] = $item['product_weight'] * 1000;
-//
-//            $startColumn = $config['startColumn'];
-//            foreach ($arrData AS $key => $data) {
-//                switch ($data['type']) {
-//                    case 'date':
-////                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
-////                        $value = '\''.date($formatDate,strtotime($item[$data['field']]));// $dateFormat->formatToView($item[$data['field']], $formatDate);
-//                        $value = $dateFormat->formatToView($item[$data['field']], 'd/m/Y');
-//                        break;
-//                    default:
-//                        $value = $item[$data['field']];
-//                }
-//                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($arrColumn[$startColumn] . $startRow, $value);
-//                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->getStyle($arrColumn[$startColumn] . $startRow)->getAlignment()->setWrapText(true);
-//                $startColumn++;
-//            }
-//
-//            $startRow++;
-//            $i++;
-//        }
-//
-//        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-//        header('Content-Disposition: attachment;filename="'.'Don_xuat_viettel_post_'.date('d-m-Y').'.xlsx"');
-//        header('Cache-Control: max-age=0');
-//        header('Cache-Control: max-age=1');
-//        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
-//        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
-//        header ('Cache-Control: cache, must-revalidate');
-//        header ('Pragma: public');
-//
-//        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
-//        $objWriter->save('php://output');
-//        exit;
-//
-//        return $this->response;
-//    }
+
 //
 //    // Cập nhật tổng số lượng sản phẩm của đơn hàng.
 //    public function updateTotalNumberProductAction() {

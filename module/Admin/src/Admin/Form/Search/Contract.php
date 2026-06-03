@@ -145,7 +145,20 @@ class Contract extends Form{
 //            )
 //        ));
 
-        // đơn đã xuất kho
+        // Loại hóa đơn
+        $this->add(array(
+            'name' => 'filter_invoiced',
+            'type' => 'Select',
+            'attributes' => array(
+                'class' => 'form-control select2 select2_basic',
+            ),
+            'options' => array(
+                'empty_option'	=> '- xuất hóa đơn -',
+                'value_options' => array('0' => 'Chưa xuất HĐ', '1' => 'Đã xuất HĐ'),
+            )
+        ));
+
+        // Loại hóa đơn
         $this->add(array(
             'name' => 'filter_option_vat',
             'type' => 'Select',
@@ -169,6 +182,7 @@ class Contract extends Form{
                 'value_options' => array('' => 'Xác nhận xuất kho', '0' => 'Chưa xuất kho', '1' => 'Đã xuất kho'),
             )
         ));
+
         $this->add(array(
             'name' => 'filter_care_status',
             'type' => 'Select',

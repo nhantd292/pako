@@ -67,6 +67,7 @@ define('TABLE_LOCATIONS',           TABLE_PREFIX . 'locations');
 define('TABLE_SETTING',             TABLE_PREFIX . 'setting');
 define('TABLE_CONTACT',             TABLE_PREFIX . 'contact');
 define('TABLE_CONTRACT',            TABLE_PREFIX . 'contract');
+define('TABLE_CONTRACT_FEE',        TABLE_PREFIX . 'contract_fee');
 define('TABLE_CONTRACT_DETAIL',     TABLE_PREFIX . 'contract_detail');
 define('TABLE_BILL',                TABLE_PREFIX . 'bill');
 define('TABLE_PRODUCT',             TABLE_PREFIX . 'product');

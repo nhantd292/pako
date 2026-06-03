@@ -40,6 +40,8 @@
             array('element' => $myForm->get('filter_customer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_invoice_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_option_vat'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_status_shipped'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_invoiced'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_action')),
@@ -72,6 +74,8 @@
             array('element' => $myForm->get('filter_marketer_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_customer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_invoice_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_status_shipped'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_invoiced'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_action')),
@@ -263,6 +267,7 @@
                                 <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.'</th>
     							<td '.$rowSpan.'>'. $order_status .'</td>
     							<td '.$rowSpan.'><a href="'.$linkDetail.'" class="text-bold">'. $code .'</a></td>
+    							<td '.$rowSpan.'>'. $ghtk_code .'</td>
     							<td '.$rowSpan.'>'. $date .'<br>'.$shipped_date.'</td>
     							<td '.$rowSpan.'>'. $user_name .'<br>'.$care_name.'</td>
     							';
@@ -285,6 +290,7 @@
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_transfer) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->discount) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($item->fee_shipp) .'</td>
                             <td '.$rowSpan.'>'. $contact_name .'</td>
                             <td '.$rowSpan.'>'. $contact_phone .'</td>
                             <td class="" '.$rowSpan.' style="inline-size: 200px;overflow-wrap: break-word;">'. $address .'<br>'.$location_town.'<br>'.$location_district.'<br>'.$location_city.'</td>
@@ -320,6 +326,7 @@
     $xhtmlHead .= '<th width="70" class="fix-head" style="left: 23px;">Công cụ</th>';
     $xhtmlHead .= '<th width="180">Trạng thái</th>';
     $xhtmlHead .= '<th width="200">Mã số đơn</th>';
+    $xhtmlHead .= '<th width="200">Mã đơn giao vận</th>';
     $xhtmlHead .= '<th width="80">Ngày</th>';
     $xhtmlHead .= '<th width="150">Nhân viên</th>';
     $xhtmlHead .= '<th width="200">Sản phẩm</th>';
@@ -330,6 +337,7 @@
     $xhtmlHead .= '<th width="80" class="text-right">Trả tiền mặt'.$text_total_paid_cash.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Chuyển khoản'.$text_total_paid_transfer.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Giảm giá'.$text_total_discount.'</th>';
+    $xhtmlHead .= '<th width="80" class="text-right">Phí giao hàng'.'</th>';
     $xhtmlHead .= '<th width="150">Tên khách hàng</th>';
     $xhtmlHead .= '<th width="90">Điện thoại</th>';
     $xhtmlHead .= '<th class="av-read">Địa chỉ</th>';
@@ -376,13 +384,35 @@
 //                array( 'name' => 'import', 'caption' => 'Đối soát ghtk', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import')), 'icon' => 'fa fa-check-square-o' ),
                 array( 'name' => 'exportVAT', 'caption' => 'Xuất mẫu hóa đơn VAT', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport(\'exportVAT\');')) ,
                 array( 'name' => 'exportVAT', 'caption' => 'Xuất mẫu hóa đơn máy tính tiền', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport(\'exportPOS\');')) ,
-//                array( 'name' => 'exportToVTP', 'caption' => 'Xuất dữ liệu đẩy sang Viettel port', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport(\'exportToVTP\');')) ,
+                array( 'name' => 'exportToVTP', 'caption' => 'Xuất dữ liệu đẩy sang Viettel port', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport(\'exportToVTP\');')) ,
+                array( 'name' => 'import-fee', 'caption' => 'Nhập phụ phí giao vận', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import-fee')), 'icon' => 'fa fa-upload' ),
+
 //                array( 'name' => 'transfer', 'caption' => 'Thêm quyền giục đơn', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:changeUser(\'changeDelivery\');') ),
 //                array( 'name' => 'transfer', 'caption' => 'Thêm quyền chăm sóc', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:changeUser(\'shareOrder\');') ),
 //                array( 'name' => 'export', 'caption' => 'Xuất bản excel', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport();')) ,
 //                array( 'name' => 'hidden', 'caption' => 'Khóa đơn hàng', 'link' => 'javascript:;', 'icon' => 'fa fa-lock', 'attributes' => array('onclick'=>'javascript:contractLock(\'lock\');')),
 //                array( 'name' => 'return', 'caption' => 'Xác nhận hoàn', 'link' => 'javascript:;', 'icon' => 'fa fa-arrow-left', 'attributes' => array('onclick'=>'javascript:updateItem(\'returned\', \'Bạn có muốn xác nhận hoàn các đơn hàng đã chọn\');')),
 
+                array(
+                    'name' => 'shipped',
+                    'caption' => 'Xác nhận - Đã xuất kho',
+                    'link' => 'javascript:;',
+                    'icon' => 'fa fa-truck',
+                    'attributes' => array(
+                        'onclick' => 'javascript:updateItem(\'shipped\', \'Các đơn hàng chỉ được xác nhận xuất kho một lần! <br> Bạn có chắc chắn muốn xác nhận xuất kho với các đơn hàng này ?\');',
+                        'title' => 'Xác nhận đã xuất kho cho đơn hàng',
+                    ),
+                ),
+                array(
+                    'name' => 'invoiced',
+                    'caption' => 'Xác nhận - Đã xuất hóa đơn',
+                    'link' => 'javascript:;',
+                    'icon' => 'fa fa-check-circle-o',
+                    'attributes' => array(
+                        'onclick' => 'javascript:updateItem(\'invoiced\', \'Các đơn hàng chỉ được xác nhận xuất hóa đơn một lần! <br> Bạn có chắc chắn muốn xác nhận xuất hóa đơn với các đơn hàng này ?\');',
+                        'title' => 'Xác nhận đã xuất hóa đơn cho đơn hàng',
+                    ),
+                ),
 //                array(
 //                    'name' => 'updateOrderKiotviet',
 //                    'caption' => 'Cập nhật số lượng sang Kiotviet',

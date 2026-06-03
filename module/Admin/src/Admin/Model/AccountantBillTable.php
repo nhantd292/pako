@@ -313,7 +313,7 @@ class AccountantBillTable extends DefaultTable
                     if ($funds_changer != 0) {
                         // Lấy tất cả phiếu lớn hơn phiếu hiện tại
                         $items = $this->tableGateway->select(function (Select $select) use ($arrItem, $date) {
-                            $select->where->greaterThan('created', $arrItem['created'])
+                            $select->where->greaterThan('index', $arrItem['index'])
                                 ->equalTo('accountant_funds_id', $arrItem['accountant_funds_id']);
                             $select->order(array('created' => 'ASC', 'id' => 'ASC'));
                         })->toArray();

@@ -226,6 +226,13 @@ class ContractTable extends DefaultTable {
                 if(!empty($ssFilter['filter_option_vat'])) {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.option_vat', $ssFilter['filter_option_vat']);
                 }
+                if(isset($ssFilter['filter_invoiced']) && $ssFilter['filter_invoiced'] != '') {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.invoiced', $ssFilter['filter_invoiced']);
+                }
+
+                if(isset($ssFilter['filter_status_shipped']) && $ssFilter['filter_status_shipped'] != '') {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.shipped', $ssFilter['filter_status_shipped']);
+                }
             })->current();
 	    }
 
@@ -864,6 +871,13 @@ class ContractTable extends DefaultTable {
 
                 if(!empty($ssFilter['filter_option_vat'])) {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.option_vat', $ssFilter['filter_option_vat']);
+                }
+                if(isset($ssFilter['filter_invoiced']) && $ssFilter['filter_invoiced'] != '') {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.invoiced', $ssFilter['filter_invoiced']);
+                }
+
+                if(isset($ssFilter['filter_status_shipped']) && $ssFilter['filter_status_shipped'] != '') {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.shipped', $ssFilter['filter_status_shipped']);
                 }
     		});
 		}
@@ -1904,7 +1918,12 @@ class ContractTable extends DefaultTable {
 		if ($options['task'] == 'update-ship-ext') {
 			$id = $arrData['id'];
             $data = array();
-            $data['ship_ext'] = $arrItem['ship_ext'] + $number->formatToData($arrData['fee']);
+            if (!empty($arrData['fee'])) {
+                $data['fee_shipp'] = $number->formatToData($arrData['fee']);
+            }
+            if (!empty($arrData['ghtk_code'])) {
+                $data['ghtk_code'] = $arrData['ghtk_code'];
+            }
 
 
 			$this->tableGateway->update($data, array('id' => $id));
@@ -3490,6 +3509,14 @@ class ContractTable extends DefaultTable {
             $data = array(
                 'shipped' => 1,
                 'shipped_date' => date('Y-m-d H:i:s'),
+            );
+            $this->tableGateway->update($data, array('id' => $arrData['id']));
+            return $arrData['id'];
+        }
+
+        if($options['task'] == 'update-invoiced') {
+            $data = array(
+                'invoiced' => 1,
             );
             $this->tableGateway->update($data, array('id' => $arrData['id']));
             return $arrData['id'];

@@ -538,6 +538,36 @@ class CustomerDebtController extends ActionController{
                     $this->_params['data']['inventory_id'] = $item['inventory_id'];
 
                     $this->_params['item'] = $item;
+
+                    $accountant_funds = $this->getServiceLocator()->get('Admin\Model\FundsTable')->getItem(array('id' => $arrData['accountant_funds_id']));
+                    $funds = $accountant_funds['price'] + $number->formatToNumber($arrData['paid']) - $number->formatToNumber($arrData['accrued']);
+                    $content = ($arrData['content_select'] != 'other') ? $arrData['content_select'] . ' ' . $arrData['content'] : $arrData['content'];
+                    $data = array(
+                        'date' => $date->formatToData($arrData['date'], 'Y-m-d'),
+                        'code' => strtoupper(trim($arrData['code'])),
+                        'accountant_funds_id' => $arrData['accountant_funds_id'],
+                        'transaction_category_id' => $arrData['transaction_category_id'],
+                        'transaction_type_id' => $arrData['transaction_type_id'],
+                        'transaction_form_id' => $arrData['transaction_form_id'],
+                        'category_id' => $arrData['category_id'],
+                        'content' => $content,
+                        'sale_branch_id' => $accountant_funds['company_branch_id'],
+                        'created_item_id' => $this->userInfo->getUserInfo('id'),
+                        'submitter_name' => $arrData['submitter_name'],
+                        'submitter_phone' => $arrData['submitter_phone'],
+                        'paid' => $number->formatToNumber($arrData['paid']),
+                        'accrued' => $number->formatToNumber($arrData['accrued']),
+                        'funds' => $number->formatToNumber($funds),
+                        'note' => $arrData['note'],
+                        'customer_debt_id' => $arrData['customer_debt_id'] ?: null,
+                        'inventory_id' => $arrData['inventory_id'] ?: null,
+                        'status' => $arrData['customer_debt_id'] ? 1 : 0,
+                        'created' => date('Y-m-d H:i:s'),
+                        'created_by' => $this->userInfo->getUserInfo('id'),
+                    );
+                    echo "<pre>";
+                    print_r($item);
+                    echo "</pre>";
                     echo "<pre>";
                     print_r($this->_params['data']);
                     echo "</pre>";
