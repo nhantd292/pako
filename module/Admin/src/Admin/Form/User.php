@@ -110,6 +110,18 @@ class User extends Form {
 //		        'value_options'	=> $option_per_list,
 		    ),
 		));
+
+		// Nhóm quyền truy cập
+		$this->add(array(
+		    'name'			=> 'customer_type_ids',
+		    'type'			=> 'MultiCheckbox',
+		    'options'		=> array(
+		        'label_attributes' => array(
+		            'class'		=> 'checkbox-inline',
+		        ),
+		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'list-item', 'paginator' => false)), array('key' => 'id', 'value' => 'name')),
+		    ),
+		));
 		
 //		// Kho hàng kiotviet
 //		$this->add(array(

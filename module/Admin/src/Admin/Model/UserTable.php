@@ -537,6 +537,7 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
 	    $gid      = new \ZendX\Functions\Gid();
 
 	    $permission_ids     = $arrData['permission_ids'] ? implode(',', $arrData['permission_ids']) : '';
+	    $customer_type_ids     = $arrData['customer_type_ids'] ? implode(',', $arrData['customer_type_ids']) : '';
 	    $position_care_id   = $arrData['company_position_care_id'] ? implode(',', $arrData['company_position_care_id']) : '';
 	    $sale_group_ids     = $arrData['sale_group_ids'] ? implode(',', $arrData['sale_group_ids']) : '';
 
@@ -556,6 +557,7 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
 				'created'               => date('Y-m-d H:i:s'),
 				'created_by'            => $this->userInfo->getUserInfo('id'),
 				'permission_ids'        => $permission_ids,
+				'customer_type_ids'     => $customer_type_ids,
 				'company_branch_id'     => $arrData['company_branch_id'],
 				'company_department_id' => $arrData['company_department_id'],
 				'company_position_id'   => $arrData['company_position_id'],
@@ -587,6 +589,7 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
 				'status'                => $arrData['status'],
                 'notifi'                => !empty($arrData['notifi']) ? $arrData['notifi'] : null,
 			    'permission_ids'        => $permission_ids,
+			    'customer_type_ids'     => $customer_type_ids,
 			    'company_branch_id'     => $arrData['company_branch_id'],
 			    'company_department_id' => $arrData['company_department_id'],
 			    'company_position_id'   => $arrData['company_position_id'],

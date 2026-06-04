@@ -197,6 +197,23 @@ class User extends InputFilter {
 		    )
 		));
 
+		// Nhóm quyền truy cập
+		$this->add(array(
+		    'name'		=> 'customer_type_ids',
+		    'required'	=> true,
+		    'validators'	=> array(
+		        array(
+		            'name'		=> 'NotEmpty',
+		            'options'	=> array(
+		                'messages'	=> array(
+		                    \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống',
+		                )
+		            ),
+		            'break_chain_on_failure'	=> true
+		        )
+		    )
+		));
+
 		// Cơ sở
 		$this->add(array(
 		    'name'		=> 'sale_branch_id',

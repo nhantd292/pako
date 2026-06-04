@@ -109,6 +109,7 @@ class UserController extends ActionController {
             $item = $this->getTable()->getItem($this->_params['data']);
             if(!empty($item)) {
                 $item['permission_ids'] = explode(',', $item['permission_ids']);
+                $item['customer_type_ids'] = explode(',', $item['customer_type_ids']);
                 $item['company_position_care_id'] = explode(',', $item['company_position_care_id']);
                 $item['encode_phone'] = explode(',', $item['encode_phone']);
                 $item['sale_group_hidden'] = $item['sale_group_ids'];
