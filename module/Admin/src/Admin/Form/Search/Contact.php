@@ -15,6 +15,8 @@ class Contact extends Form
         $userInfo = new \ZendX\System\UserInfo();
         $userInfo = $userInfo->getUserInfo();
 
+        $customer_type_ids = explode(',',$userInfo['customer_type_ids']);
+
         // FORM Attribute
         $this->setAttributes(array(
             'action' => '',
@@ -343,7 +345,7 @@ class Contact extends Form
             ),
             'options'		=> array(
                 'empty_option'	=> '- Nhóm KH -',
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\CustomerTypeTable')->listItem(array('ssFilter' => array('filter_cid' => $customer_type_ids)), array('task' => 'list-item', 'paginator' => false)), array('key' => 'id', 'value' => 'name')),
             )
         ));
 
