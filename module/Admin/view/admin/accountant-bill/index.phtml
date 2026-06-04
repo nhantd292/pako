@@ -18,7 +18,7 @@
         array('element' => $myForm->get('filter_transaction_category'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_transaction_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_sale_branch_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_transaction_form'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+//        array('element' => $myForm->get('filter_transaction_form'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_category'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_status'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -49,7 +49,7 @@
     $xhtmlHead .= '<th>Sổ quỹ</th>';
     $xhtmlHead .= '<th>Loại nghiệp vụ</th>';
     $xhtmlHead .= '<th>Nghiệp vụ</th>';
-    $xhtmlHead .= '<th>Hình thức giao dịch</th>';
+//    $xhtmlHead .= '<th>Hình thức giao dịch</th>';
     $xhtmlHead .= '<th class="text-center">Số tiền thu<br><span class="mask_currency text-right text-bold text-green">'. $total_paid .'</span></th>';
     $xhtmlHead .= '<th class="text-center">Số tiền chi<br><span class="mask_currency text-right text-bold text-red">'. $total_accrued .'</span></th>';
     $xhtmlHead .= '<th>Tồn</th>';
@@ -106,7 +106,7 @@
             
             $xhtmlItems .= '<tr id="tr_'. $id .'" class="tr_'. $index .'" data-id="'. $id .'">
     							<td>'. $cid .'</td>
-    							<td>'. $stt .'</td>
+    							<td class="text-center">'. $stt .'</td>
 							    <td>'. $controls .'</td>
 							    <td>'. $date .'</td>
 							    <td class="code">'. $code .'</td>
@@ -114,7 +114,6 @@
     							<td>'. $accountant_funds .'</td>
     							<td>'. $transaction_category .'</td>
     							<td>'. $transaction_type .'</td>
-    							<td>'. $transaction_form .'</td>
     							<td class="mask_currency text-right">'. $paid .'</td>
     							<td class="mask_currency text-right">'. $accrued .'</td>
     							<td class="mask_currency text-right">'. $funds .'</td>
