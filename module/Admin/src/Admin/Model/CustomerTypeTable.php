@@ -46,6 +46,10 @@ class CustomerTypeTable extends DefaultTable {
     			if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
     			    $select->where->equalTo('status', $ssFilter['filter_status']);
     			}
+
+    			if(isset($ssFilter['filter_cid']) && $ssFilter['filter_cid'] != '') {
+                    $select->where->in('id', $ssFilter['filter_cid']);
+    			}
     			
     			if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
     		        $select->where->NEST

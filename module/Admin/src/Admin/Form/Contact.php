@@ -6,6 +6,7 @@ class Contact extends Form {
 	
 	public function __construct($sm, $options){
 		parent::__construct();
+        $customer_type_ids = explode(',',$options['customer_type_ids']);
 		
 		// FORM Attribute
 		$this->setAttributes(array(
@@ -74,7 +75,7 @@ class Contact extends Form {
 		    'options'		=> array(
 		        'empty_option'	=> '- Chọn -',
 		        'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(array('ssFilter' => array('filter_cid' => $customer_type_ids)), array('task' => 'list-item', 'paginator' => false)), array('key' => 'id', 'value' => 'name')),
             )
 		));
 

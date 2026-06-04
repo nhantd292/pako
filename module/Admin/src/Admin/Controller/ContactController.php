@@ -255,11 +255,13 @@ class ContactController extends ActionController
         $ssFilter   = new Container(__CLASS__);
 
         $curent_user_id  = $this->_userInfo->getUserInfo('id');
+        $customer_type_ids  = $this->_userInfo->getUserInfo('customer_type_ids');
         $phone_code = true;
 
         $task    = 'add-item';
         $caption = 'Liên hệ - Thêm mới';
         $item    = array();
+        $item['customer_type_ids'] = $customer_type_ids;
         if (!empty($this->params('id'))) {
             $this->_params['data']['id'] = $this->params('id');
             $item                        = $this->getTable()->getItem($this->_params['data']);
@@ -289,7 +291,7 @@ class ContactController extends ActionController
             }
         }
         else{
-            $myForm = new \Admin\Form\Contact($this);
+            $myForm = new \Admin\Form\Contact($this, $item);
         }
 
         if ($this->getRequest()->isPost()) {
