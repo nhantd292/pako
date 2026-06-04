@@ -284,11 +284,15 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
 
                 $select -> where -> equalTo('company_department_id', 'sales');
 
-                if(!empty($arrData['sale_branch_id'])){
-                    $select -> where -> equalTo('sale_branch_id', $arrData['sale_branch_id']);
+                if(!empty($arrParam['id'])){
+                    $select -> where -> equalTo('id', $arrParam['id']);
                 }
                 if(!empty($arrParam['filter_sale_branch'])){
                     $select -> where -> equalTo('sale_branch_id', $arrParam['filter_sale_branch']);
+                }
+
+                if(!empty($arrData['sale_branch_id'])){
+                    $select -> where -> equalTo('sale_branch_id', $arrData['sale_branch_id']);
                 }
 
                 if(!empty($arrData['sale_group_id'])){
@@ -346,6 +350,10 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
                 $select -> where -> notEqualTo('id', '3333333333333333333333');
 
                 $select -> where -> equalTo('company_department_id', 'care');
+
+                if(!empty($arrParam['id'])){
+                    $select -> where -> equalTo('id', $arrParam['id']);
+                }
 
                 if(!empty($arrData['sale_branch_id'])){
                     $select -> where -> equalTo('sale_branch_id', $arrData['sale_branch_id']);

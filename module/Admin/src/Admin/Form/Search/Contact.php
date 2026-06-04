@@ -139,6 +139,10 @@ class Contact extends Form
         ));
 
         // nhân viên - chỉ lấy nhân viên sale và chăm sóc khách hàng
+        $permission_ids = explode(',', $userInfo['permission_ids']);
+        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(MANAGER, $permission_ids)){
+            $params['id'] = $userInfo['id'];
+        }
         $user_sale      = $sm->get('Admin\Model\UserTable')->listItem($params, array('task' => 'list-sale'));
         $user_care      = $sm->get('Admin\Model\UserTable')->listItem($params, array('task' => 'list-care'));
         $user = array_merge($user_sale, $user_care);
