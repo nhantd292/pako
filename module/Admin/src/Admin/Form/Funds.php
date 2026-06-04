@@ -57,6 +57,31 @@ class Funds extends Form {
 		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
 		    ),
 		));
+
+        // Hình thức giao dịch
+        $this->add(array(
+            'name'			=> 'transaction_form_id',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Chọn -',
+                'disable_inarray_validator' => true,
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "accountant-transaction-form" ) ), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
+            )
+        ));
+
+        $this->add(array(
+            'name'			=> 'user_ids',
+            'type'			=> 'MultiCheckbox',
+            'options'		=> array(
+                'label_attributes' => array(
+                    'class'		=> 'checkbox-inline',
+                ),
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'list-accounting')), array('key' => 'id', 'value' => 'name')),
+            ),
+        ));
 		
 		// Ordering
 		$this->add(array(

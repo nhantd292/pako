@@ -78,5 +78,27 @@ class Funds extends InputFilter {
 				),
 			)
 		));
+
+		// Cơ sở
+		$this->add(array(
+			'name'		=> 'transaction_form_id',
+			'required'	=> true,
+			'validators'	=> array(
+				array(
+					'name'		=> 'NotEmpty',
+				    'options'	=> array(
+				        'messages'	=> array(
+				            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+				        )
+				    ),
+					'break_chain_on_failure'	=> true
+				),
+			)
+		));
+
+		$this->add(array(
+			'name'		=> 'status',
+			'required'	=> false,
+		));
 	}
 }

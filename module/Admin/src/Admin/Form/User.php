@@ -111,7 +111,7 @@ class User extends Form {
 		    ),
 		));
 
-		// Nhóm quyền truy cập
+		// Nhóm khách hàng
 		$this->add(array(
 		    'name'			=> 'customer_type_ids',
 		    'type'			=> 'MultiCheckbox',

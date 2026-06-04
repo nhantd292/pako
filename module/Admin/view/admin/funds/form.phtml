@@ -12,9 +12,11 @@
     $elements = array(
         array('element' => $myForm->get('name'), 'label' => 'Tên quỹ', 'validate' => array('require' => true)),
         array('element' => $myForm->get('company_branch_id'), 'label' => 'Thuộc cơ sở', 'validate' => array('require' => true)),
+        array('element' => $myForm->get('transaction_form_id'), 'label' => 'Hình thực giao dịch', 'validate' => array('require' => true)),
         array('element' => $myForm->get('price'), 'label' => 'Tồn quỹ hiện tại', 'validate' => array('require' => true)),
-        array('element' => $myForm->get('ordering'), 'label' => 'Thứ tự', 'boxClass' => 'col-sm-2'),
-        array('element' => $myForm->get('status'), 'label' => 'Hiển thị', 'boxClass' => 'col-sm-1'),
+        array('element' => $myForm->get('user_ids'), 'label' => 'Nhân viên phụ trách', 'validate' => array('require' => true), 'boxClass' => 'col-md-12'),
+//        array('element' => $myForm->get('ordering'), 'label' => 'Thứ tự', 'boxClass' => 'col-sm-2'),
+//        array('element' => $myForm->get('status'), 'label' => 'Hiển thị', 'boxClass' => 'col-sm-1'),
         array('element' => $myForm->get('id'), 'validate' => array('require' => true)),
     );
     

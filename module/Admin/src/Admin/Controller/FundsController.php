@@ -60,8 +60,10 @@ class FundsController extends ActionController {
         
         $this->_viewModel['myForm']	        = $myForm;
         $this->_viewModel['items']          = $items;
+        $this->_viewModel['user']           = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['count']          = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
         $this->_viewModel['company_branch'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $this->_viewModel['transaction_form'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'accountant-transaction-form')), array('task' => 'cache-alias'));
         $this->_viewModel['caption']        = 'Tài khoản - Danh sách';
         return new ViewModel($this->_viewModel);
     }
@@ -76,10 +78,11 @@ class FundsController extends ActionController {
             $this->_params['data']['id'] = $this->params('id');
             $item = $this->getTable()->getItem($this->_params['data']);
             if(!empty($item)) {
+                $item['user_ids'] = explode(',', $item['user_ids']);
                 $myForm->setInputFilter(new \Admin\Filter\Funds(array('id' => $this->_params['data']['id'])));
                 $myForm->bind($item);
                 $task = 'edit-item';
-                $caption = 'Tài khoản - Sửa';
+                $caption = 'Sổ quỹ - Sửa';
             }
         }
     
@@ -87,8 +90,8 @@ class FundsController extends ActionController {
             $myForm->setData($this->_params['data']);
     
             $controlAction = $this->_params['data']['control-action'];
-            
             if($myForm->isValid()){
+
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $result = $this->getTable()->saveItem($this->_params, array('task' => $task));
     

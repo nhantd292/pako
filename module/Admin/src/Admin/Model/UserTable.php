@@ -319,6 +319,30 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
             })->toArray();
         }
 
+        // danh sách nhân viên quản lý sổ quỹ
+        if ($options['task'] == 'list-accounting') {
+            $result    = $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $arrData = $arrParam['data'];
+
+                $select -> order('name ASC');
+                $select -> where -> equalTo('status', 1);
+                $select -> where -> notEqualTo('id', '1111111111111111111111');
+                $select -> where -> notEqualTo('id', '3333333333333333333333');
+
+                $select -> where -> NEST
+                    -> like('permission_ids', '%'.SYSTEM.'%')
+                    ->OR
+                    -> like('permission_ids', '%'.ADMIN.'%')
+                    ->OR
+                    -> like('permission_ids', '%'.ACCOUNTING.'%')
+                    -> UNNEST;
+
+                if(!empty($arrData['sale_branch_id'])){
+                    $select -> where -> equalTo('sale_branch_id', $arrData['sale_branch_id']);
+                }
+            })->toArray();
+        }
+
         if ($options['task'] == 'list-marketing') {
             $result    = $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
                 $arrData = $arrParam['data'];

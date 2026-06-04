@@ -18,6 +18,8 @@
     $xhtmlHead .= '<th class="col-50">STT</th>';
     $xhtmlHead .= $this->linkAdminSort('Tên', 'name', $this->params['ssFilter'], null);
     $xhtmlHead .= $this->linkAdminSort('Cơ sở', 'company_branch_id', $this->params['ssFilter'], null);
+    $xhtmlHead .= $this->linkAdminSort('Hình thức giao dịch', 'transaction_form_id', $this->params['ssFilter'], null);
+    $xhtmlHead .= $this->linkAdminSort('Nhân viên phụ trách', 'user_ids', $this->params['ssFilter'], null);
     $xhtmlHead .= $this->linkAdminSort('Tồn quỹ hiện tại', 'price', $this->params['ssFilter'], null);
 	$xhtmlHead .= $this->linkAdminSort('Thứ tự', 'ordering', $this->params['ssFilter'], array('class' => 'col-80'));
     $xhtmlHead .= '<th class="col-80">Công cụ</th>';
@@ -31,8 +33,15 @@
             $name           = $item->name;
             $price          = $item->price;
             $company_branch = $item->company_branch_id ? $this->company_branch[$item['company_branch_id']]['name'] : '';
+            $transaction_form_id = $item->transaction_form_id ? $this->transaction_form[$item['transaction_form_id']]['name'] : '';
             $ordering       = @$this->xFormInput('ordering['. $id .']', $item->ordering, array('class' => 'form-control input-xs'));
             $cid            = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
+
+            $user_ids         = explode(',', $item->user_ids);
+            $users            = '';
+            foreach ($user_ids AS $user_id) {
+                $users    .= '<p>'. $this->user[$user_id]['name'] .'</p>';
+            }
             
             // Link Action
             $linkEdit       = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'form', 'id' => $id));
@@ -47,6 +56,8 @@
     							<td>'. ($index + 1) .'</td>
     							<td><a href="'. $linkEdit .'">'. $name .'</a></td>
     							<td>'. $company_branch .'</td>
+    							<td>'. $transaction_form_id .'</td>
+    							<td>'. $users .'</td>
     							<td class="mask_currency">'. $price .'</td>
     							<td>'. $ordering .'</td>
 							    <td>'. $controls .'</td>

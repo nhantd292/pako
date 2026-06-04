@@ -84,6 +84,7 @@ class FundsTable extends DefaultTable
         $filter = new \ZendX\Filter\Purifier();
         $number = new \ZendX\Functions\Number();
         $gid = new \ZendX\Functions\Gid();
+        $user_ids     = $arrData['user_ids'] ? implode(',', $arrData['user_ids']) : '';
 
         if ($options['task'] == 'add-item') {
             $id = $gid->getId();
@@ -91,6 +92,8 @@ class FundsTable extends DefaultTable
                 'id' => $id,
                 'name' => $arrData['name'],
                 'company_branch_id' => $arrData['company_branch_id'],
+                'transaction_form_id' => $arrData['transaction_form_id'],
+                'user_ids' => $user_ids,
                 'price' => $number->formatToNumber($arrData['price']),
                 'ordering' => $arrData['ordering'],
                 'status' => $arrData['status'],
@@ -107,8 +110,10 @@ class FundsTable extends DefaultTable
             $data = array(
                 'name' => $arrData['name'],
                 'company_branch_id' => $arrData['company_branch_id'],
-                'ordering' => $arrData['ordering'],
-                'status' => $arrData['status'],
+                'transaction_form_id' => $arrData['transaction_form_id'],
+                'user_ids' => $user_ids,
+//                'ordering' => $arrData['ordering'],
+//                'status' => $arrData['status'],
             );
 
             $this->tableGateway->update($data, array('id' => $id));
