@@ -1,81 +1,63 @@
 <?php
     $myForm = $this->myForm;
     $myForm->prepare();
-    
-    $color_price_owed       = 'text-info';
-    if(($this->contract['price_paid'] / $this->contract['price_total'] * 100) < 60) {
-        $color_price_owed   = 'text-red';
-    } elseif (($this->contract['price_paid'] / $this->contract['price_total'] * 100) < 100) {
-        $color_price_owed   = 'text-purple';
+    $number = new \ZendX\Functions\Number();
+    $date = new \ZendX\Functions\Date();
+
+    $nv = '';
+    if (in_array($this->item['type'], [KMH,PTH,THU])) {
+        $nv = 'Thu';
+    }
+    if (in_array($this->item['type'], [KTH,PNH,CHI])) {
+        $nv = 'Chi';
     }
 
-    if (!empty($this->contract['product_list'])) {
-        foreach (unserialize($this->contract['product_list']) as $key => $value) {
-            foreach ($value as $keySub => $valueSub) {
-                $product_list .= $this->product_info[$valueSub['product_id']]['name'].'<br>';
-            }
-        }
-    } else {
-        $product_list   = $this->product['name'];
-    }
-    $contract_options = unserialize($this->contract['options']);
+    $field_paid_cash = abs($this->item['paid_cash']) > 0 ? array('element' => '<span class="text-info">'. number_format(abs($this->item['paid_cash'])) .'</span>', 'label' => $nv.' tiền mặt', 'boxClass' => 'col-md-3') : [];
+    $field_paid_transfer = abs($this->item['paid_transfer']) > 0 ? array('element' => '<span class="text-info">'. number_format(abs($this->item['paid_transfer'])) .'</span>', 'label' => $nv.' chuyển khoản', 'boxClass' => 'col-md-3') : [];
 
     $elementContract = array(
         array('section' => 'Thông tin phiếu thu chi khách hàng', 'boxClass' => 'col-md-12'),
-        array('element' => '<span class="text-info">'. $this->item['code'] .'</span>', 'label' => 'Mã phiếu', 'boxClass' => 'col-md-2'),
-        array('element' => '<span class="text-info">'. $this->item['type'] .'</span>', 'label' => 'Loại phiếu', 'boxClass' => 'col-md-2'),
-        array('element' => '<span class="text-info">'. $this->contact['name'] .'</span>', 'label' => 'Khách hàng', 'boxClass' => 'col-md-2'),
-        array('element' => '<span class="text-info">'. $this->contact['phone'] .'</span>', 'label' => 'Điện thoại', 'boxClass' => 'col-md-2'),
-        array('element' => '<span class="text-info">'. $this->contact['email'] .'</span>', 'label' => 'Email', 'boxClass' => 'col-md-2'),
+        array('element' => '<span class="text-info">'. $this->item['code'] .'</span>', 'label' => 'Mã phiếu', 'boxClass' => 'col-md-3'),
+        array('element' => '<span class="text-info">'. $this->debt_type[$this->item['type']] .'</span>', 'label' => 'Loại phiếu', 'boxClass' => 'col-md-3'),
+        array('element' => '<span class="text-info">'. $date->formatToView($this->item['date']) .'</span>', 'label' => 'Ngày thu chi', 'boxClass' => 'col-md-3'),
+        array('element' => '<span class="text-info">Giao dịch</span>', 'label' => 'Loại nghiệp vụ', 'boxClass' => 'col-md-3'),
+        array('element' => '<span class="text-info">'.$nv.'</span>', 'label' => 'Nghiệp vụ', 'boxClass' => 'col-md-3'),
+        array('element' => '<span class="text-info">'. $this->item['customer_name'] .'</span>', 'label' => 'Người nộp/nhận', 'boxClass' => 'col-md-6'),
+        array('element' => '<span class="text-info">'. $this->item['customer_phone'] .'</span>', 'label' => 'Số điện thoại', 'boxClass' => 'col-md-3'),
     );
-    $xhtmlContract = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementContract);
-    
-
-    
-//    if(count($myForm->get('accountant_funds_id')->getValueOptions()) == 1) {
-//        $myForm->get('accountant_funds_id')->setEmptyOption(null);
-//    }
-    
-    $class_paid = '';
-    $class_accrued = ' box-hidden';
-    if($myForm->get('transaction_type_id')->getValue() == 'chi') {
-        $class_paid = ' box-hidden';
-        $class_accrued = '';
+    if ($field_paid_cash) {
+        $elementContract[] = $field_paid_cash;
     }
-    $elements = array(
-        array('section' => 'Nghiệp vụ', 'boxClass' => 'col-md-12'),
-        array('element' => $myForm->get('date'), 'label' => 'Ngày Thu - Chi', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
-//        array('element' => $myForm->get('code'), 'label' => 'Số chứng từ',  'boxClass' => 'col-sm-3'),
+    if ($field_paid_transfer) {
+        $elementContract[] = $field_paid_transfer;
+    }
+    $xhtmlContract = $this->partialLoop($this->params['module'] . '/partial/form-view.phtml', $elementContract);
 
-        array('element' => $myForm->get('transaction_category_id'), 'label' => 'Loại nghiệp vụ', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
-        array('element' => $myForm->get('transaction_type_id'), 'label' => 'Nghiệp vụ', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
-        array('element' => $myForm->get('submitter_name'), 'label' => 'Người nộp/nhận', 'boxClass' => 'col-sm-3'),
-        array('element' => $myForm->get('submitter_phone'), 'label' => 'Số điện thoại', 'boxClass' => 'col-sm-3'),
+    $elements = array(
+        array('element' => $myForm->get('id'), 'validate' => array('require' => true)),
+        array('element' => $myForm->get('modal'), 'validate' => array('require' => true)),
+
+        array('section' => 'Nghiệp vụ', 'boxClass' => 'col-md-12'),
         array('element' => $myForm->get('category_id'), 'label' => 'Danh mục', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
         array('element' => $myForm->get('content_select'), 'label' => 'Nội dung chọn', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
-        array('element' => $myForm->get('content'), 'label' => 'Nội dung nhập', 'validate' => array('require' => true), 'boxClass' => 'col-sm-6'),
-        array('element' => $myForm->get('note'), 'label' => 'Ghi chú thêm', 'boxClass' => 'col-sm-6'),
-
-        array('element' => $myForm->get('modal'), 'validate' => array('require' => true)),
-        array('element' => $myForm->get('id'), 'validate' => array('require' => true)),
+        array('element' => $myForm->get('content'), 'label' => 'Nội dung nhập', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
+        array('element' => $myForm->get('note'), 'label' => 'Ghi chú thêm', 'boxClass' => 'col-sm-3'),
     );
     $xhtml = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
 
-    $elements_cash = array(
-        array('section' => 'Tiền mặt', 'boxClass' => 'col-md-12'),
-        array('element' => $myForm->get('paid_cash'), 'label' => 'Thu tiền mặt', 'validate' => array('require' => true), 'boxId' => 'box-paid', 'boxClass' => 'col-sm-6'. $class_paid),
-        array('element' => $myForm->get('accrued_cash'), 'label' => 'Chi tiền mặt', 'validate' => array('require' => true), 'boxId' => 'box-accrued', 'boxClass' => 'col-sm-6'. $class_accrued),
-        array('element' => $myForm->get('accountant_funds_id_cash'), 'label' => 'Quỹ tiền mặt', 'validate' => array('require' => true), 'boxClass' => 'col-sm-6'),
+    $fund_cash = abs($this->item['paid_cash']) > 0 ? array('element' => $myForm->get('accountant_funds_id_cash'), 'label' => 'Quỹ tiền mặt '.$nv, 'validate' => array('require' => true), 'boxClass' => 'col-sm-3') : [];
+    $fund_transfer = abs($this->item['paid_transfer']) > 0 ? array('element' => $myForm->get('accountant_funds_id_transfer'), 'label' => 'Quỹ chuyển khoản '.$nv, 'validate' => array('require' => true), 'boxClass' => 'col-sm-3') : [];
+    $elements_fund = array(
+        array('section' => 'Chọn sổ quỹ', 'boxClass' => 'col-md-12'),
     );
-    $xhtml_cash = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements_cash);
+    if ($fund_cash) {
+        $elements_fund[] = $fund_cash;
+    }
+    if ($fund_transfer) {
+        $elements_fund[] = $fund_transfer;
+    }
 
-    $elements_transfer = array(
-        array('section' => 'Chuyển khoản', 'boxClass' => 'col-md-12'),
-        array('element' => $myForm->get('paid_transfer'), 'label' => 'Thu chuyển khoản', 'validate' => array('require' => true), 'boxId' => 'box-paid', 'boxClass' => 'col-sm-6'. $class_paid),
-        array('element' => $myForm->get('accrued_transfer'), 'label' => 'Chi chuyển khoản', 'validate' => array('require' => true), 'boxId' => 'box-accrued', 'boxClass' => 'col-sm-6'. $class_accrued),
-        array('element' => $myForm->get('accountant_funds_id_transfer'), 'label' => 'Quỹ chuyển khoản', 'validate' => array('require' => true), 'boxClass' => 'col-sm-6'),
-    );
-    $xhtml_transfer = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements_transfer);
+    $xhtml_fund = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements_fund);
 ?>
 
 <?php
@@ -95,16 +77,11 @@ if($this->params['data']['modal'] != 'success') {
 			<?php echo $xhtmlContract;?>
 		</div>
         <div class="row">
-            <div class="col-md-6">
-                <?php echo $xhtml_cash;?>
-            </div>
-            <div class="col-md-6">
-                <?php echo $xhtml_transfer;?>
-            </div>
+            <?php echo $xhtml;?>
         </div>
-    	<div class="row">
-			<?php echo $xhtml;?>
-		</div>
+        <div class="row">
+            <?php echo $xhtml_fund;?>
+        </div>
     </form>
 <?php
 if($this->params['data']['modal'] != 'success') { 
@@ -117,15 +94,3 @@ if($this->params['data']['modal'] != 'success') {
 <?php
 } 
 ?>
-<script type="text/javascript">
-    //Nghiệp vụ
-    $('select[name="transaction_type_id"]').change(function() {
-    	if($(this).val() == 'thu') {
-            $('#box-paid').removeClass('box-hidden');
-            $('#box-accrued').addClass('box-hidden');
-    	} else {
-    	    $('#box-paid').addClass('box-hidden');
-            $('#box-accrued').removeClass('box-hidden');
-    	}
-    });
-</script>

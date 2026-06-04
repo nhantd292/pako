@@ -34,24 +34,6 @@ class Accept extends Form {
 		    'type'			=> 'Hidden',
 		));
 		
-		// Ngày chứng từ
-		$this->add(array(
-		    'name'			=> 'date',
-		    'type'			=> 'Text',
-		    'attributes'	=> array(
-		        'class'		=> 'form-control date-picker',
-		    ),
-		));
-		
-		// Số chứng từ
-		$this->add(array(
-		    'name'			=> 'code',
-		    'type'			=> 'Text',
-		    'attributes'	=> array(
-		        'class'		=> 'form-control',
-		    ),
-		));
-		
 		// Tài khoản chính
 		$this->add(array(
 		    'name'			=> 'accountant_funds_id_cash',
@@ -62,7 +44,7 @@ class Accept extends Form {
 		    'options'		=> array(
 		        'empty_option'	=> '- Chọn -',
 		        'disable_inarray_validator' => true,
-		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\FundsTable')->listItem(null, array('task' => 'permision')), array('key' => 'id', 'value' => 'name')),
+		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\FundsTable')->listItem(array('transaction_form_id' => 'tien-mat'), array('task' => 'permision')), array('key' => 'id', 'value' => 'name')),
 		    )
 		));
 		$this->add(array(
@@ -74,51 +56,9 @@ class Accept extends Form {
 		    'options'		=> array(
 		        'empty_option'	=> '- Chọn -',
 		        'disable_inarray_validator' => true,
-		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\FundsTable')->listItem(null, array('task' => 'permision')), array('key' => 'id', 'value' => 'name')),
+		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\FundsTable')->listItem(array('transaction_form_id' => 'chuyen-khoan'), array('task' => 'permision')), array('key' => 'id', 'value' => 'name')),
 		    )
 		));
-		
-		// Loại nghiệp vụ
-		$this->add(array(
-		    'name'			=> 'transaction_category_id',
-		    'type'			=> 'Select',
-		    'attributes'	=> array(
-		        'class'		=> 'form-control select2 select2_basic',
-		    ),
-		    'options'		=> array(
-		        'empty_option'	=> '- Chọn -',
-		        'disable_inarray_validator' => true,
-		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "accountant-transaction-category" ) ), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
-		    )
-		));
-		
-		// Nghiệp vụ
-		$this->add(array(
-		    'name'			=> 'transaction_type_id',
-		    'type'			=> 'Select',
-		    'attributes'	=> array(
-		        'class'		=> 'form-control select2 select2_basic',
-		        'value'     => 'thu'
-		    ),
-		    'options'		=> array(
-		        'disable_inarray_validator' => true,
-		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "accountant-transaction-type" ) ), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
-		    )
-		));
-		
-		// Hình thức giao dịch
-//		$this->add(array(
-//		    'name'			=> 'transaction_form_id',
-//		    'type'			=> 'Select',
-//		    'attributes'	=> array(
-//		        'class'		=> 'form-control select2 select2_basic',
-//		    ),
-//		    'options'		=> array(
-//		        'empty_option'	=> '- Chọn -',
-//		        'disable_inarray_validator' => true,
-//		        'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "accountant-transaction-form" ) ), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
-//		    )
-//		));
 		
 		// Danh mục
 		$this->add(array(
@@ -149,89 +89,23 @@ class Accept extends Form {
 		        'value_options'	=> $content_select,
 		    )
 		));
-		
-		// Nội dung
-		$this->add(array(
-		    'name'			=> 'content',
-		    'type'			=> 'Textarea',
-		    'attributes'	=> array(
-		        'class'			=> 'form-control',
-		        'rows'			=> '3',
-		    ),
-		));
-		
-		// Người nộp/nhận: tên
-		$this->add(array(
-			'name'			=> 'submitter_name',
-			'type'			=> 'Text',
-			'attributes'	=> array(
-				'class'			=> 'form-control',
-			),
-		));
-		
-		// Người nộp/nhận: điện thoại
-		$this->add(array(
-			'name'			=> 'submitter_phone',
-			'type'			=> 'Text',
-			'attributes'	=> array(
-				'class'			=> 'form-control mask_phone',
-			),
-		));
-		
-		// Thu
-		$this->add(array(
-		    'name'			=> 'paid_cash',
-		    'type'			=> 'Text',
-		    'attributes'	=> array(
-		        'class'			=> 'form-control mask_currency',
-		        'placeholder'	=> 'Thu tiền mặt'
-		    )
-		));
 
-		// Thu
-		$this->add(array(
-		    'name'			=> 'paid_transfer',
-		    'type'			=> 'Text',
-		    'attributes'	=> array(
-		        'class'			=> 'form-control mask_currency',
-		        'placeholder'	=> 'Thu chuyển khoản'
-		    )
-		));
-		
-		// Chi
-		$this->add(array(
-		    'name'			=> 'accrued_cash',
-		    'type'			=> 'Text',
-		    'attributes'	=> array(
-		        'class'			=> 'form-control mask_currency',
-		        'placeholder'	=> 'Số tiền chi tiền mặt'
-		    )
-		));
-
-		// Chi
-		$this->add(array(
-		    'name'			=> 'accrued_transfer',
-		    'type'			=> 'Text',
-		    'attributes'	=> array(
-		        'class'			=> 'form-control mask_currency',
-		        'placeholder'	=> 'Số tiền chi chuyển khoản'
-		    )
-		));
+        // Nội dung
+        $this->add(array(
+            'name'			=> 'content',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'			=> 'form-control',
+            ),
+        ));
 		
 		// Ghi chú
 		$this->add(array(
 		    'name'			=> 'note',
-		    'type'			=> 'TextArea',
+		    'type'			=> 'Text',
 		    'attributes'	=> array(
 		        'class'		=> 'form-control',
-		        'rows'		=> 3,
 		    ),
-		));
-		
-		// Người lập phiếu thu/chi
-		$this->add(array(
-		    'name'			=> 'created_item_id',
-		    'type'			=> 'Hidden',
 		));
 	}
 }

@@ -9,9 +9,12 @@ use Zend\Session\Container;
 use Zend\Form\FormInterface;
 use ZendX\System\UserInfo;
 
-class CustomerDebtController extends ActionController{
+class CustomerDebtController extends ActionController
+{
     public $caption = 'Thu chi khách hàng';
-    public function init() {
+
+    public function init()
+    {
         // Thiết lập options
         $this->_options['tableName'] = 'Admin\Model\CustomerDebtTable';
         $this->_options['formName'] = 'formAdminCustomerDebt';
@@ -19,21 +22,21 @@ class CustomerDebtController extends ActionController{
         $action = !empty($this->getRequest()->getPost('filter_action')) ? str_replace('-', '_', $this->getRequest()->getPost('filter_action')) : 'index';
         $ssFilter = new Container(__CLASS__ . $action);
 
-        $this->_params['ssFilter']['order_by']                  = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'ordering';
-        $this->_params['ssFilter']['order']                     = !empty($ssFilter->order) ? $ssFilter->order : 'DESC';
-        $this->_params['ssFilter']['filter_status']             = $ssFilter->filter_status;
-        $this->_params['ssFilter']['filter_keyword']            = $ssFilter->filter_keyword;
-        $this->_params['ssFilter']['filter_date_begin']            = $ssFilter->filter_date_begin;
-        $this->_params['ssFilter']['filter_date_end']            = $ssFilter->filter_date_end;
-        $this->_params['ssFilter']['filter_state']            = $ssFilter->filter_state;
-        $this->_params['ssFilter']['filter_type']            = $ssFilter->filter_type;
-        $this->_params['ssFilter']['filter_category']            = $ssFilter->filter_category;
-        $this->_params['ssFilter']['filter_inventory_id']            = $ssFilter->filter_inventory_id;
-        $this->_params['ssFilter']['filter_customer_id']            = $ssFilter->filter_customer_id;
+        $this->_params['ssFilter']['order_by'] = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'ordering';
+        $this->_params['ssFilter']['order'] = !empty($ssFilter->order) ? $ssFilter->order : 'DESC';
+        $this->_params['ssFilter']['filter_status'] = $ssFilter->filter_status;
+        $this->_params['ssFilter']['filter_keyword'] = $ssFilter->filter_keyword;
+        $this->_params['ssFilter']['filter_date_begin'] = $ssFilter->filter_date_begin;
+        $this->_params['ssFilter']['filter_date_end'] = $ssFilter->filter_date_end;
+        $this->_params['ssFilter']['filter_state'] = $ssFilter->filter_state;
+        $this->_params['ssFilter']['filter_type'] = $ssFilter->filter_type;
+        $this->_params['ssFilter']['filter_category'] = $ssFilter->filter_category;
+        $this->_params['ssFilter']['filter_inventory_id'] = $ssFilter->filter_inventory_id;
+        $this->_params['ssFilter']['filter_customer_id'] = $ssFilter->filter_customer_id;
 
         // Thiết lập lại thông số phân trang
-        $this->_paginator['itemCountPerPage']               = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : 50;
-        $this->_paginator['currentPageNumber']              = $this->params()->fromRoute('page', 1);
+        $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : 50;
+        $this->_paginator['currentPageNumber'] = $this->params()->fromRoute('page', 1);
         $this->_params['paginator'] = $this->_paginator;
 
         // Lấy dữ liệu post của form
@@ -42,25 +45,26 @@ class CustomerDebtController extends ActionController{
         $this->_viewModel['params'] = $this->_params;
     }
 
-    public function filterAction() {
+    public function filterAction()
+    {
         if ($this->getRequest()->isPost()) {
             $action = !empty($this->getRequest()->getPost('filter_action')) ? $this->getRequest()->getPost('filter_action') : 'index';
-            
-            $ssFilter	= new Container(__CLASS__ . $action);
+
+            $ssFilter = new Container(__CLASS__ . $action);
             $data = $this->_params['data'];
-            
-            $ssFilter->pagination_option        = intval($data['pagination_option']);
-            $ssFilter->order_by                 = $data['order_by'];
-            $ssFilter->order                    = $data['order'];
-            $ssFilter->filter_status            = $data['filter_status'];
-            $ssFilter->filter_keyword           = $data['filter_keyword'];
-            $ssFilter->filter_date_begin           = $data['filter_date_begin'];
-            $ssFilter->filter_date_end           = $data['filter_date_end'];
-            $ssFilter->filter_state           = $data['filter_state'];
-            $ssFilter->filter_type           = $data['filter_type'];
-            $ssFilter->filter_category           = $data['filter_category'];
-            $ssFilter->filter_inventory_id           = $data['filter_inventory_id'];
-            $ssFilter->filter_customer_id           = $data['filter_customer_id'];
+
+            $ssFilter->pagination_option = intval($data['pagination_option']);
+            $ssFilter->order_by = $data['order_by'];
+            $ssFilter->order = $data['order'];
+            $ssFilter->filter_status = $data['filter_status'];
+            $ssFilter->filter_keyword = $data['filter_keyword'];
+            $ssFilter->filter_date_begin = $data['filter_date_begin'];
+            $ssFilter->filter_date_end = $data['filter_date_end'];
+            $ssFilter->filter_state = $data['filter_state'];
+            $ssFilter->filter_type = $data['filter_type'];
+            $ssFilter->filter_category = $data['filter_category'];
+            $ssFilter->filter_inventory_id = $data['filter_inventory_id'];
+            $ssFilter->filter_customer_id = $data['filter_customer_id'];
         }
 
         if (!empty($this->_params['route']['id'])) {
@@ -70,38 +74,40 @@ class CustomerDebtController extends ActionController{
         $this->goRoute(array('action' => $action));
     }
 
-    public function indexAction() {
-        $myForm    = new \Admin\Form\Search\CustomerDebt($this->getServiceLocator(), $this->_params['ssFilter']);
+    public function indexAction()
+    {
+        $myForm = new \Admin\Form\Search\CustomerDebt($this->getServiceLocator(), $this->_params['ssFilter']);
         $myForm->setData($this->_params['ssFilter']);
         // Danh sách data
         $items = $this->getTable()->listItem($this->_params, array('task' => 'list-item'));
 
-        $this->_viewModel['myForm']             = $myForm;
-        $this->_viewModel['items']              = $items;
-        $this->_viewModel['model']              = $this->getTable();
-        $this->_viewModel['count']              = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
-        $this->_viewModel['order_status']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $this->_viewModel['myForm'] = $myForm;
+        $this->_viewModel['items'] = $items;
+        $this->_viewModel['model'] = $this->getTable();
+        $this->_viewModel['count'] = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
+        $this->_viewModel['order_status'] = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
 
-        $this->_viewModel['user']               = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
-        $this->_viewModel['branch']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
-        $this->_viewModel['debt_category']      = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
-        $this->_viewModel['debt_type']          = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
-        $this->_viewModel['caption']            = $this->caption;
+        $this->_viewModel['user'] = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['branch'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $this->_viewModel['debt_category'] = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
+        $this->_viewModel['debt_type'] = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
+        $this->_viewModel['caption'] = $this->caption;
 
         return new ViewModel($this->_viewModel);
     }
 
-    public function addRevenueAction() {
+    public function addRevenueAction()
+    {
         $myForm = new \Admin\Form\CustomerDebt($this, $this->_params);
         $number = new \ZendX\Functions\Number();
         $connection = $this->getConnection();
 
-        if($this->getRequest()->isPost()){
+        if ($this->getRequest()->isPost()) {
             $myForm->setInputFilter(new \Admin\Filter\CustomerDebt());
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
 
-            if($myForm->isValid()){
+            if ($myForm->isValid()) {
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $customer_id = $this->_params['data']['customer_id'];
                 $contact_item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $customer_id));
@@ -115,14 +121,13 @@ class CustomerDebtController extends ActionController{
                     $list_debt = $list_debt->toArray();
                     $ucdebt = $list_debt[0];
                     $old_debt = $ucdebt['new_debt'];
-                }
-                else{
+                } else {
                     $old_debt = $contact_item['amount_owed'];
                 }
 
-                $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
-                $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
-                $new_debt       = $old_debt - ($paid_cash + $paid_transfer);
+                $paid_cash = $number->formatToData($this->_params['data']['paid_cash']);
+                $paid_transfer = $number->formatToData($this->_params['data']['paid_transfer']);
+                $new_debt = $old_debt - ($paid_cash + $paid_transfer);
                 $data_debt = array(
                     'customer_id' => $customer_id,
                     'type' => THU,
@@ -143,11 +148,11 @@ class CustomerDebtController extends ActionController{
                 $connection->commit();
 
 
-                $this->flashMessenger()->addSuccessMessage('Thêm mới '.$this->caption.' thành công');
+                $this->flashMessenger()->addSuccessMessage('Thêm mới ' . $this->caption . ' thành công');
 
-                if($controlAction == 'save-new') {
+                if ($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'add-revenue'));
-                } else if($controlAction == 'save') {
+                } else if ($controlAction == 'save') {
                     $this->goRoute(array('action' => 'detail-revenue', 'id' => $result));
                 } else {
                     $this->goRoute();
@@ -155,37 +160,36 @@ class CustomerDebtController extends ActionController{
             }
         }
 
-        $this->_viewModel['myForm']	    = $myForm;
-        $this->_viewModel['caption']    = 'Thêm mới - Phiếu Thu: '.$this->caption;
+        $this->_viewModel['myForm'] = $myForm;
+        $this->_viewModel['caption'] = 'Thêm mới - Phiếu Thu ';
         return new ViewModel($this->_viewModel);
     }
 
-    public function detailRevenueAction() {
+    public function detailRevenueAction()
+    {
         $id = $this->params('id');
-        if($id) {
+        if ($id) {
             $connection = $this->getConnection();
             $item = $this->getTable()->getItem(array('id' => $id), array('task' => 'type-id'));
             if (empty($item)) {
                 return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
-            }
-            else{
-                if (!in_array($item['type'], [THU,CHI]) ) {
+            } else {
+                if (!in_array($item['type'], [THU, CHI])) {
                     return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
                 }
             }
         } else {
             return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
         }
-        if($this->getRequest()->isPost()){
+        if ($this->getRequest()->isPost()) {
             $control_action = $this->_params['data']['control-action'];
-            if (!in_array($item['type'], [THU,CHI]) ) {
+            if (!in_array($item['type'], [THU, CHI])) {
                 return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
             }
             if (in_array($item['state'], array(COMPLETE_STATUS, CANCEL_STATUS))) {
                 $state_text = $item['state'] == CANCEL_STATUS ? 'HỦY' : 'HOÀN THÀNH';
-                $this->flashMessenger()->addErrorMessage('Phiếu thu đã ở trạng thái "'.$state_text.'" không thể cập nhật dữ liệu!');
-            }
-            else{
+                $this->flashMessenger()->addErrorMessage('Phiếu thu đã ở trạng thái "' . $state_text . '" không thể cập nhật dữ liệu!');
+            } else {
                 if ($control_action == CANCEL_STATUS) {
                     ##### begin #####
                     $connection->beginTransaction();
@@ -225,31 +229,32 @@ class CustomerDebtController extends ActionController{
             }
         }
 
-        $this->_viewModel['item']                       = $item;
-        $this->_viewModel['contact']                    = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $item['contact_id']));
-        $this->_viewModel['user']                       = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
-        $this->_viewModel['customer_type']              = $this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache'));
-        $this->_viewModel['warehouse']                  = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
-        $this->_viewModel['sale_group']                 = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
-        $this->_viewModel['sale_branch']                = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
-        $this->_viewModel['order_status']               = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-        $this->_viewModel['caption']                    = 'Chi tiết - '.$this->caption. ' - '. $item['code'];
+        $this->_viewModel['item'] = $item;
+        $this->_viewModel['contact'] = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $item['contact_id']));
+        $this->_viewModel['user'] = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['customer_type'] = $this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['warehouse'] = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['sale_group'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
+        $this->_viewModel['sale_branch'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $this->_viewModel['order_status'] = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $this->_viewModel['caption'] = 'Chi tiết phiếu thu - ' . $item['code'];
         $viewModel = new ViewModel($this->_viewModel);
         return $viewModel;
     }
 
-    public function addExpenseAction() {
+    public function addExpenseAction()
+    {
         $this->_params['type'] = 'thu';
         $myForm = new \Admin\Form\CustomerDebt($this, $this->_params);
         $number = new \ZendX\Functions\Number();
         $connection = $this->getConnection();
 
-        if($this->getRequest()->isPost()){
+        if ($this->getRequest()->isPost()) {
             $myForm->setInputFilter(new \Admin\Filter\CustomerDebt());
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
 
-            if($myForm->isValid()){
+            if ($myForm->isValid()) {
                 $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $customer_id = $this->_params['data']['customer_id'];
                 $contact_item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $customer_id));
@@ -263,14 +268,13 @@ class CustomerDebtController extends ActionController{
                     $list_debt = $list_debt->toArray();
                     $ucdebt = $list_debt[0];
                     $old_debt = $ucdebt['new_debt'];
-                }
-                else{
+                } else {
                     $old_debt = $contact_item['amount_owed'];
                 }
 
-                $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
-                $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
-                $new_debt       = $old_debt + ($paid_cash + $paid_transfer);
+                $paid_cash = $number->formatToData($this->_params['data']['paid_cash']);
+                $paid_transfer = $number->formatToData($this->_params['data']['paid_transfer']);
+                $new_debt = $old_debt + ($paid_cash + $paid_transfer);
                 $data_debt = array(
                     'customer_id' => $customer_id,
                     'type' => CHI,
@@ -291,11 +295,11 @@ class CustomerDebtController extends ActionController{
                 $connection->commit();
 
 
-                $this->flashMessenger()->addSuccessMessage('Thêm mới '.$this->caption.' thành công');
+                $this->flashMessenger()->addSuccessMessage('Thêm mới ' . $this->caption . ' thành công');
 
-                if($controlAction == 'save-new') {
+                if ($controlAction == 'save-new') {
                     $this->goRoute(array('action' => 'add-expense'));
-                } else if($controlAction == 'save') {
+                } else if ($controlAction == 'save') {
                     $this->goRoute(array('action' => 'detail-expense', 'id' => $result));
                 } else {
                     $this->goRoute();
@@ -303,37 +307,36 @@ class CustomerDebtController extends ActionController{
             }
         }
 
-        $this->_viewModel['myForm']	    = $myForm;
-        $this->_viewModel['caption']    = 'Thêm mới - Phiếu Thu: '.$this->caption;
+        $this->_viewModel['myForm'] = $myForm;
+        $this->_viewModel['caption'] = 'Thêm mới - Phiếu Chi: ';
         return new ViewModel($this->_viewModel);
     }
 
-    public function detailExpenseAction() {
+    public function detailExpenseAction()
+    {
         $id = $this->params('id');
-        if($id) {
+        if ($id) {
             $connection = $this->getConnection();
             $item = $this->getTable()->getItem(array('id' => $id), array('task' => 'type-id'));
             if (empty($item)) {
                 return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
-            }
-            else{
-                if (!in_array($item['type'], [THU,CHI]) ) {
+            } else {
+                if (!in_array($item['type'], [THU, CHI])) {
                     return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
                 }
             }
         } else {
             return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
         }
-        if($this->getRequest()->isPost()){
+        if ($this->getRequest()->isPost()) {
             $control_action = $this->_params['data']['control-action'];
-            if (!in_array($item['type'], [THU,CHI]) ) {
+            if (!in_array($item['type'], [THU, CHI])) {
                 return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
             }
             if (in_array($item['state'], array(COMPLETE_STATUS, CANCEL_STATUS))) {
                 $state_text = $item['state'] == CANCEL_STATUS ? 'HỦY' : 'HOÀN THÀNH';
-                $this->flashMessenger()->addErrorMessage('Phiếu chi đã ở trạng thái "'.$state_text.'" không thể cập nhật dữ liệu!');
-            }
-            else{
+                $this->flashMessenger()->addErrorMessage('Phiếu chi đã ở trạng thái "' . $state_text . '" không thể cập nhật dữ liệu!');
+            } else {
                 if ($control_action == CANCEL_STATUS) {
                     ##### begin #####
                     $connection->beginTransaction();
@@ -373,20 +376,21 @@ class CustomerDebtController extends ActionController{
             }
         }
 
-        $this->_viewModel['item']                       = $item;
-        $this->_viewModel['contact']                    = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $item['contact_id']));
-        $this->_viewModel['user']                       = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
-        $this->_viewModel['customer_type']              = $this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache'));
-        $this->_viewModel['warehouse']                  = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
-        $this->_viewModel['sale_group']                 = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
-        $this->_viewModel['sale_branch']                = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
-        $this->_viewModel['order_status']               = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-        $this->_viewModel['caption']                    = 'Chi tiết - '.$this->caption. ' - '. $item['code'];
+        $this->_viewModel['item'] = $item;
+        $this->_viewModel['contact'] = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $item['contact_id']));
+        $this->_viewModel['user'] = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['customer_type'] = $this->getServiceLocator()->get('Admin\Model\CustomerTypeTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['warehouse'] = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['sale_group'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
+        $this->_viewModel['sale_branch'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $this->_viewModel['order_status'] = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $this->_viewModel['caption'] = 'Chi tiết phiếu chi - ' . $item['code'];
         $viewModel = new ViewModel($this->_viewModel);
         return $viewModel;
     }
 
-    public function deleteAction() {
+    public function deleteAction()
+    {
 //        if($this->getRequest()->isPost()) {
 //            if(!empty($this->_params['data']['cid'])) {
 //                $cdata = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
@@ -398,13 +402,14 @@ class CustomerDebtController extends ActionController{
         $this->goRoute(array('action' => 'index'));
     }
 
-    public function exportAction() {
+    public function exportAction()
+    {
 
         $dateFormat = new \ZendX\Functions\Date();
-        $file_name = 'thu_chi_khach_hang_ '.date('Y_m_d').'.xlsx';
+        $file_name = 'thu_chi_khach_hang_ ' . date('Y_m_d') . '.xlsx';
         $items = $this->getTable()->listItem($this->_params, array('task' => 'list-item', 'paginator' => false));
-        $debt_type      = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-        $debt_category  = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $debt_type = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $debt_category = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
 
         require_once PATH_VENDOR . '/Excel/PHPExcel.php';
 
@@ -431,7 +436,7 @@ class CustomerDebtController extends ActionController{
 
         // Dữ liệu tiêu đề
         $startColumn = $config['startColumn'];
-        foreach ($arrData AS $key => $data) {
+        foreach ($arrData as $key => $data) {
             $colLetter = $arrColumn[$startColumn];
             $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $config['headRow'], $data['title']);
             $objPHPExcel->getActiveSheet()->getStyle($colLetter . $config['headRow'])->getFont()->setBold(true);
@@ -440,21 +445,21 @@ class CustomerDebtController extends ActionController{
 
         // Dữ liệu data
         $startRow = $config['startRow'];
-        foreach ($items AS $item) {
+        foreach ($items as $item) {
             $startColumn = $config['startColumn'];
-            foreach ($arrData AS $key => $data) {
+            foreach ($arrData as $key => $data) {
                 $colLetter = $arrColumn[$startColumn];
                 switch ($data['type']) {
                     case 'date':
                         $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
-                        $value      = $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        $value = $dateFormat->formatToView($item[$data['field']], $formatDate);
                         break;
                     case 'datetime':
                         $formatDate = $data['format'] ? $data['format'] : 'd/m/Y H:i:s';
-                        $value      = $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        $value = $dateFormat->formatToView($item[$data['field']], $formatDate);
                         break;
                     case 'abs':
-                        $value      = abs($item[$data['field']]);
+                        $value = abs($item[$data['field']]);
                         break;
                     case 'data_source':
                         $field = $data['data_source_field'] ? $data['data_source_field'] : 'name';
@@ -476,7 +481,7 @@ class CustomerDebtController extends ActionController{
         }
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="'.$file_name.'"');
+        header('Content-Disposition: attachment;filename="' . $file_name . '"');
 
         $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
         $objWriter->save('php://output');
@@ -484,114 +489,113 @@ class CustomerDebtController extends ActionController{
     }
 
     // Vào sổ thanh toán
-    public function acceptAction() {
-        if(!empty($this->_params['data']['id'])) {
-            $item    = $this->getTable()->getItem(array('id' => $this->_params['data']['id']), array('task' => 'type-id'));
+    public function acceptAction()
+    {
+        if (!empty($this->_params['data']['id'])) {
+            $item = $this->getTable()->getItem(array('id' => $this->_params['data']['id']), array('task' => 'type-id'));
+            $debt_type = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
             $contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $item['customer_id']));
         } else {
             return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
         }
-        if($this->getRequest()->isPost()){
-            $dateFomart = new \ZendX\Functions\Date();
-            $myForm  = new \Admin\Form\CustomerDebt\Accept($this->getServiceLocator());
+        if ($this->getRequest()->isPost()) {
+            $myForm = new \Admin\Form\CustomerDebt\Accept($this->getServiceLocator());
             $myForm->setInputFilter(new \Admin\Filter\CustomerDebt\Accept($this->_params['data']));
-            if (in_array($item['type'], [KMH,PTH,THU])) {
-                $arrData = array(
-                    'id'                        => $item['id'],
-                    'date'                      => $dateFomart->formatToView($item['date']), // Ngày thu chi = Ngày thanh toán thực tế
-                    'transaction_type_id'       => 'thu', // Nghiệp vụ
-                    'content'                   => $item['content'], // Nội dung
-                    'submitter_name'            => $item['customer_name'], // Người nộp
-                    'submitter_phone'           => $item['customer_phone'], // Điện thoại
-                    'transaction_category_id'   => 'giao-dich',
-//                    'transaction_form_id'       => 'tien-mat',
-                    'paid_cash'                 => abs($item['paid_cash']),
-                    'paid_transfer'             => abs($item['paid_transfer']),
-                    'accrued_cash'              => 0,
-                    'accrued_transfer'          => 0,
-                );
-            }
-            if (in_array($item['type'], [KTH,PNH,CHI])) {
-                $arrData = array(
-                    'id'                        => $item['id'],
-                    'date'                      => $dateFomart->formatToView($item['date']), // Ngày thu chi = Ngày thanh toán thực tế
-                    'transaction_type_id'       => 'chi', // Nghiệp vụ
-                    'content'                   => $item['content'], // Nội dung
-                    'submitter_name'            => $item['customer_name'], // Người nộp
-                    'submitter_phone'           => $item['customer_phone'], // Điện thoại
-                    'transaction_category_id'   => 'giao-dich',
-//                    'transaction_form_id'       => 'tien-mat',
-                    'paid_cash'                 => 0,
-                    'paid_transfer'             => 0,
-                    'accrued_cash'              => abs($item['paid_cash']),
-                    'accrued_transfer'          => abs($item['paid_transfer']),
-                );
-            }
+            $arrData = array(
+                'id' => $item['id'],
+                'content' => $debt_type[$item['type']],
+                'note' => $item['note'],
+            );
 
             $myForm->setData($arrData);
 
-            if($this->_params['data']['modal'] == 'success') {
+            $connection = $this->getConnection();
+
+            if ($this->_params['data']['modal'] == 'success') {
                 $myForm->setData($this->_params['data']);
-                if($myForm->isValid()){
+                if ($myForm->isValid()) {
+
                     $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
-                    $this->_params['data']['customer_debt_id'] = $item['id'];
-                    $this->_params['data']['inventory_id'] = $item['inventory_id'];
+                    $params = $this->_params['data'];
 
                     $this->_params['item'] = $item;
+                    $transaction_type = '';
+                    if (in_array($item['type'], [KMH,PTH,THU])) {
+                        $transaction_type = 'thu';
+                    }
+                    if (in_array($item['type'], [KTH,PNH,CHI])) {
+                        $transaction_type = 'chi';
+                    }
 
-                    $accountant_funds = $this->getServiceLocator()->get('Admin\Model\FundsTable')->getItem(array('id' => $arrData['accountant_funds_id']));
-                    $funds = $accountant_funds['price'] + $number->formatToNumber($arrData['paid']) - $number->formatToNumber($arrData['accrued']);
-                    $content = ($arrData['content_select'] != 'other') ? $arrData['content_select'] . ' ' . $arrData['content'] : $arrData['content'];
-                    $data = array(
-                        'date' => $date->formatToData($arrData['date'], 'Y-m-d'),
-                        'code' => strtoupper(trim($arrData['code'])),
-                        'accountant_funds_id' => $arrData['accountant_funds_id'],
-                        'transaction_category_id' => $arrData['transaction_category_id'],
-                        'transaction_type_id' => $arrData['transaction_type_id'],
-                        'transaction_form_id' => $arrData['transaction_form_id'],
-                        'category_id' => $arrData['category_id'],
-                        'content' => $content,
-                        'sale_branch_id' => $accountant_funds['company_branch_id'],
-                        'created_item_id' => $this->userInfo->getUserInfo('id'),
-                        'submitter_name' => $arrData['submitter_name'],
-                        'submitter_phone' => $arrData['submitter_phone'],
-                        'paid' => $number->formatToNumber($arrData['paid']),
-                        'accrued' => $number->formatToNumber($arrData['accrued']),
-                        'funds' => $number->formatToNumber($funds),
-                        'note' => $arrData['note'],
-                        'customer_debt_id' => $arrData['customer_debt_id'] ?: null,
-                        'inventory_id' => $arrData['inventory_id'] ?: null,
-                        'status' => $arrData['customer_debt_id'] ? 1 : 0,
-                        'created' => date('Y-m-d H:i:s'),
-                        'created_by' => $this->userInfo->getUserInfo('id'),
-                    );
-                    echo "<pre>";
-                    print_r($item);
-                    echo "</pre>";
-                    echo "<pre>";
-                    print_r($this->_params['data']);
-                    echo "</pre>";
-                    exit;
+                    ##### begin #####
+                    $connection->beginTransaction();
+
+                    if (abs($item['paid_cash']) > 0) {
+                        $data = array(
+                            'date' => $item['date'],
+                            'accountant_funds_id' => $params['accountant_funds_id_cash'],
+                            'transaction_category_id' => 'giao-dich',
+                            'transaction_type_id' => $transaction_type,
+                            'transaction_form_id' => 'tien-mat',
+                            'category_id' => $params['category_id'],
+                            'content' => $params['content'],
+                            'submitter_name' => $item['customer_name'],
+                            'submitter_phone' => $item['customer_phone'],
+                            'paid' => $transaction_type == 'thu' ? abs($item['paid_cash']) : 0,
+                            'accrued' => $transaction_type == 'chi' ? abs($item['paid_cash']) : 0,
+                            'note' => $params['note'],
+                            'customer_debt_id' => $item['id'] ? $item['id'] : null,
+                            'inventory_id' => $item['inventory_id'] ? $item['inventory_id'] : null,
+                        );
+                        $this->_params['data'] = $data;
+
+                        $this->getServiceLocator()->get('Admin\Model\AccountantBillTable')->saveItem($this->_params, array('task' => 'add-item'));
+                    }
+                    if (abs($item['paid_transfer']) > 0) {
+                        $data = array(
+                            'date' => $item['date'],
+                            'accountant_funds_id' => $params['accountant_funds_id_transfer'],
+                            'transaction_category_id' => 'giao-dich',
+                            'transaction_type_id' => $transaction_type,
+                            'transaction_form_id' => 'chuyen-khoan',
+                            'category_id' => $params['category_id'],
+                            'content' => $params['content'],
+                            'submitter_name' => $item['customer_name'],
+                            'submitter_phone' => $item['customer_phone'],
+                            'paid' => $transaction_type == 'thu' ? abs($item['paid_transfer']) : 0,
+                            'accrued' => $transaction_type == 'chi' ? abs($item['paid_transfer']) : 0,
+                            'note' => $params['note'],
+                            'customer_debt_id' => $item['id'] ? $item['id'] : null,
+                            'inventory_id' => $item['inventory_id'] ? $item['inventory_id'] : null,
+                        );
+                        $this->_params['data'] = $data;
+
+                        $this->getServiceLocator()->get('Admin\Model\AccountantBillTable')->saveItem($this->_params, array('task' => 'add-item'));
+                    }
+
+                    $this->getTable()->saveItem(array('data' => array('id' => $item['id'], 'accept' => 1)), array('task' => 'update-item'));
+
+
+                    $connection->commit();
 
                     // Vào sổ tài khoản thanh toán
-                    $this->getServiceLocator()->get('Admin\Model\AccountantBillTable')->saveItem($this->_params, array('task' => 'add-item'));
-                    $this->getTable()->saveItem(array('data' => array('id' => $item['id'], 'accept' => 1)), array('task' => 'update-item'));
+
                     $this->flashMessenger()->addMessage('Vào sổ tài khoản thành công');
                     echo 'success';
                     return $this->response;
                 }
             }
-        }
-        else {
+        } else {
             return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
         }
 
-        $this->_viewModel['myForm']       = $myForm;
-        $this->_viewModel['item']         = $item;
-        $this->_viewModel['contact']      = $contact;
-        $this->_viewModel['bill_type']    = array('paid' => 'Thu', 'accrued' => 'Chi', 'surcharge' => 'Phụ phí');
-        $this->_viewModel['paid_type']    = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array("table" => "document", "where" => array("code" => "bill-type-paid"), "order" => array("ordering" => "ASC", "created" => "ASC", "name" => "ASC"), "view" => array("key" => "id", "value" => "name", "sprintf" => "%s")), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
-        $this->_viewModel['caption']      = 'Vào sổ tài khoản - thanh toán';
+        $this->_viewModel['myForm'] = $myForm;
+        $this->_viewModel['item'] = $item;
+        $this->_viewModel['debt_type'] = $debt_type;
+        $this->_viewModel['contact'] = $contact;
+        $this->_viewModel['bill_type'] = array('paid' => 'Thu', 'accrued' => 'Chi', 'surcharge' => 'Phụ phí');
+        $this->_viewModel['paid_type'] = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array("table" => "document", "where" => array("code" => "bill-type-paid"), "order" => array("ordering" => "ASC", "created" => "ASC", "name" => "ASC"), "view" => array("key" => "id", "value" => "name", "sprintf" => "%s")), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $this->_viewModel['caption'] = 'Vào sổ tài khoản - thanh toán';
 
         $viewModel = new ViewModel($this->_viewModel);
         $viewModel->setTerminal(true);

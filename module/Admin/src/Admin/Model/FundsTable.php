@@ -59,6 +59,13 @@ class FundsTable extends DefaultTable
                 if (!empty($this->userInfo->getUserInfo('company_branch_id'))) {
                     $select->where->equalTo('company_branch_id', $this->userInfo->getUserInfo('company_branch_id'));
                 }
+                if (!empty($this->userInfo->getUserInfo('id'))) {
+                    $select->where->like('user_ids', "%{$this->userInfo->getUserInfo('id')}%");
+                }
+
+                if (!empty($arrParam['transaction_form_id'])) {
+                    $select->where->equalTo('transaction_form_id', $arrParam['transaction_form_id']);
+                }
 
             })->toArray();
         }

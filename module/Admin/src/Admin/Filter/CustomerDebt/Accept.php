@@ -12,22 +12,6 @@ class Accept extends InputFilter {
     protected $_optionContract;
 	
 	public function __construct($options = null){
-	    // Ngày chứng từ
-	    $this->add(array(
-	        'name'		=> 'date',
-	        'required'	=> true,
-	        'validators'	=> array(
-	            array(
-	                'name'		=> 'NotEmpty',
-	                'options'	=> array(
-	                    'messages'	=> array(
-	                        \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-	                    )
-	                ),
-	                'break_chain_on_failure'	=> true
-	            )
-	        )
-	    ));
 	    
 		// Tài khoản chính
 		$this->add(array(
@@ -60,57 +44,6 @@ class Accept extends InputFilter {
 				)
 			)
 		));
-	    
-		// Loại nghiệp vụ
-		$this->add(array(
-			'name'		=> 'transaction_category_id',
-			'required'	=> true,
-			'validators'	=> array(
-				array(
-					'name'		=> 'NotEmpty',
-				    'options'	=> array(
-				        'messages'	=> array(
-				            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-				        )
-				    ),
-					'break_chain_on_failure'	=> true
-				)
-			)
-		));
-	    
-		// Nghiệp vụ
-		$this->add(array(
-			'name'		=> 'transaction_type_id',
-			'required'	=> true,
-			'validators'	=> array(
-				array(
-					'name'		=> 'NotEmpty',
-				    'options'	=> array(
-				        'messages'	=> array(
-				            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-				        )
-				    ),
-					'break_chain_on_failure'	=> true
-				)
-			)
-		));
-	    
-		// Hình thức giao dịch
-//		$this->add(array(
-//			'name'		=> 'transaction_form_id',
-//			'required'	=> true,
-//			'validators'	=> array(
-//				array(
-//					'name'		=> 'NotEmpty',
-//				    'options'	=> array(
-//				        'messages'	=> array(
-//				            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-//				        )
-//				    ),
-//					'break_chain_on_failure'	=> true
-//				)
-//			)
-//		));
 	    
 		// Danh mục
 		$this->add(array(
@@ -162,89 +95,5 @@ class Accept extends InputFilter {
 				)
 			)
 		));
-	    
-		// Số tiền thu
-		if($options['transaction_type_id'] == 'thu') {
-    		$this->add(array(
-    			'name'		=> 'paid_cash',
-    			'required'	=> true,
-    			'validators'	=> array(
-    				array(
-    					'name'		=> 'NotEmpty',
-    				    'options'	=> array(
-    				        'messages'	=> array(
-    				            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-    				        )
-    				    ),
-    					'break_chain_on_failure'	=> true
-    				)
-    			)
-    		));
-    		$this->add(array(
-    			'name'		=> 'paid_transfer',
-    			'required'	=> true,
-    			'validators'	=> array(
-    				array(
-    					'name'		=> 'NotEmpty',
-    				    'options'	=> array(
-    				        'messages'	=> array(
-    				            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-    				        )
-    				    ),
-    					'break_chain_on_failure'	=> true
-    				)
-    			)
-    		));
-		}
-	    
-		// Số tiền chi
-		if($options['transaction_type_id'] == 'chi') {
-    		$this->add(array(
-    			'name'		=> 'accrued_cash',
-    			'required'	=> true,
-    			'validators'	=> array(
-    				array(
-    					'name'		=> 'NotEmpty',
-    				    'options'	=> array(
-    				        'messages'	=> array(
-    				            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-    				        )
-    				    ),
-    					'break_chain_on_failure'	=> true
-    				)
-    			)
-    		));
-    		$this->add(array(
-    			'name'		=> 'accrued_transfer',
-    			'required'	=> true,
-    			'validators'	=> array(
-    				array(
-    					'name'		=> 'NotEmpty',
-    				    'options'	=> array(
-    				        'messages'	=> array(
-    				            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-    				        )
-    				    ),
-    					'break_chain_on_failure'	=> true
-    				)
-    			)
-    		));
-		}
-
-        $this->add(array(
-            'name'		=> 'content',
-            'required'	=> true,
-            'validators'	=> array(
-                array(
-                    'name'		=> 'NotEmpty',
-                    'options'	=> array(
-                        'messages'	=> array(
-                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-                        )
-                    ),
-                    'break_chain_on_failure'	=> true
-                )
-            )
-        ));
 	}
 }

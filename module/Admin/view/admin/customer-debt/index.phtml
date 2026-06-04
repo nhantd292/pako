@@ -74,7 +74,7 @@
             else
                 $accept = '';
             $linkPopupAccept = empty($item['accept']) ? 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'accept')) . '\', {\'id\': \'' . $item['id'] . '\'});' : '#';
-            $linkPopupAccept = $accept = '';
+//            $linkPopupAccept = $accept = '';
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
     							<td class="text-center">'. $cid .'</td>
