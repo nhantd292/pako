@@ -360,7 +360,7 @@ class AccountantBillTable extends DefaultTable
                 if (!empty($arrItem['paid'])) {
                     $dataUpdate = array('funds' => new Expression('(`funds` - ?)', array($number->formatToNumber($arrItem['paid']))));
                     $whereUpdate = new Where();
-                    $whereUpdate->greaterThan('id', $arrItem['id']);
+                    $whereUpdate->greaterThan('index', $arrItem['index']);
                     $whereUpdate->equalTo('accountant_funds_id', $arrItem['accountant_funds_id']);
                     $this->tableGateway->update($dataUpdate, $whereUpdate);
 
@@ -372,7 +372,7 @@ class AccountantBillTable extends DefaultTable
                 } else if (!empty($arrItem['accrued'])) {
                     $dataUpdate = array('funds' => new Expression('(`funds` + ?)', array($number->formatToNumber($arrItem['accrued']))));
                     $whereUpdate = new Where();
-                    $whereUpdate->greaterThan('id', $arrItem['id']);
+                    $whereUpdate->greaterThan('index', $arrItem['index']);
                     $whereUpdate->equalTo('accountant_funds_id', $arrItem['accountant_funds_id']);
                     $this->tableGateway->update($dataUpdate, $whereUpdate);
 

@@ -176,91 +176,20 @@ class AccountantBillController extends ActionController {
         $this->_viewModel['userInfo']   = $this->_userInfo->getUserInfo();
         return new ViewModel($this->_viewModel);
     }
-
-    public function addAction() {
-        $myForm = $this->getForm();
-        $dateFormart   = new \ZendX\Functions\Date();
-        $numberFormart = new \ZendX\Functions\Number();
-
-        $task = 'add-item';
-        $caption = 'Nghiệp vụ - Thêm mới';
-        $item = array();
-        if(!empty($this->params('id'))) {
-            $this->_params['data']['id'] = $this->params('id');
-            $item = $this->getTable()->getItem($this->_params['data']);
-            $this->_params['item'] = $item;
-            $item['date'] = $dateFormart->formatToView($item['date']);
-
-            if(!empty($item)) {
-                $content_select = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "accountant-content" ) ), array('task' => 'cache'));
-                foreach ($content_select AS $key => $value) {
-                    if(strpos($item['content'], $value['name']) !== false) {
-                        $content_select = explode($value['name'], $item['content']);
-
-                        $item['content_select'] = trim($value['name']);
-                        $item['content'] = trim($content_select[1]);
-                    }
-                }
-
-                if(empty($item['content_select'])) {
-                    $item['content_select'] = 'other';
-                }
-
-                if($this->params('code') == 'copy') {
-                    $arrFilter = $this->_params['data'];
-                    unset($arrFilter['id']);
-
-                    $myForm->setInputFilter(new \Admin\Filter\AccountantBill($arrFilter));
-                    $myForm->bind($item);
-                    $task = 'add-item';
-                    $caption = 'Nghiệp vụ - Copy';
-                } else {
-                    $myForm->setInputFilter(new \Admin\Filter\AccountantBill($this->_params['data']));
-                    $myForm->setData($item);
-                    $task = 'edit-item';
-                    $caption = 'Nghiệp vụ - Sửa';
-                }
-            }
-        } else {
-            $myForm->setInputFilter(new \Admin\Filter\AccountantBill($this->_params['data']));
-        }
-
-        if($this->getRequest()->isPost()){
-            $myForm->setData($this->_params['data']);
-            $controlAction = $this->_params['data']['control-action'];
-
-            if($myForm->isValid()){
-                $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
-                $result = $this->getTable()->saveItem($this->_params, array('task' => $task));
-
-                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
-
-                if($controlAction == 'save-new') {
-                    return $this->redirect()->toRoute('routeAdmin/default', array('controller' => $this->_params['controller'], 'action' => 'form'));
-                } else if($controlAction == 'save') {
-                    return $this->redirect()->toRoute('routeAdmin/default', array('controller' => $this->_params['controller'], 'action' => 'form', 'id' => $result));
-                } else {
-                    return $this->redirect()->toRoute('routeAdmin/default', array('controller' => $this->_params['controller'], 'action' => 'index'));
-                }
-            }
-        }
-
-        $this->_viewModel['myForm']     = $myForm;
-        $this->_viewModel['item']       = $item;
-        $this->_viewModel['caption']    = $caption;
-        $this->_viewModel['userInfo']   = $this->_userInfo->getUserInfo();
-        return new ViewModel($this->_viewModel);
-    }
     
     public function deleteAction() {
         $item = $this->getTable()->getItem(array('id' => $this->_params['route']['id']));
         if(empty($item)) {
             return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
         }
+        $connection = $this->getConnection();
         if($this->getRequest()->isPost()){
-            if($item['status'] == 0) {
+            if($item['status'] == 0 and empty($item['customer_debt_id'])) {
                 $this->_params['item'] = $item;
+                # begin
+                $connection->beginTransaction();
                 $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
+                $connection->commit();
                 $this->flashMessenger()->addSuccessMessage('Xóa dữ liệu thành công');
                 return $this->redirect()->toRoute('routeAdmin/default', array('controller' => $this->_params['controller'], 'action' => 'index'));
             }
