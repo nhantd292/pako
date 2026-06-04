@@ -110,6 +110,20 @@ class Contract extends Form {
             )
         ));
 
+        // Loại đơn sản xuất
+        $this->add(array(
+            'name'			=> 'production_type_id',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Chọn -',
+                'disable_inarray_validator' => true,
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "production-type" )), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            ),
+        ));
+
         $this->add(array(
             'name'			=> 'invoice_type',
             'type'			=> 'Select',

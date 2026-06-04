@@ -45,7 +45,7 @@ class ContractController extends ActionController {
         $this->_params['ssFilter']['filter_category']       = $ssFilter->filter_category;
         $this->_params['ssFilter']['filter_product']        = $ssFilter->filter_product;
         $this->_params['ssFilter']['filter_update_kov_false']        = $ssFilter->filter_update_kov_false;
-//        $this->_params['ssFilter']['filter_production_type_id']        = $ssFilter->filter_production_type_id;
+        $this->_params['ssFilter']['filter_production_type_id']        = $ssFilter->filter_production_type_id;
         $this->_params['ssFilter']['filter_shipper_id']     = $ssFilter->filter_shipper_id;
         $this->_params['ssFilter']['filter_care_status']    = $ssFilter->filter_care_status;
         $this->_params['ssFilter']['filter_marketer_status']= $ssFilter->filter_marketer_status;
@@ -92,6 +92,7 @@ class ContractController extends ActionController {
             $ssFilter->filter_state             = $data['filter_state'];
             $ssFilter->filter_user              = $data['filter_user'];
             $ssFilter->filter_delivery_id       = $data['filter_delivery_id'];
+            $ssFilter->filter_production_type_id = $data['filter_production_type_id'];
             $ssFilter->filter_action            = $data['filter_action'];
             $ssFilter->filter_coincider 	    = $data['filter_coincider'];
             $ssFilter->filter_unit_transport 	= $data['filter_unit_transport'];
