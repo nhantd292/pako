@@ -266,6 +266,8 @@ class ContactController extends ActionController
             $this->_params['data']['id'] = $this->params('id');
             $item                        = $this->getTable()->getItem($this->_params['data']);
 
+            $item['customer_type_ids'] = $customer_type_ids;
+
             if (!empty($item)) {
                 $item_options        = !empty($item['options']) ? unserialize($item['options']) : array();
                 $item['date_return'] = $dateFormat->formatToView($item['date_return']);
