@@ -493,6 +493,9 @@ class CustomerDebtController extends ActionController
     {
         if (!empty($this->_params['data']['id'])) {
             $item = $this->getTable()->getItem(array('id' => $this->_params['data']['id']), array('task' => 'type-id'));
+            if ($item['accept'] == 1) {
+                return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+            }
             $debt_type = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
             $contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $item['customer_id']));
         } else {
