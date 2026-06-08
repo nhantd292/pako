@@ -696,7 +696,7 @@ class ContractController extends ActionController {
     }
 
     // Xuất mẫu hóa đơn VAT
-    public function exportVATAction() {
+    public function exportVATv1Action() {
         $dateFormat             = new \ZendX\Functions\Date();
         $items      = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('ssFilter' => $this->_params['data']), array('task' => 'list-item', 'paginator' => false))->toArray();
 
@@ -819,6 +819,161 @@ class ContractController extends ActionController {
             }
 
             $startRow++;
+        }
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="'.'Don_xuat_vat_'.date('d-m-Y').'.xlsx"');
+        header('Cache-Control: max-age=0');
+        header('Cache-Control: max-age=1');
+        header ('Expires: Mon, 26 Jul 1997 05:00:00 GMT');
+        header ('Last-Modified: '.gmdate('D, d M Y H:i:s').' GMT');
+        header ('Cache-Control: cache, must-revalidate');
+        header ('Pragma: public');
+
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+    public function exportVATAction() {
+        $dateFormat             = new \ZendX\Functions\Date();
+        $items      = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('ssFilter' => $this->_params['data']), array('task' => 'list-item', 'paginator' => false))->toArray();
+
+        $units         = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache'));
+
+        require_once PATH_VENDOR . '/Excel/PHPExcel.php';
+
+        $config = array('sheetData' => 0, 'headRow' => 1, 'startRow' => 2, 'startColumn' => 0);
+        $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
+
+        // Cấu hình mảng dữ liệu: Đã đổi Ngày hóa đơn sang format_code => '@' (Text)
+        $arrData = array(
+            array('field' => 'stt', 'title' => 'Số thứ tự hóa đơn (*)', 'align' => 'center', 'format_code' => 'General'),
+            array('field' => 'contract_date', 'title' => 'Ngày hóa đơn', 'type' => 'date', 'align' => 'center', 'format_code' => '@'), // Để dạng Text cứng
+            array('field' => 'company_name', 'title' => 'Tên khách hàng', 'format_code' => '@'),
+            array('field' => 'company_address', 'title' => 'Địa chỉ', 'format_code' => '@'),
+            array('field' => 'company_mst', 'title' => 'Mã số thuế', 'align' => 'center', 'format_code' => '@'), // Để dạng Text cứng giữ số 0
+            array('field' => 'customer_name', 'title' => 'Người mua hàng', 'format_code' => '@'),
+            array('field' => 'company_email', 'title' => 'Email', 'format_code' => '@'),
+            array('field' => 'pay_type', 'title' => 'Hình thức thanh toán', 'align' => 'center', 'format_code' => '@'),
+            array('field' => 'percent_vat', 'title' => 'Thuế suất GTGT (%)', 'align' => 'center', 'format_code' => '#,##0'),
+            array('field' => 'contract_vat', 'title' => 'Tiền thuế GTGT', 'align' => 'right', 'format_code' => '#,##0'),
+            array('field' => 'products_name_vat', 'title' => 'Tên hàng hóa/dịch vụ (*)'),
+            array('field' => 'products_unit_id', 'title' => 'Đơn vị', 'type' => 'data_source', 'data_source' => $units, 'align' => 'center'),
+            array('field' => 'numbers', 'title' => 'Số lượng', 'align' => 'right', 'format_code' => '#,##0'),
+            array('field' => 'price', 'title' => 'Đơn giá', 'align' => 'right', 'format_code' => '#,##0'),
+            array('field' => 'total', 'title' => 'Thành tiền', 'align' => 'right', 'format_code' => '#,##0'),
+        );
+
+        // Create new PHPExcel object
+        $objPHPExcel = new \PHPExcel();
+        $sheet = $objPHPExcel->setActiveSheetIndex($config['sheetData']);
+
+        // Dữ liệu tiêu đề cột
+        $startColumn = $config['startColumn'];
+        foreach ($arrData AS $key => $data) {
+            $sheet->setCellValue($arrColumn[$startColumn] . $config['headRow'], $data['title']);
+            $sheet->getStyle($arrColumn[$startColumn] . $config['headRow'])->getFont()->setBold(true);
+            $sheet->getStyle($arrColumn[$startColumn] . $config['headRow'])->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+            $startColumn++;
+        }
+
+        // Dữ liệu data
+        $startRow = $config['startRow'];
+        $i = 1;
+        $contract_id = '';
+        foreach ($items AS $item) {
+//            $net_numbers = $item['numbers'] - $item['numbers_return'];
+//            $item['numbers'] = $net_numbers;
+//            $item['total'] = $net_numbers * $item['price'];
+//            $item['percent_vat'] = $this->_params['settings']['General.System.Vat']['value'];
+
+            $net_numbers = $item['numbers'] - $item['numbers_return'];
+            $item['percent_vat'] = $this->_params['settings']['General.System.Vat']['value'];
+            $item['numbers'] = $net_numbers;
+            $item['price'] = round($item['price'] / (1 + $item['percent_vat'] / 100));
+            $item['total'] = round($net_numbers * $item['price']);
+            $item['pay_type'] = 'TM/CK';
+
+            if ($item['contract_id'] != $contract_id) {
+                $contract_id = $item['contract_id'];
+                $item['stt'] = $i;
+                $i++;
+            }
+            else {
+                $item['stt'] = $i-1;
+                $item['contract_date'] =
+                $item['company_name'] =
+                $item['company_address'] =
+                $item['company_mst'] =
+                $item['customer_name'] =
+                $item['company_email'] =
+                $item['pay_type'] =
+                $item['percent_vat'] =
+                $item['contract_vat'] = '';
+            }
+
+            $startColumn = $config['startColumn'];
+            foreach ($arrData AS $key => $data) {
+                $colLetter = $arrColumn[$startColumn];
+                $cellCoordinate = $colLetter . $startRow;
+                $value = $item[$data['field']];
+
+                switch ($data['type']) {
+                    case 'date':
+                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
+                        // Định dạng chuỗi ngày d/m/Y sạch sẽ, nếu dòng trống do gộp thì giữ rỗng ''
+                        $value = (!empty($value)) ? $dateFormat->formatToView($value, $formatDate) : '';
+                        break;
+                    case 'data_source':
+                        $field = $data['data_source_field'] ? $data['data_source_field'] : 'name';
+                        $value = $data['data_source'][$value][$field];
+                        break;
+                }
+
+                // Ép kiểu số float đối với các trường số (loại trừ các trường có format_code là Text @ hoặc General)
+                if (isset($data['format_code']) && $data['format_code'] !== '@' && $data['format_code'] !== 'General' && $value !== '') {
+                    $value = (float)$value;
+                }
+
+                // Ghi dữ liệu vào ô (Nếu cấu hình format_code là '@' thì ép kiểu Text chuỗi Explicit để bảo toàn dữ liệu gốc)
+                if (isset($data['format_code']) && $data['format_code'] === '@') {
+                    $sheet->setCellValueExplicit($cellCoordinate, $value, \PHPExcel_Cell_DataType::TYPE_STRING);
+                } else {
+                    $sheet->setCellValue($cellCoordinate, $value);
+                }
+
+                $cellStyle = $sheet->getStyle($cellCoordinate);
+
+                // Xử lý Căn lề (Align)
+                if (isset($data['align'])) {
+                    switch ($data['align']) {
+                        case 'center':
+                            $cellStyle->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+                            break;
+                        case 'right':
+                            $cellStyle->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+                            break;
+                        case 'left':
+                            $cellStyle->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_LEFT);
+                            break;
+                    }
+                }
+
+                // Áp dụng mã định dạng format_code vào ô Excel
+                if (isset($data['format_code']) && $value !== '') {
+                    $cellStyle->getNumberFormat()->setFormatCode($data['format_code']);
+                }
+
+                $startColumn++;
+            }
+
+            $startRow++;
+        }
+
+        // Tự động giãn chiều rộng cột (Auto Fit)
+        $maxColumnIndex = $config['startColumn'] + count($arrData);
+        for ($col = $config['startColumn']; $col < $maxColumnIndex; $col++) {
+            $sheet->getColumnDimension($arrColumn[$col])->setAutoSize(true);
         }
 
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
@@ -1031,8 +1186,8 @@ class ContractController extends ActionController {
             $net_numbers = $item['numbers'] - $item['numbers_return'];
             $item['percent_vat'] = $this->_params['settings']['General.System.Vat']['value'];
             $item['numbers'] = $net_numbers;
-            $item['price'] = $item['price'] / (1 + $item['percent_vat'] / 100);
-            $item['total'] = $net_numbers * $item['price'];
+            $item['price'] = round($item['price'] / (1 + $item['percent_vat'] / 100));
+            $item['total'] = round($net_numbers * $item['price']);
             $item['pay_type'] = 'TM/CK';
 
             if ($item['contract_id'] != $contract_id) {
