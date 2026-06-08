@@ -102,8 +102,8 @@ class FundsTable extends DefaultTable
                 'transaction_form_id' => $arrData['transaction_form_id'],
                 'user_ids' => $user_ids,
                 'price' => $number->formatToNumber($arrData['price']),
-                'ordering' => $arrData['ordering'],
-                'status' => $arrData['status'],
+                'ordering' => 255,
+                'status' => 1,
                 'created' => date('Y-m-d H:i:s'),
                 'created_by' => $this->userInfo->getUserInfo('id'),
             );
