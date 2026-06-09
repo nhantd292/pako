@@ -899,6 +899,21 @@ class ContractController extends ActionController {
             if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == 1) {
                 $item['total'] += 1;
             }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == 2) {
+                $item['total'] += 2;
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == 3) {
+                $item['total'] += 3;
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == -1) {
+                $item['total'] -= 1;
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == -2) {
+                $item['total'] -= 2;
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == -3) {
+                $item['total'] -= 3;
+            }
 
             if ($item['contract_id'] != $contract_id) {
                 $contract_id = $item['contract_id'];
@@ -1188,6 +1203,7 @@ class ContractController extends ActionController {
         $startRow = $config['startRow'];
         $i = 1;
         $contract_id = '';
+        $tm = array();
         foreach ($items AS $item) {
             $net_numbers = $item['numbers'] - $item['numbers_return'];
             $item['percent_vat'] = $this->_params['settings']['General.System.Vat']['value'];
@@ -1195,6 +1211,30 @@ class ContractController extends ActionController {
             $item['price'] = round($item['price'] / (1 + $item['percent_vat'] / 100));
             $item['total'] = round($net_numbers * $item['price']);
             $item['pay_type'] = 'TM/CK';
+            if (array_key_exists($item['contract_id'], $tm)) {
+                $tm[$item['contract_id']] += $item['total'];
+            }
+            else{
+                $tm[$item['contract_id']] = $item['total'];
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == 1) {
+                $item['total'] += 1;
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == 2) {
+                $item['total'] += 2;
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == 3) {
+                $item['total'] += 3;
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == -1) {
+                $item['total'] -= 1;
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == -2) {
+                $item['total'] -= 2;
+            }
+            if ($item['contract_price_total'] - ($tm[$item['contract_id']] + $item['contract_vat']) == -3) {
+                $item['total'] -= 3;
+            }
 
             if ($item['contract_id'] != $contract_id) {
                 $contract_id = $item['contract_id'];
