@@ -289,6 +289,11 @@ class Contact extends InputFilter {
 		    'name'		=> 'class_name',
 		    'required'	=> false
 		));
+
+		$this->add(array(
+		    'name'		=> 'user_ids',
+		    'required'	=> false
+		));
 		
 		// Check nhập lịch sử chăm sóc
 //		if(!empty($optionData['history_type_id']) || !empty($optionData['history_success']) || !empty($optionData['history_action_id']) || !empty($optionData['history_result_id']) || !empty($optionData['history_return']) || !empty($optionData['history_content'])) {
