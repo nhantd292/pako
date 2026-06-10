@@ -368,30 +368,27 @@ class ContractController extends ActionController {
             return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
         }
         $permission_ids = explode(',', $this->_userInfo->getUserInfo('permission_ids'));
+        $uid = $this->_userInfo->getUserInfo('id');
 
         if($this->getRequest()->isPost()){
             $control_action = $this->_params['data']['control-action'];
-            if (in_array($item['state'], array(COMPLETE_STATUS, CANCEL_STATUS))) {
-                $state_text = $item['state'] == CANCEL_STATUS ? 'HỦY' : 'HOÀN THÀNH';
-                $this->flashMessenger()->addErrorMessage('Đơn hàng đã ở trạng thái "'.$state_text.'" không thể cập nhật dữ liệu!');
+            if ($control_action == PROCESSING_STATUS) {
+                $connection->beginTransaction();
+                $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
+
+                # cập nhật trạng thái phiếu thu
+                $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                $data_debt = array(
+                    'id' => $debt_item_old->id,
+                    'state' => PROCESSING_STATUS,
+                );
+                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                $connection->commit();
+                $this->flashMessenger()->addSuccessMessage('Đơn hàng chuyển sang trạng thái "ĐANG XỬ LÝ"');
             }
-            else{
-                if ($control_action == PROCESSING_STATUS) {
-                    $connection->beginTransaction();
-                    $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
-
-                    # cập nhật trạng thái phiếu thu
-                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
-                    $data_debt = array(
-                        'id' => $debt_item_old->id,
-                        'state' => PROCESSING_STATUS,
-                    );
-                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
-
-                    $connection->commit();
-                    $this->flashMessenger()->addSuccessMessage('Đơn hàng chuyển sang trạng thái "ĐANG XỬ LÝ"');
-                }
-                if ($control_action == CANCEL_STATUS) {
+            if ($control_action == CANCEL_STATUS) {
+                if (($item['state'] == NEW_STATUS && $item['created_by'] == $uid) || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)){
                     ##### begin #####
                     $connection->beginTransaction();
                     # cập nhật trạng thái hủy cho đơn hàng.
@@ -413,48 +410,53 @@ class ContractController extends ActionController {
                     $connection->commit();
                     $this->flashMessenger()->addSuccessMessage('Hủy đơn hàng thành công!');
                 }
-                if ($control_action == COMPLETE_STATUS) {
-                    if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(ACCOUNTING, $permission_ids)){
-                        $this->flashMessenger()->addErrorMessage('Bạn không có quyền hoàn thành đơn hàng!');
-                    }
-                    else{
-                        ##### begin #####
-                        $connection->beginTransaction();
-                        # cập nhật trạng thái hoàn thành cho đơn hàng.
-                        $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => COMPLETE_STATUS)), array('task' => 'update-state'));
+                else{
+                    $this->flashMessenger()->addErrorMessage('Chỉ có thể Hủy đơn hàng khi đơn hàng ở trạng thái phiếu tạm!');
+                }
+            }
+            if ($control_action == COMPLETE_STATUS) {
+                if ((($item['state'] == PROCESSING_STATUS) && $item['created_by'] == $uid) || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)){
+                    ##### begin #####
+                    $connection->beginTransaction();
+                    # cập nhật trạng thái hoàn thành cho đơn hàng.
+                    $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => COMPLETE_STATUS)), array('task' => 'update-state'));
 
-                        # cập nhật tồn kho cho sản phẩm.
-                        $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
-                        foreach ($products_detail as $detail_item) {
-                            $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $item['inventory_id']), array('task' => 'filter'));
-                            $quantity_new = $inventory->quantity - $detail_item->numbers;
-                            if ($quantity_new < 0) {
-                                $this->flashMessenger()->addErrorMessage('Số lượng sản phẩm "'.$inventory->products_name.'" trong kho "'.$inventory->warehouse_name.'" không đủ!');
-                                $this->goRoute(array('action' => 'detail', 'id' => $id));
-                                return false;
-                            }
-
-                            $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
+                    # cập nhật tồn kho cho sản phẩm.
+                    $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
+                    foreach ($products_detail as $detail_item) {
+                        $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $item['inventory_id']), array('task' => 'filter'));
+                        $quantity_new = $inventory->quantity - $detail_item->numbers;
+                        if ($quantity_new < 0) {
+                            $this->flashMessenger()->addErrorMessage('Số lượng sản phẩm "'.$inventory->products_name.'" trong kho "'.$inventory->warehouse_name.'" không đủ!');
+                            $this->goRoute(array('action' => 'detail', 'id' => $id));
+                            return false;
                         }
 
-                        # Sửa phiếu thu chi khách hàng
-                        $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
-                        $data_debt = array(
-                            'id' => $debt_item_old->id,
-                            'state' => COMPLETE_STATUS,
-                        );
-                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
-
-                        $connection->commit();
+                        $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
                     }
-                }
 
-                $item = $this->getTable()->getItem(array('id' => $id));
+                    # Sửa phiếu thu chi khách hàng
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                    $data_debt = array(
+                        'id' => $debt_item_old->id,
+                        'state' => COMPLETE_STATUS,
+                    );
+                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                    $connection->commit();
+                }
+                else{
+                    $this->flashMessenger()->addErrorMessage('Bạn không thể hoàn thành đơn hàng!');
+                }
             }
+
+            $item = $this->getTable()->getItem(array('id' => $id));
+
         }
 
         $this->_viewModel['item']                       = $item;
         $this->_viewModel['permission_ids']             = $permission_ids;
+        $this->_viewModel['uid']                        = $uid;
         $this->_viewModel['debt_item']                  = $debt_item;
         $this->_viewModel['contact']                    = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $item['contact_id']));
         $this->_viewModel['user']                       = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
@@ -477,20 +479,29 @@ class ContractController extends ActionController {
     }
 
     public function editKovAction() {
-        $this->_params['userInfo'] = $this->_userInfo->getUserInfo();
+        $userInfo = $this->_userInfo->getUserInfo();
+        $this->_params['userInfo'] = $userInfo;
         $number = new \ZendX\Functions\Number();
         $dateFormat = new \ZendX\Functions\Date();
         $myForm = new \Admin\Form\Contract($this, $this->_params);
         $connection = $this->getConnection();
         $id = $this->params('id');
+        $permission_ids = explode(',', $userInfo['permission_ids']);
 
         if(!empty($id)) {
             $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id), array('task' => 'join-debt'));
-            if (in_array($contract['state'], array(COMPLETE_STATUS, CANCEL_STATUS))) {
+            if (in_array($contract['state'], array(COMPLETE_STATUS, CANCEL_STATUS)) && !in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)) {
                 $state_text = $contract['state'] == CANCEL_STATUS ? 'HỦY' : 'HOÀN THÀNH';
                 $this->flashMessenger()->addErrorMessage('Đơn hàng đã ở trạng thái "'.$state_text.'" không thể cập nhật dữ liệu!');
                 $this->goRoute(array('action' => 'detail', 'id' => $id));
                 return false;
+            }
+            else{
+                if ($contract['created_by'] != $userInfo['id'] && !in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)) {
+                    $this->flashMessenger()->addErrorMessage('Bạn không có quyền sửa đơn hàng của người khác');
+                    $this->goRoute(array('action' => 'detail', 'id' => $id));
+                    return false;
+                }
             }
 
             $contract_options = !empty($contract['options']) ? unserialize($contract['options']) : array();

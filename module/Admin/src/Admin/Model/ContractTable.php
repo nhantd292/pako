@@ -95,6 +95,8 @@ class ContractTable extends DefaultTable {
                         -> equalTo(TABLE_CONTRACT .'.created_by', $ssFilter['filter_user'])
                         ->Or
                         -> equalTo(TABLE_CONTRACT .'.care_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
                         -> UNNEST;
                 }
 
@@ -678,6 +680,7 @@ class ContractTable extends DefaultTable {
     			                 'contact_location_city_id' => 'location_city_id',
     			                 'contact_location_district_id' => 'location_district_id',
     			                 'contact_options' => 'options',
+    			                 'contact_user_ids' => 'user_ids',
     			             ), 'inner');
     			$select -> order(array(TABLE_CONTRACT .'.index' => 'DESC'));
 
@@ -747,6 +750,8 @@ class ContractTable extends DefaultTable {
                         -> equalTo(TABLE_CONTRACT .'.created_by', $ssFilter['filter_user'])
                         ->Or
                         -> equalTo(TABLE_CONTRACT .'.care_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
                         -> UNNEST;
                 }
 

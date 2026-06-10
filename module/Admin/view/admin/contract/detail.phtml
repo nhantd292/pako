@@ -60,24 +60,43 @@ $xhtmlProducts = $this->partialLoop($this->params['module'] . '/partial/form-vie
 $linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit-kov', 'id' => $this->item['id']));
 $linkIndex  = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index'));
 
-$arrControlProcessing = $this->item['state'] == NEW_STATUS ? array(
-    array('name' => 'save', 'caption' => 'Xử lý đơn', 'link' => 'javascript:;', 'icon' => 'fa-check', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'processing\', \' Bạn có chắc chắn muốn chuyển trạng thái xử lý đơn hàng\');', 'class' => 'btn blue')),
-) : array();
-
 $permission_ids = $this->permission_ids;
-$complete_action = array('name' => 'save-close', 'caption' => 'Hoàn thành', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành đơn hàng\');', 'class' => 'btn green'));
-if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(ACCOUNTING, $permission_ids)){
-    $complete_action = array();
+//$processing_action = array('name' => 'save', 'caption' => 'Xử lý đơn', 'link' => 'javascript:;', 'icon' => 'fa-check', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'processing\', \' Bạn có chắc chắn muốn chuyển trạng thái xử lý đơn hàng\');', 'class' => 'btn blue'));
+//$cancel_action = array('name' => 'cancel', 'caption' => 'Hủy đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'cancel\', \' Bạn có chắc chắn muốn hủy đơn hàng\');', 'class' => 'btn red'));
+//$complete_action = array('name' => 'complete', 'caption' => 'Hoàn thành', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành đơn hàng\');', 'class' => 'btn green'));
+//$edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
+
+$processing_action = $cancel_action = $complete_action = $edit_action = array();
+
+if ($this->item['state'] == NEW_STATUS) {
+    if ($this->item['created_by'] == $this->uid || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+        $cancel_action = array('name' => 'cancel', 'caption' => 'Hủy đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'cancel\', \' Bạn có chắc chắn muốn hủy đơn hàng\');', 'class' => 'btn red'));
+        $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
+    }
 }
-$arrControlAction = array(
-    array('name' => 'save-new', 'caption' => 'Hủy đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'cancel\', \' Bạn có chắc chắn muốn hủy đơn hàng\');', 'class' => 'btn red')),
-    $complete_action,
-    array('name' => 'close', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow')),
-);
+if ($this->item['state'] == PROCESSING_STATUS) {
+    if ($this->item['created_by'] == $this->uid || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+        $complete_action = array('name' => 'complete', 'caption' => 'Hoàn thành', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành đơn hàng\');', 'class' => 'btn green'));
+    }
+    if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+        $cancel_action = array('name' => 'cancel', 'caption' => 'Hủy đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'cancel\', \' Bạn có chắc chắn muốn hủy đơn hàng\');', 'class' => 'btn red'));
+        $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
+    }
+}
+if ($this->item['state'] == COMPLETE_STATUS) {
+    if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+        $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
+    }
+}
+
 $arrControlDefault = array(
-    array('name' => 'edit', 'caption' => 'Đóng', 'link' => $linkIndex, 'onclick' => '', 'icon' => 'fa fa-pencil', 'attributes' => array('class' => 'btn default'))
+    $processing_action,
+    $cancel_action,
+    $complete_action,
+    $edit_action,
+    array('name' => 'close', 'caption' => 'Đóng', 'link' => $linkIndex, 'onclick' => '', 'icon' => 'fa fa-pencil', 'attributes' => array('class' => 'btn default'))
 );
-$arrControl = in_array($this->item['state'], [CANCEL_STATUS, COMPLETE_STATUS]) ? $arrControlDefault : array_merge($arrControlProcessing,$arrControlAction, $arrControlDefault);
+$arrControl = $arrControlDefault;
 ?>
 
 <form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm" class="">
