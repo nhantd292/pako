@@ -79,6 +79,18 @@ class Contact extends Form {
             )
 		));
 
+        $this->add(array(
+            'name'			=> 'user_ids',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'multiple'	=> true,
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'list-sale')), array('key' => 'id', 'value' => 'name')),
+            )
+        ));
+
         // Nhóm sản phẩm quan tâm
 //        $this->add(array(
 //            'name'			=> 'product_group_id',

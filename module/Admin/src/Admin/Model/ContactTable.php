@@ -78,6 +78,8 @@ class ContactTable extends DefaultTable {
                         -> equalTo('user_id', $ssFilter['filter_user'])
                         ->Or
                         -> equalTo('care_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like('user_ids', "%{$ssFilter['filter_user']}%")
                         -> UNNEST;
     			}
     			if(!empty($ssFilter['filter_marketer_id'])) {
@@ -286,6 +288,8 @@ class ContactTable extends DefaultTable {
                         -> equalTo('user_id', $ssFilter['filter_user'])
                         ->Or
                         -> equalTo('care_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like('user_ids', "%{$ssFilter['filter_user']}%")
                         -> UNNEST;
                 }
                 if(!empty($ssFilter['filter_marketer_id'])) {
@@ -475,6 +479,8 @@ class ContactTable extends DefaultTable {
 	    $filter        = new \ZendX\Filter\Purifier();
 		$gid           = new \ZendX\Functions\Gid();
 		$number   = new \ZendX\Functions\Number();
+
+        $user_ids     = $arrData['user_ids'] ? implode(',', $arrData['user_ids']) : '';
 	    
 	    // Thêm mới liên hệ - NamNV
 		if($options['task'] == 'add-item') {
@@ -552,6 +558,7 @@ class ContactTable extends DefaultTable {
 				'history_created'       => $arrData['history_action_id'] ? date('Y-m-d H:i:s') : null,
 				'history_return'        => $arrData['history_return'] ? $dateFormat->formatToData($arrData['history_return'], 'Y-m-d') : null,
 				'user_id'               => $arrData['user_id'] ? $arrData['user_id'] : $this->userInfo->getUserInfo('id'),
+				'user_ids'              => $user_ids,
 				'sale_branch_id'        => $arrData['sale_branch_id'] ? $arrData['sale_branch_id'] : $this->userInfo->getUserInfo('sale_branch_id'),
 				'sale_group_id'         => $arrData['sale_group_id'] ? $arrData['sale_group_id'] : $this->userInfo->getUserInfo('sale_group_id'),
 
@@ -825,6 +832,9 @@ class ContactTable extends DefaultTable {
 		    }
 		    if(!empty($arrData['history_return'])) {
 		        $data['history_return'] = $dateFormat->formatToData($arrData['history_return'], 'Y-m-d');
+		    }
+		    if(!empty($arrData['user_ids'])) {
+		        $data['user_ids'] = $user_ids;
 		    }
 		    if(!empty($arrData['user_id'])) {
 		        $data['user_id'] = $arrData['user_id'];

@@ -272,8 +272,9 @@ class ContactController extends ActionController
                 $item_options        = !empty($item['options']) ? unserialize($item['options']) : array();
                 $item['date_return'] = $dateFormat->formatToView($item['date_return']);
                 $item                = array_merge($item, $item_options);
+                $item['user_ids']    = explode(',', $item['user_ids']);
 
-                if($curent_user_id == $item['user_id'] || $curent_user_id == $item['care_id']) {
+                if($curent_user_id == $item['user_id'] || $curent_user_id == $item['care_id'] || in_array($curent_user_id, $item['user_ids'])) {
                     $phone_code = false;
                 }
 
