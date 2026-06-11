@@ -12,6 +12,11 @@ class Contract extends Form{
 		
 		$userInfo = new \ZendX\System\UserInfo();
 		$userInfo = $userInfo->getUserInfo();
+        $permission_ids = explode(',', $userInfo['permission_ids']);
+        $filter_user_id = '';
+        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(ACCOUNTING, $permission_ids)){
+            $filter_user_id = $userInfo['id'];
+        }
 		
 		// FORM Attribute
 		$this->setAttributes(array(
@@ -114,6 +119,9 @@ class Contract extends Form{
                 'id'                => 'customer_id',
                 'data-placeholder'  => 'Khách hàng',
                 'data-table'        => TABLE_CONTACT,
+                'data-where_user_id'=> $filter_user_id,
+                'data-type'         => "like",
+                'data-type_value'   => "user_id, user_ids",
                 'data-text'         => 'name, phone',
                 'data-where-status' => 1,
             )
