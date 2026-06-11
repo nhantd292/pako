@@ -74,6 +74,19 @@ class Contract extends Form{
             )
         ));
 
+        // Người trả fee
+        $this->add(array(
+            'name'			=> 'filter_fee_type',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Người trả phí -',
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
+            )
+        ));
+
 		// Cơ sở
 		$this->add(array(
 		    'name'			=> 'filter_unit_transport',
@@ -313,6 +326,7 @@ class Contract extends Form{
 		    'attributes'	=> array(
                 'multiple'	=> true,
 		        'class'		=> 'form-control select2 select2_basic',
+                'data-placeholder'  => 'Chọn Sản phẩm',
 		    ),
 		    'options'		=> array(
 //		        'empty_option'	=> '- Sản phẩm-',

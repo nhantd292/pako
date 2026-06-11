@@ -225,6 +225,10 @@ class ContractTable extends DefaultTable {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.invoice_type', $ssFilter['filter_invoice_type']);
                 }
 
+                if(!empty($ssFilter['filter_fee_type'])) {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.fee_type', $ssFilter['filter_fee_type']);
+                }
+
                 if(!empty($ssFilter['filter_option_vat'])) {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.option_vat', $ssFilter['filter_option_vat']);
                 }
@@ -872,6 +876,10 @@ class ContractTable extends DefaultTable {
 
                 if(!empty($ssFilter['filter_invoice_type'])) {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.invoice_type', $ssFilter['filter_invoice_type']);
+                }
+
+                if(!empty($ssFilter['filter_fee_type'])) {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.fee_type', $ssFilter['filter_fee_type']);
                 }
 
                 if(!empty($ssFilter['filter_option_vat'])) {
@@ -2462,6 +2470,7 @@ class ContractTable extends DefaultTable {
                 'address'                 => $arrData['address'],
                 'production_type_id'      => $arrData['production_type_id'],
                 'option_vat'              => $arrData['option_vat'],
+                'fee_type'                  => $arrData['fee_type'],
                 'price_total'             => $number->formatToData($arrData['price_total']),
                 'paid_cash'               => $number->formatToData($arrData['paid_cash']),
                 'paid_transfer'           => $number->formatToData($arrData['paid_transfer']),
@@ -2553,6 +2562,7 @@ class ContractTable extends DefaultTable {
                 'address'                 => $arrData['address'],
                 'production_type_id'      => $arrData['production_type_id'],
                 'option_vat'              => $arrData['option_vat'],
+                'fee_type'                  => $arrData['fee_type'],
                 'price_total'             => $number->formatToData($arrData['price_total']),
                 'paid_cash'               => $number->formatToData($arrData['paid_cash']),
                 'paid_transfer'           => $number->formatToData($arrData['paid_transfer']),

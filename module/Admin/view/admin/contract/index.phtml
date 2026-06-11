@@ -31,6 +31,7 @@
 //            array('element' => $myForm->get('filter_returned'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_shipper_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_production_type_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_fee_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_inventory_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_care_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_marketer_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -74,6 +75,7 @@
             array('element' => $myForm->get('filter_marketer_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_customer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_invoice_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_fee_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_status_shipped'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_invoiced'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -291,6 +293,7 @@
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_transfer) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->discount) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->fee_shipp) .'</td>
+                            <td '.$rowSpan.'>'. $this->fee_type[$item->fee_type]['name'] .'</td>
                             <td '.$rowSpan.'>'. $contact_name .'</td>
                             <td '.$rowSpan.'>'. $contact_phone .'</td>
                             <td class="" '.$rowSpan.' style="inline-size: 200px;overflow-wrap: break-word;">'. $address .'<br>'.$location_town.'<br>'.$location_district.'<br>'.$location_city.'</td>
@@ -338,6 +341,7 @@
     $xhtmlHead .= '<th width="80" class="text-right">Chuyển khoản'.$text_total_paid_transfer.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Giảm giá'.$text_total_discount.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Phí giao hàng'.'</th>';
+    $xhtmlHead .= '<th width="80" class="text-right">Người trả phí'.'</th>';
     $xhtmlHead .= '<th width="150">Tên khách hàng</th>';
     $xhtmlHead .= '<th width="90">Điện thoại</th>';
     $xhtmlHead .= '<th class="av-read">Địa chỉ</th>';

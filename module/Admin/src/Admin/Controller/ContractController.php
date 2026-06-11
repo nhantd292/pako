@@ -56,6 +56,7 @@ class ContractController extends ActionController {
         $this->_params['ssFilter']['filter_option_vat']     = $ssFilter->filter_option_vat;
         $this->_params['ssFilter']['filter_invoiced']       = $ssFilter->filter_invoiced;
         $this->_params['ssFilter']['filter_status_shipped'] = $ssFilter->filter_status_shipped;
+        $this->_params['ssFilter']['filter_fee_type']       = $ssFilter->filter_fee_type;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : $this->_paginator['itemCountPerPage'];
@@ -111,6 +112,7 @@ class ContractController extends ActionController {
             $ssFilter->filter_option_vat 	    = $data['filter_option_vat'];
             $ssFilter->filter_invoiced 	        = $data['filter_invoiced'];
             $ssFilter->filter_status_shipped 	= $data['filter_status_shipped'];
+            $ssFilter->filter_fee_type 	        = $data['filter_fee_type'];
 
             $ssFilter->filter_sale_group = $data['filter_sale_group'];
             if(!empty($data['filter_sale_branch'])) {
@@ -187,6 +189,7 @@ class ContractController extends ActionController {
         $this->_viewModel['status_accounting']      = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status-acounting')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['status_sales']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['order_status']           = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $this->_viewModel['fee_type']               = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-type')), array('task' => 'cache-alias'));
         $this->_viewModel['fee_type_list']          = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['caption']                = 'Danh sách - '.$this->caption;
 
@@ -469,6 +472,7 @@ class ContractController extends ActionController {
         $this->_viewModel['fee_other_type']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-other-type')), array('task' => 'cache-alias'));
         $this->_viewModel['status']                     = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'status')), array('task' => 'cache'));
         $this->_viewModel['invoice_type']               = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'invoice-type')), array('task' => 'cache-alias'));
+        $this->_viewModel['fee_type']               = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-type')), array('task' => 'cache-alias'));
         $this->_viewModel['order_status']               = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $this->_viewModel['production_type']            = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'production-type')), array('task' => 'cache')), array('key' => 'id', 'value' => 'object'));
         $this->_viewModel['caption']                    = 'Chi tiết - '.$this->caption. ' - '. $item['code'];

@@ -162,6 +162,22 @@ class Contract extends InputFilter {
         ));
 
         $this->add(array(
+            'name'		=> 'fee_type',
+            'required'	=> true,
+            'validators'	=> array(
+                array(
+                    'name'		=> 'NotEmpty',
+                    'options'	=> array(
+                        'messages'	=> array(
+                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+                        )
+                    ),
+                    'break_chain_on_failure'	=> true
+                )
+            )
+        ));
+
+        $this->add(array(
             'name'		=> 'paid_cash',
             'required'	=> true,
             'validators'	=> array(
