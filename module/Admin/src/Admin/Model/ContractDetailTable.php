@@ -23,6 +23,10 @@ class ContractDetailTable extends DefaultTable {
                     $select->where->equalTo(TABLE_CONTRACT.'.contact_id', $ssFilter['filter_contact_id']);
                 }
 
+                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.user_id', $ssFilter['filter_user']);
+                }
+
                 if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
                     $select->where->equalTo(TABLE_CONTRACT.'.state', $ssFilter['filter_state']);
                 }
