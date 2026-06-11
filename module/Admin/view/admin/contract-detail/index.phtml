@@ -3,6 +3,8 @@
 
     $myForm = $this->myForm;
     $myForm->prepare();
+    $userInfo = new \ZendX\System\UserInfo();
+    $curent_user = $userInfo->getUserInfo();
 
     $permission_ids = explode(',', $curent_user['permission_ids']);
     $encode_phone = explode(',', $curent_user['encode_phone']);
@@ -11,7 +13,7 @@
         $phone_code = false;
     }
 
-    if(in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(GDCN, $permission_ids) || in_array(MANAGER, $permission_ids)){
+//    if(in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(GDCN, $permission_ids) || in_array(MANAGER, $permission_ids)){
         $elements = array(
             array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -30,10 +32,10 @@
             array('element' => $myForm->get('order')),
             array('element' => $myForm->get('order_by')),
         );
-    }
+//    }
 
     $xhtmlFilter = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
-    
+
     // Danh sách
     $xhtmlItems = '';
 
@@ -82,7 +84,7 @@
             $contract_date                = $dateFormat->formatToView($item->contract_date, 'd/m/Y');
 
             $user                   = $this->user[$item->user_id]['name'];
-            $created_by             = $this->user[$item->created_by]['name'];
+            $created_by             = $this->user[$item->contract_created_by]['name'];
 
             $linkContract = $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'detail', 'id' => $item->contract_id));
 

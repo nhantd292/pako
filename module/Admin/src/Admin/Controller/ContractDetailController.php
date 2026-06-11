@@ -111,12 +111,6 @@ class ContractDetailController extends ActionController {
                 $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
                 $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
             }
-            elseif (in_array(GROUP_SALES_LEADER, $permission_ids)){
-                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
-                $this->_params['ssFilter']['filter_sale_group'] = $curent_user['sale_group_id'];
-                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
-                $ssFilter->filter_sale_group = $curent_user['filter_sale_group'];
-            }
             else{
                 $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
             }

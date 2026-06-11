@@ -71,6 +71,7 @@ class ContractDetailTable extends DefaultTable {
                         'contract_code' => 'code',
                         'contract_date'=> 'date',
                         'contract_vat' => 'vat',
+                        'contract_created_by' => 'created_by',
                         'contract_price_total' => 'price_total',
                         'customer_name' => 'name',
                         'customer_phone' => 'phone',
@@ -86,6 +87,10 @@ class ContractDetailTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_contact_id']) && $ssFilter['filter_contact_id'] != '') {
                     $select->where->equalTo(TABLE_CONTRACT.'.contact_id', $ssFilter['filter_contact_id']);
+                }
+
+                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.user_id', $ssFilter['filter_user']);
                 }
 
                 if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {

@@ -11,7 +11,7 @@
         $phone_code = false;
     }
 
-    if(in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(GDCN, $permission_ids) || in_array(MANAGER, $permission_ids)){
+//    if(in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(GDCN, $permission_ids) || in_array(MANAGER, $permission_ids)){
         $elements = array(
             array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_inventory_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
@@ -22,7 +22,7 @@
             array('element' => $myForm->get('order')),
             array('element' => $myForm->get('order_by')),
         );
-    }
+//    }
 
     $xhtmlFilter = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
     

@@ -1490,7 +1490,7 @@ class ContractController extends ActionController {
                 foreach ($cid as $id){
                     $contract = $this->getTable()->getItem(array('id' => $id));
                     // Chỉ lấy ra những đơn hàng đang xử lý
-                    if($contract['state'] == PROCESSING_STATUS && $contract['shipped'] == 0){
+                    if($contract['shipped'] == 0){
                         $params['data']['id']       = $id;
                         $params['data']['shipped']  = 1;
                         $count_update += 1;
