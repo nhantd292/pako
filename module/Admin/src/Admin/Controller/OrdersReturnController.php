@@ -64,6 +64,12 @@ class OrdersReturnController extends ActionController{
     }
 
     public function indexAction() {
+        $curent_user = $this->_userInfo->getUserInfo();
+        $permission_ids = explode(',', $curent_user['permission_ids']);
+        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)){
+            $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
+        }
+
         $myForm    = new \Admin\Form\Search\OrdersRetrun($this, $this->_params['ssFilter']);
         $myForm->setData($this->_params['ssFilter']);
         // Danh sách data
@@ -229,29 +235,29 @@ class OrdersReturnController extends ActionController{
         } else {
             return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
         }
+        $permission_ids = explode(',', $this->_userInfo->getUserInfo('permission_ids'));
+        $uid = $this->_userInfo->getUserInfo('id');
+
         if($this->getRequest()->isPost()){
             $control_action = $this->_params['data']['control-action'];
-            if (in_array($item['state'], array(COMPLETE_STATUS, CANCEL_STATUS))) {
-                $state_text = $item['state'] == CANCEL_STATUS ? 'HỦY' : 'HOÀN THÀNH';
-                $this->flashMessenger()->addErrorMessage('Phiếu trả hàng đã ở trạng thái "'.$state_text.'" không thể cập nhật dữ liệu!');
+
+            if ($control_action == PROCESSING_STATUS) {
+                $connection->beginTransaction();
+                $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
+
+                # cập nhật trạng thái phiếu thu
+                $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_return_id' => $id), array('task' => 'type-id'));
+                $data_debt = array(
+                    'id' => $debt_item_old->id,
+                    'state' => PROCESSING_STATUS,
+                );
+                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                $connection->commit();
+                $this->flashMessenger()->addSuccessMessage('Phiếu trả hàng đã chuyển sang trạng thái "ĐANG XỬ LÝ"');
             }
-            else{
-                if ($control_action == PROCESSING_STATUS) {
-                    $connection->beginTransaction();
-                    $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
-
-                    # cập nhật trạng thái phiếu thu
-                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_return_id' => $id), array('task' => 'type-id'));
-                    $data_debt = array(
-                        'id' => $debt_item_old->id,
-                        'state' => PROCESSING_STATUS,
-                    );
-                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
-
-                    $connection->commit();
-                    $this->flashMessenger()->addSuccessMessage('Phiếu trả hàng đã chuyển sang trạng thái "ĐANG XỬ LÝ"');
-                }
-                if ($control_action == CANCEL_STATUS) {
+            if ($control_action == CANCEL_STATUS) {
+                if (($item['state'] == NEW_STATUS && $item['created_by'] == $uid) || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)){
                     ##### begin #####
                     $connection->beginTransaction();
                     # cập nhật trạng thái hủy cho đơn hàng.
@@ -273,7 +279,12 @@ class OrdersReturnController extends ActionController{
                     $connection->commit();
                     $this->flashMessenger()->addSuccessMessage('Hủy đơn hàng thành công!');
                 }
-                if ($control_action == COMPLETE_STATUS) {
+                else{
+                    $this->flashMessenger()->addErrorMessage('Chỉ có thể Hủy phiếu trả hàng khi phiếu đơn hàng ở trạng thái phiếu tạm!');
+                }
+            }
+            if ($control_action == COMPLETE_STATUS) {
+                if ((($item['state'] == PROCESSING_STATUS) && $item['created_by'] == $uid) || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)){
                     ##### begin #####
                     $connection->beginTransaction();
                     # cập nhật trạng thái hoàn thành cho đơn hàng.
@@ -308,10 +319,12 @@ class OrdersReturnController extends ActionController{
                     $connection->commit();
                     $this->flashMessenger()->addSuccessMessage('Phiếu trả hàng đã được hoàn thành!');
                 }
-
-
-                $item = $this->getTable()->getItem(array('id' => $id));
+                else{
+                    $this->flashMessenger()->addErrorMessage('Bạn không thể hoàn thành phiếu trả hàng!');
+                }
             }
+
+            $item = $this->getTable()->getItem(array('id' => $id));
         }
 
         $this->_viewModel['item']                       = $item;

@@ -89,14 +89,14 @@ if ($this->item['state'] == COMPLETE_STATUS) {
     }
 }
 
-$arrControlDefault = array(
+$arrControl = array(
     $processing_action,
     $cancel_action,
     $complete_action,
     $edit_action,
     array('name' => 'close', 'caption' => 'Đóng', 'link' => $linkIndex, 'onclick' => '', 'icon' => 'fa fa-pencil', 'attributes' => array('class' => 'btn default'))
 );
-$arrControl = $arrControlDefault;
+
 ?>
 
 <form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm" class="">

@@ -103,34 +103,23 @@ class OrdersReturnDetailController extends ActionController {
     // Danh sách
     public function indexAction() {
         $ssFilter = new Container(__CLASS__.'index');
-        // Phân quyền view
-//        $curent_user = $this->_userInfo->getUserInfo();
-//        $permission_ids = explode(',', $curent_user['permission_ids']);
-//        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(MANAGER, $permission_ids)){
-//            if(in_array(GDCN, $permission_ids) || in_array(SALEADMIN, $permission_ids)){
-//                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
-//                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
-//            }
-//            elseif (in_array(GROUP_SALES_LEADER, $permission_ids)){
-//                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
-//                $this->_params['ssFilter']['filter_sale_group'] = $curent_user['sale_group_id'];
-//                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
-//                $ssFilter->filter_sale_group = $curent_user['filter_sale_group'];
-//            }
-//            else{
-//                $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
-//            }
-//        }
+        $curent_user = $this->_userInfo->getUserInfo();
+        $permission_ids = explode(',', $curent_user['permission_ids']);
+        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(MANAGER, $permission_ids)){
+            if(in_array(GDCN, $permission_ids) || in_array(SALEADMIN, $permission_ids)){
+                $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
+                $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
+            }
+            else{
+                $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
+            }
+        }
 
         $myForm	= new \Admin\Form\Search\BaseSearch($this->getServiceLocator(), $this->_params);
         $myForm->setData($this->_params['ssFilter']);
 
         $this->_viewModel['myForm']	                = $myForm;
         $this->_viewModel['items']                  = $this->getTable()->listItem($this->_params, array('task' => 'list-item'));
-//        echo "<pre>";
-//        print_r($this->_viewModel['items']->toArray());
-//        echo "</pre>";
-//        exit;
         $this->_viewModel['count']                  = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
         $this->_viewModel['user']                   = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['sale_group']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));

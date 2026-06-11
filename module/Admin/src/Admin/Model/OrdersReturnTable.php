@@ -45,6 +45,14 @@ class OrdersReturnTable extends DefaultTable {
                         ->like(TABLE_ORDERS_RETURN .'.code', '%'.$ssFilter['filter_keyword'].'%')
                         ->UNNEST;
                 }
+
+                if(!empty($ssFilter['filter_user'])) {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CONTACT .'.user_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
+                        -> UNNEST;
+                }
             })->count();
 	    }
 	    
@@ -99,6 +107,14 @@ class OrdersReturnTable extends DefaultTable {
                         ->like(TABLE_ORDERS_RETURN .'.code', '%'.$ssFilter['filter_keyword'].'%')
                 			      ->UNNEST;
     			}
+
+    			if(!empty($ssFilter['filter_user'])) {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CONTACT .'.user_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
+                        -> UNNEST;
+                }
     		});
 		}
 		
