@@ -225,21 +225,21 @@ class Contract extends InputFilter {
             )
         ));
 
-        $this->add(array(
-            'name'		=> 'fee_shipp',
-            'required'	=> true,
-            'validators'	=> array(
-                array(
-                    'name'		=> 'NotEmpty',
-                    'options'	=> array(
-                        'messages'	=> array(
-                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
-                        )
-                    ),
-                    'break_chain_on_failure'	=> true
-                )
-            )
-        ));
+//        $this->add(array(
+//            'name'		=> 'fee_shipp',
+//            'required'	=> true,
+//            'validators'	=> array(
+//                array(
+//                    'name'		=> 'NotEmpty',
+//                    'options'	=> array(
+//                        'messages'	=> array(
+//                            \Zend\Validator\NotEmpty::IS_EMPTY => 'Giá trị này không được để trống'
+//                        )
+//                    ),
+//                    'break_chain_on_failure'	=> true
+//                )
+//            )
+//        ));
 
         $this->add(array(
             'name'		=> 'option_vat',

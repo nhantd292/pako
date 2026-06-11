@@ -283,15 +283,15 @@ class Contract extends Form {
 		    )
 		));
 
-		$this->add(array(
-		    'name'			=> 'fee_shipp',
-		    'type'			=> 'Text',
-		    'attributes'	=> array(
-		        'class'		  => 'form-control text-green text-bold mask_currency',
-		        'value'       => 0,
-		        'data-value'  => 0,
-		    )
-		));
+//		$this->add(array(
+//		    'name'			=> 'fee_shipp',
+//		    'type'			=> 'Text',
+//		    'attributes'	=> array(
+//		        'class'		  => 'form-control text-green text-bold mask_currency',
+//		        'value'       => 0,
+//		        'data-value'  => 0,
+//		    )
+//		));
 		
 		// Ghi chú sales
 		$this->add(array(

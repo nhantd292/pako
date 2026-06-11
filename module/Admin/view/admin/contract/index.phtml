@@ -107,7 +107,7 @@
             $contact_name           = $item->contact_name;
             $index_number           = $item->index_number;
             $fee_cod                = number_format($item->price_transport);
-            $price_total            = $item->price_total;
+            $price_total            = $item->price_total + $item->fee_other;
             $price_owed             = $item->price_owed;
             
             if($this->params['ssFilter']['filter_user']){

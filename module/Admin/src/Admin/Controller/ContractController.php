@@ -297,12 +297,10 @@ class ContractController extends ActionController {
                     $discount       = $number->formatToData($this->_params['data']['discount']);
                     $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
-
-                    $fee_shipp      = $number->formatToData($this->_params['data']['fee_shipp']);
                     $fee_other      = $number->formatToData($this->_params['data']['fee_other']);
 
 //                    $price_total    = $number->formatToData($this->_params['data']['price_total']);
-                    $price_total    = $products_price_total + $fee_shipp + $fee_other;
+                    $price_total    = $products_price_total + $fee_other;
                     $new_debt       = $old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
                     $data_debt = array(
                         'customer_id' => $customer_id,
@@ -610,11 +608,9 @@ class ContractController extends ActionController {
                     $paid_cash      = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer  = $number->formatToData($this->_params['data']['paid_transfer']);
 
-                    $fee_shipp      = $number->formatToData($this->_params['data']['fee_shipp']);
                     $fee_other      = $number->formatToData($this->_params['data']['fee_other']);
 
-//                    $price_total    = $number->formatToData($this->_params['data']['price_total']);
-                    $price_total    = $products_price_total + $fee_shipp + $fee_other;
+                    $price_total    = $products_price_total + $fee_other;
                     $new_debt       = $debt_item_old->old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
                     $data_debt = array(
                         'id' => $debt_item_old->id,
