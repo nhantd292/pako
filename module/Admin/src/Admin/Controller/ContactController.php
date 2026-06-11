@@ -200,8 +200,13 @@ class ContactController extends ActionController
     }
 
     # công nợ phải thu của khách hàng
-    public function receivableAction()
-    {
+    public function receivableAction(){
+        $curent_user = $this->_userInfo->getUserInfo();
+        $permission_ids = explode(',', $curent_user['permission_ids']);
+        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)){
+            $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
+        }
+
         $myForm = new \Admin\Form\Search\Contact($this->getServiceLocator(), $this->_params['ssFilter']);
         $myForm->setData($this->_params['ssFilter']);
         $this->_params['ssFilter']['filter_debt_type'] = 'receivable';

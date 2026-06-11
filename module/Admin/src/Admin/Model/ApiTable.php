@@ -106,7 +106,24 @@ class ApiTable extends AbstractTableGateway implements ServiceLocatorAwareInterf
 	            
 	            if(!empty($arrData['data-where'])) {
 	                foreach ($arrData['data-where'] AS $key => $value) {
-	                    $select->where->equalTo($key, $value);
+	                    if (!empty($value)) {
+	                        if ($arrData['data-type'] == 'like') {
+                                $columns = explode(',', $arrData['data-type-value']);
+                                $nest = $select->where->nest();
+                                foreach ($columns as $index => $column) {
+                                    $column = str_replace(' ', '', $column);
+                                    if ($index > 0) {
+                                        $nest->or;
+                                    }
+                                    $nest->like($column, "%{$value}%");
+                                }
+                                $nest->unnest();
+	                        }
+	                        else{
+                                $select->where->equalTo($key, $value);
+                            }
+
+	                    }
 	                }
 	            }
 	        });

@@ -431,6 +431,7 @@ var Form = function () {
         		quietMillis: 300,
         		transport: function (params) {
         			var attrData = $(this).data();
+                    console.log(attrData)
         			var dataWhere = {};
         			$.each(attrData, function(key, value) {
         			    var w = key.split('where_');
@@ -438,6 +439,7 @@ var Form = function () {
         			    	dataWhere[w[1]] = value;
         			    }
         			});
+                    console.log(dataWhere)
         			
         			var module = $(this).attr('data-module') ? $(this).attr('data-module') : moduleAdmin;
         			var controller = $(this).attr('data-controller') ? $(this).attr('data-controller') : 'api';
@@ -451,6 +453,8 @@ var Form = function () {
         			params['data']['data-text'] = $(this).attr('data-text') ? $(this).attr('data-text') : 'name';
         			params['data']['data-order'] = $(this).attr('data-order') ? $(this).attr('data-order') : '';
         			params['data']['data-db'] = $(this).attr('data-db') ? $(this).attr('data-db') : '';
+        			params['data']['data-type'] = $(this).attr('data-type') ? $(this).attr('data-type') : '';
+        			params['data']['data-type-value'] = $(this).attr('data-type_value') ? $(this).attr('data-type_value') : '';
         			params['url'] = module +'/'+ controller +'/'+ action;
 
         			return $.ajax(params);

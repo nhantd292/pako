@@ -166,6 +166,14 @@ class ContactTable extends DefaultTable {
                     }
 
                 }
+
+                if(!empty($ssFilter['filter_user'])) {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CONTACT .'.user_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
+                        -> UNNEST;
+                }
             })->current();
 	    }
 
@@ -197,6 +205,14 @@ class ContactTable extends DefaultTable {
                     else{
                         $select -> where -> lessThan('amount_owed', 0);
                     }
+                }
+
+                if(!empty($ssFilter['filter_user'])) {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CONTACT .'.user_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
+                        -> UNNEST;
                 }
             })->current();
             return $result;
@@ -381,6 +397,14 @@ class ContactTable extends DefaultTable {
                         $select -> where -> lessThan('amount_owed', 0);
                         $select->order(array('amount_owed ASC'));
                     }
+                }
+
+                if(!empty($ssFilter['filter_user'])) {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CONTACT .'.user_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
+                        -> UNNEST;
                 }
             });
         }

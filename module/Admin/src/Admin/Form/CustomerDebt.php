@@ -48,6 +48,13 @@ class CustomerDebt extends Form
             )
         ));
 
+        $UserInfo      = new \ZendX\System\UserInfo();
+        $curent_user = $UserInfo->getUserInfo();
+        $permission_ids = explode(',', $curent_user['permission_ids']);
+        $filter_user_id = '';
+        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(ACCOUNTING, $permission_ids)){
+            $filter_user_id = $curent_user['id'];
+        }
         $this->add(array(
             'name'       => 'customer_id',
             'type'       => 'Text',
@@ -56,8 +63,10 @@ class CustomerDebt extends Form
                 'id'                => 'customer_id',
                 'data-table'        => TABLE_CONTACT, // Tên bảng khách hàng của bạn
                 'data-text'         => 'name, phone',    // Cột hiển thị
-                'data-where-status' => 1,         // Ví dụ: chỉ lấy khách hàng đang hoạt động
-                'disabled' => $options['action'] == 'edit-revenue' ? true : false,
+                'data-where_user_id'=> $filter_user_id,
+                'data-type'         => "like",
+                'data-type_value'   => "user_id, user_ids",
+                'disabled'          => $options['action'] == 'edit-revenue' ? true : false,
 
                 'data-target'       => '#amount_owed',       // Ô đích nhận kết quả số tiền nợ
                 'data-url'          => '/xadmin/api/get-owed',
