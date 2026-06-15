@@ -74,13 +74,12 @@
     
     // Control
     $arrControl = array(
-        array( 'name' => 'add', 'caption' => 'Thêm', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn', ) ),
         array(
             'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
             'children' => array(
-                array( 'name' => 'delete', 'caption' => 'Xóa', 'link' => 'javascript:;', 'icon' => 'fa-trash', 'attributes' => array( 'onclick' => 'javascript:deleteItem(\'multi\', \'all\');' ) ),
-                array('name' => 'sort', 'caption' => 'Sắp xếp', 'link' => 'javascript:;', 'icon' => 'fa-sort-alpha-asc', 'attributes' => array('onclick' => 'javascript:changeOrdering();',))
-                ),
+                array( 'name' => 'update-price', 'caption' => 'Cập nhật bảng giá', 'link' => $this->url('routeAdmin/default', array('controller' => 'products', 'action' => 'update-price')), 'icon' => 'fa fa-upload' ),
+
+            ),
             'children-class' => 'dropdown-menu pull-right'
         ),
     );
@@ -90,8 +89,9 @@
     	<div class="title pull-left">
     		<?php echo $this->caption;?>
     	</div>
-    	<div class="control pull-right">
-		</div>
+        <div class="control pull-right">
+            <?php echo $this->partial($this->params['module'] . '/partial/control-index.phtml', array( 'control' => $arrControl, 'params' => $this->params));?>
+        </div>
 		<div class="clearfix"></div>
 	</div>
     <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
