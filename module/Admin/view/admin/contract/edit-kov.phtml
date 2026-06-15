@@ -261,20 +261,21 @@ var params = JSON.parse('<?php echo json_encode($this->discounts_params); ?>');
 var customer_type_id = <?php echo json_encode($this->customer_type_id); ?>;
 var contactId = <?php echo json_encode($this->contactId);?>;
 var percent_vat = <?php echo json_encode($this->params['settings']['General.System.Vat']['value']);?>;
+var url_loadProduct = '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProducts'));?>';
 
-
-$("input[name='filter_keyword']").on('keydown', function (e) {
-    if (e.key === 'Enter' || e.keyCode === 13) {
-        var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_customer_type: $(`select[name="customer_type_id"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val()};
-        load_action('#loadProducts', '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProducts'));?>', data);
-        return false;
-    }
-});
-
-$(`select[name="filter_products_type"], select[name="customer_type_id"], select[name="inventory_id"]`).change(function () {
-    var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_customer_type: $(`select[name="customer_type_id"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val()};
-    load_action('#loadProducts', '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProducts'));?>', data);
-});
+<!---->
+<!--$("input[name='filter_keyword']").on('keydown', function (e) {-->
+<!--    if (e.key === 'Enter' || e.keyCode === 13) {-->
+<!--        var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_customer_type: $(`select[name="customer_type_id"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val()};-->
+<!--        load_action('#loadProducts', '--><?php //echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProducts'));?><!--', data);-->
+<!--        return false;-->
+<!--    }-->
+<!--});-->
+<!---->
+<!--$(`select[name="filter_products_type"], select[name="customer_type_id"], select[name="inventory_id"]`).change(function () {-->
+<!--    var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val(), filter_customer_type: $(`select[name="customer_type_id"]`).val(), filter_warehouse: $(`select[name="inventory_id"]`).val()};-->
+<!--    load_action('#loadProducts', '--><?php //echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadKovProducts'));?><!--', data);-->
+<!--});-->
 
 <?php $this->headScript()->captureEnd() ?>
 
