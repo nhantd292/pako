@@ -19,7 +19,7 @@
         array('section' => 'Thông tin phiếu thu chi khách hàng', 'boxClass' => 'col-md-12'),
         array('element' => '<span class="text-info">'. $this->item['code'] .'</span>', 'label' => 'Mã phiếu', 'boxClass' => 'col-md-3'),
         array('element' => '<span class="text-info">'. $this->debt_type[$this->item['type']] .'</span>', 'label' => 'Loại phiếu', 'boxClass' => 'col-md-3'),
-        array('element' => '<span class="text-info">'. $date->formatToView($this->item['date']) .'</span>', 'label' => 'Ngày thu chi', 'boxClass' => 'col-md-3'),
+//        array('element' => '<span class="text-info">'. $date->formatToView($this->item['date']) .'</span>', 'label' => 'Ngày thu chi', 'boxClass' => 'col-md-3'),
         array('element' => '<span class="text-info">Giao dịch</span>', 'label' => 'Loại nghiệp vụ', 'boxClass' => 'col-md-3'),
         array('element' => '<span class="text-info">'.$nv.'</span>', 'label' => 'Nghiệp vụ', 'boxClass' => 'col-md-3'),
         array('element' => '<span class="text-info">'. $this->item['customer_name'] .'</span>', 'label' => 'Người nộp/nhận', 'boxClass' => 'col-md-6'),
@@ -38,6 +38,7 @@
         array('element' => $myForm->get('modal'), 'validate' => array('require' => true)),
 
         array('section' => 'Nghiệp vụ', 'boxClass' => 'col-md-12'),
+        array('element' => $myForm->get('date'), 'label' => 'Ngày thu chi', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
         array('element' => $myForm->get('category_id'), 'label' => 'Danh mục', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
         array('element' => $myForm->get('content_select'), 'label' => 'Nội dung chọn', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
         array('element' => $myForm->get('content'), 'label' => 'Nội dung nhập', 'validate' => array('require' => true), 'boxClass' => 'col-sm-3'),
@@ -72,6 +73,7 @@ if($this->params['data']['modal'] != 'success') {
 } 
 ?>
     <?php echo @$this->xViewElementErrors($elements);?>
+    <?php echo @$this->xViewElementErrors($elements_fund);?>
 	<form method="post" action="" class="horizontal-form adminForm" role="form" name="adminFormModal" id="adminFormModal">
     	<div class="row">
 			<?php echo $xhtmlContract;?>

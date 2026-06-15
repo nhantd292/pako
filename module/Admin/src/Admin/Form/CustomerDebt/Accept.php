@@ -33,6 +33,15 @@ class Accept extends Form {
 		    'name'			=> 'id',
 		    'type'			=> 'Hidden',
 		));
+
+        // Ngày thu/chi
+        $this->add(array(
+            'name'			=> 'date',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'		=> 'form-control date-picker',
+            ),
+        ));
 		
 		// Tài khoản chính
 		$this->add(array(

@@ -498,6 +498,7 @@ class CustomerDebtController extends ActionController
     // Vào sổ thanh toán
     public function acceptAction()
     {
+        $date     = new \ZendX\Functions\Date();
         if (!empty($this->_params['data']['id'])) {
             $item = $this->getTable()->getItem(array('id' => $this->_params['data']['id']), array('task' => 'type-id'));
             if ($item['accept'] == 1) {
@@ -510,11 +511,14 @@ class CustomerDebtController extends ActionController
         }
         if ($this->getRequest()->isPost()) {
             $myForm = new \Admin\Form\CustomerDebt\Accept($this->getServiceLocator());
+            $this->_params['data']['paid_cash'] = abs($item['paid_cash']);
+            $this->_params['data']['paid_transfer'] = abs($item['paid_transfer']);
             $myForm->setInputFilter(new \Admin\Filter\CustomerDebt\Accept($this->_params['data']));
             $arrData = array(
                 'id' => $item['id'],
                 'content' => $debt_type[$item['type']],
                 'note' => $item['note'],
+                'date' => $date->formatToView($item['date']),
             );
 
             $myForm->setData($arrData);
@@ -542,7 +546,7 @@ class CustomerDebtController extends ActionController
 
                     if (abs($item['paid_cash']) > 0) {
                         $data = array(
-                            'date' => $item['date'],
+                            'date' => $params['date'],
                             'accountant_funds_id' => $params['accountant_funds_id_cash'],
                             'transaction_category_id' => 'giao-dich',
                             'transaction_type_id' => $transaction_type,
@@ -563,7 +567,7 @@ class CustomerDebtController extends ActionController
                     }
                     if (abs($item['paid_transfer']) > 0) {
                         $data = array(
-                            'date' => $item['date'],
+                            'date' => $params['date'],
                             'accountant_funds_id' => $params['accountant_funds_id_transfer'],
                             'transaction_category_id' => 'giao-dich',
                             'transaction_type_id' => $transaction_type,
