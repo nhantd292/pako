@@ -11,10 +11,11 @@ $elementsContact = array(
 );
 $elementsContract = array(
     array('section' => 'Thông tin phiếu thu', 'boxClass' => 'col-md-12'),
-    array('element' => $this->item['code'], 'label' => 'Mã phiếu', 'boxClass' => 'col-md-3'),
-    array('element' => $dateFormat->formatToView($this->item['created'], 'd/m/Y H:i:s'), 'label' => 'Ngày tạo', 'boxClass' => 'col-md-3'),
-    array('element' => $this->user[$this->item['created_by']]['name'], 'label' => 'Người tạo', 'boxClass' => 'col-md-3'),
-    array('element' => '<span class="text-orange">'.$this->order_status[$this->item['state']]->name.'</span> ', 'label' => 'Trạng thái', 'boxClass' => 'col-md-3'),
+    array('element' => $this->item['code'], 'label' => 'Mã phiếu', 'boxClass' => 'col-md-2'),
+    array('element' => $dateFormat->formatToView($this->item['created'], 'd/m/Y H:i:s'), 'label' => 'Ngày tạo phiếu thu', 'boxClass' => 'col-md-3'),
+    array('element' => $dateFormat->formatToView($this->item['date'], 'd/m/Y'), 'label' => 'Ngày thu', 'boxClass' => 'col-md-2'),
+    array('element' => $this->user[$this->item['created_by']]['name'], 'label' => 'Người tạo', 'boxClass' => 'col-md-2'),
+    array('element' => '<span class="text-orange">'.$this->order_status[$this->item['state']]->name.'</span> ', 'label' => 'Trạng thái', 'boxClass' => 'col-md-2'),
 );
 $elementsPrice = array(
     array('section' => 'Thông tin thanh toán', 'boxClass' => 'col-md-12'),

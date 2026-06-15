@@ -148,6 +148,7 @@ class CustomerDebtController extends ActionController
                     'state' => NEW_STATUS,
                     'category' => $this->_params['data']['category'],
                     'note' => $this->_params['data']['note'],
+                    'date' => $this->_params['data']['date'],
                 );
                 $result = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
 
@@ -295,6 +296,7 @@ class CustomerDebtController extends ActionController
                     'state' => NEW_STATUS,
                     'category' => $this->_params['data']['category'],
                     'note' => $this->_params['data']['note'],
+                    'date' => $this->_params['data']['date'],
                 );
                 $result = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
 

@@ -15,7 +15,8 @@
         array('element' => $myForm->get('customer_id'), 'label' => 'Tên khách hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('category'), 'label' => 'Danh mục', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
         array('element' => $myForm->get('inventory_id'), 'label' => 'Kho hàng thu', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
-        array('element' => $myForm->get('note'), 'label' => 'Nội dung', 'validate' => array('require' => true), 'boxClass' => 'col-md-12')
+        array('element' => $myForm->get('date'), 'label' => 'Ngày thu chi', 'validate' => array('require' => true), 'boxClass' => 'col-md-4'),
+        array('element' => $myForm->get('note'), 'label' => 'Nội dung', 'validate' => array('require' => true), 'boxClass' => 'col-md-8')
     );
 
 $xhtmlTop = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);

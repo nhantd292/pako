@@ -76,6 +76,15 @@ class CustomerDebt extends Form
             )
         ));
 
+        // Ngày thu/chi
+        $this->add(array(
+            'name'			=> 'date',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'		=> 'form-control date-picker',
+            ),
+        ));
+
         // Nợ cũ
         $this->add(array(
             'name'       => 'amount_owed',
