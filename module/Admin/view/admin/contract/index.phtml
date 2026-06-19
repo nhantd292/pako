@@ -104,6 +104,7 @@
         	$code                   = $item->code;
             $date                   = $dateFormat->formatToView($item->date);
             $shipped_date           = $dateFormat->formatToView($item->shipped_date);
+            $date_invoice           = $dateFormat->formatToView($item->date_invoice);
             $contact_date           = $dateFormat->formatToView($item->contact_date, 'd/m/Y H:i');
             $contact_contract_first_date = $dateFormat->formatToView($item->contact_contract_first_date, 'd/m/Y H:i');
             $contact_phone          = $phone_code && $item->contact_phone && $item->user_id != $curent_user['id'] && $item->created != $curent_user['id'] && $item->care_id != $curent_user['id'] ? substr_replace($item->contact_phone, "***", 4, 3) : $item->contact_phone;
@@ -272,7 +273,7 @@
     							<td '.$rowSpan.'>'. $order_status .'</td>
     							<td '.$rowSpan.'><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a></td>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>
-    							<td '.$rowSpan.'>'. $date .'<br>'.$shipped_date.'</td>
+    							<td '.$rowSpan.'>Lên đơn: '. $date .'<br>Xuất kho: '.$shipped_date.'<br>Xuất HĐ: '.$date_invoice.'</td>
     							<td '.$rowSpan.'>'. $user_name .'<br>'.$care_name.'</td>
     							';
             if (count($options['product']) > 0) {

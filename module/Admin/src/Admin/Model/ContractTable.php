@@ -3544,6 +3544,7 @@ class ContractTable extends DefaultTable {
         if($options['task'] == 'update-invoiced') {
             $data = array(
                 'invoiced' => 1,
+                'date_invoice' => date('Y-m-d H:i:s'),
             );
             $this->tableGateway->update($data, array('id' => $arrData['id']));
             return $arrData['id'];
