@@ -126,19 +126,52 @@ class ContractDetailTable extends DefaultTable {
     		});
 		}
 
-		if($options['task'] == 'list-ajax') {
-			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
-                $date       = new \ZendX\Functions\Date();
-				$number     = new \ZendX\Functions\Number();
+//		if($options['task'] == 'list-ajax') {
+//			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+//                $date       = new \ZendX\Functions\Date();
+//				$number     = new \ZendX\Functions\Number();
+//
+//                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code'), 'inner');
+//                $select -> order(array(TABLE_CONTRACT_DETAIL .'.created' => 'DESC'));
+//
+//                if(isset($arrParam['contract_id']) && $arrParam['contract_id'] != '') {
+//                    $select->where->equalTo('contract_id', $arrParam['contract_id']);
+//                }
+//    		});
+//		}
 
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array('contract_code' => 'code'), 'inner');
-                $select -> order(array(TABLE_CONTRACT_DETAIL .'.created' => 'DESC'));
+        if($options['task'] == 'list-ajax') {
+            $result = $this->tableGateway->select(function (Select $select) use ($arrParam, $options) {
+                $date   = new \ZendX\Functions\Date();
+                $number = new \ZendX\Functions\Number();
 
+                // 1. Join với bảng x_contract (TABLE_CONTRACT)
+                $select->join(
+                    TABLE_CONTRACT,
+                    TABLE_CONTRACT . '.id = ' . TABLE_CONTRACT_DETAIL . '.contract_id',
+                    array('contract_code' => 'code'),
+                    $select::JOIN_INNER
+                );
+
+                // 2. Join với bảng x_products_price (Gộp cả 2 điều kiện vào đây)
+                // Lưu ý: Sửa 'products_id' thành 'product_id' ở vế sau nếu bảng detail của bạn dùng 'product_id'
+                $select->join(
+                    TABLE_PRODUCTS_PRICE,
+                    TABLE_PRODUCTS_PRICE . '.customer_type_id = ' . TABLE_CONTRACT . '.customer_type_id ' .
+                    'AND ' . TABLE_PRODUCTS_PRICE . '.products_id = ' . TABLE_CONTRACT_DETAIL . '.product_id',
+                    array('products_price' => 'price'), // Không lấy ra cột nào từ bảng giá
+                    $select::JOIN_INNER
+                );
+
+                // 3. Sắp xếp
+                $select->order(array(TABLE_CONTRACT_DETAIL . '.created' => 'DESC'));
+
+                // 4. Điều kiện lọc (Thêm tên bảng trước contract_id để an toàn)
                 if(isset($arrParam['contract_id']) && $arrParam['contract_id'] != '') {
-                    $select->where->equalTo('contract_id', $arrParam['contract_id']);
+                    $select->where->equalTo(TABLE_CONTRACT_DETAIL . '.contract_id', $arrParam['contract_id']);
                 }
-    		});
-		}
+            });
+        }
 
         if($options['task'] == 'list-query') {
             $result = $this->tableGateway->getAdapter()->driver->getConnection()->execute($arrParam['query']);
