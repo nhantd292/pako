@@ -58,7 +58,7 @@ class ProductsPriceTable extends DefaultTable {
                 $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_PRICE .'.products_id', array( 'products_name' => 'name', 'products_code' => 'code', 'products_type_id' => 'products_type_id','trademark_id' => 'trademark_id','unit_id' => 'unit_id', ), 'inner')
                     -> join(TABLE_CUSTOMER_TYPE, TABLE_CUSTOMER_TYPE .'.id = '. TABLE_PRODUCTS_PRICE .'.customer_type_id', array( 'customer_type_name' => 'name' ), 'inner');
 
-//                $select -> order(array('ordering' => 'ASC'));
+                $select -> order(array(TABLE_PRODUCTS.'.name' => 'ASC', TABLE_PRODUCTS_PRICE.'.price' => 'ASC'));
 
                 if(isset($ssFilter['filter_status']) && $ssFilter['filter_status'] != '') {
                     $select->where->equalTo(TABLE_PRODUCTS.'.status', $ssFilter['filter_status']);
