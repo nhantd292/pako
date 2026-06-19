@@ -55,7 +55,7 @@ class ProductsInventoryTable extends DefaultTable {
                         -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
                 }
 
-//                $select -> order(array('ordering' => 'ASC'));
+                $select -> order(array(TABLE_PRODUCTS.'.name' => 'ASC', TABLE_PRODUCTS_INVENTORY.'.quantity' => 'ASC'));
 
                 $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_PRODUCTS_INVENTORY .'.products_id', array( 'products_name' => 'name', 'products_code' => 'code', 'cost_price', 'products_type_id' => 'products_type_id','trademark_id' => 'trademark_id','unit_id' => 'unit_id', ), 'inner')
                     -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_PRODUCTS_INVENTORY .'.warehouse_id', array( 'warehouse_name' => 'name' ), 'inner');
