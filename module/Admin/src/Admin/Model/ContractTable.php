@@ -239,6 +239,10 @@ class ContractTable extends DefaultTable {
                 if(isset($ssFilter['filter_status_shipped']) && $ssFilter['filter_status_shipped'] != '') {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.shipped', $ssFilter['filter_status_shipped']);
                 }
+
+                if(isset($ssFilter['filter_warning_price']) && $ssFilter['filter_warning_price'] != '') {
+                    $select -> where -> equalTo('warning_price', $ssFilter['filter_warning_price']);
+                }
             })->current();
 	    }
 
@@ -891,6 +895,10 @@ class ContractTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_status_shipped']) && $ssFilter['filter_status_shipped'] != '') {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.shipped', $ssFilter['filter_status_shipped']);
+                }
+
+                if(isset($ssFilter['filter_warning_price']) && $ssFilter['filter_warning_price'] != '') {
+                    $select -> where -> equalTo('warning_price', $ssFilter['filter_warning_price']);
                 }
     		});
 		}
@@ -2483,6 +2491,7 @@ class ContractTable extends DefaultTable {
                 'total_product'           => $number->formatToData($arrData['total_product']),
                 'state'                   => $arrData['state'],
                 'status_id'               => DA_CHOT,
+                'warning_price'           => $arrData['warning_price'],
 
                 'invoice_type'              => $arrData['invoice_type'],
                 'company_name'              => $arrData['company_name'],
@@ -2580,6 +2589,7 @@ class ContractTable extends DefaultTable {
                 'company_email'             => $arrData['company_email'],
                 'company_user'              => $arrData['company_user'],
                 'company_phone'             => $arrData['company_phone'],
+                'warning_price'           => $arrData['warning_price'],
 
                 'sale_branch_id'          => $arrData['sale_branch_id'],
 

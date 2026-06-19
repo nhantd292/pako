@@ -394,6 +394,19 @@ class Contract extends Form{
             )
         ));
 
+        // Sửa giá bán
+        $this->add(array(
+            'name'			=> 'filter_warning_price',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Giá bán -',
+                'value_options'	=> array( 1	=> 'Đã sửa giá', 0 => 'Không sửa'),
+            )
+        ));
+
         // Xác nhận hoàn
         $this->add(array(
             'name' => 'filter_returned',

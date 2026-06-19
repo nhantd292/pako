@@ -57,6 +57,7 @@ class ContractController extends ActionController {
         $this->_params['ssFilter']['filter_invoiced']       = $ssFilter->filter_invoiced;
         $this->_params['ssFilter']['filter_status_shipped'] = $ssFilter->filter_status_shipped;
         $this->_params['ssFilter']['filter_fee_type']       = $ssFilter->filter_fee_type;
+        $this->_params['ssFilter']['filter_warning_price']  = $ssFilter->filter_warning_price;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : $this->_paginator['itemCountPerPage'];
@@ -113,6 +114,7 @@ class ContractController extends ActionController {
             $ssFilter->filter_invoiced 	        = $data['filter_invoiced'];
             $ssFilter->filter_status_shipped 	= $data['filter_status_shipped'];
             $ssFilter->filter_fee_type 	        = $data['filter_fee_type'];
+            $ssFilter->filter_warning_price 	= $data['filter_warning_price'];
 
             $ssFilter->filter_sale_group = $data['filter_sale_group'];
             if(!empty($data['filter_sale_branch'])) {
@@ -236,8 +238,8 @@ class ContractController extends ActionController {
                     )$check_emty_data = false;
                 }
 
+                $warning_price = 0;
                 if($check_emty_data){
-
                     $products_detail  = array();
                     $total_number_product = 0;
                     $cost_price_total = 0;
@@ -263,6 +265,11 @@ class ContractController extends ActionController {
                             $total_number_product += $number->formatToData($contract_product['numbers'][$i]);
                             $cost_price_total += ($number->formatToData($contract_product['numbers'][$i]) * $number->formatToData($contract_product['cost'][$i]));
                             $products_price_total += ($number->formatToData($contract_product['numbers'][$i]) * $number->formatToData($contract_product['price'][$i]));
+
+                            $products_item = $this->getServiceLocator()->get('Admin\Model\ProductsPriceTable')->getItem(array('products_id' => $contract_product['product_id'][$i], 'customer_type_id' => $contact_item['customer_type_id']), array('task' => 'filter'));
+                            if ($products_item->price != $number->formatToData($contract_product['price'][$i])) {
+                                $warning_price = 1;
+                            }
                         }
                     }
 
@@ -272,6 +279,7 @@ class ContractController extends ActionController {
                     $this->_params['data']['contract_product'] = $products_detail;
                     $this->_params['data']['customer_type_id'] = $contact_item['customer_type_id'];
                     $this->_params['data']['state'] = NEW_STATUS;
+                    $this->_params['data']['warning_price'] = $warning_price;
 
                     $this->_params['item'] = $contact_item;
 
@@ -555,6 +563,7 @@ class ContractController extends ActionController {
                     )$check_emty_data = false;
                 }
 
+                $warning_price = 0;
                 if($check_emty_data){
                     $products_detail  = array();
                     $total_number_product = 0;
@@ -581,6 +590,11 @@ class ContractController extends ActionController {
                             $total_number_product += $number->formatToData($contract_product['numbers'][$i]);
                             $cost_price_total += ($number->formatToData($contract_product['numbers'][$i]) * $number->formatToData($contract_product['cost'][$i]));
                             $products_price_total += ($number->formatToData($contract_product['numbers'][$i]) * $number->formatToData($contract_product['price'][$i]));
+
+                            $products_item = $this->getServiceLocator()->get('Admin\Model\ProductsPriceTable')->getItem(array('products_id' => $contract_product['product_id'][$i], 'customer_type_id' => $contact_item['customer_type_id']), array('task' => 'filter'));
+                            if ($products_item->price != $number->formatToData($contract_product['price'][$i])) {
+                                $warning_price = 1;
+                            }
                         }
                     }
 
@@ -590,6 +604,7 @@ class ContractController extends ActionController {
                     $this->_params['data']['contract_product'] = $products_detail;
                     $this->_params['data']['state'] = NEW_STATUS;
                     $this->_params['data']['customer_type_id'] = $contact_item['customer_type_id'];
+                    $this->_params['data']['warning_price'] = $warning_price;
 
                     $this->_params['item'] = $contact_item;
 

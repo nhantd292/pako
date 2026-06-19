@@ -36,7 +36,8 @@
 //            array('element' => $myForm->get('filter_care_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_marketer_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_category'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-            array('element' => $myForm->get('filter_product'), 'boxClass' => 'col-md-3 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_product'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_warning_price'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_marketer_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_customer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_invoice_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -263,12 +264,13 @@
             if($item->returned){
                 $color_text_row = 'style ="background-color: #e29494"';
             }
+            $warning_price_text = $item->warning_price == 1 ? 'text-danger' : '';
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'"'.$color_text_row.'>
     							<th '.$rowSpan.'>'. $cid .'</th>
                                 <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.'</th>
     							<td '.$rowSpan.'>'. $order_status .'</td>
-    							<td '.$rowSpan.'><a href="'.$linkDetail.'" class="text-bold">'. $code .'</a></td>
+    							<td '.$rowSpan.'><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a></td>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>
     							<td '.$rowSpan.'>'. $date .'<br>'.$shipped_date.'</td>
     							<td '.$rowSpan.'>'. $user_name .'<br>'.$care_name.'</td>
