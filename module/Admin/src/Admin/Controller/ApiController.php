@@ -513,6 +513,48 @@ class ApiController extends ActionController
         }
     }
 
+    public function loadProductsVatAction()
+    {
+        $itemPerpage = 20;
+        $curentPage = $this->_params['data']['curentPage'] ? $this->_params['data']['curentPage'] : 1;
+        $paginator = array(
+            'itemCountPerPage' => $itemPerpage,
+            'currentPageNumber' => $curentPage
+        );
+
+        if (!empty($this->_params['data']['filter_products_type']))
+            $ssFilter['filter_products_type'] = $this->_params['data']['filter_products_type'];
+        if (!empty($this->_params['data']['filter_keyword']))
+            $ssFilter['filter_keyword'] = $this->_params['data']['filter_keyword'];
+        if (!empty($this->_params['data']['filter_trademark']))
+            $ssFilter['filter_trademark'] = $this->_params['data']['filter_trademark'];
+
+        $param = array(
+            'paginator' => $paginator,
+            'ssFilter' => $ssFilter
+        );
+
+        $this->_viewModel['kovProducts'] = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->listItem($param, array('task' => 'list-item'));
+        $this->_viewModel['count'] = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->countItem($param, array('task' => 'list-item'));
+        $this->_viewModel['itemPerpage'] = $itemPerpage;
+        $this->_viewModel['curentPage'] = $curentPage;
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+        return $viewModel;
+    }
+    public function addProductToVatAction()
+    {
+        if ($this->_params['data']['id']) {
+            $product = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->getItem($this->_params['data'], null);
+            $this->_viewModel['product'] = (array)$product;
+            $this->_viewModel['data'] = $this->_params['data'];
+            $viewModel = new ViewModel($this->_viewModel);
+            $viewModel->setTerminal(true);
+            return $viewModel;
+        }
+    }
+
     public function checkGiftAction()
     {
         $this->_viewModel['data'] = $this->_params['data'];

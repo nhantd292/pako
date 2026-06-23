@@ -117,6 +117,7 @@ define('TABLE_WAREHOUSE_OUTPUT',            TABLE_PREFIX . 'warehouse_output'); 
 define('TABLE_WAREHOUSE_OUTPUT_DETAIL',     TABLE_PREFIX . 'warehouse_output_detail'); // Chi tiết sản phẩm trả
 define('TABLE_WAREHOUSE_ROTATION',          TABLE_PREFIX . 'warehouse_rotation'); // Phiếu luân chuyển kho
 define('TABLE_WAREHOUSE_ROTATION_DETAIL',   TABLE_PREFIX . 'warehouse_rotation_detail'); // Chi tiết sản phẩm luân chuyển kho
+define('TABLE_WAREHOUSE_VAT_DETAIL',        TABLE_PREFIX . 'warehouse_vat_detail'); // nhập hóa đơn vat
 
 // Bảng Kiotviet
 define('TABLE_KOV_BRANCHES',        TABLE_PREFIX . 'kov_branches'); // Kho hàng
@@ -169,6 +170,7 @@ define('NEW_STATUS'    , 'new');
 define('PROCESSING_STATUS'  , 'processing');
 define('COMPLETE_STATUS'  , 'complete');
 define('CANCEL_STATUS'        , 'cancel');
+define('DELIVERING_STATUS'        , 'delivering');
 
 define('THU'    , 'REVENUE');
 define('CHI'    , 'EXPENSE');

@@ -411,6 +411,16 @@
                     ),
                 ),
                 array(
+                    'name' => 'shipped',
+                    'caption' => 'Xác nhận - Đang giao hàng',
+                    'link' => 'javascript:;',
+                    'icon' => 'fa fa-truck',
+                    'attributes' => array(
+                        'onclick' => 'javascript:updateItem(\'delivering\', \'Các đơn hàng chỉ được xác nhận đang giao hàng một lần! <br> và chỉ những đơn ở trạng thái PHIẾU TẠM hoặc ĐANG XỬ LÝ mới có thể chuyển trạng thái đang giao hàng<br> Bạn có chắc chắn muốn xác nhận đang giao hàng với các đơn hàng này ?\');',
+                        'title' => 'Xác nhận đang giao hàng',
+                    ),
+                ),
+                array(
                     'name' => 'invoiced',
                     'caption' => 'Xác nhận - Đã xuất hóa đơn',
                     'link' => 'javascript:;',
