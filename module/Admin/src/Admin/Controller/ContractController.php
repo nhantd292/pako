@@ -399,7 +399,7 @@ class ContractController extends ActionController
                 $this->flashMessenger()->addSuccessMessage('Đơn hàng chuyển sang trạng thái "ĐANG XỬ LÝ"');
             }
             if ($control_action == CANCEL_STATUS) {
-                if (($item['state'] == NEW_STATUS && $item['created_by'] == $uid) || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+                if (($item['state'] == NEW_STATUS && $item['created_by'] == $uid) || ($item['state'] == NEW_STATUS && (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)))) {
                     ##### begin #####
                     $connection->beginTransaction();
                     # cập nhật trạng thái hủy cho đơn hàng.
@@ -431,19 +431,19 @@ class ContractController extends ActionController
                     # cập nhật trạng thái hoàn thành cho đơn hàng.
                     $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => COMPLETE_STATUS)), array('task' => 'update-state'));
 
-                    # cập nhật tồn kho cho sản phẩm.
-                    $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
-                    foreach ($products_detail as $detail_item) {
-                        $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $item['inventory_id']), array('task' => 'filter'));
-                        $quantity_new = $inventory->quantity - $detail_item->numbers;
-                        if ($quantity_new < 0) {
-                            $this->flashMessenger()->addErrorMessage('Số lượng sản phẩm "' . $inventory->products_name . '" trong kho "' . $inventory->warehouse_name . '" không đủ!');
-                            $this->goRoute(array('action' => 'detail', 'id' => $id));
-                            return false;
-                        }
-
-                        $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
-                    }
+//                    # cập nhật tồn kho cho sản phẩm.
+//                    $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
+//                    foreach ($products_detail as $detail_item) {
+//                        $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $item['inventory_id']), array('task' => 'filter'));
+//                        $quantity_new = $inventory->quantity - $detail_item->numbers;
+//                        if ($quantity_new < 0) {
+//                            $this->flashMessenger()->addErrorMessage('Số lượng sản phẩm "' . $inventory->products_name . '" trong kho "' . $inventory->warehouse_name . '" không đủ!');
+//                            $this->goRoute(array('action' => 'detail', 'id' => $id));
+//                            return false;
+//                        }
+//
+//                        $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
+//                    }
 
                     # Sửa phiếu thu chi khách hàng
                     $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
@@ -1077,7 +1077,6 @@ class ContractController extends ActionController
         exit;
     }
 
-
     # xuất file excel import vtp
     public function exportToVTPAction()
     {
@@ -1273,20 +1272,37 @@ class ContractController extends ActionController
                 $cid = $this->_params['data']['cid'];
                 $count_update = 0;
                 $connection = $this->getConnection();
+                $array_success = [];
                 foreach ($cid as $id) {
                     $contract = $this->getTable()->getItem(array('id' => $id));
                     if (in_array($contract['state'], array(PROCESSING_STATUS, NEW_STATUS))) {
                         $connection->beginTransaction();
-
+                        // thay đổi trạng thái
                         $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => DELIVERING_STATUS)), array('task' => 'update-state'));
-                        $count_update += 1;
-
+                        // ghi nhận ngày giao hàng
                         if ($contract['shipped'] == 0) {
                             $params['data']['id'] = $id;
                             $params['data']['shipped'] = 1;
                             $this->getTable()->saveItem($params, array('task' => 'update-shipped'));
                         }
 
+                        # cập nhật tồn kho cho sản phẩm.
+                        $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
+                        foreach ($products_detail as $detail_item) {
+                            $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $contract['inventory_id']), array('task' => 'filter'));
+                            $quantity_new = $inventory->quantity - $detail_item->numbers;
+                            if ($quantity_new < 0) {
+                                $this->flashMessenger()->addErrorMessage('Đơn hàng: '. $contract['code'] .' Số lượng sản phẩm "' . $inventory->products_name . '" trong kho "' . $inventory->warehouse_name . '" không đủ!');
+                                $connection->rollback();
+                                continue 2;
+                            }
+                            else{
+                                $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
+                            }
+
+                        }
+
+                        // chuyển trạng thái cho thu chi khách hàng
                         $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
                         $data_debt = array(
                             'id' => $debt_item_old->id,
@@ -1294,10 +1310,13 @@ class ContractController extends ActionController
                         );
                         $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
+                        $count_update += 1;
+                        $array_success[] = $contract['code'];
+
                         $connection->commit();
                     }
                 }
-                $message = ' Đã xác nhận ' . $count_update . ' đơn hàng đang giao hàng';
+                $message = ' Đã xác nhận ' . $count_update . ' đơn hàng đang giao hàng: '. implode(',', $array_success);
                 $this->flashMessenger()->addSuccessMessage($message);
             }
         }
