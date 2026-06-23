@@ -1349,8 +1349,59 @@ class ContractController extends ActionController
                         $connection->commit();
                     }
                 }
-                $message = ' Đã xác nhận ' . $count_update . ' đơn hàng đang giao hàng: '. implode(',', $array_success);
+                $message = ' Đã xác nhận ' . $count_update . ' đơn hàng ĐANG GIAO HÀNG: '. implode(',', $array_success);
                 $this->flashMessenger()->addSuccessMessage($message);
+            }
+        }
+        $this->goRoute(array('action' => 'index'));
+    }
+
+    // Xác nhận hoàn thành
+    public function CompleteAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            if (!empty($this->_params['data']['cid'])) {
+                $cid = $this->_params['data']['cid'];
+                $count_update = 0;
+                $connection = $this->getConnection();
+                $array_success = [];
+                $array_error = [];
+                foreach ($cid as $id) {
+                    $contract = $this->getTable()->getItem(array('id' => $id));
+                    if (in_array($contract['state'], array(DELIVERING_STATUS))) {
+                        $connection->beginTransaction();
+                        // thay đổi trạng thái
+                        $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => COMPLETE_STATUS)), array('task' => 'update-state'));
+                        // ghi nhận ngày giao hàng
+                        if ($contract['shipped'] == 0) {
+                            $params['data']['id'] = $id;
+                            $params['data']['shipped'] = 1;
+                            $this->getTable()->saveItem($params, array('task' => 'update-shipped'));
+                        }
+
+                        // chuyển trạng thái cho thu chi khách hàng
+                        $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                        $data_debt = array(
+                            'id' => $debt_item_old->id,
+                            'state' => COMPLETE_STATUS,
+                        );
+                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                        $count_update += 1;
+                        $array_success[] = $contract['code'];
+
+                        $connection->commit();
+                    }
+                    else{
+                        $array_error[] = $contract['code'];
+                    }
+                }
+                $message = ' Đã xác nhận ' . $count_update . ' đơn hàng HOÀN THÀNH: '. implode(',', $array_success);
+                $this->flashMessenger()->addSuccessMessage($message);
+                if (!empty($array_error)) {
+                    $message2 = ' Đơn hàng: '. implode(',', $array_error) . ' chưa ở trạng thái đang giao hàng không thể HOÀN THÀNH';
+                    $this->flashMessenger()->addErrorMessage($message2);
+                }
             }
         }
         $this->goRoute(array('action' => 'index'));
