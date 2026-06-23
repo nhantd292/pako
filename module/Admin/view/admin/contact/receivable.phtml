@@ -62,6 +62,7 @@
             $xhtmlItems .= '<td class="" style="inline-size: 200px;overflow-wrap: break-word;">'. $location_town.' - '.$location_district.' - '.$location_city.'</td>';
             $xhtmlItems .= '<td>'. $phone .'</td>';
             $xhtmlItems .= '<td><div class="col-100 text-wrap">'. $customer_type.'</div></td>';
+            $xhtmlItems .= '<td>'. $user_id . $sale_group_id . $sale_branch_id .'</td>';
             $xhtmlItems .= '<td class="mask_currency text-right text-bold text-red">'. $amount_owed .'</td>';
             $xhtmlItems .= '<td></td>';
     		$xhtmlItems .= '</tr>';
@@ -75,6 +76,7 @@
     $xhtmlHead .= '<th>Địa chỉ</th>';
     $xhtmlHead .= '<th>Điện thoại</th>';
     $xhtmlHead .= '<th>Nhóm Khách hàng</th>';
+    $xhtmlHead .= '<th>NV Quản lý</th>';
     $xhtmlHead .= '<th class="text-right">Tổng nợ phải thu: <span class="mask_currency text-red">'.$total_amount_owed.'</span></th>';
     $xhtmlHead .= '<th></th>';
     $xhtmlHead .= '</tr>';
