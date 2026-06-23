@@ -4,6 +4,7 @@ namespace Admin\Model;
 
 use Zend\Db\Sql\Select;
 use Admin\Model\DefaultTable;
+use Zend\XmlRpc\Server\System;
 
 class FundsTable extends DefaultTable
 {
@@ -59,8 +60,11 @@ class FundsTable extends DefaultTable
                 if (!empty($this->userInfo->getUserInfo('company_branch_id'))) {
                     $select->where->equalTo('company_branch_id', $this->userInfo->getUserInfo('company_branch_id'));
                 }
-                if (!empty($this->userInfo->getUserInfo('id'))) {
-                    $select->where->like('user_ids', "%{$this->userInfo->getUserInfo('id')}%");
+                $permission_ids = explode(',', $this->userInfo->getUserInfo('permission_ids'));
+                if (!in_array(SYSTEM, $permission_ids)) {
+                    if (!empty($this->userInfo->getUserInfo('id'))) {
+                        $select->where->like('user_ids', "%{$this->userInfo->getUserInfo('id')}%");
+                    }
                 }
 
                 if (!empty($arrParam['transaction_form_id'])) {

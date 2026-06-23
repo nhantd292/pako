@@ -128,6 +128,22 @@ class CustomerDebt extends Form
             )
         ));
 
+        $user_care	= \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\UserTable')->listItem(array('company_department_id' => 'care'), array('task' => 'list-user-department')), array('key' => 'id', 'value' => 'name'));
+        $user_sales	= \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\UserTable')->listItem(array('company_department_id' => 'sales'), array('task' => 'list-user-department')), array('key' => 'id', 'value' => 'name'));
+        $user_data = array_merge($user_sales, $user_care);
+
+        $this->add(array(
+            'name'			=> 'filter_user',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Nhân viên -',
+                'value_options'	=> $user_data,
+            )
+        ));
+
         $this->add(array(
             'name'       => 'filter_customer_id',
             'type'       => 'Text',

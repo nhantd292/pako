@@ -66,6 +66,10 @@ class CustomerDebtTable extends DefaultTable {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
 
+                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.created_by', $ssFilter['filter_user']);
+                }
+
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $select->where->NEST
                         ->like(TABLE_CUSTOMER_DEBT.'.code', '%'. $ssFilter['filter_keyword'] . '%')
@@ -156,6 +160,10 @@ class CustomerDebtTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
+                }
+
+                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.created_by', $ssFilter['filter_user']);
                 }
     			
     			if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {

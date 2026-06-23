@@ -34,6 +34,7 @@ class CustomerDebtController extends ActionController
         $this->_params['ssFilter']['filter_category'] = $ssFilter->filter_category;
         $this->_params['ssFilter']['filter_inventory_id'] = $ssFilter->filter_inventory_id;
         $this->_params['ssFilter']['filter_customer_id'] = $ssFilter->filter_customer_id;
+        $this->_params['ssFilter']['filter_user'] = $ssFilter->filter_user;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : 50;
@@ -67,6 +68,7 @@ class CustomerDebtController extends ActionController
             $ssFilter->filter_category = $data['filter_category'];
             $ssFilter->filter_inventory_id = $data['filter_inventory_id'];
             $ssFilter->filter_customer_id = $data['filter_customer_id'];
+            $ssFilter->filter_user = $data['filter_user'];
         }
 
         if (!empty($this->_params['route']['id'])) {
