@@ -170,7 +170,8 @@ define('NEW_STATUS'    , 'new');
 define('PROCESSING_STATUS'  , 'processing');
 define('COMPLETE_STATUS'  , 'complete');
 define('CANCEL_STATUS'        , 'cancel');
-define('DELIVERING_STATUS'        , 'delivering');
+define('DELIVERING_STATUS'    , 'delivering');
+define('RETURN_STATUS'        , 'return');
 
 define('THU'    , 'REVENUE');
 define('CHI'    , 'EXPENSE');

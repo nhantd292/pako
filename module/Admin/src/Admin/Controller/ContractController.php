@@ -458,6 +458,39 @@ class ContractController extends ActionController
                     $this->flashMessenger()->addErrorMessage('Bạn không thể hoàn thành đơn hàng!');
                 }
             }
+            if ($control_action == RETURN_STATUS) {
+                if (($item['state'] == DELIVERING_STATUS) && (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids))) {
+                    ##### begin #####
+                    $connection->beginTransaction();
+                    # cập nhật trạng thái hoàn cho đơn hàng.
+                    $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => RETURN_STATUS)), array('task' => 'update-state'));
+
+                    # cập nhật tồn kho cho sản phẩm.
+                    $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
+                    foreach ($products_detail as $detail_item) {
+                        $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $item['inventory_id']), array('task' => 'filter'));
+                        $quantity_new = $inventory->quantity + $detail_item->numbers;
+                        $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
+                    }
+
+                    # Sửa phiếu thu chi khách hàng
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                    $data_debt = array(
+                        'id' => $debt_item_old->id,
+                        'price_total' => 0,
+                        'discount' => 0,
+                        'paid_cash' => 0,
+                        'paid_transfer' => 0,
+                        'new_debt' => $debt_item_old->old_debt,
+                        'state' => RETURN_STATUS,
+                    );
+                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                    $connection->commit();
+                } else {
+                    $this->flashMessenger()->addErrorMessage('Bạn không thể hoàn thành đơn hàng!');
+                }
+            }
 
             $item = $this->getTable()->getItem(array('id' => $id));
 
