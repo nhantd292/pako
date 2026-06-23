@@ -37,6 +37,19 @@ class CustomerDebtTable extends DefaultTable {
                     $select->where->notEqualTo(TABLE_CUSTOMER_DEBT.'.state', CANCEL_STATUS);
                 }
 
+                if(isset($ssFilter['filter_accept']) && $ssFilter['filter_accept'] != '') {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CUSTOMER_DEBT.'.accept', $ssFilter['filter_accept'])
+                        -> equalTo(TABLE_CUSTOMER_DEBT.'.state', COMPLETE_STATUS)
+                        ->And
+                        -> NEST
+                        -> NotEqualTo(TABLE_CUSTOMER_DEBT.'.paid_cash', 0)
+                        ->Or
+                        -> NotEqualTo(TABLE_CUSTOMER_DEBT.'.paid_transfer', 0)
+                        -> UNNEST
+                        -> UNNEST;
+                }
+
                 if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.type', $ssFilter['filter_type']);
                 }
@@ -114,6 +127,19 @@ class CustomerDebtTable extends DefaultTable {
     			}
     			else{
                     $select->where->notEqualTo(TABLE_CUSTOMER_DEBT.'.state', CANCEL_STATUS);
+                }
+
+                if(isset($ssFilter['filter_accept']) && $ssFilter['filter_accept'] != '') {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CUSTOMER_DEBT.'.accept', $ssFilter['filter_accept'])
+                        -> equalTo(TABLE_CUSTOMER_DEBT.'.state', COMPLETE_STATUS)
+                        ->And
+                            -> NEST
+                            -> NotEqualTo(TABLE_CUSTOMER_DEBT.'.paid_cash', 0)
+                            ->Or
+                            -> NotEqualTo(TABLE_CUSTOMER_DEBT.'.paid_transfer', 0)
+                            -> UNNEST
+                        -> UNNEST;
                 }
 
     			if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {

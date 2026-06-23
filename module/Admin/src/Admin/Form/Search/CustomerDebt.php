@@ -115,6 +115,19 @@ class CustomerDebt extends Form
             ),
         ));
 
+        // accept
+        $this->add(array(
+            'name'			=> 'filter_accept',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Nhập sổ quỹ -',
+                'value_options'	=> array( 1	=> 'Đã vào sổ quỹ', 0 => 'Chờ vào sổ quỹ'),
+            )
+        ));
+
         $this->add(array(
             'name'       => 'filter_customer_id',
             'type'       => 'Text',
