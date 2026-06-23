@@ -425,7 +425,7 @@ class ContractController extends ActionController
                 }
             }
             if ($control_action == COMPLETE_STATUS) {
-                if ((($item['state'] == PROCESSING_STATUS) && $item['created_by'] == $uid) || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+                if ((($item['state'] == PROCESSING_STATUS || $item['state'] == DELIVERING_STATUS) && $item['created_by'] == $uid) || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
                     ##### begin #####
                     $connection->beginTransaction();
                     # cập nhật trạng thái hoàn thành cho đơn hàng.
@@ -1554,9 +1554,12 @@ class ContractController extends ActionController
             if (!empty($this->_params['data']['cid'])) {
                 $cid = $this->_params['data']['cid'];
                 $count_update = 0;
+                $connection = $this->getConnection();
                 foreach ($cid as $id) {
                     $contract = $this->getTable()->getItem(array('id' => $id));
                     if (in_array($contract['state'], array(PROCESSING_STATUS, NEW_STATUS))) {
+                        $connection->beginTransaction();
+
                         $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => DELIVERING_STATUS)), array('task' => 'update-state'));
                         $count_update += 1;
 
@@ -1565,6 +1568,15 @@ class ContractController extends ActionController
                             $params['data']['shipped'] = 1;
                             $this->getTable()->saveItem($params, array('task' => 'update-shipped'));
                         }
+
+                        $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+                        $data_debt = array(
+                            'id' => $debt_item_old->id,
+                            'state' => DELIVERING_STATUS,
+                        );
+                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                        $connection->commit();
                     }
                 }
                 $message = ' Đã xác nhận ' . $count_update . ' đơn hàng đang giao hàng';
