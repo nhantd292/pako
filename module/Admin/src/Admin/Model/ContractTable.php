@@ -1501,20 +1501,6 @@ class ContractTable extends DefaultTable {
             return true;
 		}
 
-		if ($options['task'] == 'update-state') {
-            $id = $arrData['id'];
-            $data = array();
-            if (isset($arrData['state'])) {
-                $data['state'] = $arrData['state'];
-            }
-            try {
-                $this->tableGateway->update($data, array('id' => $id));
-                return $id;
-            } catch (\Exception $e) {
-                throw new \Exception('Update contract state failed: ' . $e->getMessage());
-            }
-		}
-
         //		if ($options['task'] == 'update-code') {
         //            $id = $arrData;
         //            $result = $this->getItem(array('id' => $id));
@@ -3530,6 +3516,20 @@ class ContractTable extends DefaultTable {
                 $this->tableGateway->update($data, $where);
             }
             return count($arrData['cid']);
+        }
+
+        if ($options['task'] == 'update-state') {
+            $id = $arrData['id'];
+            $data = array();
+            if (isset($arrData['state'])) {
+                $data['state'] = $arrData['state'];
+            }
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Update contract state failed: ' . $e->getMessage());
+            }
         }
 
         if($options['task'] == 'update-shipped') {

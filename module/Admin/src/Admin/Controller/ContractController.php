@@ -1559,6 +1559,12 @@ class ContractController extends ActionController
                     if (in_array($contract['state'], array(PROCESSING_STATUS, NEW_STATUS))) {
                         $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => DELIVERING_STATUS)), array('task' => 'update-state'));
                         $count_update += 1;
+
+                        if ($contract['shipped'] == 0) {
+                            $params['data']['id'] = $id;
+                            $params['data']['shipped'] = 1;
+                            $this->getTable()->saveItem($params, array('task' => 'update-shipped'));
+                        }
                     }
                 }
                 $message = ' Đã xác nhận ' . $count_update . ' đơn hàng đang giao hàng';
