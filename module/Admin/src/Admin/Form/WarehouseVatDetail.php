@@ -40,5 +40,15 @@ class WarehouseVatDetail extends Form
                 'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
             )
         ));
+
+        $this->add(array(
+            'name'			=> 'quantity',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'			=> 'form-control mask_currency',
+                'id'			=> 'quantity',
+
+            ),
+        ));
     }
 }

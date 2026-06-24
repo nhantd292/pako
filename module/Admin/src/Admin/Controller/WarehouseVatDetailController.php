@@ -180,11 +180,7 @@ class WarehouseVatDetailController extends ActionController{
 
         if(!empty($id)) {
             $item = $this->getTable()->getItem(array('id' => $id), array('task' => 'search'));
-            echo "<pre>";
-            print_r($item);
-            echo "</pre>";
-
-            $myForm = new \Admin\Form\WarehouseRotation($this, $item);
+            $myForm = new \Admin\Form\WarehouseVatDetail($this, $item);
             $myForm->setData($item);
             $this->_viewModel['item']        = $item;
         }
@@ -193,76 +189,38 @@ class WarehouseVatDetailController extends ActionController{
         }
 
         if($this->getRequest()->isPost()){
-            $this->_viewModel['is_post'] = 1;
-            unset($this->_params['data']['filter_products_type']);
-            unset($this->_params['data']['filter_keyword']);
-
-            $myForm->setInputFilter(new \Admin\Filter\WarehouseRotation(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
+            $myForm->setInputFilter(new \Admin\Filter\WarehouseVatDetail(array('data' => $this->_params['data'], 'route' => $this->_params['route'])));
             $myForm->setData($this->_params['data']);
             $controlAction = $this->_params['data']['control-action'];
-            $productList = $this->_params['data']['products_list'];
+            $this->_params['item'] = $item;
 
             if($myForm->isValid()){
-                $check_emty_data = !empty($productList) ? true : false;
+                ##### begin #####
+                $connection->beginTransaction();
+                $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
+                $connection->commit();
+                ##### end #####
 
-                for ($i = 0; $i < count($productList['products_id']); $i++ ){
-                    if(
-                        trim($productList['products_id'][$i]) == "" ||
-                        (int)trim($productList['quantity'][$i]) == 0
-                    )$check_emty_data = false;
-                }
+                $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
 
-                if($check_emty_data){
-                    $products_detail  = array();
-                    for($i = 0; $i < count($productList['products_id']); $i++){
-                        if(!empty($productList['products_id'][$i])) {
-                            $products_detail[$i]['quantity']         = $number->formatToData($productList['quantity'][$i]); // số lượng của đơn hàng
-                            $products_detail[$i]['products_id']      = $productList['products_id'][$i]; // id sản phẩm
-                        }
-                    }
-
-                    ##### begin #####
-                    $connection->beginTransaction();
-                    # Sửa Phiếu luân chuyển kho
-                    $warehouse_rotation_id = $this->getTable()->saveItem($this->_params, array('task' => 'edit-item'));
-
-                    // Xóa chi tiết sản phẩm
-                    $this->getServiceLocator()->get('Admin\Model\WarehouseRotationDetailTable')->saveItem(array('warehouse_rotation_id' => $warehouse_rotation_id), array('task' => 'delete_product_by_warehouse_rotation_id'));
-                    // Thêm chi tiết sản phẩm
-                    foreach($products_detail as $arraydata){
-                        $this->getServiceLocator()->get('Admin\Model\WarehouseRotationDetailTable')->saveItem(array('data' => $arraydata, 'warehouse_rotation_id' => $warehouse_rotation_id), array('task' => 'add-item'));
-                    }
-
-                    $connection->commit();
-                    ##### end #####
-
-                    $this->flashMessenger()->addSuccessMessage('Dữ liệu đã được cập nhật thành công');
-
-
-                    if($controlAction == 'save-new') {
-                        $this->goRoute(array('action' => 'add'));
-                    } else if($controlAction == 'save') {
-                        $this->goRoute(array('action' => 'detail', 'id' => $warehouse_rotation_id));
-                    } else {
-                        $this->goRoute();
-                    }
-                }
-                else{
-                    $this->_viewModel['check_product_id'] = 'Cần nhập đầy đủ thông tin của sản phẩm';
-                    $this->_viewModel['productList'] = $productList;
-                    $this->_viewModel['data']  = $this->_params['data'];
+                if($controlAction == 'save-new') {
+                    $this->goRoute(array('action' => 'add'));
+                } else if($controlAction == 'save') {
+                    $this->goRoute();
+                } else {
+                    $this->goRoute();
                 }
             }
             else {
-                $this->_viewModel['productList']  = $productList;
                 $this->_viewModel['data']  = $this->_params['data'];
             }
         }
 
-        $this->_viewModel['contactId']      = $customer_id;
-        $this->_viewModel['products_type']  = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
         $this->_viewModel['myForm']	        = $myForm;
-        $this->_viewModel['caption']        = 'Thêm mới - '.$this->caption;
+        $this->_viewModel['item']	        = $item;
+        $this->_viewModel['sale_branch']    = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $this->_viewModel['user']           = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['caption']        = 'Sửa - '.$this->caption;
         return new ViewModel($this->_viewModel);
     }
 
