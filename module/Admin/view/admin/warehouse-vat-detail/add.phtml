@@ -11,6 +11,7 @@ $arrControl = array(
 
 $elementsTop = array(
     array('element' => $myForm->get('sale_branch_id'), 'label' => 'Chi nhánh', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
+    array('element' => $myForm->get('note'), 'label' => 'Ghi chú', 'validate' => array('require' => false), 'boxClass' => 'col-md-4'),
 );
 
 $xhtmlTop = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elementsTop);

@@ -112,7 +112,8 @@ class WarehouseVatDetailController extends ActionController{
                         if(!empty($productList['products_id'][$i])) {
                             $products_detail[$i]['quantity']         = $number->formatToData($productList['quantity'][$i]); // số lượng của đơn hàng
                             $products_detail[$i]['products_id']      = $productList['products_id'][$i]; // id sản phẩm
-                            $products_detail[$i]['sale_branch_id']   = $this->_params['data']['sale_branch_id']; // id chi nhanhs
+                            $products_detail[$i]['sale_branch_id']   = $this->_params['data']['sale_branch_id']; // id chi nhánh
+                            $products_detail[$i]['note']             = $this->_params['data']['note']; // ghi chú
                             $ssFilter = array(
                                 'filter_sale_branch_id' => $products_detail[$i]['sale_branch_id'],
                                 'filter_products_id' => $productList['products_id'][$i]
@@ -180,6 +181,11 @@ class WarehouseVatDetailController extends ActionController{
 
         if(!empty($id)) {
             $item = $this->getTable()->getItem(array('id' => $id), array('task' => 'search'));
+
+            if ($item['type'] == 'out') {
+                $this->flashMessenger()->addErrorMessage('Phiếu xuất được tạo tự động bạn không thể sửa!');
+                $this->goRoute();
+            }
             $myForm = new \Admin\Form\WarehouseVatDetail($this, $item);
             $myForm->setData($item);
             $this->_viewModel['item']        = $item;

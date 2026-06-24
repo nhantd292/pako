@@ -50,5 +50,15 @@ class WarehouseVatDetail extends Form
 
             ),
         ));
+
+        $this->add(array(
+            'name'			=> 'note',
+            'type'			=> 'Text',
+            'attributes'	=> array(
+                'class'			=> 'form-control',
+                'id'			=> 'note',
+
+            ),
+        ));
     }
 }

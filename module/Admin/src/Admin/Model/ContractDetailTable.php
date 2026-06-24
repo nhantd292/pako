@@ -146,20 +146,14 @@ class ContractDetailTable extends DefaultTable {
                 $number = new \ZendX\Functions\Number();
 
                 // 1. Join với bảng x_contract (TABLE_CONTRACT)
-                $select->join(
-                    TABLE_CONTRACT,
-                    TABLE_CONTRACT . '.id = ' . TABLE_CONTRACT_DETAIL . '.contract_id',
-                    array('contract_code' => 'code'),
+                $select->join(TABLE_CONTRACT, TABLE_CONTRACT . '.id = ' . TABLE_CONTRACT_DETAIL . '.contract_id',
+                    array('contract_code' => 'code', 'sale_branch_id', 'user_id'),
                     $select::JOIN_INNER
                 );
 
                 // 2. Join với bảng x_products_price (Gộp cả 2 điều kiện vào đây)
-                // Lưu ý: Sửa 'products_id' thành 'product_id' ở vế sau nếu bảng detail của bạn dùng 'product_id'
-                $select->join(
-                    TABLE_PRODUCTS_PRICE,
-                    TABLE_PRODUCTS_PRICE . '.customer_type_id = ' . TABLE_CONTRACT . '.customer_type_id ' .
-                    'AND ' . TABLE_PRODUCTS_PRICE . '.products_id = ' . TABLE_CONTRACT_DETAIL . '.product_id',
-                    array('products_price' => 'price'), // Không lấy ra cột nào từ bảng giá
+                $select->join( TABLE_PRODUCTS_PRICE, TABLE_PRODUCTS_PRICE . '.customer_type_id = ' . TABLE_CONTRACT . '.customer_type_id ' . 'AND ' . TABLE_PRODUCTS_PRICE . '.products_id = ' . TABLE_CONTRACT_DETAIL . '.product_id',
+                    array('products_price' => 'price'),
                     $select::JOIN_INNER
                 );
 

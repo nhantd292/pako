@@ -1280,6 +1280,7 @@ class ContractController extends ActionController
             if (!empty($this->_params['data']['cid'])) {
                 $cid = $this->_params['data']['cid'];
                 $count_update = 0;
+                $connection = $this->getConnection();
                 foreach ($cid as $id) {
                     $contract = $this->getTable()->getItem(array('id' => $id));
                     // Chỉ lấy ra những đơn hàng hoàn thành
@@ -1287,7 +1288,50 @@ class ContractController extends ActionController
                         $params['data']['id'] = $id;
                         $params['data']['invoiced'] = 1;
                         $count_update += 1;
+
+                        ##### begin #####
+                        $connection->beginTransaction();
+                        # cập nhật trạng thái xuất hóa đơn cho đơn hàng
                         $this->getTable()->saveItem($params, array('task' => 'update-invoiced'));
+                        $contract = $this->getTable()->getItem(array('id' => $id));
+                        # thêm phiếu xuất vat cho xuất nhập vat
+                        $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
+
+                        foreach ($items as $key => $item) {
+                            $number = $item['numbers'] - $item['numbers_return'];
+                            if ($number > 0) {
+                                $ssFilter = array(
+                                    'filter_sale_branch_id' => $item['sale_branch_id'],
+                                    'filter_products_id' => $item['product_id']
+                                );
+                                $quantity_begin = 0;
+                                $count_products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->countItem(array('ssFilter' => $ssFilter), array('task' => 'list-item'));
+                                if ($count_products_vat > 0) {
+                                    $products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->listItem(array('ssFilter' => $ssFilter), array('task' => 'list-item', 'paginator' => false))->toArray();
+                                    $pr_item = $products_vat[0];
+                                    $quantity_begin = $pr_item['quantity_end'];
+                                }
+
+                                $data_vat = array(
+                                    'quantity'              => $number,
+                                    'quantity_begin'        => $quantity_begin,
+                                    'quantity_end'          => $quantity_begin - $number,
+                                    'products_id'           => $item['product_id'],
+                                    'sale_branch_id'        => $item['sale_branch_id'],
+                                    'contract_detail_id'    => $item['id'],
+                                    'type'                  => 'out',
+                                    'note'                  => '',
+
+                                    'user_id'       => $item['user_id'],
+                                    'created'       => $contract['date_invoice'],
+                                    'created_by'    => $item['user_id'],
+                                );
+                                $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat), array('task' => 'add-item'));
+                            }
+
+                        }
+                        $connection->commit();
+                        ##### end #####
                     }
                 }
                 $message = ' Đã xác nhận ' . $count_update . ' đơn hàng được xuất hóa đơn';

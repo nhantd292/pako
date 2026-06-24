@@ -27,7 +27,8 @@
 
     // Danh sách
     $xhtmlItems = '';
-    $types = ['in' => 'Nhập', 'out' => 'Xuất'];
+    $types = ['in' => 'Nhập hàng', 'out' => 'Xuất hàng'];
+
     
     if(!empty($this->items)) {
         $index = 0;
@@ -40,13 +41,15 @@
             $created        = $dateFormat->formatToView($item['created'], 'd/m/Y H:i:s');
             $cid            = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
             $ordering       = @$this->xFormInput('ordering['. $id .']', $item->ordering, array('class' => 'form-control input-xs'));
-            $created_by             = $this->user[$item->created_by]['name'];
+            $created_by     = $this->user[$item->created_by]['name'];
+            $style = $item['type'] == 'in' ? 'text-green' : 'text-red';
+            $t = $item['type'] == 'in' ? '+' : '-';
             
             // Link Action
             $linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit', 'id' => $id));
 
             
-            $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
+            $xhtmlItems .= '<tr id="tr_'. $id .'" class="'.$style.'">
     							<td class="text-center">'. $cid .'</td>
                                 <td class="text-center">'. $index .'</td>
     							<td>'. $this->branch[$item['sale_branch_id']]['name'] .'</td>
@@ -54,9 +57,10 @@
     							<td>'. $item['products_name'] .'</td>
     							<td class="text-center">'.$created .'</td>
     							<td class="text-center">'. $types[$item['type']] .'</td>
-    							<td class="mask_currency text-center">'. $item['quantity'] .'</td>
+    							<td class="text-center">'. $t .'<span class="mask_currency">'.$item['quantity'].'</span></td>
     							<td class="mask_currency text-center">'. $item['quantity_begin'] .'</td>
     							<td class="mask_currency text-center">'. $item['quantity_end'] .'</td>
+    							<td>'. $item['note'] .'</td>
     							<td>'. $created_by .'</td>
     						</tr>';
         }
@@ -74,6 +78,7 @@
     $xhtmlHead .= '<th class="text-center" width="150">Số lượng</th>';
     $xhtmlHead .= '<th class="text-center" width="150">Tồn đầu kỳ</th>';
     $xhtmlHead .= '<th class="text-center" width="150">Tồn cuối kỳ</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">Ghi chú</th>';
     $xhtmlHead .= '<th class="text-center" width="15">Người tạo</th>';
     $xhtmlHead .= '</tr>';
     
@@ -101,6 +106,8 @@
 		<div class="clearfix"></div>
 	</div>
     <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
+    <?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
+
     <div class="page-filter">
     	<div class="row">
     		<?php echo $xhtmlFilter;?>

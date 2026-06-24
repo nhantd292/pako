@@ -168,10 +168,11 @@ class WarehouseVatDetailTable extends DefaultTable {
                 'sale_branch_id'        => $arrData['sale_branch_id'],
                 'contract_detail_id'    => $arrData['contract_detail_id'],
                 'type'                  => $arrData['type'],
+                'note'                  => $arrData['note'],
 
-                'user_id'       => $this->userInfo->getUserInfo('id'),
-                'created'       => date('Y-m-d H:i:s'),
-                'created_by'    => $this->userInfo->getUserInfo('id'),
+                'user_id'       => !empty($arrData['user_id']) ? $arrData['user_id'] : $this->userInfo->getUserInfo('id'),
+                'created'       => !empty($arrData['created']) ? $arrData['created'] : date('Y-m-d H:i:s'),
+                'created_by'    => !empty($arrData['user_id']) ? $arrData['user_id'] : $this->userInfo->getUserInfo('id'),
             );
 
             try {
@@ -190,6 +191,9 @@ class WarehouseVatDetailTable extends DefaultTable {
             if(isset($arrData['quantity'])) {
                 $data['quantity'] = $arrData['quantity'];
                 $data['quantity_end'] = $arrItem['quantity_begin'] + $arrData['quantity'];
+            }
+            if(isset($arrData['note'])) {
+                $data['note'] = $arrData['note'];
             }
 
             try {
