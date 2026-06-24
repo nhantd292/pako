@@ -76,7 +76,7 @@ class WarehouseVatDetailTable extends DefaultTable {
 
                 $select -> order(array(TABLE_WAREHOUSE_VAT_DETAIL .'.index' => 'DESC'));
 
-                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_WAREHOUSE_VAT_DETAIL .'.products_id', array('products_code' => 'code', 'products_name' => 'name'), 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_WAREHOUSE_VAT_DETAIL .'.products_id', array('products_code' => 'code', 'products_name' => 'name', 'products_name_vat' => 'name_vat'), 'inner');
 
                 if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
                     $select -> where -> NEST
