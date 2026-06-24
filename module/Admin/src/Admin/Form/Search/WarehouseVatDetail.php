@@ -28,7 +28,7 @@ class WarehouseVatDetail extends Form{
 		    'name'			=> 'filter_keyword',
 		    'type'			=> 'Text',
 		    'attributes'	=> array(
-		        'placeholder'   => 'Từ khóa',
+		        'placeholder'   => 'Mã/Tên sản phẩm',
 		        'class'			=> 'form-control input-sm',
 		        'id'			=> 'filter_keyword',
 		    ),
@@ -66,6 +66,34 @@ class WarehouseVatDetail extends Form{
             'options'		=> array(
                 'empty_option'	=> '- Chi nhánh -',
                 'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            )
+        ));
+
+        $user_care	= \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\UserTable')->listItem(array('company_department_id' => 'care', 'sale_branch_id' => $ssFilter['filter_sale_branch']), array('task' => 'list-user-department')), array('key' => 'id', 'value' => 'name'));
+        $user_sales	= \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\UserTable')->listItem(array('company_department_id' => 'sales', 'sale_branch_id' => $ssFilter['filter_sale_branch']), array('task' => 'list-user-department')), array('key' => 'id', 'value' => 'name'));
+        $user_data = array_merge($user_sales, $user_care);
+
+        $this->add(array(
+            'name'			=> 'filter_user_id',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Nhân viên -',
+                'value_options'	=> $user_data,
+            )
+        ));
+
+        $this->add(array(
+            'name'			=> 'filter_type',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Phân loại -',
+                'value_options'	=> array('in' => 'Nhập hàng', 'out' => 'Xuất hàng'),
             )
         ));
 		

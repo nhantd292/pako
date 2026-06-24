@@ -37,6 +37,14 @@ class WarehouseVatDetailTable extends DefaultTable {
                     $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
                 }
 
+                if(isset($ssFilter['filter_user_id']) && $ssFilter['filter_user_id'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.user_id', $ssFilter['filter_user_id']);
+                }
+
+                if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.type', $ssFilter['filter_type']);
+                }
+
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $filter_keyword = trim($ssFilter['filter_keyword']);
                     $select -> where -> NEST
@@ -88,6 +96,14 @@ class WarehouseVatDetailTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') {
                     $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
+                }
+
+                if(isset($ssFilter['filter_user_id']) && $ssFilter['filter_user_id'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.user_id', $ssFilter['filter_user_id']);
+                }
+
+                if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.type', $ssFilter['filter_type']);
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {

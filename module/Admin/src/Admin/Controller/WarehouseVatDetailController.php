@@ -25,6 +25,8 @@ class WarehouseVatDetailController extends ActionController{
         $this->_params['ssFilter']['filter_date_begin']             = $ssFilter->filter_date_begin;
         $this->_params['ssFilter']['filter_date_end']               = $ssFilter->filter_date_end;
         $this->_params['ssFilter']['filter_sale_branch_id']         = $ssFilter->filter_sale_branch_id;
+        $this->_params['ssFilter']['filter_type']                   = $ssFilter->filter_type;
+        $this->_params['ssFilter']['filter_user_id']                = $ssFilter->filter_user_id;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage']               = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : 50;
@@ -52,6 +54,8 @@ class WarehouseVatDetailController extends ActionController{
             $ssFilter->filter_date_begin            = $data['filter_date_begin'];
             $ssFilter->filter_date_end              = $data['filter_date_end'];
             $ssFilter->filter_sale_branch_id        = $data['filter_sale_branch_id'];
+            $ssFilter->filter_type                  = $data['filter_type'];
+            $ssFilter->filter_user_id               = $data['filter_user_id'];
         }
 
         if (!empty($this->_params['route']['id'])) {
