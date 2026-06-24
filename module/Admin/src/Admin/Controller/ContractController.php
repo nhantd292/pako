@@ -534,6 +534,12 @@ class ContractController extends ActionController
 
         if (!empty($id)) {
             $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id), array('task' => 'join-debt'));
+            # với những đơn hàng đã xuất hóa đơn đã thêm phiếu xuất hàng vat thì không thể sửa không sẽ mất
+            if ($contract['invoiced'] == 1) {
+                $this->flashMessenger()->addErrorMessage('Đơn hàng đã xuất hóa đơn bạn không thể sửa');
+                $this->goRoute(array('action' => 'detail', 'id' => $id));
+                return false;
+            }
             if (in_array($contract['state'], array(COMPLETE_STATUS, CANCEL_STATUS)) && !in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)) {
                 $state_text = $contract['state'] == CANCEL_STATUS ? 'HỦY' : 'HOÀN THÀNH';
                 $this->flashMessenger()->addErrorMessage('Đơn hàng đã ở trạng thái "' . $state_text . '" không thể cập nhật dữ liệu!');
@@ -1319,6 +1325,8 @@ class ContractController extends ActionController
                                     'products_id'           => $item['product_id'],
                                     'sale_branch_id'        => $item['sale_branch_id'],
                                     'contract_detail_id'    => $item['id'],
+                                    'contract_id'           => $item['contract_id'],
+                                    'contract_code'         => $item['contract_code'],
                                     'type'                  => 'out',
                                     'note'                  => '',
 
@@ -1522,6 +1530,60 @@ class ContractController extends ActionController
         return $viewModel;
     }
 
+    // Chạy xuất hàng vat
+    public function runInvoicedAction()
+    {
+        $this->_params['ssFilter']['filter_invoiced'] = 1;
+        $this->_params['ssFilter']['order_by'] = 'date_invoice';
+        $this->_params['ssFilter']['order'] = 'ASC';
+        $contracts = $this->getTable()->listItem($this->_params, array('task' => 'list-item', 'paginator' => false));
+
+        foreach ($contracts as $contract) {
+                # thêm phiếu xuất vat cho xuất nhập vat
+                $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contract['id']), array('task' => 'list-ajax'));
+
+                foreach ($items as $key => $item) {
+                    $vat_item = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->getItem(array('contract_detail_id' => $item['id']), array('task' => 'search'));
+                    # nếu đã tạo rồi thì không tạo nữa
+                    if (empty($vat_item)) {
+                        $number = $item['numbers'] - $item['numbers_return'];
+                        if ($number > 0) {
+                            $ssFilter = array(
+                                'filter_sale_branch_id' => $item['sale_branch_id'],
+                                'filter_products_id' => $item['product_id']
+                            );
+                            $quantity_begin = 0;
+                            $count_products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->countItem(array('ssFilter' => $ssFilter), array('task' => 'list-item'));
+                            if ($count_products_vat > 0) {
+                                $products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->listItem(array('ssFilter' => $ssFilter), array('task' => 'list-item', 'paginator' => false))->toArray();
+                                $pr_item = $products_vat[0];
+                                $quantity_begin = $pr_item['quantity_end'];
+                            }
+
+                            $data_vat = array(
+                                'quantity'              => $number,
+                                'quantity_begin'        => $quantity_begin,
+                                'quantity_end'          => $quantity_begin - $number,
+                                'products_id'           => $item['product_id'],
+                                'sale_branch_id'        => $item['sale_branch_id'],
+                                'contract_detail_id'    => $item['id'],
+                                'contract_id'           => $item['contract_id'],
+                                'contract_code'         => $item['contract_code'],
+                                'type'                  => 'out',
+                                'note'                  => '',
+
+                                'user_id'       => $item['user_id'],
+                                'created'       => $contract['date_invoice'],
+                                'created_by'    => $item['user_id'],
+                            );
+                            $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat), array('task' => 'add-item'));
+                        }
+                    }
+                }
+            }
+
+        $this->goRoute(array('action' => 'index'));
+    }
 
 //    // Danh sách đơn hàng giục đơn
 //    public function indexShippingAction() {

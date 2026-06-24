@@ -174,7 +174,7 @@ class Contract extends Form{
                 'class' => 'form-control select2 select2_basic',
             ),
             'options' => array(
-                'empty_option'	=> '- xuất hóa đơn -',
+                'empty_option'	=> '- Xuất hóa đơn -',
                 'value_options' => array('0' => 'Chưa xuất HĐ', '1' => 'Đã xuất HĐ'),
             )
         ));

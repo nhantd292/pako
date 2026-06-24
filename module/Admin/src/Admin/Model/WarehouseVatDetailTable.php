@@ -145,7 +145,9 @@ class WarehouseVatDetailTable extends DefaultTable {
                 if (!empty($arrParam['products_id'])) {
                     $select -> where -> equalTo(TABLE_WAREHOUSE_VAT_DETAIL .'.products_id', $arrParam['products_id']);
                 }
-
+                if (!empty($arrParam['contract_detail_id'])) {
+                    $select -> where -> equalTo(TABLE_WAREHOUSE_VAT_DETAIL .'.contract_detail_id', $arrParam['contract_detail_id']);
+                }
 
     		})->toArray();
 		}
@@ -167,6 +169,8 @@ class WarehouseVatDetailTable extends DefaultTable {
                 'products_id'           => $arrData['products_id'],
                 'sale_branch_id'        => $arrData['sale_branch_id'],
                 'contract_detail_id'    => $arrData['contract_detail_id'],
+                'contract_id'           => $arrData['contract_id'],
+                'contract_code'         => $arrData['contract_code'],
                 'type'                  => $arrData['type'],
                 'note'                  => $arrData['note'],
 

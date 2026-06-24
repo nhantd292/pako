@@ -690,7 +690,12 @@ class ContractTable extends DefaultTable {
     			                 'contact_options' => 'options',
     			                 'contact_user_ids' => 'user_ids',
     			             ), 'inner');
-    			$select -> order(array(TABLE_CONTRACT .'.index' => 'DESC'));
+                if(isset($ssFilter['order_by']) && $ssFilter['order_by'] != '' && $ssFilter['order_by'] == 'date_invoice') {
+                    $select -> order(array(TABLE_CONTRACT .'.'.$ssFilter['order_by'] => $ssFilter['order']));
+                }
+                else{
+                    $select -> order(array(TABLE_CONTRACT .'.index' => 'DESC'));
+                }
 
     			// Đơn hàng chưa xóa có trạng thái = 0
                 $select -> where -> equalTo(TABLE_CONTRACT .'.delete', 0);
