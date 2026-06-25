@@ -1126,6 +1126,7 @@ class ContractController extends ActionController
         $location_city = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
         $location_district = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
         $location_town = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 3), array('task' => 'cache'));
+        $fee_type = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'fee-type')), array('task' => 'cache-alias'));
         //Include PHPExcel
         require_once PATH_VENDOR . '/Excel/PHPExcel.php';
 
@@ -1162,7 +1163,7 @@ class ContractController extends ActionController
             array('field' => 'product_length', 'title' => 'Dài(cm)'),
             array('field' => 'product_width', 'title' => 'Rộng(cm)'),
             array('field' => 'product_height', 'title' => 'Cao(cm)'),
-            array('field' => 'user_fee', 'title' => 'Người trả cước'),
+            array('field' => 'fee_type', 'title' => 'Người trả cước', 'type' => 'data_source', 'data_source' => $fee_type),
             array('field' => 'require_other', 'title' => 'Yêu cầu khác'),
             array('field' => 'delivery_time_note', 'title' => 'Thời gian hẹn lấy'),
             array('field' => 'delivery_time', 'title' => 'Thời gian giao')
@@ -1194,7 +1195,7 @@ class ContractController extends ActionController
             $options = unserialize($item['options']);
             $item['address'] = $item['address'] . ', ' . $location_district[$item['location_district_id']]['name'] . ', ' . $location_city[$item['location_city_id']]['name'];
 
-            $item['user_fee'] = 'Người gửi trả';
+//            $item['fee_type'] = 'Người gửi trả';
             if ($item['deliver_work_shift'] == 1)
                 $item['delivery_time'] = 'Buổi sáng';
             elseif ($item['deliver_work_shift'] == 2)
@@ -1227,6 +1228,10 @@ class ContractController extends ActionController
 //                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
 //                        $value = '\''.date($formatDate,strtotime($item[$data['field']]));// $dateFormat->formatToView($item[$data['field']], $formatDate);
                         $value = $dateFormat->formatToView($item[$data['field']], 'd/m/Y');
+                        break;
+                    case 'data_source':
+                        $field = $data['data_source_field'] ? $data['data_source_field'] : 'name';
+                        $value = $data['data_source'][$item[$data['field']]][$field];
                         break;
                     default:
                         $value = $item[$data['field']];
