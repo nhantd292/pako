@@ -339,7 +339,8 @@ class Contract extends InputFilter {
 
         $this->add(array(
             'name'		=> 'company_address',
-            'required'	=> $require_invoice_type == true ? true : false,
+//            'required'	=> $require_invoice_type == true ? true : false,
+            'required'	=> false,
             'validators'	=> array(
                 array(
                     'name'		=> 'NotEmpty',
@@ -355,7 +356,8 @@ class Contract extends InputFilter {
 
         $this->add(array(
             'name'		=> 'company_user',
-            'required'	=> $require_invoice_type == true ? true : false,
+//            'required'	=> $require_invoice_type == true ? true : false,
+            'required'	=> $optionData['invoice_type'] == 'vat' ? true : false,
             'validators'	=> array(
                 array(
                     'name'		=> 'NotEmpty',
@@ -371,7 +373,8 @@ class Contract extends InputFilter {
 
         $this->add(array(
             'name'		=> 'company_phone',
-            'required'	=> $require_invoice_type == true ? true : false,
+//            'required'	=> $require_invoice_type == true ? true : false,
+            'required'	=> false,
             'validators'	=> array(
                 array(
                     'name'		=> 'NotEmpty',
