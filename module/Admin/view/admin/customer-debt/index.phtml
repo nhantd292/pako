@@ -50,6 +50,9 @@
             $detail_revenue_url   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail-revenue', 'id' => $id));
             $detail_expense_url   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail-expense', 'id' => $id));
 
+            $linkDelete = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'delete', 'id' => $id));
+            $controlDelete = (in_array($item['type'],[THU,CHI]) && $item['accept'] == 0) ? $this->linkAdminHtml($linkDelete, array('type' => 'icon', 'title' => 'Xóa', 'class' => 'btn btn-xs red', 'icon' => 'fa fa-trash')): '';
+
             if ($item['type'] == THU)
                 $linkDetail = '<a href="'.$detail_revenue_url.'"> '. $item['code'] .'</a>';
             elseif ($item['type'] == CHI)
@@ -81,6 +84,7 @@
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
     							<td class="text-center">'. $cid .'</td>
                                 <td class="text-center">'. $index .'</td>
+                                <td class="text-center">'. $controlDelete .'</td>
     							<td class="text-center"><a href="javascript:;" onclick="'.$linkPopupAccept.'">'. $accept .'</a></td>
     							<td class="text-center text-bold">'.$linkDetail.'</td>
     							<td class="">'.  $item['customer_name'] .'</td>
@@ -105,6 +109,7 @@
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th width="20" class="table-checkbox text-center"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';;
     $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
+    $xhtmlHead .= '<th class="col-50">Công cụ</th>';
     $xhtmlHead .= '<th class="text-center">Nhập sổ quỹ</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Mã phiếu</th>';
     $xhtmlHead .= '<th class="text-center" width="150">Khách hàng</th>';

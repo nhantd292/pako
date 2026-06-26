@@ -220,7 +220,7 @@ class CustomerDebtController extends ActionController
                     $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     $connection->commit();
-                    $this->flashMessenger()->addSuccessMessage('Hủy đơn hàng thành công!');
+                    $this->flashMessenger()->addSuccessMessage('Hủy phiếu thu thành công!');
                 }
                 if ($control_action == COMPLETE_STATUS) {
                     ##### begin #####
@@ -234,7 +234,7 @@ class CustomerDebtController extends ActionController
                     $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     $connection->commit();
-                    $this->flashMessenger()->addSuccessMessage('Phiếu trả hàng đã được hoàn thành!');
+                    $this->flashMessenger()->addSuccessMessage('Phiếu thu đã được hoàn thành!');
                 }
 
                 $item = $this->getTable()->getItem(array('id' => $id));
@@ -368,7 +368,7 @@ class CustomerDebtController extends ActionController
                     $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     $connection->commit();
-                    $this->flashMessenger()->addSuccessMessage('Hủy đơn hàng thành công!');
+                    $this->flashMessenger()->addSuccessMessage('Hủy phiếu chi thành công!');
                 }
                 if ($control_action == COMPLETE_STATUS) {
                     ##### begin #####
@@ -382,7 +382,7 @@ class CustomerDebtController extends ActionController
                     $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     $connection->commit();
-                    $this->flashMessenger()->addSuccessMessage('Phiếu trả hàng đã được hoàn thành!');
+                    $this->flashMessenger()->addSuccessMessage('Phiếu chi đã được hoàn thành!');
                 }
 
                 $item = $this->getTable()->getItem(array('id' => $id));
@@ -404,15 +404,42 @@ class CustomerDebtController extends ActionController
 
     public function deleteAction()
     {
-//        if($this->getRequest()->isPost()) {
-//            if(!empty($this->_params['data']['cid'])) {
-//                $cdata = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
-//                $message = 'Xóa '. $cdata .' '.$this->caption.' thành công';
-//                $this->flashMessenger()->addSuccessMessage($message);
-//            }
-//        }
-        $this->flashMessenger()->addErrorMessage('Không thể xóa thu chi khách hàng!');
-        $this->goRoute(array('action' => 'index'));
+        $item = $this->getTable()->getItem(array('id' => $this->_params['route']['id']));
+        if(empty($item)) {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+        }
+        $connection = $this->getConnection();
+        if($this->getRequest()->isPost()){
+            $types = array(THU => 'Thu', CHI => 'Chi');
+            if($item['accept'] == 0 and in_array($item['type'], [THU, CHI])) {
+                $connection->beginTransaction();
+
+                # Sửa phiếu thu chi khách hàng
+                $debt_item_old = $item;
+                $data_debt = array(
+                    'id' => $debt_item_old->id,
+                    'price_total' => 0,
+                    'discount' => 0,
+                    'paid_cash' => 0,
+                    'paid_transfer' => 0,
+                    'new_debt' => $debt_item_old->old_debt,
+                    'state' => CANCEL_STATUS,
+                );
+                $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                $connection->commit();
+                $this->flashMessenger()->addSuccessMessage('Xóa phiếu '.$types[$item['type']] .' '. $item['code'].' thành công!');
+                $this->goRoute();
+            }
+            else{
+                $this->flashMessenger()->addErrorMessage('Phiếu '. $types[$item['type']] .' '. $item['code'] . ' đã vào sổ quỹ không thể xóa!');
+                return $this->redirect()->toRoute('routeAdmin/default', array('controller' => $this->_params['controller'], 'action' => 'index'));
+            }
+        }
+        $this->_viewModel['item']    = $item;
+        $this->_viewModel['caption'] = 'Thui chi khách hàng - Xóa';
+        $viewModel = new ViewModel($this->_viewModel);
+        return $viewModel;
     }
 
     public function exportAction()
