@@ -10,6 +10,7 @@ class CustomerDebtTable extends DefaultTable {
 	    if($options['task'] == 'list-item') {
 	        $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
                 $ssFilter  = $arrParam['ssFilter'];
+                $date       = new \ZendX\Functions\Date();
 
                 $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name', 'customer_phone' => 'phone'), 'inner')
                     -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id'), 'left')
@@ -66,9 +67,9 @@ class CustomerDebtTable extends DefaultTable {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
 
-                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
-                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.created_by', $ssFilter['filter_user']);
-                }
+//                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
+//                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.created_by', $ssFilter['filter_user']);
+//                }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $select->where->NEST
@@ -162,9 +163,9 @@ class CustomerDebtTable extends DefaultTable {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
 
-                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
-                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.created_by', $ssFilter['filter_user']);
-                }
+//                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
+//                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.created_by', $ssFilter['filter_user']);
+//                }
     			
     			if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
     		        $select->where->NEST
