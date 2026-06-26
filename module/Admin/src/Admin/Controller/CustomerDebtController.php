@@ -236,6 +236,21 @@ class CustomerDebtController extends ActionController
                     $connection->commit();
                     $this->flashMessenger()->addSuccessMessage('Phiếu thu đã được hoàn thành!');
                 }
+                if ($control_action == COMPLETE_STATUS.'NotFund') {
+                    ##### begin #####
+                    $connection->beginTransaction();
+                    # Sửa phiếu thu chi khách hàng
+                    $debt_item_old = $item;
+                    $data_debt = array(
+                        'id' => $debt_item_old->id,
+                        'state' => COMPLETE_STATUS,
+                        'accept' => 2,
+                    );
+                    $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                    $connection->commit();
+                    $this->flashMessenger()->addSuccessMessage('Phiếu chi đã được hoàn thành!');
+                }
 
                 $item = $this->getTable()->getItem(array('id' => $id));
             }
@@ -378,6 +393,21 @@ class CustomerDebtController extends ActionController
                     $data_debt = array(
                         'id' => $debt_item_old->id,
                         'state' => COMPLETE_STATUS,
+                    );
+                    $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                    $connection->commit();
+                    $this->flashMessenger()->addSuccessMessage('Phiếu chi đã được hoàn thành!');
+                }
+                if ($control_action == COMPLETE_STATUS.'NotFund') {
+                    ##### begin #####
+                    $connection->beginTransaction();
+                    # Sửa phiếu thu chi khách hàng
+                    $debt_item_old = $item;
+                    $data_debt = array(
+                        'id' => $debt_item_old->id,
+                        'state' => COMPLETE_STATUS,
+                        'accept' => 2,
                     );
                     $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 

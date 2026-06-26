@@ -35,6 +35,7 @@ $linkIndex  = $this->url('routeAdmin/default', array('controller' => $this->para
 $arrControlAction = array(
     array('name' => 'save-new', 'caption' => 'Hủy phiếu thu', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'cancel\', \' Bạn có chắc chắn muốn hủy đơn hàng\');', 'class' => 'btn red')),
     array('name' => 'save-close', 'caption' => 'Hoàn thành phiếu thu', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành đơn hàng\');', 'class' => 'btn green')),
+    array('name' => 'complete-not-fund', 'caption' => 'Hoàn thành phiếu thu không vào sổ quỹ', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'completeNotFund\', \' Bạn có chắc chắn muốn hoàn thành phiếu thu <br>và không nhập khoản thu này vào sổ quỹ\');', 'class' => 'btn yellow')),
 );
 $arrControlDefault = array(
     array('name' => 'edit', 'caption' => 'Đóng', 'link' => $linkIndex, 'onclick' => '', 'icon' => 'fa fa-pencil', 'attributes' => array('class' => 'btn default'))

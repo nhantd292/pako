@@ -352,6 +352,9 @@ class CustomerDebtTable extends DefaultTable {
             if(isset($arrData['state'])) {
                 $data['state'] = $arrData['state'];
             }
+            if(isset($arrData['accept'])) {
+                $data['accept'] = $arrData['accept'];
+            }
 
             try {
                 # cập nhật thu chi

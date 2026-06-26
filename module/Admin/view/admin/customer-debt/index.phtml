@@ -74,12 +74,19 @@
                 $link_category = '<a href="/xadmin/warehouse-output/detail/id/'.$item['warehouse_output_id'].'/" target="_blank"> '. $item['warehouse_output_code'] .'</a>';
             }
 
-            if($item['state'] == COMPLETE_STATUS and ($item['paid_cash'] != 0 or $item['paid_transfer'] != 0))
-                $accept = !empty($item['accept']) ? '<sapn class="btn-accepted">Đã vào sổ quỹ</sapn>' : '<sapn class="btn-pending">Chờ vào sổ quỹ</sapn>';
+            if($item['state'] == COMPLETE_STATUS and ($item['paid_cash'] != 0 or $item['paid_transfer'] != 0)) {
+//                $accept = !empty($item['accept']) ? '<sapn class="btn-accepted">Đã vào sổ quỹ</sapn>' : '<sapn class="btn-pending">Chờ vào sổ quỹ</sapn>';
+                if ($item['accept'] == 0) {
+                    $accept = '<sapn class="btn-pending">Chờ vào sổ quỹ</sapn>';
+                }
+                elseif ($item['accept'] == 1)
+                    $accept = '<sapn class="btn-accepted">Đã vào sổ quỹ</sapn>';
+                else
+                    $accept = '<sapn class="btn-not-accepted">Không vào sổ quỹ</sapn>';
+            }
             else
                 $accept = '';
-            $linkPopupAccept = empty($item['accept']) ? 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'accept')) . '\', {\'id\': \'' . $item['id'] . '\'});' : '#';
-//            $linkPopupAccept = $accept = '';
+            $linkPopupAccept = $item['accept'] == 0 ? 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'accept')) . '\', {\'id\': \'' . $item['id'] . '\'});' : '#';
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
     							<td class="text-center">'. $cid .'</td>

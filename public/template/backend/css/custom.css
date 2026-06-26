@@ -447,7 +447,7 @@ div.table-fixed tbody th {
 .btn-pending {
 	background: #ff9900;
 	padding: 2px 5px;
-	width: 100px;
+	width: 110px;
 	display: inline-block;
 	text-align: center;
 	color: #fff;
@@ -457,7 +457,17 @@ div.table-fixed tbody th {
 .btn-accepted {
 	background: #2dc285;
 	padding: 2px 5px;
-	width: 100px;
+	width: 110px;
+	display: inline-block;
+	text-align: center;
+	color: #fff;
+	border-radius: 3px !important;
+	cursor: pointer;
+}
+.btn-not-accepted {
+	background: #0088cc;
+	padding: 2px 5px;
+	width: 110px;
 	display: inline-block;
 	text-align: center;
 	color: #fff;
