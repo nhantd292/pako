@@ -679,4 +679,30 @@ class CustomerDebtController extends ActionController
         return $viewModel;
     }
 
+    // Xác nhận đã xuất kho
+    public function acceptNotFundAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            if (!empty($this->_params['data']['cid'])) {
+                $cid = $this->_params['data']['cid'];
+                $count_update = 0;
+                $arr_complete = [];
+                foreach ($cid as $id) {
+                    $item = $this->getTable()->getItem(array('id' => $id));
+                    // Chỉ lấy ra những đơn hàng đang đã hoàn thành và chưa vào sổ quỹ
+                    if ($item['accept'] == 0 && $item['state'] == COMPLETE_STATUS) {
+                        $params['data']['id'] = $id;
+                        $params['data']['accept'] = 2;
+                        $this->getTable()->saveItem($params, array('task' => 'update-item'));
+                        $count_update += 1;
+                        $arr_complete[] = $item['code'];
+                    }
+                }
+                $message = ' Đã xác nhận ' . $count_update . ' Phiếu thu chi: '.implode(',', $arr_complete).' không nhập vào sổ quỹ';
+                $this->flashMessenger()->addSuccessMessage($message);
+            }
+        }
+        $this->goRoute(array('action' => 'index'));
+    }
+
 }
