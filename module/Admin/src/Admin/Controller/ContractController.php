@@ -540,7 +540,8 @@ class ContractController extends ActionController
                 $this->goRoute(array('action' => 'detail', 'id' => $id));
                 return false;
             }
-            if (in_array($contract['state'], array(COMPLETE_STATUS, CANCEL_STATUS)) && !in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)) {
+//            if (in_array($contract['state'], array(COMPLETE_STATUS, CANCEL_STATUS)) && !in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)) {
+            if (in_array($contract['state'], array(COMPLETE_STATUS, CANCEL_STATUS))) {
                 $state_text = $contract['state'] == CANCEL_STATUS ? 'HỦY' : 'HOÀN THÀNH';
                 $this->flashMessenger()->addErrorMessage('Đơn hàng đã ở trạng thái "' . $state_text . '" không thể cập nhật dữ liệu!');
                 $this->goRoute(array('action' => 'detail', 'id' => $id));
