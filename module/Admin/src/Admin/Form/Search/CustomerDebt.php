@@ -124,7 +124,7 @@ class CustomerDebt extends Form
             ),
             'options'		=> array(
                 'empty_option'	=> '- Nhập sổ quỹ -',
-                'value_options'	=> array( 1	=> 'Đã vào sổ quỹ', 0 => 'Chờ vào sổ quỹ'),
+                'value_options'	=> array( 1	=> 'Đã vào sổ quỹ', 0 => 'Chờ vào sổ quỹ', 2 => 'không vào sổ quỹ'),
             )
         ));
 
