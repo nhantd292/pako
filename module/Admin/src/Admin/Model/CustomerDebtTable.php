@@ -371,7 +371,8 @@ class CustomerDebtTable extends DefaultTable {
 
                 $list_debt = $this->listItem(array('customer_id' => $customer_id, 'created' => $debt_item_old->created), array('task' => 'list-update'));
                 $change_value = $value_old - $value_new;
-                if ($change_value != 0) {
+
+//                if ($change_value != 0) {
                     foreach ($list_debt as $debt) {
                         $data_update = array(
                             'id' => $debt->id,
@@ -386,7 +387,7 @@ class CustomerDebtTable extends DefaultTable {
                         );
                         $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem(array('data' => $data_contact), array('task' => 'update-infor'));
                     }
-                }
+//                }
 
                 return $id;
             } catch (\Exception $e) {
