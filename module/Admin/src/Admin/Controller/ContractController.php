@@ -1653,6 +1653,9 @@ class ContractController extends ActionController
                     if ($first_code == 'SAN7CHO') {
                         $_SAN7CHO += $number;
                     }
+                    echo "<pre>";
+                    print_r($first_code);
+                    echo "</pre>";
 
                     if ($number > 0) {
                         $ssFilter = array(
@@ -1760,7 +1763,14 @@ class ContractController extends ActionController
                 $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat_7), array('task' => 'add-item'));
             }
             $connection->commit();
+            echo "<pre>";
+            print_r($_SAN5CHO);
+            echo "</pre>";
+            echo "<pre>";
+            print_r($_SAN7CHO);
+            echo "</pre>";
         }
+        exit;
 
         $this->goRoute(array('action' => 'index'));
     }
