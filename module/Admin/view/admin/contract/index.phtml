@@ -266,11 +266,12 @@
                 $color_text_row = 'style ="background-color: #e29494"';
             }
             $warning_price_text = $item->warning_price == 1 ? 'text-danger' : '';
+            $invoiced = $item->invoiced == 1 ? '<span class="text-danger"><i class="fa fa fa-check-circle-o"></i></span>' : '';
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'"'.$color_text_row.'>
     							<th '.$rowSpan.'>'. $cid .'</th>
                                 <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.'</th>
-    							<td '.$rowSpan.'>'. $order_status .'</td>
+    							<td '.$rowSpan.'>'. $order_status .' '.$invoiced.'</td>
     							<td '.$rowSpan.'><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a></td>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>
     							<td '.$rowSpan.'>Lên đơn: '. $date .'<br>Xuất kho: '.$shipped_date.'<br>Xuất HĐ: '.$date_invoice.'</td>

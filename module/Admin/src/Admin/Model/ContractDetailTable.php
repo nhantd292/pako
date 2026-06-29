@@ -157,6 +157,12 @@ class ContractDetailTable extends DefaultTable {
                     $select::JOIN_INNER
                 );
 
+                // 3. Join với bảng x_products (TABLE_CONTRACT)
+                $select->join(TABLE_PRODUCTS, TABLE_PRODUCTS . '.id = ' . TABLE_CONTRACT_DETAIL . '.product_id',
+                    array('products_id' => 'id', 'products_code' => 'code'),
+                    $select::JOIN_INNER
+                );
+
                 // 3. Sắp xếp
                 $select->order(array(TABLE_CONTRACT_DETAIL . '.created' => 'DESC'));
 

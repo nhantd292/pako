@@ -29,6 +29,10 @@ class WarehouseVatDetailTable extends DefaultTable {
                     $select -> where -> lessThanOrEqualTo(TABLE_WAREHOUSE_VAT_DETAIL.'.created', $date->formatToSearch($ssFilter['filter_date_end']) . ' 23:59:59');
                 }
 
+                if(isset($ssFilter['filter_products_code']) && $ssFilter['filter_products_code'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.code', $ssFilter['filter_products_code']);
+                }
+
                 if(isset($ssFilter['filter_products_id']) && $ssFilter['filter_products_id'] != '') {
                     $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.products_id', $ssFilter['filter_products_id']);
                 }
@@ -50,7 +54,7 @@ class WarehouseVatDetailTable extends DefaultTable {
                     $select -> where -> NEST
                         -> like(TABLE_PRODUCTS. '.name', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_PRODUCTS. '.code', '%'. $filter_keyword .'%')// mã sản phẩm
+                        -> equalTo(TABLE_PRODUCTS. '.code', $filter_keyword)// mã sản phẩm so sánh =
                         -> UNNEST;
                 }
             })->current();
@@ -90,6 +94,10 @@ class WarehouseVatDetailTable extends DefaultTable {
                     $select -> where -> lessThanOrEqualTo(TABLE_WAREHOUSE_VAT_DETAIL.'.created', $date->formatToSearch($ssFilter['filter_date_end']) . ' 23:59:59');
                 }
 
+                if(isset($ssFilter['filter_products_code']) && $ssFilter['filter_products_code'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.code', $ssFilter['filter_products_code']);
+                }
+
                 if(isset($ssFilter['filter_products_id']) && $ssFilter['filter_products_id'] != '') {
                     $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.products_id', $ssFilter['filter_products_id']);
                 }
@@ -111,7 +119,7 @@ class WarehouseVatDetailTable extends DefaultTable {
                     $select -> where -> NEST
                         -> like(TABLE_PRODUCTS. '.name', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_PRODUCTS. '.code', '%'. $filter_keyword .'%')// mã sản phẩm
+                        -> equalTo(TABLE_PRODUCTS. '.code', $filter_keyword)// mã sản phẩm so sánh =
                         -> UNNEST;
                 }
     		});

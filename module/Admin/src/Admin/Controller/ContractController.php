@@ -1308,17 +1308,30 @@ class ContractController extends ActionController
                         $this->getTable()->saveItem($params, array('task' => 'update-invoiced'));
                         $contract = $this->getTable()->getItem(array('id' => $id));
                         # thêm phiếu xuất vat cho xuất nhập vat
-                        $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
+                        $contract_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));
 
-                        foreach ($items as $key => $item) {
+                        $_SAN5CHO = $_SAN7CHO = 0;
+
+                        foreach ($contract_detail as $key => $item) {
                             $number = $item['numbers'] - $item['numbers_return'];
+
+                            # tính tổng số lượng xe 5 cho xe 7 chỗ.
+                            $first_code = explode("_", $item['products_code'])[0];
+                            if ($first_code == 'SAN5CHO') {
+                                $_SAN5CHO += $number;
+                            }
+                            if ($first_code == 'SAN7CHO') {
+                                $_SAN7CHO += $number;
+                            }
+
                             if ($number > 0) {
+                                # Tạo phiếu xuất theo id sản phẩm
                                 $ssFilter = array(
                                     'filter_sale_branch_id' => $item['sale_branch_id'],
                                     'filter_products_id' => $item['product_id']
                                 );
-                                $quantity_begin = 0;
                                 $count_products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->countItem(array('ssFilter' => $ssFilter), array('task' => 'list-item'));
+                                $quantity_begin = 0;
                                 if ($count_products_vat > 0) {
                                     $products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->listItem(array('ssFilter' => $ssFilter), array('task' => 'list-item', 'paginator' => false))->toArray();
                                     $pr_item = $products_vat[0];
@@ -1330,20 +1343,93 @@ class ContractController extends ActionController
                                     'quantity_begin'        => $quantity_begin,
                                     'quantity_end'          => $quantity_begin - $number,
                                     'products_id'           => $item['product_id'],
-                                    'sale_branch_id'        => $item['sale_branch_id'],
                                     'contract_detail_id'    => $item['id'],
-                                    'contract_id'           => $item['contract_id'],
-                                    'contract_code'         => $item['contract_code'],
                                     'type'                  => 'out',
                                     'note'                  => '',
 
-                                    'user_id'       => $item['user_id'],
-                                    'created'       => $contract['date_invoice'],
-                                    'created_by'    => $item['user_id'],
+                                    'contract_code'         => $contract['code'],
+                                    'contract_id'           => $contract['id'],
+                                    'sale_branch_id'        => $contract['sale_branch_id'],
+                                    'user_id'               => $contract['created_by'],
+                                    'created'               => $contract['date_invoice'],
+                                    'created_by'            => $contract['created_by'],
                                 );
                                 $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat), array('task' => 'add-item'));
                             }
+                        }
 
+                        # thêm bản ghi vat tổng hợp cho xe 5 chỗ
+                        if ($_SAN5CHO > 0) {
+                            $pro5 = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->getItem(array('code' => 'SAN5CHO'), array('task' => 'code'));
+                            $ssFilter = array(
+                                'filter_sale_branch_id' => $contract['sale_branch_id'],
+                                'filter_products_code' => 'SAN5CHO'
+                            );
+                            $paginator = array(
+                                'currentPageNumber' => 1,
+                                'itemCountPerPage' => 1
+                            );
+                            $quantity_begin = 0;
+                            $count_products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->countItem(array('ssFilter' => $ssFilter), array('task' => 'list-item'));
+                            if ($count_products_vat > 0) {
+                                $products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->listItem(array('ssFilter' => $ssFilter, 'paginator' => $paginator), array('task' => 'list-item'))->toArray();
+                                $pr_item = $products_vat[0];
+                                $quantity_begin = $pr_item['quantity_end'];
+                            }
+
+                            $data_vat_5 = array(
+                                'quantity'              => $_SAN5CHO,
+                                'quantity_begin'        => $quantity_begin,
+                                'quantity_end'          => $quantity_begin - $_SAN5CHO,
+                                'products_id'           => $pro5['id'],
+                                'type'                  => 'out',
+                                'note'                  => '',
+
+                                'contract_code'         => $contract['code'],
+                                'contract_id'           => $contract['id'],
+                                'sale_branch_id'        => $contract['sale_branch_id'],
+                                'user_id'               => $contract['created_by'],
+                                'created'               => $contract['date_invoice'],
+                                'created_by'            => $contract['created_by'],
+                            );
+                            $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat_5), array('task' => 'add-item'));
+                        }
+
+                        # thêm bản ghi vat tổng hợp cho xe 7 chỗ
+                        if ($_SAN7CHO > 0) {
+                            $pro5 = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->getItem(array('code' => 'SAN7CHO'), array('task' => 'code'));
+                            $ssFilter = array(
+                                'filter_sale_branch_id' => $contract['sale_branch_id'],
+                                'filter_products_code' => 'SAN7CHO'
+                            );
+                            $paginator = array(
+                                'currentPageNumber' => 1,
+                                'itemCountPerPage' => 1
+                            );
+                            $quantity_begin = 0;
+                            $count_products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->countItem(array('ssFilter' => $ssFilter), array('task' => 'list-item'));
+                            if ($count_products_vat > 0) {
+                                $products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->listItem(array('ssFilter' => $ssFilter, 'paginator' => $paginator), array('task' => 'list-item'))->toArray();
+                                $pr_item = $products_vat[0];
+                                $quantity_begin = $pr_item['quantity_end'];
+                            }
+
+                            $data_vat_7 = array(
+                                'quantity'              => $_SAN7CHO,
+                                'quantity_begin'        => $quantity_begin,
+                                'quantity_end'          => $quantity_begin - $_SAN7CHO,
+                                'products_id'           => $pro5['id'],
+                                'type'                  => 'out',
+                                'note'                  => '',
+
+                                'contract_code'         => $contract['code'],
+                                'contract_id'           => $contract['id'],
+                                'sale_branch_id'        => $contract['sale_branch_id'],
+                                'user_id'               => $contract['created_by'],
+                                'created'               => $contract['date_invoice'],
+                                'created_by'            => $contract['created_by'],
+                            );
+                            $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat_7), array('task' => 'add-item'));
                         }
                         $connection->commit();
                         ##### end #####
@@ -1544,50 +1630,137 @@ class ContractController extends ActionController
         $this->_params['ssFilter']['order_by'] = 'date_invoice';
         $this->_params['ssFilter']['order'] = 'ASC';
         $contracts = $this->getTable()->listItem($this->_params, array('task' => 'list-item', 'paginator' => false));
+        $connection = $this->getConnection();
 
         foreach ($contracts as $contract) {
-                # thêm phiếu xuất vat cho xuất nhập vat
-                $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contract['id']), array('task' => 'list-ajax'));
+            $connection->beginTransaction();
 
-                foreach ($items as $key => $item) {
-                    $vat_item = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->getItem(array('contract_detail_id' => $item['id']), array('task' => 'search'));
-                    # nếu đã tạo rồi thì không tạo nữa
-                    if (empty($vat_item)) {
-                        $number = $item['numbers'] - $item['numbers_return'];
-                        if ($number > 0) {
-                            $ssFilter = array(
-                                'filter_sale_branch_id' => $item['sale_branch_id'],
-                                'filter_products_id' => $item['product_id']
-                            );
-                            $quantity_begin = 0;
-                            $count_products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->countItem(array('ssFilter' => $ssFilter), array('task' => 'list-item'));
-                            if ($count_products_vat > 0) {
-                                $products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->listItem(array('ssFilter' => $ssFilter), array('task' => 'list-item', 'paginator' => false))->toArray();
-                                $pr_item = $products_vat[0];
-                                $quantity_begin = $pr_item['quantity_end'];
-                            }
+            # thêm phiếu xuất vat cho xuất nhập vat
+            $contract_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contract['id']), array('task' => 'list-ajax'));
+            $_SAN5CHO = $_SAN7CHO = 0;
 
-                            $data_vat = array(
-                                'quantity'              => $number,
-                                'quantity_begin'        => $quantity_begin,
-                                'quantity_end'          => $quantity_begin - $number,
-                                'products_id'           => $item['product_id'],
-                                'sale_branch_id'        => $item['sale_branch_id'],
-                                'contract_detail_id'    => $item['id'],
-                                'contract_id'           => $item['contract_id'],
-                                'contract_code'         => $item['contract_code'],
-                                'type'                  => 'out',
-                                'note'                  => '',
+            foreach ($contract_detail as $key => $item) {
+                $vat_item = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->getItem(array('contract_detail_id' => $item['id']), array('task' => 'search'));
+                # nếu đã tạo rồi thì không tạo nữa
+                if (empty($vat_item)) {
+                    $number = $item['numbers'] - $item['numbers_return'];
 
-                                'user_id'       => $item['user_id'],
-                                'created'       => $contract['date_invoice'],
-                                'created_by'    => $item['user_id'],
-                            );
-                            $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat), array('task' => 'add-item'));
+                    # tính tổng số lượng xe 5 cho xe 7 chỗ.
+                    $first_code = explode("_", $item['products_code'])[0];
+                    if ($first_code == 'SAN5CHO') {
+                        $_SAN5CHO += $number;
+                    }
+                    if ($first_code == 'SAN7CHO') {
+                        $_SAN7CHO += $number;
+                    }
+
+                    if ($number > 0) {
+                        $ssFilter = array(
+                            'filter_sale_branch_id' => $item['sale_branch_id'],
+                            'filter_products_id' => $item['product_id']
+                        );
+                        $quantity_begin = 0;
+                        $count_products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->countItem(array('ssFilter' => $ssFilter), array('task' => 'list-item'));
+                        if ($count_products_vat > 0) {
+                            $products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->listItem(array('ssFilter' => $ssFilter), array('task' => 'list-item', 'paginator' => false))->toArray();
+                            $pr_item = $products_vat[0];
+                            $quantity_begin = $pr_item['quantity_end'];
                         }
+
+                        $data_vat = array(
+                            'quantity'              => $number,
+                            'quantity_begin'        => $quantity_begin,
+                            'quantity_end'          => $quantity_begin - $number,
+                            'products_id'           => $item['product_id'],
+                            'contract_detail_id'    => $item['id'],
+                            'type'                  => 'out',
+                            'note'                  => '',
+
+                            'contract_code'         => $contract['code'],
+                            'contract_id'           => $contract['id'],
+                            'sale_branch_id'        => $contract['sale_branch_id'],
+                            'user_id'               => $contract['created_by'],
+                            'created'               => $contract['date_invoice'],
+                            'created_by'            => $contract['created_by'],
+                        );
+                        $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat), array('task' => 'add-item'));
                     }
                 }
             }
+            # thêm bản ghi vat tổng hợp cho xe 5 chỗ
+            if ($_SAN5CHO > 0) {
+                $pro5 = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->getItem(array('code' => 'SAN5CHO'), array('task' => 'code'));
+                $ssFilter = array(
+                    'filter_sale_branch_id' => $contract['sale_branch_id'],
+                    'filter_products_code' => 'SAN5CHO'
+                );
+                $paginator = array(
+                    'currentPageNumber' => 1,
+                    'itemCountPerPage' => 1
+                );
+                $quantity_begin = 0;
+                $count_products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->countItem(array('ssFilter' => $ssFilter), array('task' => 'list-item'));
+                if ($count_products_vat > 0) {
+                    $products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->listItem(array('ssFilter' => $ssFilter, 'paginator' => $paginator), array('task' => 'list-item'))->toArray();
+                    $pr_item = $products_vat[0];
+                    $quantity_begin = $pr_item['quantity_end'];
+                }
+
+                $data_vat_5 = array(
+                    'quantity'              => $_SAN5CHO,
+                    'quantity_begin'        => $quantity_begin,
+                    'quantity_end'          => $quantity_begin - $_SAN5CHO,
+                    'products_id'           => $pro5['id'],
+                    'type'                  => 'out',
+                    'note'                  => '',
+
+                    'contract_code'         => $contract['code'],
+                    'contract_id'           => $contract['id'],
+                    'sale_branch_id'        => $contract['sale_branch_id'],
+                    'user_id'               => $contract['created_by'],
+                    'created'               => $contract['date_invoice'],
+                    'created_by'            => $contract['created_by'],
+                );
+                $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat_5), array('task' => 'add-item'));
+            }
+            # thêm bản ghi vat tổng hợp cho xe 7 chỗ
+            if ($_SAN7CHO > 0) {
+                $pro5 = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->getItem(array('code' => 'SAN7CHO'), array('task' => 'code'));
+                $ssFilter = array(
+                    'filter_sale_branch_id' => $contract['sale_branch_id'],
+                    'filter_products_code' => 'SAN7CHO'
+                );
+                $paginator = array(
+                    'currentPageNumber' => 1,
+                    'itemCountPerPage' => 1
+                );
+                $quantity_begin = 0;
+                $count_products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->countItem(array('ssFilter' => $ssFilter), array('task' => 'list-item'));
+                if ($count_products_vat > 0) {
+                    $products_vat = $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->listItem(array('ssFilter' => $ssFilter, 'paginator' => $paginator), array('task' => 'list-item'))->toArray();
+                    $pr_item = $products_vat[0];
+                    $quantity_begin = $pr_item['quantity_end'];
+                }
+
+                $data_vat_7 = array(
+                    'quantity'              => $_SAN7CHO,
+                    'quantity_begin'        => $quantity_begin,
+                    'quantity_end'          => $quantity_begin - $_SAN7CHO,
+                    'products_id'           => $pro5['id'],
+                    'type'                  => 'out',
+                    'note'                  => '',
+
+                    'contract_code'         => $contract['code'],
+                    'contract_id'           => $contract['id'],
+                    'sale_branch_id'        => $contract['sale_branch_id'],
+                    'user_id'               => $contract['created_by'],
+                    'created'               => $contract['date_invoice'],
+                    'created_by'            => $contract['created_by'],
+                );
+                $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat_7), array('task' => 'add-item'));
+            }
+            $connection->commit();
+        }
 
         $this->goRoute(array('action' => 'index'));
     }

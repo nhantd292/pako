@@ -294,8 +294,8 @@ class ApiController extends ActionController
             'currentPageNumber' => $curentPage
         );
         $ssFilter = array(
-            'filter_customer_type' => $this->_params['data']['filter_customer_type'],
-            'filter_warehouse' => $this->_params['data']['filter_warehouse'],
+            'filter_customer_type' => !empty($this->_params['data']['filter_customer_type']) ? $this->_params['data']['filter_customer_type'] : 'customer_type_id',
+            'filter_warehouse' => !empty($this->_params['data']['filter_warehouse']) ? $this->_params['data']['filter_warehouse'] : 'warehouse_id',
         );
 
         if (!empty($this->_params['data']['filter_products_type']))
