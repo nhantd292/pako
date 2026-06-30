@@ -17,7 +17,9 @@ class WarehouseVatDetailController extends ActionController{
         $this->_options['formName'] = 'formAdminWarehouseVatDetail';
 
         // Thiết lập session filter
-        $ssFilter = new Container(__CLASS__ . $this->_params['action']);
+        $action = str_replace('-', '_', $this->_params['action']);
+        $ssFilter = new Container(__CLASS__. $action);
+
         $this->_params['ssFilter']['order_by']                      = !empty($ssFilter->order_by) ? $ssFilter->order_by : 'ordering';
         $this->_params['ssFilter']['order']                         = !empty($ssFilter->order) ? $ssFilter->order : 'DESC';
         $this->_params['ssFilter']['filter_state']                  = $ssFilter->filter_state;
@@ -41,9 +43,9 @@ class WarehouseVatDetailController extends ActionController{
 
     public function filterAction() {
         if ($this->getRequest()->isPost()) {
-            $action = !empty($this->getRequest()->getPost('filter_action')) ? $this->getRequest()->getPost('filter_action') : 'index';
-            
+            $action = !empty($this->getRequest()->getPost('filter_action')) ? str_replace('-', '_', $this->getRequest()->getPost('filter_action')) : 'index';
             $ssFilter	= new Container(__CLASS__ . $action);
+
             $data = $this->_params['data'];
             
             $ssFilter->pagination_option            = intval($data['pagination_option']);
@@ -73,6 +75,87 @@ class WarehouseVatDetailController extends ActionController{
 
         $this->_viewModel['myForm']             = $myForm;
         $this->_viewModel['items']              = $items;
+        $this->_viewModel['model']              = $this->getTable();
+        $this->_viewModel['count']              = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
+        $this->_viewModel['user']               = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['warehouse']          = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['branch']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $this->_viewModel['caption']            = $this->caption;
+        $this->_viewModel['order_status']       = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+
+        return new ViewModel($this->_viewModel);
+    }
+
+    public function reportAction() {
+        # Gán ngày mặc định lọc từ đầu tháng tới cuối tháng
+        $default_date_begin     = date('01/m/Y');
+        $default_date_end       = date('t/m/Y');
+        if (empty($this->_params['ssFilter']['filter_date_begin'])) {
+            $this->_params['ssFilter']['filter_date_begin'] = $default_date_begin ;
+        }
+        if (empty($this->_params['ssFilter']['filter_date_end'])) {
+            $this->_params['ssFilter']['filter_date_end'] = $default_date_end;
+        }
+        # Gán chi nhánh mặc định
+        $branch = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $first_branch = reset($branch);
+        if (empty($this->_params['ssFilter']['filter_sale_branch_id'])) {
+            $this->_params['ssFilter']['filter_sale_branch_id'] = $first_branch['id'];
+        }
+
+        $myForm    = new \Admin\Form\Search\WarehouseVatDetail($this, $this->_params['ssFilter']);
+        $myForm->setData($this->_params['ssFilter']);
+        // Danh sách data
+        $items = $this->getTable()->listItem($this->_params, array('task' => 'list-report-vat'));
+        $unit = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache'));
+
+//        echo "<pre>";
+//        print_r($items->toArray());
+//        echo "</pre>";
+//        exit;
+
+
+
+        $date       = new \ZendX\Functions\Date();
+        $day_begin  = strtotime($date->formatToData($this->_params['ssFilter']['filter_date_begin']));
+        $day_end    = strtotime($date->formatToData($this->_params['ssFilter']['filter_date_end']));
+        $number_day = abs($day_end - $day_begin) / 86400;
+        // Tạo mảng lưu báo cáo.
+        $data_report = [];
+        for ($i = 0; $i <= $number_day; $i++) {
+            $day = date('Y-m-d', $day_begin + $i*86400);
+            $data_report[$day] = array();
+        }
+
+        foreach ($items as $key => $value) {
+            $day  = substr($value['created'], 0, 10);
+            $p_id = $value['products_id'];
+            // 1. Khởi tạo giá trị mặc định khi sản phẩm xuất hiện lần đầu trong ngày
+            if (!isset($data_report[$day][$p_id]['code'])) {
+                $data_report[$day][$p_id]['code']           = $value['products_code'];
+                $data_report[$day][$p_id]['name']           = $value['products_name'];
+                $data_report[$day][$p_id]['unit']           = $unit[$value['unit_id']]['name'];
+                $data_report[$day][$p_id]['quantity_begin'] = $value['quantity_begin'];
+                $data_report[$day][$p_id]['total_in']       = 0; // Luôn có total_in bằng 0 mặc định
+                $data_report[$day][$p_id]['total_out']      = 0; // Luôn có total_out bằng 0 mặc định
+            }
+
+            // Tồn cuối kỳ luôn được cập nhật theo dòng mới nhất
+            $data_report[$day][$p_id]['quantity_end'] = $value['quantity_end'];
+
+            // 2. Cộng dồn số lượng dựa theo loại (type)
+            if ($value['type'] == 'out') {
+                $data_report[$day][$p_id]['total_out'] += $value['quantity'];
+            }
+
+            if ($value['type'] == 'in') {
+                $data_report[$day][$p_id]['total_in'] += $value['quantity'];
+            }
+        }
+
+
+        $this->_viewModel['myForm']             = $myForm;
+        $this->_viewModel['items']              = $data_report;
         $this->_viewModel['model']              = $this->getTable();
         $this->_viewModel['count']              = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
         $this->_viewModel['user']               = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));

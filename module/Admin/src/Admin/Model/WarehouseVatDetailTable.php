@@ -80,7 +80,7 @@ class WarehouseVatDetailTable extends DefaultTable {
 
                 $select -> order(array(TABLE_WAREHOUSE_VAT_DETAIL .'.index' => 'DESC'));
 
-                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_WAREHOUSE_VAT_DETAIL .'.products_id', array('products_code' => 'code', 'products_name' => 'name', 'products_name_vat' => 'name_vat'), 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_WAREHOUSE_VAT_DETAIL .'.products_id', array('products_code' => 'code', 'products_name' => 'name', 'products_name_vat' => 'name_vat', 'unit_id'), 'inner');
 
                 if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
                     $select -> where -> NEST
@@ -140,6 +140,59 @@ class WarehouseVatDetailTable extends DefaultTable {
 
                 if(isset($arrParam['products_id']) && $arrParam['products_id'] != '') {
                     $select->where->equalTo('products_id', $arrParam['products_id']);
+                }
+            });
+        }
+
+
+        if($options['task'] == 'list-report-vat') {
+            $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $ssFilter   = $arrParam['ssFilter'];
+                $date       = new \ZendX\Functions\Date();
+
+                $select -> order(array(TABLE_WAREHOUSE_VAT_DETAIL .'.index' => 'ASC'));
+
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_WAREHOUSE_VAT_DETAIL .'.products_id', array('products_code' => 'code', 'products_name' => 'name', 'products_name_vat' => 'name_vat', 'unit_id'), 'inner');
+
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_WAREHOUSE_VAT_DETAIL.'.created', $date->formatToSearch($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_WAREHOUSE_VAT_DETAIL.'.created', $date->formatToSearch($ssFilter['filter_date_end']) . ' 23:59:59')
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select -> where -> greaterThanOrEqualTo(TABLE_WAREHOUSE_VAT_DETAIL.'.created', $date->formatToSearch($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> lessThanOrEqualTo(TABLE_WAREHOUSE_VAT_DETAIL.'.created', $date->formatToSearch($ssFilter['filter_date_end']) . ' 23:59:59');
+                }
+
+                if(isset($ssFilter['filter_products_code']) && $ssFilter['filter_products_code'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.code', $ssFilter['filter_products_code']);
+                }
+
+                if(isset($ssFilter['filter_products_id']) && $ssFilter['filter_products_id'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.products_id', $ssFilter['filter_products_id']);
+                }
+
+                if(isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
+                }
+
+                if(isset($ssFilter['filter_user_id']) && $ssFilter['filter_user_id'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.user_id', $ssFilter['filter_user_id']);
+                }
+
+                if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
+                    $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.type', $ssFilter['filter_type']);
+                }
+
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $filter_keyword = trim($ssFilter['filter_keyword']);
+                    $select -> where -> NEST
+                        -> like(TABLE_PRODUCTS. '.name', '%'. $filter_keyword .'%')
+                        ->Or
+                        -> equalTo(TABLE_PRODUCTS. '.code', $filter_keyword)// mã sản phẩm so sánh =
+                        -> UNNEST;
                 }
             });
         }

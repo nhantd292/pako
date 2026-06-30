@@ -13,6 +13,7 @@
 //    if(count($myForm->get('filter_sale_branch')->getValueOptions()) == 1) {
 //        $myForm->get('filter_sale_branch')->setEmptyOption('');
 //    }
+    $myForm->get('filter_action')->setValue($this->params['action']);
     $elements = array(
         array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -24,6 +25,7 @@
         array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('order')),
         array('element' => $myForm->get('order_by')),
+        array('element' => $myForm->get('filter_action')),
     );
     $xhtmlFilter = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
 
@@ -33,71 +35,61 @@
 
     
     if(!empty($this->items)) {
-        $index = 0;
-        $list_item  = $this->items;
-        $total_price = 0;
-        foreach ($list_item AS $item) {
-            $index++;
-            $id             = $item['id'];
-            $cid            = $this->xFormInput('cid[]', $item['id'], array('type' => 'checkbox', 'class' => 'checkboxes'));
-            $created        = $dateFormat->formatToView($item['created'], 'd/m/Y H:i:s');
-            $cid            = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
-            $ordering       = @$this->xFormInput('ordering['. $id .']', $item->ordering, array('class' => 'form-control input-xs'));
-            $created_by     = $this->user[$item->created_by]['name'];
-            $style = $item['type'] == 'in' ? 'text-green' : 'text-red';
-            $t = $item['type'] == 'in' ? '+' : '-';
-            
-            // Link Action
-            $linkEdit   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit', 'id' => $id));
-            $linkContract   = $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'detail', 'id' => $item['contract_id']));
+        foreach ($this->items AS $day => $item) {
+            if (!empty($item)) {
 
-            
-            $xhtmlItems .= '<tr id="tr_'. $id .'" class="'.$style.'">
-    							<td class="text-center">'. $cid .'</td>
-                                <td class="text-center">'. $index .'</td>
-    							<td>'. $this->branch[$item['sale_branch_id']]['name'] .'</td>
-    							<td class="text-center text-bold"><a href="'. $linkEdit .'">'.  $item['products_code'] .'</a></td>
-    							<td>'. $item['products_name'] .'</td>
-    							<td class="text-center">'.$created .'</td>
-    							<td class="text-center">'. $types[$item['type']] .'</td>
-    							<td class="text-center">'. $t .'<span class="mask_currency">'.$item['quantity'].'</span></td>
-    							<td class="mask_currency text-center">'. $item['quantity_begin'] .'</td>
-    							<td class="mask_currency text-center">'. $item['quantity_end'] .'</td>
-    							<td>'. $item['note'] .'</td>
-    							<td class="text-center"><a href="'. $linkContract .'">'.  $item['contract_code'] .'</a></td>
-    							<td>'. $created_by .'</td>
+                $index = 0;
+
+                $rowspan = count($item);
+                $style = $item['type'] == 'in' ? 'text-green' : 'text-red';
+
+                foreach ($item as $key => $value) {
+                    $rowSpan = '';
+                    if ($index == 0) {
+                        $rowSpan = 'rowspan="'.count($item).'"';
+                        $xhtmlItems .= '<tr>
+    							<td class="text-center text-middle text-bold" '.$rowSpan.'>' . $day . '</td>
+    							<td>' . $value['code'] . '</td>
+    							<td>' . $value['name'] . '</td>
+    							<td class="text-center">' . $value['unit'] . '</td>
+    							<td class="text-center">' . $value['quantity_begin'] . '</td>
+    							<td class="text-center">' . $value['total_in'] . '</td>
+    							<td class="text-center">' . $value['total_out'] . '</td>
+    							<td class="text-center">' . $value['quantity_end'] . '</td>
     						</tr>';
+                    }
+                    else{
+                        $xhtmlItems .= '<tr>
+    							<td>' . $value['code'] . '</td>
+    							<td>' . $value['name'] . '</td>
+    							<td class="text-center">' . $value['unit'] . '</td>
+    							<td class="text-center">' . $value['quantity_begin'] . '</td>
+    							<td class="text-center">' . $value['total_in'] . '</td>
+    							<td class="text-center">' . $value['total_out'] . '</td>
+    							<td class="text-center">' . $value['quantity_end'] . '</td>
+    						</tr>';
+                    }
+                    $index++;
+                }
+            }
         }
     }
 
     // Head
     $xhtmlHead  = '<tr>';
-    $xhtmlHead .= '<th width="20" class="table-checkbox text-center"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';
-    $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
-    $xhtmlHead .= '<th class="text-center" width="50">Chi nhánh</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Ngày</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Mã SP</th>';
     $xhtmlHead .= '<th class="text-center" width="150">Tên SP</th>';
-    $xhtmlHead .= '<th class="text-center" width="130" class="text-center">Ngày tạo</th>';
-    $xhtmlHead .= '<th class="text-center" width="150">Phân loại</th>';
-    $xhtmlHead .= '<th class="text-center" width="150">Số lượng</th>';
-    $xhtmlHead .= '<th class="text-center" width="150">Tồn đầu kỳ</th>';
-    $xhtmlHead .= '<th class="text-center" width="150">Tồn cuối kỳ</th>';
-    $xhtmlHead .= '<th class="text-center" width="150">Ghi chú</th>';
-    $xhtmlHead .= '<th class="text-center" width="150">Đơn hàng</th>';
-    $xhtmlHead .= '<th class="text-center" width="15">Người tạo</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">Đơn vị</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">SL tồn đầu kỳ</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">SL nhập</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">SL xuất</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">SL tồn cuối kỳ</th>';
     $xhtmlHead .= '</tr>';
     
     // Control
     $arrControl = array(
         array( 'name' => 'add', 'caption' => 'Thêm', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn', ) ),
-//        array(
-//            'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
-//            'children' => array(
-//                array( 'name' => 'delete', 'caption' => 'Xóa', 'link' => 'javascript:;', 'icon' => 'fa-trash', 'attributes' => array( 'onclick' => 'javascript:deleteItem(\'multi\', \'all\');' ) ),
-//                array('name' => 'sort', 'caption' => 'Sắp xếp', 'link' => 'javascript:;', 'icon' => 'fa-sort-alpha-asc', 'attributes' => array('onclick' => 'javascript:changeOrdering();',))
-//                ),
-//            'children-class' => 'dropdown-menu pull-right'
-//        ),
     );
 ?>
 <form action="<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'filter')); ?>" name="adminFormFilter" id="adminFormFilter" method="post">
