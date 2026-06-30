@@ -369,22 +369,15 @@
                 </a>
             </li>
             <li class="divider"></li>
-            <li class="dropdown-submenu">
-                <a href="javascript:;" target="_self">
-                    <i class="fa fa-link"></i> <span class="title">Nhập xuất VAT</span><span class="arrow"></span>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-vat-detail', 'action' => 'report'));?>" target="_self">
+                    <i class="fa fa-list-ul"></i> <span class="title">Báo cáo nhập xuất VAT</span><span class="arrow"></span>
                 </a>
-                <ul class="dropdown-menu" style="display: none;">
-                    <li>
-                        <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-vat-detail', 'action' => 'index'));?>" target="_self">
-                            <i class="fa fa-list-ul"></i> <span class="title">Bảng chi tiết sản phẩm nhập xuất</span><span class="arrow"></span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-vat-detail', 'action' => 'report'));?>" target="_self">
-                            <i class="fa fa-list-ul"></i> <span class="title">Báo cáo nhập xuất VAT</span><span class="arrow"></span>
-                        </a>
-                    </li>
-                </ul>
+            </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'warehouse-vat-detail', 'action' => 'index'));?>" target="_self">
+                    <i class="fa fa-list-ul"></i> <span class="title">Chi tiết nhập xuất VAT</span><span class="arrow"></span>
+                </a>
             </li>
 
         </ul>

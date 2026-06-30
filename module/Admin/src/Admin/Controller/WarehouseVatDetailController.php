@@ -115,8 +115,12 @@ class WarehouseVatDetailController extends ActionController{
         $number_day = abs($day_end - $day_begin) / 86400;
         // Tạo mảng lưu báo cáo.
         $data_report = [];
+//        for ($i = 0; $i <= $number_day; $i++) {
+//            $day = date('Y-m-d', $day_begin + $i*86400);
+//            $data_report[$day] = array();
+//        }
         for ($i = 0; $i <= $number_day; $i++) {
-            $day = date('Y-m-d', $day_begin + $i*86400);
+            $day = date('Y-m-d', $day_end - $i*86400);
             $data_report[$day] = array();
         }
 
