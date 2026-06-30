@@ -29,6 +29,7 @@ class WarehouseVatDetailController extends ActionController{
         $this->_params['ssFilter']['filter_sale_branch_id']         = $ssFilter->filter_sale_branch_id;
         $this->_params['ssFilter']['filter_type']                   = $ssFilter->filter_type;
         $this->_params['ssFilter']['filter_user_id']                = $ssFilter->filter_user_id;
+        $this->_params['ssFilter']['filter_products_type']          = $ssFilter->filter_products_type;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage']               = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : 50;
@@ -58,6 +59,7 @@ class WarehouseVatDetailController extends ActionController{
             $ssFilter->filter_sale_branch_id        = $data['filter_sale_branch_id'];
             $ssFilter->filter_type                  = $data['filter_type'];
             $ssFilter->filter_user_id               = $data['filter_user_id'];
+            $ssFilter->filter_products_type         = $data['filter_products_type'];
         }
 
         if (!empty($this->_params['route']['id'])) {
@@ -86,7 +88,8 @@ class WarehouseVatDetailController extends ActionController{
         return new ViewModel($this->_viewModel);
     }
 
-    public function reportAction() {
+    # báo cáo tổng hợp theo ngày
+    public function reportv1Action() {
         # Gán ngày mặc định lọc từ đầu tháng tới cuối tháng
         $default_date_begin     = date('01/m/Y');
         $default_date_end       = date('t/m/Y');
@@ -149,6 +152,75 @@ class WarehouseVatDetailController extends ActionController{
                 $data_report[$day][$p_id]['total_in'] += $value['quantity'];
             }
         }
+
+        $this->_viewModel['myForm']             = $myForm;
+        $this->_viewModel['items']              = $data_report;
+        $this->_viewModel['model']              = $this->getTable();
+        $this->_viewModel['count']              = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
+        $this->_viewModel['user']               = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['warehouse']          = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['branch']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $this->_viewModel['caption']            = 'Báo cáo - '.$this->caption;
+        $this->_viewModel['order_status']       = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+
+        return new ViewModel($this->_viewModel);
+    }
+
+    # báo cáo tổng hợp theo sản phẩm
+    public function reportAction() {
+        # Gán ngày mặc định lọc từ đầu tháng tới cuối tháng
+        $default_date_begin     = date('01/m/Y');
+        $default_date_end       = date('t/m/Y');
+        if (empty($this->_params['ssFilter']['filter_date_begin'])) {
+            $this->_params['ssFilter']['filter_date_begin'] = $default_date_begin ;
+        }
+        if (empty($this->_params['ssFilter']['filter_date_end'])) {
+            $this->_params['ssFilter']['filter_date_end'] = $default_date_end;
+        }
+        # Gán chi nhánh mặc định
+        $branch = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
+        $first_branch = reset($branch);
+        if (empty($this->_params['ssFilter']['filter_sale_branch_id'])) {
+            $this->_params['ssFilter']['filter_sale_branch_id'] = $first_branch['id'];
+        }
+
+        $myForm    = new \Admin\Form\Search\WarehouseVatDetail($this, $this->_params['ssFilter']);
+        $myForm->setData($this->_params['ssFilter']);
+        // Danh sách data
+        $items = $this->getTable()->listItem($this->_params, array('task' => 'list-report-vat'));
+        $unit = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache'));
+
+        // Tạo mảng lưu báo cáo.
+        $data_report = [];
+
+        foreach ($items as $key => $value) {
+            $p_id = $value['products_id'];
+            // 1. Khởi tạo giá trị mặc định khi sản phẩm xuất hiện lần đầu trong ngày
+            if (!isset($data_report[$p_id]['code'])) {
+                $data_report[$p_id]['code']           = $value['products_code'];
+                $data_report[$p_id]['name']           = $value['products_name'];
+                $data_report[$p_id]['unit']           = $unit[$value['unit_id']]['name'];
+                $data_report[$p_id]['quantity_begin'] = $value['quantity_begin'];
+                $data_report[$p_id]['total_in']       = 0; // Luôn có total_in bằng 0 mặc định
+                $data_report[$p_id]['total_out']      = 0; // Luôn có total_out bằng 0 mặc định
+            }
+
+            // Tồn cuối kỳ luôn được cập nhật theo dòng mới nhất
+            $data_report[$p_id]['quantity_end'] = $value['quantity_end'];
+
+            // 2. Cộng dồn số lượng dựa theo loại (type)
+            if ($value['type'] == 'out') {
+                $data_report[$p_id]['total_out'] += $value['quantity'];
+            }
+
+            if ($value['type'] == 'in') {
+                $data_report[$p_id]['total_in'] += $value['quantity'];
+            }
+        }
+//        echo "<pre>";
+//        print_r($data_report);
+//        echo "</pre>";
+//        exit;
 
         $this->_viewModel['myForm']             = $myForm;
         $this->_viewModel['items']              = $data_report;

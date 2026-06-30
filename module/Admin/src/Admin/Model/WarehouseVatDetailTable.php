@@ -37,6 +37,10 @@ class WarehouseVatDetailTable extends DefaultTable {
                     $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.products_id', $ssFilter['filter_products_id']);
                 }
 
+                if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
+                }
+
                 if(isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') {
                     $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
                 }
@@ -100,6 +104,10 @@ class WarehouseVatDetailTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_products_id']) && $ssFilter['filter_products_id'] != '') {
                     $select->where->equalTo(TABLE_WAREHOUSE_VAT_DETAIL.'.products_id', $ssFilter['filter_products_id']);
+                }
+
+                if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
                 }
 
                 if(isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') {
@@ -168,6 +176,10 @@ class WarehouseVatDetailTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_products_code']) && $ssFilter['filter_products_code'] != '') {
                     $select->where->equalTo(TABLE_PRODUCTS.'.code', $ssFilter['filter_products_code']);
+                }
+
+                if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
                 }
 
                 if(isset($ssFilter['filter_products_id']) && $ssFilter['filter_products_id'] != '') {

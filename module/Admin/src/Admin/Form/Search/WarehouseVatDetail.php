@@ -96,6 +96,19 @@ class WarehouseVatDetail extends Form{
                 'value_options'	=> array('in' => 'Nhập hàng', 'out' => 'Xuất hàng'),
             )
         ));
+
+
+        $this->add(array(
+            'name'			=> 'filter_products_type',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Nhóm sản phẩm -',
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\ProductsTypeTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            )
+        ));
 		
 		// Submit
 		$this->add(array(

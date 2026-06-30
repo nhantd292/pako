@@ -1,0 +1,131 @@
+<?php
+    // Filter
+    $myForm				= $this->myForm;
+    $model = $this->model;
+    $myForm->prepare();
+    $dateFormat = new \ZendX\Functions\Date();
+    $numberFormat = new \ZendX\Functions\Number();
+
+    $userInfo = new \ZendX\System\UserInfo();
+    $curent_user = $userInfo->getUserInfo();
+    $permission_ids = explode(',', $curent_user['permission_ids']);
+    
+//    if(count($myForm->get('filter_sale_branch')->getValueOptions()) == 1) {
+//        $myForm->get('filter_sale_branch')->setEmptyOption('');
+//    }
+    $myForm->get('filter_action')->setValue($this->params['action']);
+    $elements = array(
+        array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_products_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_sale_branch_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_user_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('order')),
+        array('element' => $myForm->get('order_by')),
+        array('element' => $myForm->get('filter_action')),
+    );
+    $xhtmlFilter = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+
+    // Danh sách
+    $xhtmlItems = '';
+    $types = ['in' => 'Nhập hàng', 'out' => 'Xuất hàng'];
+
+    
+    if(!empty($this->items)) {
+        foreach ($this->items AS $day => $item) {
+            if (!empty($item)) {
+
+                $index = 0;
+
+                $rowspan = count($item);
+                $style = $item['type'] == 'in' ? 'text-green' : 'text-red';
+
+                foreach ($item as $key => $value) {
+                    $rowSpan = '';
+                    if ($index == 0) {
+                        $rowSpan = 'rowspan="'.count($item).'"';
+                        $xhtmlItems .= '<tr>
+    							<td class="text-center text-middle text-bold" '.$rowSpan.'>' . $day . '</td>
+    							<td>' . $value['code'] . '</td>
+    							<td>' . $value['name'] . '</td>
+    							<td class="text-center">' . $value['unit'] . '</td>
+    							<td class="text-center">' . $value['total_in'] . '</td>
+    							<td class="text-center">' . $value['total_out'] . '</td>
+    							<td class="text-center">' . $value['quantity_begin'] . '</td>
+    							<td class="text-center">' . $value['quantity_end'] . '</td>
+    						</tr>';
+                    }
+                    else{
+                        $xhtmlItems .= '<tr>
+    							<td>' . $value['code'] . '</td>
+    							<td>' . $value['name'] . '</td>
+    							<td class="text-center">' . $value['unit'] . '</td>
+    							<td class="text-center">' . $value['total_in'] . '</td>
+    							<td class="text-center">' . $value['total_out'] . '</td>
+    							<td class="text-center">' . $value['quantity_begin'] . '</td>
+    							<td class="text-center">' . $value['quantity_end'] . '</td>
+    						</tr>';
+                    }
+                    $index++;
+                }
+            }
+        }
+    }
+
+    // Head
+    $xhtmlHead  = '<tr>';
+    $xhtmlHead .= '<th class="text-center" width="50">Ngày</th>';
+    $xhtmlHead .= '<th class="text-center" width="50">Mã SP</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">Tên SP</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">Đơn vị</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">SL nhập</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">SL xuất</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">SL tồn đầu kỳ</th>';
+    $xhtmlHead .= '<th class="text-center" width="150">SL tồn cuối kỳ</th>';
+    $xhtmlHead .= '</tr>';
+    
+    // Control
+    $arrControl = array(
+//        array( 'name' => 'add', 'caption' => 'Thêm', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn', ) ),
+    );
+?>
+<form action="<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'filter')); ?>" name="adminFormFilter" id="adminFormFilter" method="post">
+    <div class="page-control">
+    	<div class="title pull-left">
+    		<?php echo $this->caption;?>
+    	</div>
+    	<div class="control pull-right">
+			<?php echo $this->partial($this->params['module'] . '/partial/control-index.phtml', array( 'control' => $arrControl, 'params' => $this->params));?>
+		</div>
+		<div class="clearfix"></div>
+	</div>
+    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
+    <?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
+
+    <div class="page-filter">
+    	<div class="row">
+    		<?php echo $xhtmlFilter;?>
+    	</div>
+    </div>
+    <div class="page-content">
+    	<div class="table-manager" id="table-manager">
+    		<div class="table-scrollable table-fixed">
+    			<table class="table table-striped table-bordered table-hover">
+    				<thead>
+    					<?php echo $xhtmlHead;?>
+    				</thead>
+    				<tbody>
+    					<?php echo $xhtmlItems;?>
+    				</tbody>
+    			</table>
+    		</div>
+    		<?php
+//            	echo $this->paginationControl(\ZendX\Paginator\Paginator::createPaginator($this->count, $this->params['paginator']), 'sliding', $this->params['module'] . '/partial/paginator.phtml', array('currentURL' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'options' => $this->params['paginator']['options']));
+            ?>
+    	</div>
+	</div>
+</form>
