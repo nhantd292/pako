@@ -80,7 +80,7 @@ if ($this->item['state'] == NEW_STATUS) {
 }
 if ($this->item['state'] == PROCESSING_STATUS) {
     if ($this->item['created_by'] == $this->uid || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
-        $complete_action = array('name' => 'complete', 'caption' => 'Hoàn thành', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành đơn hàng\');', 'class' => 'btn green'));
+//        $complete_action = array('name' => 'complete', 'caption' => 'Hoàn thành', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành đơn hàng\');', 'class' => 'btn green'));
     }
     if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
 //        $cancel_action = array('name' => 'cancel', 'caption' => 'Hủy đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'cancel\', \' Bạn có chắc chắn muốn hủy đơn hàng\');', 'class' => 'btn red'));

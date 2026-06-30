@@ -425,7 +425,7 @@ class ContractController extends ActionController
                 }
             }
             if ($control_action == COMPLETE_STATUS) {
-                if ((($item['state'] == PROCESSING_STATUS || $item['state'] == DELIVERING_STATUS) && $item['created_by'] == $uid) || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+                if ((($item['state'] == DELIVERING_STATUS) && $item['created_by'] == $uid) || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
                     ##### begin #####
                     $connection->beginTransaction();
                     # cập nhật trạng thái hoàn thành cho đơn hàng.
