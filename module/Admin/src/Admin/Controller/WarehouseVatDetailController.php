@@ -10,7 +10,7 @@ use Zend\Form\FormInterface;
 use ZendX\System\UserInfo;
 
 class WarehouseVatDetailController extends ActionController{
-    public $caption = 'Phiếu nhập VAT';
+    public $caption = 'Nhập xuất VAT';
     public function init() {
         // Thiết lập options
         $this->_options['tableName'] = 'Admin\Model\WarehouseVatDetailTable';
@@ -80,7 +80,7 @@ class WarehouseVatDetailController extends ActionController{
         $this->_viewModel['user']               = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['warehouse']          = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['branch']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
-        $this->_viewModel['caption']            = $this->caption;
+        $this->_viewModel['caption']            = 'Danh sách - '.$this->caption;
         $this->_viewModel['order_status']       = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
 
         return new ViewModel($this->_viewModel);
@@ -108,13 +108,6 @@ class WarehouseVatDetailController extends ActionController{
         // Danh sách data
         $items = $this->getTable()->listItem($this->_params, array('task' => 'list-report-vat'));
         $unit = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache'));
-
-//        echo "<pre>";
-//        print_r($items->toArray());
-//        echo "</pre>";
-//        exit;
-
-
 
         $date       = new \ZendX\Functions\Date();
         $day_begin  = strtotime($date->formatToData($this->_params['ssFilter']['filter_date_begin']));
@@ -153,7 +146,6 @@ class WarehouseVatDetailController extends ActionController{
             }
         }
 
-
         $this->_viewModel['myForm']             = $myForm;
         $this->_viewModel['items']              = $data_report;
         $this->_viewModel['model']              = $this->getTable();
@@ -161,7 +153,7 @@ class WarehouseVatDetailController extends ActionController{
         $this->_viewModel['user']               = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['warehouse']          = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['branch']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
-        $this->_viewModel['caption']            = $this->caption;
+        $this->_viewModel['caption']            = 'Báo cáo - '.$this->caption;
         $this->_viewModel['order_status']       = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
 
         return new ViewModel($this->_viewModel);
