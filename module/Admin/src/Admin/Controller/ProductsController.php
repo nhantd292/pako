@@ -882,8 +882,8 @@ class ProductsController extends ActionController{
     public function updateInventoryAction()
     {
         $dateFormat = new \ZendX\Functions\Date();
-        $myForm = new \Admin\Form\Products\Import($this->getServiceLocator(), $this->_params);
-        $myForm->setInputFilter(new \Admin\Filter\Products\Import($this->_params));
+        $myForm = new \Admin\Form\Products\ImportInventory($this->getServiceLocator(), $this->_params);
+        $myForm->setInputFilter(new \Admin\Filter\Products\ImportInventory($this->_params));
 
         $warehouse = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
 
@@ -893,6 +893,10 @@ class ProductsController extends ActionController{
 
         if ($this->getRequest()->isXmlHttpRequest()) {
             if ($this->getRequest()->isPost()) {
+                if (empty($this->_params['data']['inventory_id'])) {
+                    echo 'Thiếu Kho hàng';
+                    return $this->response;
+                }
                 if (empty($this->_params['data']['code'])) {
                     echo 'Thiếu mã SP';
                     return $this->response;
@@ -901,34 +905,27 @@ class ProductsController extends ActionController{
                     echo 'Thiếu tên SP';
                     return $this->response;
                 }
-
-                foreach ($warehouse as $key => $value) {
-                    if (empty($this->_params['data'][$key.'_quantity'])) {
-                        echo 'Thiếu SL: '.$value;
-                        return $this->response;
-                    }
+                if (empty($this->_params['data']['quantity'])) {
+                    echo 'Thiếu số lượng';
+                    return $this->response;
                 }
 
                 $item = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->getItem(array('code' => $this->_params['data']['code']), array('task' => 'code'));
 
                 if (!empty($item)) {
-                    # update inventory products
-                    foreach ($warehouse as $key => $value) {
-                        $inventoryData = array(
-                            'products_id'       => $item->id,
-                            'warehouse_id'      => $key,
-                            'quantity'          => $this->_params['data'][$key.'_quantity'],
-                        );
-                        $products_inventory_item = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $item->id, 'warehouse_id' => $key), array('task' => 'filter'));
-                        if (!empty($products_inventory_item)){
-                            $inventoryData['id'] = $products_inventory_item->id;
-                            $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => $inventoryData), array('task' => 'edit-item'));
-                        }
-                        else{
-                            $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => $inventoryData), array('task' => 'add-item'));
-                        }
+                    $inventoryData = array(
+                        'products_id'       => $item->id,
+                        'warehouse_id'      => $this->_params['data']['inventory_id'],
+                        'quantity'          => $this->_params['data']['quantity'],
+                    );
+                    $products_inventory_item = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $item->id, 'warehouse_id' => $this->_params['data']['inventory_id']), array('task' => 'filter'));
+                    if (!empty($products_inventory_item)){
+                        $inventoryData['id'] = $products_inventory_item->id;
+                        $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => $inventoryData), array('task' => 'edit-item'));
                     }
-
+                    else{
+                        $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => $inventoryData), array('task' => 'add-item'));
+                    }
                     echo 'Hoàn thành';
                 }
                 else {

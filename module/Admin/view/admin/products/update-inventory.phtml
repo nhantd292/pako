@@ -11,7 +11,9 @@
 
     $elements = array(
         array('div' => '', 'boxClass' => 'col-md-12', 'boxId' => 'result_check_contact'),
-        array('element' => $myForm->get('file_import'), 'label' => 'Chọn file cần import dữ liệu <a href="/xadmin/products/export-template-inventory/type/template-import"><b>(Tải file mẫu <i class="fa fa-download"></i>)</b></a>', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
+//        array('element' => $myForm->get('file_import'), 'label' => 'Chọn file cần import dữ liệu <a href="/xadmin/products/export-template-inventory/type/template-import"><b>(Tải file mẫu <i class="fa fa-download"></i>)</b></a>', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
+        array('element' => $myForm->get('file_import'), 'label' => 'Chọn file cần import dữ liệu <a href="'. URL_FILES .'/template/Mau_nhap_ton_kho_san_pham.xlsx"><b>(Tải file mẫu <i class="fa fa-download"></i>)</b></a>', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
+        array('element' => $myForm->get('inventory_id'), 'label' => 'Kho hàng', 'validate' => array('require' => true), 'boxClass' => 'col-md-2'),
         array('element' => $myForm->get('submit'), 'label' => '.', 'boxClass' => 'col-md-1'),
     );
 
@@ -55,7 +57,8 @@
             						<th class="col-50">STT</th>
                                     <th>Mã SP <span class="text-red">*</span></th>
             						<th>Tên SP <span class="text-red">*</span></th>
-                                    <?php echo $title_custom; ?>
+            						<th>Số lượng tồn <span class="text-red">*</span></th>
+<!--                                    --><?php //echo $title_custom; ?>
             					</tr>
             				</thead>
             				<tbody>
@@ -79,7 +82,8 @@
         							<td><?php echo $index;?></td>
                                     <td><span class="code"><?php echo trim($val['A']);?></span></td>
                                     <td><span class="name"><?php echo trim($val['B']);?></span></td>
-                                    <?php echo $tbody_custom; ?>
+                                    <td><span class="quantity"><?php echo trim($val['C']);?></span></td>
+<!--                                    --><?php //echo $tbody_custom; ?>
         						</tr>
         						<?php
             					    }
@@ -107,10 +111,13 @@
 		var item = '#tr_'+ index;
 
 		if($(item).size() > 0) {
-            var data = {};
+            var data = {
+                'inventory_id': $('select[name="inventory_id"]').val(),
+            };
 		    $(item +' span').each(function() {
 		        data[$(this).attr('class')] = $(this).text();
 		    });
+
             console.log(data);
             $.ajax({
     			url: "<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => $this->params['action']));?>",
