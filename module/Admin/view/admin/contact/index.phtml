@@ -173,8 +173,8 @@
     $xhtmlHead .= '<th width ="150">Họ tên</th>';
     $xhtmlHead .= '<th width ="120">Nhóm Khách hàng</th>';
 //    $xhtmlHead .= '<th width ="150">SP quan tâm</th>';
-    $xhtmlHead .= '<th width ="140">Số lần mua sản phẩm</th>';
-    $xhtmlHead .= '<th width ="140">Tổng doanh số</th>';
+    $xhtmlHead .= $this->linkAdminSort('Số lần mua sản phẩm', 'contract_total', $this->params['ssFilter'], array('class' => 'col-150', 'width' => '150'));
+    $xhtmlHead .= $this->linkAdminSort('Tổng doanh số', 'contract_price_total', $this->params['ssFilter'], array('class' => 'col-150', 'width' => '120'));
     $xhtmlHead .= '<th width ="200">Tên xe - Năm sản xuất</th>';
     $xhtmlHead .= '<th width ="220">Nội dung tư vấn</th>';
     $xhtmlHead .= '<th width ="150">Số lần được chăm sóc</th>';
