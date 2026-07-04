@@ -58,13 +58,21 @@ class Contact extends InputFilter {
 //        ));
 	    
 		// Phone
-	    if(!empty($optionId)) {
-	        $excludePhoneMessages = $optionData['phone'] .' đã tồn tại trong danh sách khách hàng của bạn';
-	        $excludePhone = "id != '". $optionId ."' AND phone = '". $optionData['phone'] ."' AND marketer_id = '".$optionItem['marketer_id']."' AND user_id = '".$optionItem['user_id']."'";
-	    } else {
-	        $excludePhoneMessages = $optionData['phone'] .' đã tồn tại trong danh sách khách hàng của bạn';
-	        $excludePhone = "phone = '". $optionData['phone'] ."' AND user_id = '".$userInfo['id']."'";
-	    }
+//	    if(!empty($optionId)) {
+//	        $excludePhoneMessages = $optionData['phone'] .' đã tồn tại trong danh sách khách hàng của bạn';
+//	        $excludePhone = "id != '". $optionId ."' AND phone = '". $optionData['phone'] ."' AND marketer_id = '".$optionItem['marketer_id']."' AND user_id = '".$optionItem['user_id']."'";
+//	    } else {
+//	        $excludePhoneMessages = $optionData['phone'] .' đã tồn tại trong danh sách khách hàng của bạn';
+//	        $excludePhone = "phone = '". $optionData['phone'] ."' AND user_id = '".$userInfo['id']."'";
+//	    }
+
+        if(!empty($optionId)) {
+            $excludePhoneMessages = $optionData['phone'] .' đã tồn tại trong danh sách khách hàng';
+            $excludePhone = "id != '". $optionId ."' AND phone = '". $optionData['phone'] ."'";
+        } else {
+            $excludePhoneMessages = $optionData['phone'] .' đã tồn tại trong danh sách khách hàng';
+            $excludePhone = "phone = '". $optionData['phone'] ."'";
+        }
 		$this->add(array(
 			'name'		=> 'phone',
 			'required'	=> true,

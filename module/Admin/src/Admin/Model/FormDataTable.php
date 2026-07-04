@@ -936,7 +936,11 @@ class FormDataTable extends DefaultTable {
         foreach ($items as $i => $item){
             $data_item     = $this->getItem(array('id' => $item['id']));
             $sales_user    = $this->getServiceLocator()->get('Admin\Model\UserTable')->getItem(array('id' => $users[$index_user % count($users)]));
-            $check_contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('phone' => $data_item['phone'], 'marketer_id' => $data_item['marketer_id'], 'user_id' => $sales_user['id']), array('task' => 'check-share-data'));
+
+//            $check_contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('phone' => $data_item['phone'], 'marketer_id' => $data_item['marketer_id'], 'user_id' => $sales_user['id']), array('task' => 'check-share-data'));
+            $check_contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('phone' => $data_item['phone']), array('task' => 'check-share-data'));
+
+
             if(empty($data_item['sales_id']) && $data_item['cancel_share'] != 1 && empty($check_contact)){
                 $data_contact = array(
                     'name'             => $data_item['name'],

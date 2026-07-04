@@ -486,8 +486,8 @@ class ContactTable extends DefaultTable {
 		if($options['task'] == 'check-share-data') {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
 			    $select -> where -> equalTo('phone', $arrParam['phone']);
-			    $select -> where -> equalTo('marketer_id', $arrParam['marketer_id']);
-			    $select -> where -> equalTo('user_id', $arrParam['user_id']);
+//			    $select -> where -> equalTo('marketer_id', $arrParam['marketer_id']);
+//			    $select -> where -> equalTo('user_id', $arrParam['user_id']);
     		})->toArray();
 		}
 	

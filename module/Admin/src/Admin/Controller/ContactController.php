@@ -610,7 +610,8 @@ class ContactController extends ActionController
                         $user_mkt   = $this->getServiceLocator()->get('Admin\Model\UserTable')->getItem(array('code' => $this->_params['data']['marketer_code']), array('task' => 'by-code'));
                         $user_sales = $this->getServiceLocator()->get('Admin\Model\UserTable')->getItem(array('code' => $this->_params['data']['sales_code']), array('task' => 'by-code'));
                         // Check liên hệ
-                        $item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('phone' => $this->_params['data']['phone'], 'marketer_id' => $user_mkt['id'], 'user_id' => $user_sales['id']), array('task' => 'check-share-data'));
+//                        $item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('phone' => $this->_params['data']['phone'], 'marketer_id' => $user_mkt['id'], 'user_id' => $user_sales['id']), array('task' => 'check-share-data'));
+                        $item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('phone' => $this->_params['data']['phone']));
                         if (!empty($item)) {
                             echo 'Tồn tại';
                         }
