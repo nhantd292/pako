@@ -93,12 +93,12 @@ if ($this->item['state'] == DELIVERING_STATUS) {
     }
     if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
         $return_action = array('name' => 'return', 'caption' => 'Hoàn đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'return\', \' Bạn có chắc chắn muốn hoàn đơn hàng\');', 'class' => 'btn purple'));
-        $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
+//        $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
     }
 }
 if ($this->item['state'] == COMPLETE_STATUS) {
     if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
-        $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
+//        $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
     }
 }
 

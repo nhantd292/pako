@@ -679,7 +679,7 @@ class CustomerDebtController extends ActionController
         return $viewModel;
     }
 
-    // Xác nhận đã xuất kho
+    // Xác nhận hoàn thành nhưng không vào sổ quỹ
     public function acceptNotFundAction()
     {
         if ($this->getRequest()->isPost()) {

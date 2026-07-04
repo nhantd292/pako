@@ -74,7 +74,8 @@
                 $link_category = '<a href="/xadmin/warehouse-output/detail/id/'.$item['warehouse_output_id'].'/" target="_blank"> '. $item['warehouse_output_code'] .'</a>';
             }
 
-            if($item['state'] == COMPLETE_STATUS and ($item['paid_cash'] != 0 or $item['paid_transfer'] != 0)) {
+//            if($item['state'] == COMPLETE_STATUS and ($item['paid_cash'] != 0 or $item['paid_transfer'] != 0)) {
+            if(!in_array($item['state'], [CANCEL_STATUS, NEW_STATUS])  and ($item['paid_cash'] != 0 or $item['paid_transfer'] != 0)) {
 //                $accept = !empty($item['accept']) ? '<sapn class="btn-accepted">Đã vào sổ quỹ</sapn>' : '<sapn class="btn-pending">Chờ vào sổ quỹ</sapn>';
                 if ($item['accept'] == 0) {
                     $accept = '<sapn class="btn-pending">Chờ vào sổ quỹ</sapn>';
