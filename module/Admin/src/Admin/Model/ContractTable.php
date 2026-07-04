@@ -1863,42 +1863,6 @@ class ContractTable extends DefaultTable {
             return $contract['id'];
         }
 
-		// cập nhật bảo hành
-		if ($options['task'] == 'update-guarantee') {
-			$id = $arrData['id'];
-			$data = [
-				'guarantee_date' => $date->formatToData($arrData['guarantee_date']),
-				'guarantee_note' => $arrData['guarantee_note'],
-			];
-            // Cập nhật đơn hàng
-			$this->tableGateway->update($data, array('id' => $id));
-			return $id;
-		}
-
-		// cập nhật bảo hành
-		if ($options['task'] == 'update-evaluate') {
-			$id = $arrData['contract_id'];
-			$data = [
-				'evaluate' => 1,
-			];
-            // Cập nhật đơn hàng
-			$this->tableGateway->update($data, array('id' => $id));
-			return $id;
-		}
-
-        // import thợ kỹ thuật và thợ may vào đơn hàng,
-        if($options['task'] == 'import-technical') {
-            $id = $arrData['id'];
-            $data	= array(
-                'options'           => $arrData['options'],
-            );
-
-            $this->tableGateway->update($data, array('id' => $id));
-            // Cập nhật trạng thái đơn đã nhập thợ kỹ thuật, thợ may chưa
-            $this->saveItem(array('data' => $id), array('task' => 'update-status-technical'));
-            return $id;
-        }
-
 		// cập nhật giảm trừ doanh thu
 		if ($options['task'] == 'update-reduce') {
 			$id = $arrData['id'];

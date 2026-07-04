@@ -910,36 +910,39 @@ class ContactTable extends DefaultTable {
                 $data['company_phone'] = $arrData['company_phone'];
             }
 
-		    $this->tableGateway->update($data, array('id' => $id));
-		    
-		    // Thêm lịch sử hệ thống
-		    if(!empty($id)) {
-		        $arrCheckLogs = array('phone', 'name', 'email', 'birthday', 'user_id', 'sale_branch_id', 'sale_group_id', 'location_city_id', 'location_district_id', 'sales_expected', 'latched');
-		        $arrCheckResult = array();
-		        foreach ($arrCheckLogs AS $field) {
-		            if($data[$field] != $arrItem[$field]) {
-		                if(isset($data[$field])) {
-                            $arrCheckResult[$field] = $data[$field];
-		                }
-		            }
-		        }
-		        
-		        if(!empty($arrCheckResult)) {
-    		        $arrParamLogs = array(
-    		            'data' => array(
-        		            'title'          => 'Liên hệ',
-        		            'phone'          => $arrItem['phone'],
-        		            'name'           => $arrItem['name'],
-        		            'action'         => 'Sửa',
-        		            'contact_id'     => $id,
-        		            'options'        => $arrCheckResult
-        		        )
-    		        );
-    		        $logs = $this->getServiceLocator()->get('Admin\Model\LogsTable')->saveItem($arrParamLogs, array('task' => 'add-item'));
-		        }
-		    }
-			
-			return $id;
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                // Thêm lịch sử hệ thống
+                if(!empty($id)) {
+                    $arrCheckLogs = array('phone', 'name', 'email', 'birthday', 'user_id', 'sale_branch_id', 'sale_group_id', 'location_city_id', 'location_district_id', 'sales_expected', 'latched');
+                    $arrCheckResult = array();
+                    foreach ($arrCheckLogs AS $field) {
+                        if($data[$field] != $arrItem[$field]) {
+                            if(isset($data[$field])) {
+                                $arrCheckResult[$field] = $data[$field];
+                            }
+                        }
+                    }
+
+                    if(!empty($arrCheckResult)) {
+                        $arrParamLogs = array(
+                            'data' => array(
+                                'title'          => 'Liên hệ',
+                                'phone'          => $arrItem['phone'],
+                                'name'           => $arrItem['name'],
+                                'action'         => 'Sửa',
+                                'contact_id'     => $id,
+                                'options'        => $arrCheckResult
+                            )
+                        );
+                        $logs = $this->getServiceLocator()->get('Admin\Model\LogsTable')->saveItem($arrParamLogs, array('task' => 'add-item'));
+                    }
+                }
+
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Update contact data failed: ' . $e->getMessage());
+            }
 		}
 
         if ($options['task'] == 'update-infor') {

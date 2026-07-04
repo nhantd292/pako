@@ -333,6 +333,13 @@ class ContractController extends ActionController
                     );
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
 
+                    # tăng tổng số đơn và tổng doanh số cho khách hàng
+                    $arrParamContact['data']['id']                		= $contact_item['id'];
+                    $arrParamContact['data']['contract_total']    		= $contact_item['contract_total'] + 1;
+                    $arrParamContact['data']['contract_number']   		= $contact_item['contract_total'] + 1;
+                    $arrParamContact['data']['contract_price_total']    = $contact_item['contract_price_total'] + $number->formatToData($price_total);
+                    $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($arrParamContact, array('task' => 'edit-item'));
+
                     $connection->commit();
                     ##### end #####
 
@@ -697,6 +704,12 @@ class ContractController extends ActionController
                         'new_debt' => $new_debt,
                     );
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+                    # cập nhật tổng doanh số cho khách hàng
+                    $arrParamContact['data']['id']                		= $contact_item['id'];
+                    $arrParamContact['data']['contract_price_total']    = $contact_item['contract_price_total'] - ($contract['price_total'] + $contract['fee_other']) + $number->formatToData($price_total);
+                    $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($arrParamContact, array('task' => 'edit-item'));
+
                     $connection->commit();
                     ##### end #####
 
