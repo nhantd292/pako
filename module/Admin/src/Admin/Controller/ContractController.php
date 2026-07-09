@@ -988,7 +988,7 @@ class ContractController extends ActionController
             array('field' => 'company_address', 'title' => 'Địa chỉ', 'format_code' => '@'),
             array('field' => 'customer_name', 'title' => 'Người mua hàng', 'format_code' => '@'),
             array('field' => 'company_email', 'title' => 'Email', 'format_code' => '@'),
-            array('field' => 'customer_phone', 'title' => 'Số điện thoại', 'format_code' => '@', 'align' => 'center'), // Định dạng văn bản để giữ số 0
+//            array('field' => 'customer_phone', 'title' => 'Số điện thoại', 'format_code' => '@', 'align' => 'center'), // Định dạng văn bản để giữ số 0
             array('field' => 'customer_cccd', 'title' => 'Căn cước công dân', 'format_code' => '@', 'align' => 'center'), // Định dạng văn bản để giữ số 0
             array('field' => 'pay_type', 'title' => 'Hình thức thanh toán (*)', 'align' => 'center', 'format_code' => '@'),
             array('field' => 'percent_vat', 'title' => 'Thuế suất GTGT (%)', 'align' => 'center', 'format_code' => '#,##0'),
@@ -1025,7 +1025,7 @@ class ContractController extends ActionController
             $item['price'] = round($item['price'] / (1 + $item['percent_vat'] / 100));
             $item['total'] = round($net_numbers * $item['price']);
             $item['pay_type'] = 'TM/CK';
-            $item['customer_name'] = 'khách lẻ không lấy hóa đơn';
+            $item['customer_name'] = 'Bán cho ngưới tiêu dùng';
             if (array_key_exists($item['contract_id'], $tm)) {
                 $tm[$item['contract_id']] += $item['total'];
             } else {
@@ -1346,7 +1346,7 @@ class ContractController extends ActionController
                             $number = $item['numbers'] - $item['numbers_return'];
 
                             # tính tổng số lượng xe 5 cho xe 7 chỗ.
-                            $first_code = explode("_", $item['products_code'])[0];
+                            $first_code = explode("-", $item['products_code'])[0];
                             if ($first_code == 'SAN5CHO') {
                                 $_SAN5CHO += $number;
                             }

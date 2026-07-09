@@ -291,7 +291,7 @@ class CustomerDebtTable extends DefaultTable {
                 'orders_return_id'      => $arrData['orders_return_id'],
                 'warehouse_input_id'    => $arrData['warehouse_input_id'],
                 'warehouse_output_id'   => $arrData['warehouse_output_id'],
-                'date'                  => $date->formatToData($arrData['date']),
+                'date'                  => !empty($arrData['date']) ? $date->formatToData($arrData['date']) : date('Y-m-d') ,
                 'price_total'           => $number->formatToData($arrData['price_total']),
                 'paid_cash'             => $number->formatToData($arrData['paid_cash']),
                 'paid_transfer'         => $number->formatToData($arrData['paid_transfer']),
