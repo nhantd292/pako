@@ -1025,7 +1025,7 @@ class ContractController extends ActionController
             $item['price'] = round($item['price'] / (1 + $item['percent_vat'] / 100));
             $item['total'] = round($net_numbers * $item['price']);
             $item['pay_type'] = 'TM/CK';
-            $item['customer_name'] = 'Bán cho ngưới tiêu dùng';
+            $item['customer_name'] = 'Bán cho người tiêu dùng';
             $item['customer_phone'] = '';
             if (array_key_exists($item['contract_id'], $tm)) {
                 $tm[$item['contract_id']] += $item['total'];
