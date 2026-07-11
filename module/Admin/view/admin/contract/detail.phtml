@@ -5,6 +5,7 @@ $invoice_type = $this->invoice_type;
 $show_invoice_vat = $this->item['invoice_type'] == 'vat' ? '' : 'hidden';
 $show_option_vat = $this->item['option_vat'] == 'yes' ? '' : 'hidden';
 $option_vat = array('yes' => 'Lấy VAT', 'no' => 'Không lấy VAT');
+$option_mtt = array('tt' => 'Thanh toán', 'cn' => 'Công nợ');
 
 
 $elementsContact = array(
@@ -22,6 +23,7 @@ $elementsContact = array(
     array('element' => $this->production_type[$this->item['production_type_id']]['name'], 'label' => 'Loại đơn', 'boxClass' => 'col-md-3'),
     array('element' => $option_vat[$this->item['option_vat']], 'label' => 'Lấy VAT', 'boxClass' => 'col-md-3'),
     array('element' => $invoice_type[$this->item['invoice_type']]['name'], 'label' => 'Xuất hóa đơn', 'boxClass' => 'col-md-3 '.$show_option_vat),
+    array('element' => $option_mtt[$this->item['option_mtt']], 'label' => 'Khách hàng', 'boxClass' => 'col-md-3'),
     array('section' => 'Thông tin xuất hóa đơn', 'boxClass' => 'col-md-12 '.$show_option_vat),
     array('element' => $this->item['company_user'], 'label' => 'Họ và tên', 'boxClass' => 'col-md-4 '.$show_option_vat),
     array('element' => $this->item['company_phone'], 'label' => 'ĐT công ty', 'boxClass' => 'col-md-4 '.$show_option_vat),

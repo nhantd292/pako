@@ -199,6 +199,108 @@ class CustomerDebtTable extends DefaultTable {
                 }
     		});
 		}
+
+        if($options['task'] == 'list-export') {
+            $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $paginator = $arrParam['paginator'];
+                $ssFilter  = $arrParam['ssFilter'];
+                $date       = new \ZendX\Functions\Date();
+                $number     = new \ZendX\Functions\Number();
+
+                if(!isset($options['paginator']) || $options['paginator'] == true) {
+                    $select -> limit($paginator['itemCountPerPage'])
+                        -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
+                }
+
+                $select -> order(array('created' => 'ASC'));
+
+                $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name'), 'inner')
+                        # lấy thông tin sản phẩm liên kết đơn hàng
+                        -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code'), 'left')
+                        -> join(TABLE_CONTRACT_DETAIL, TABLE_CONTRACT_DETAIL .'.contract_id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array(
+                            'cdetail_product_id' => 'product_id',
+                            'cdetail_quantity' => 'numbers',
+                            'cdetail_price' => 'price',
+                            'cdetail_price_total' => 'total',
+                            ), 'left')
+
+                        # lấy thông tin sản phẩm liên kết khách trả hàng
+                        -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array( 'orders_return_code' => 'code'), 'left')
+                        -> join(TABLE_ORDERS_RETURN_DETAIL, TABLE_ORDERS_RETURN_DETAIL .'.orders_return_id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array(
+                            'odetail_product_id' => 'product_id',
+                            'odetail_quantity' => 'quantity',
+                            'odetail_price' => 'price',
+                            'odetail_price_total' => 'price_total',
+                        ), 'left');
+
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select->where->greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select->where->lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                }
+
+                if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.state', $ssFilter['filter_state']);
+                }
+                else{
+                    $select->where->notEqualTo(TABLE_CUSTOMER_DEBT.'.state', CANCEL_STATUS);
+                }
+
+                if(isset($ssFilter['filter_accept']) && $ssFilter['filter_accept'] != '') {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CUSTOMER_DEBT.'.accept', $ssFilter['filter_accept'])
+                        -> equalTo(TABLE_CUSTOMER_DEBT.'.state', COMPLETE_STATUS)
+                        ->And
+                        -> NEST
+                        -> NotEqualTo(TABLE_CUSTOMER_DEBT.'.paid_cash', 0)
+                        ->Or
+                        -> NotEqualTo(TABLE_CUSTOMER_DEBT.'.paid_transfer', 0)
+                        -> UNNEST
+                        -> UNNEST;
+                }
+
+                if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.type', $ssFilter['filter_type']);
+                }
+
+                if(isset($ssFilter['filter_category']) && $ssFilter['filter_category'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.category', $ssFilter['filter_category']);
+                }
+
+                if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.customer_id', $ssFilter['filter_customer_id']);
+                }
+
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
+                }
+
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $select->where->NEST
+                        ->like(TABLE_CUSTOMER_DEBT.'.code', '%'. $ssFilter['filter_keyword'] . '%')
+                        ->UNNEST;
+                }
+
+                if(!empty($ssFilter['filter_user'])) {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CONTACT .'.user_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> equalTo(TABLE_CUSTOMER_DEBT .'.created_by', $ssFilter['filter_user'])
+                        ->Or
+                        -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
+                        -> UNNEST;
+                }
+//                echo "<pre>";
+//                print_r($select->getSqlString());
+//                echo "</pre>";
+            });
+        }
 		
 	    if($options['task'] == 'cache') {
 	        $cache = $this->getServiceLocator()->get('cache');

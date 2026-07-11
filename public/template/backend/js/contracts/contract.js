@@ -33,16 +33,6 @@ $('input[name="location_district_id"]').change(function() {
     $(select).attr('data-parent', $(this).val());
 });
 
-var invoice_type_value = $('select[name="invoice_type"]').val()
-if(invoice_type_value) {
-    $('.' + invoice_type_value).removeClass('hidden')
-}
-
-$('select[name="invoice_type"]').change(function() {
-    var invoice_type = $(this).val();
-    $('.invoice_info').addClass('hidden')
-    $('.'+invoice_type).removeClass('hidden')
-});
 
 var option_vat_value = $('select[name="option_vat"]').val()
 if(option_vat_value) {
@@ -50,13 +40,42 @@ if(option_vat_value) {
 }
 $('select[name="option_vat"]').change(function() {
     var option_vat = $(this).val();
+    console.log(option_vat)
     $('.vat_infor').addClass('hidden')
     $('.'+option_vat).removeClass('hidden')
     $('select[name="invoice_type"]').select2('val', '');
+    $('select[name="option_mtt"]').select2('val', '');
 
     var invoice_type = $('select[name="invoice_type"]').val()
     $('.invoice_info').addClass('hidden')
     $('.'+invoice_type).removeClass('hidden')
+});
+
+var invoice_type_value = $('select[name="invoice_type"]').val()
+if(invoice_type_value) {
+    $('.' + invoice_type_value).removeClass('hidden')
+}
+
+$('select[name="invoice_type"]').change(function() {
+    var invoice_type = $(this).val();
+    console.log(invoice_type)
+    $('.invoice_info').addClass('hidden')
+    $('.pos_infor').addClass('hidden')
+    $('.'+invoice_type).removeClass('hidden')
+
+    $('select[name="option_mtt"]').select2('val', '');
+});
+
+
+var option_mtt_value = $('select[name="option_mtt"]').val()
+if(option_mtt_value) {
+    $('.' + option_mtt_value).removeClass('hidden')
+}
+$('select[name="option_mtt"]').change(function() {
+    var option_mtt = $(this).val();
+    console.log(option_mtt)
+    $('.invoice_info').addClass('hidden')
+    $('.'+option_mtt).removeClass('hidden')
 });
 
 

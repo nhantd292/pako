@@ -77,6 +77,7 @@ class ContractDetailTable extends DefaultTable {
                         'contract_vat' => 'vat',
                         'contract_created_by' => 'created_by',
                         'contract_price_total' => 'price_total',
+                        'option_mtt' => 'option_mtt',
                         'customer_name' => 'name',
                         'customer_phone' => 'phone',
                         'company_name',

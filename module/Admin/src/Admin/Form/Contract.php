@@ -150,6 +150,19 @@ class Contract extends Form {
             )
         ));
 
+        $this->add(array(
+            'name'			=> 'option_mtt',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Chọn -',
+                'disable_inarray_validator' => true,
+                'value_options'	=>  array('tt' => 'Thanh toán', 'cn' => 'Công nợ'),
+            )
+        ));
+
 		$this->add(array(
 		    'name'			=> 'company_name',
 		    'type'			=> 'Text',
