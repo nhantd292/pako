@@ -973,6 +973,9 @@ class ContractController extends ActionController
         $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('ssFilter' => $this->_params['data']), array('task' => 'list-item', 'paginator' => false))->toArray();
 
         $units = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache'));
+        $location_city = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
+        $location_district = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
+
 
         require_once PATH_VENDOR . '/Excel/PHPExcel.php';
 
@@ -1027,6 +1030,8 @@ class ContractController extends ActionController
             $item['pay_type'] = 'TM/CK';
             $item['customer_name'] = $item['option_mtt'] == 'cn' ? $item['customer_name'] :'Bán cho người tiêu dùng';
             $item['customer_phone'] = $item['option_mtt'] == 'cn' ? $item['customer_phone'] :'';
+            $item['company_address'] = $item['option_mtt'] == 'cn' ? $location_district[$item['location_district_id']]['name'] .' - '. $location_city[$item['location_city_id']]['name'] :'';
+
             if (array_key_exists($item['contract_id'], $tm)) {
                 $tm[$item['contract_id']] += $item['total'];
             } else {

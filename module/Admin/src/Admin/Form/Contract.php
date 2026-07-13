@@ -159,7 +159,7 @@ class Contract extends Form {
             'options'		=> array(
                 'empty_option'	=> '- Chọn -',
                 'disable_inarray_validator' => true,
-                'value_options'	=>  array('tt' => 'Thanh toán', 'cn' => 'Công nợ'),
+                'value_options'	=>  array('tt' => 'Không công nợ', 'cn' => 'Công nợ'),
             )
         ));
 

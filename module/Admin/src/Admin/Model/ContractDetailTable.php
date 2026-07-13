@@ -80,10 +80,14 @@ class ContractDetailTable extends DefaultTable {
                         'option_mtt' => 'option_mtt',
                         'customer_name' => 'name',
                         'customer_phone' => 'phone',
+                        'company_user',
+                        'company_phone',
                         'company_name',
                         'company_mst',
                         'company_address',
                         'company_email',
+                        'location_city_id',
+                        'location_district_id',
                         'state')
                     , 'inner');
                 $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_CONTRACT_DETAIL .'.product_id', array('products_unit_id' => 'unit_id', 'products_name_vat' => 'name_vat'), 'inner');
