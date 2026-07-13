@@ -51,6 +51,10 @@ class CustomerDebtTable extends DefaultTable {
                         -> UNNEST;
                 }
 
+                if(isset($ssFilter['filter_option_mtt']) && $ssFilter['filter_option_mtt'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.option_mtt', $ssFilter['filter_option_mtt']);
+                }
+
                 if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.type', $ssFilter['filter_type']);
                 }
@@ -109,7 +113,7 @@ class CustomerDebtTable extends DefaultTable {
                 $select -> order(array('created' => 'DESC')); // lưu ý không được thay đổi
 
                 $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name', 'customer_phone' => 'phone'), 'inner')
-                        -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id'), 'left')
+                        -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id', 'option_mtt'), 'left')
                         -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_CUSTOMER_DEBT .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner')
                         -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array( 'orders_return_code' => 'code', 'orders_return_id' => 'id'), 'left')
                         -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_input_id', array( 'warehouse_input_code' => 'code', 'warehouse_input_id' => 'id'), 'left')
@@ -146,6 +150,10 @@ class CustomerDebtTable extends DefaultTable {
                             -> UNNEST
                         -> UNNEST;
                 }
+
+    			if(isset($ssFilter['filter_option_mtt']) && $ssFilter['filter_option_mtt'] != '') {
+    			    $select->where->equalTo(TABLE_CONTRACT.'.option_mtt', $ssFilter['filter_option_mtt']);
+    			}
 
     			if(isset($ssFilter['filter_type']) && $ssFilter['filter_type'] != '') {
     			    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.type', $ssFilter['filter_type']);

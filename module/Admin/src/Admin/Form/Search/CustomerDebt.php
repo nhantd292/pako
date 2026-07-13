@@ -115,6 +115,19 @@ class CustomerDebt extends Form
             ),
         ));
 
+        // Công nợ
+        $this->add(array(
+            'name'			=> 'filter_option_mtt',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Loại công nợ -',
+                'value_options'	=> array('tt' => 'Không công nợ', 'cn' => 'Công nợ')
+            )
+        ));
+
         // accept
         $this->add(array(
             'name'			=> 'filter_accept',
