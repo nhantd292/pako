@@ -981,9 +981,9 @@ class CustomerDebtController extends ActionController
         $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('J6', 'Nợ đầu kỳ');
         $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('K6', number_format($old_debt))->getStyle('K6')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
         $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('J7', 'Phát sinh trong kỳ');
-        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('K7', number_format(abs($run_debt)))->getStyle('K7')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('K7', number_format(($run_debt)))->getStyle('K7')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
         $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('J8', 'Nợ cuối kỳ')->getStyle('J8')->getFont()->setBold(true);
-        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('K8', number_format($old_debt + abs($run_debt)));
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('K8', number_format($old_debt + ($run_debt)));
 
         $objPHPExcel->getActiveSheet()->getStyle('K8')->applyFromArray(array(
             'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_RIGHT),
