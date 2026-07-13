@@ -3,6 +3,7 @@
 namespace Admin\Controller;
 
 use kcfinder\zipFolder;
+use Zend\Paginator\Adapter\Null;
 use ZendX\Controller\ActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container;
@@ -559,7 +560,7 @@ class CustomerDebtController extends ActionController
         exit;
     }
 
-    public function exportv2Action()
+    public function exportv1Action()
     {
         $dateFormat = new \ZendX\Functions\Date();
         $file_name = 'thu_chi_khach_hang_ ' . date('Y_m_d') . '.xlsx';
@@ -568,9 +569,6 @@ class CustomerDebtController extends ActionController
         $debt_category = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
         $units = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache')), array('key' => 'id', 'value' => 'object'));
         $products = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->listItem(null, array('task' => 'cache'));
-//        echo "<pre>";
-//        print_r($items->toArray());
-//        echo "</pre>";
 
         require_once PATH_VENDOR . '/Excel/PHPExcel.php';
 
@@ -590,8 +588,6 @@ class CustomerDebtController extends ActionController
             array('field' => 'total', 'title' => 'Thành Tiền'),
             array('field' => 'debt', 'title' => 'Ghi nợ'),
             array('field' => 'debt2', 'title' => 'Ghi có'),
-//            array('field' => 'type', 'title' => 'Loại phiếu', 'type' => 'data_source', 'data_source' => $debt_type),
-//            array('field' => 'category', 'title' => 'Danh mục thu chi', 'type' => 'data_source', 'data_source' => $debt_category),
         );
 
         $objPHPExcel = new \PHPExcel();
@@ -630,7 +626,8 @@ class CustomerDebtController extends ActionController
                 foreach ($arrData as $key => $data) {
                     $colLetter = $arrColumn[$startColumn];
                     $value = $item[$data['field']];
-                    $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value);
+                    $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value)
+                        ->getStyle($colLetter . $startRow)->getFont()->setBold(true);;
                     $startColumn++;
                 }
                 $startRow++;
@@ -646,7 +643,7 @@ class CustomerDebtController extends ActionController
                     $item['vat'] = 0;
                     $item['price'] = $item['cdetail_price'];
                     $item['total'] = $item['cdetail_price_total'];
-                    $item['debt'] = $item['price_total'];
+                    $item['debt'] = '';
                     $item['debt2'] = '';
                 }
                 if ($item['type'] == KTH) {
@@ -660,11 +657,12 @@ class CustomerDebtController extends ActionController
                     $item['vat'] = 0;
                     $item['price'] = $item['odetail_price'];
                     $item['total'] = $item['odetail_price_total'];
-                    $item['debt'] = $item['price_total'];
+                    $item['debt'] = '';
                     $item['debt2'] = '';
                 }
 
-            } else {
+            }
+            else {
                 if ($item['type'] == KMH) {
                     $item['created'] = '';
                     $item['code'] = $products[$item['cdetail_product_id']]['code'];
@@ -676,7 +674,7 @@ class CustomerDebtController extends ActionController
                     $item['vat'] = 0;
                     $item['price'] = $item['cdetail_price'];
                     $item['total'] = $item['cdetail_price_total'];
-                    $item['debt'] = $item['price_total'];
+                    $item['debt'] = '';
                     $item['debt2'] = '';
                 }
                 if ($item['type'] == KTH) {
@@ -690,12 +688,10 @@ class CustomerDebtController extends ActionController
                     $item['vat'] = 0;
                     $item['price'] = $item['odetail_price'];
                     $item['total'] = $item['odetail_price_total'];
-                    $item['debt'] = $item['price_total'];
+                    $item['debt'] = '';
                     $item['debt2'] = '';
                 }
             }
-
-
 
             $startColumn = $config['startColumn'];
 
@@ -726,6 +722,274 @@ class CustomerDebtController extends ActionController
             }
             $startRow++;
         }
+
+        $lastColumnIndex = $config['startColumn'] + count($arrData) - 1;
+        for ($i = $config['startColumn']; $i <= $lastColumnIndex; $i++) {
+            $objPHPExcel->getActiveSheet()->getColumnDimension($arrColumn[$i])->setAutoSize(true);
+        }
+
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $file_name . '"');
+
+        $objWriter = \PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+        $objWriter->save('php://output');
+        exit;
+    }
+
+    public function exportv2Action()
+    {
+        $dateFormat = new \ZendX\Functions\Date();
+        $file_name = 'thu_chi_khach_hang_ ' . date('Y_m_d') . '.xlsx';
+        $items = $this->getTable()->listItem($this->_params, array('task' => 'list-export', 'paginator' => false));
+        $debt_type = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $debt_category = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-category')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $units = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache')), array('key' => 'id', 'value' => 'object'));
+        $products = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->listItem(null, array('task' => 'cache'));
+        $customer = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $this->_params['ssFilter']['filter_customer_id']));
+        $inventory = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->getItem(array('id' => $this->_params['ssFilter']['filter_inventory_id']));
+//        echo "<pre>";
+//        print_r($this->_params['ssFilter']);
+//        print_r($inventory);
+//        echo "</pre>";
+//        exit;
+
+        require_once PATH_VENDOR . '/Excel/PHPExcel.php';
+
+        $config = array('sheetData' => 0, 'headRow' => 10, 'startRow' => 11, 'startColumn' => 0);
+        $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
+
+        // Thêm thuộc tính 'format' => 'number' vào các cột cần định dạng tiền/số
+        $arrData = array(
+            array('field' => 'created', 'type' => 'datetime', 'title' => 'Thời gian'),
+            array('field' => 'code', 'title' => 'Mã'),
+            array('field' => 'name', 'title' => 'Diễn Giải'),
+            array('field' => 'unit', 'title' => 'ĐVT'),
+            array('field' => 'quantity', 'format' => 'number', 'title' => 'SL'),
+            array('field' => 'price', 'format' => 'number', 'title' => 'Đơn giá'),
+            array('field' => 'discount', 'format' => 'number', 'title' => 'Giảm giá'),
+            array('field' => 'vat', 'format' => 'number', 'title' => 'VAT'),
+            array('field' => 'price', 'format' => 'number', 'title' => 'Giá bán/trả'),
+            array('field' => 'total', 'format' => 'number', 'title' => 'Thành Tiền'),
+            array('field' => 'debt', 'format' => 'number', 'title' => 'Ghi nợ'),
+            array('field' => 'debt2', 'format' => 'number', 'title' => 'Ghi có'),
+        );
+
+        $objPHPExcel = new \PHPExcel();
+        $objPHPExcel->getProperties()->setCreator($this->_userInfo->getUserInfo('name'))->setTitle("Export");
+
+        // Định nghĩa cấu hình đường viền mỏng (Thin Border) cho PHP 5.6
+        $styleBorder = array(
+            'borders' => array(
+                'allborders' => array(
+                    'style' => \PHPExcel_Style_Border::BORDER_THIN,
+                    'color' => array('rgb' => '000000')
+                )
+            )
+        );
+
+        // Dữ liệu tiêu đề
+        $startColumn = $config['startColumn'];
+        foreach ($arrData as $key => $data) {
+            $colLetter = $arrColumn[$startColumn];
+            $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $config['headRow'], $data['title']);
+            $objPHPExcel->getActiveSheet()->getStyle($colLetter . $config['headRow'])->getFont()->setBold(true);
+            $objPHPExcel->getActiveSheet()->getStyle($colLetter . $config['headRow'])->applyFromArray($styleBorder); // Thêm border tiêu đề
+            $startColumn++;
+        }
+
+        // Dữ liệu data
+        $startRow = $config['startRow'];
+        $id = '';
+        $old_debt = NULL;
+        $run_debt = 0;
+        foreach ($items as $item) {
+            if ($old_debt == NULL) {
+                $old_debt = $item['old_debt'];
+            }
+            if ($item['id'] != $id) {
+                $run_debt += ($item['price_total'] + $item['discount'] + $item['paid_cash'] + $item['paid_transfer']);
+                $id = $item['id'];
+
+                if ($item['type'] == KMH) {
+                    $item['code'] = $item['orders_code'];
+                    $item['name'] = 'Bán hàng';
+                    $item['debt'] = abs($item['price_total'] + $item['discount']);
+                    $item['debt2'] = abs($item['paid_cash'] + $item['paid_transfer']);
+                }
+                if ($item['type'] == KTH) {
+                    $item['code'] = $item['orders_return_code'];
+                    $item['name'] = 'Trả hàng';
+                    $item['debt'] = abs($item['paid_cash'] + $item['paid_transfer']);
+                    $item['debt2'] = abs($item['price_total'] + $item['discount']);
+                }
+                if ($item['type'] == THU) {
+                    $item['name'] = 'Phiếu Thu';
+                    $item['debt2'] = abs($item['paid_cash'] + $item['paid_transfer']);
+                }
+                if ($item['type'] == CHI) {
+                    $item['name'] = 'Phiếu Chi';
+                    $item['debt'] = abs($item['paid_cash'] + $item['paid_transfer']);
+                }
+
+                $startColumn = $config['startColumn'];
+
+                foreach ($arrData as $key => $data) {
+                    $colLetter = $arrColumn[$startColumn];
+                    $value = $item[$data['field']];
+                    $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value)
+                        ->getStyle($colLetter . $startRow)->getFont()->setBold(true);
+
+                    // Thêm Border cho dòng Header của item
+                    $objPHPExcel->getActiveSheet()->getStyle($colLetter . $startRow)->applyFromArray($styleBorder);
+
+                    // Định dạng số cho dòng Header của item nếu có giá trị số
+                    if (isset($data['format']) && $data['format'] == 'number' && $value !== '' && $value !== null && is_numeric($value)) {
+                        $objPHPExcel->getActiveSheet()->getStyle($colLetter . $startRow)->getNumberFormat()->setFormatCode('#,##0');
+                    }
+
+                    $startColumn++;
+                }
+                $startRow++;
+
+                if ($item['type'] == KMH) {
+                    $item['created'] = '';
+                    $item['code'] = $products[$item['cdetail_product_id']]['code'];
+                    $item['name'] = $products[$item['cdetail_product_id']]['name'];
+                    $item['unit'] = $units[$products[$item['cdetail_product_id']]['unit_id']]['name'];
+                    $item['quantity'] = $item['cdetail_quantity'];
+                    $item['price'] = $item['cdetail_price'];
+                    $item['discount'] = 0;
+                    $item['vat'] = 0;
+                    $item['price'] = $item['cdetail_price'];
+                    $item['total'] = $item['cdetail_price_total'];
+                    $item['debt'] = '';
+                    $item['debt2'] = '';
+                }
+                if ($item['type'] == KTH) {
+                    $item['created'] = '';
+                    $item['code'] = $products[$item['odetail_product_id']]['code'];
+                    $item['name'] = $products[$item['odetail_product_id']]['name'];
+                    $item['unit'] = $units[$products[$item['cdetail_product_id']]['unit_id']]['name'];
+                    $item['quantity'] = $item['odetail_quantity'];
+                    $item['price'] = $item['odetail_price'];
+                    $item['discount'] = 0;
+                    $item['vat'] = 0;
+                    $item['price'] = $item['odetail_price'];
+                    $item['total'] = $item['odetail_price_total'];
+                    $item['debt'] = '';
+                    $item['debt2'] = '';
+                }
+                if ($item['type'] == THU || $item['type'] == CHI){
+                    continue;
+                }
+
+            }
+            else {
+                if ($item['type'] == KMH) {
+                    $item['created'] = '';
+                    $item['code'] = $products[$item['cdetail_product_id']]['code'];
+                    $item['name'] = $products[$item['cdetail_product_id']]['name'];
+                    $item['unit'] = $units[$products[$item['cdetail_product_id']]['unit_id']]['name'];
+                    $item['quantity'] = $item['cdetail_quantity'];
+                    $item['price'] = $item['cdetail_price'];
+                    $item['discount'] = 0;
+                    $item['vat'] = 0;
+                    $item['price'] = $item['cdetail_price'];
+                    $item['total'] = $item['cdetail_price_total'];
+                    $item['debt'] = '';
+                    $item['debt2'] = '';
+                }
+                if ($item['type'] == KTH) {
+                    $item['created'] = '';
+                    $item['code'] = $products[$item['odetail_product_id']]['code'];
+                    $item['name'] = $products[$item['odetail_product_id']]['name'];
+                    $item['unit'] = $units[$products[$item['cdetail_product_id']]['unit_id']]['name'];
+                    $item['quantity'] = $item['odetail_quantity'];
+                    $item['price'] = $item['odetail_price'];
+                    $item['discount'] = 0;
+                    $item['vat'] = 0;
+                    $item['price'] = $item['odetail_price'];
+                    $item['total'] = $item['odetail_price_total'];
+                    $item['debt'] = '';
+                    $item['debt2'] = '';
+                }
+            }
+
+            $startColumn = $config['startColumn'];
+
+            foreach ($arrData as $key => $data) {
+                $colLetter = $arrColumn[$startColumn];
+                switch ($data['type']) {
+                    case 'date':
+                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y';
+                        $value = $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        break;
+                    case 'datetime':
+                        $formatDate = $data['format'] ? $data['format'] : 'd/m/Y H:i:s';
+                        $value = $dateFormat->formatToView($item[$data['field']], $formatDate);
+                        break;
+                    case 'abs':
+                        $value = abs($item[$data['field']]);
+                        break;
+                    case 'data_source':
+                        $field = $data['data_source_field'] ? $data['data_source_field'] : 'name';
+                        $value = $data['data_source'][$item[$data['field']]][$field];
+                        break;
+                    default:
+                        $value = $item[$data['field']];
+                }
+
+                $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value);
+
+                // Thêm Border cho các ô dữ liệu chi tiết
+                $objPHPExcel->getActiveSheet()->getStyle($colLetter . $startRow)->applyFromArray($styleBorder);
+
+                // Định dạng số (1,000,000) cho các ô dữ liệu chi tiết nếu có giá trị số hợp lệ
+                if (isset($data['format']) && $data['format'] == 'number' && $value !== '' && $value !== null && is_numeric($value)) {
+                    $objPHPExcel->getActiveSheet()->getStyle($colLetter . $startRow)->getNumberFormat()->setFormatCode('#,##0');
+                }
+
+                $startColumn++;
+            }
+            $startRow++;
+        }
+
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('A1', 'Pako việt Nam')->getStyle('A1')->getFont()->setBold(true);
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('A2', 'Chi nhánh');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('B2', $inventory ? $inventory['name'] : '');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('A3', 'Địa chỉ');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('B3', $inventory ? $inventory['address'] : '');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('A4', 'Điện thoại');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValueExplicit('B4',$inventory ? $inventory['phone'] : '',\PHPExcel_Cell_DataType::TYPE_STRING);
+
+//        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('A5', 'Công nợ chi tiết khách hàng Từ ngày 01/05/2026 đến ngày 31/05/2026');
+        $titleText = "Công nợ chi tiết khách hàng \nTừ ngày {$this->_params['ssFilter']['filter_date_begin']} đến ngày {$this->_params['ssFilter']['filter_date_end']}";
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('A5', $titleText)->getStyle('A5')->getFont()->setBold(true);
+        $objPHPExcel->getActiveSheet()->mergeCells('A5:L5');
+        $objPHPExcel->getActiveSheet()->getStyle('A5')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+        $objPHPExcel->getActiveSheet()->getStyle('A5')->getAlignment()->setWrapText(true);
+        $objPHPExcel->getActiveSheet()->getRowDimension(5)->setRowHeight(40);
+
+
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('A6', 'Khách hàng');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('B6', $customer ? $customer['name'] : '');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('A7', 'Mã KH');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('B7', $customer ? $customer['name'] : '');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('A8', 'Điện thoại');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValueExplicit('B8',$customer ? $customer['phone'] : '',\PHPExcel_Cell_DataType::TYPE_STRING);
+
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('J6', 'Nợ đầu kỳ');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('K6', number_format($old_debt))->getStyle('K6')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('J7', 'Phát sinh trong kỳ');
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('K7', number_format(abs($run_debt)))->getStyle('K7')->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_RIGHT);
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('J8', 'Nợ cuối kỳ')->getStyle('J8')->getFont()->setBold(true);
+        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue('K8', number_format($old_debt + abs($run_debt)));
+
+        $objPHPExcel->getActiveSheet()->getStyle('K8')->applyFromArray(array(
+            'alignment' => array('horizontal' => \PHPExcel_Style_Alignment::HORIZONTAL_RIGHT),
+            'font'      => array('color' => array('rgb' => 'FF0000')),
+            'fill'      => array('type' => \PHPExcel_Style_Fill::FILL_SOLID, 'color' => array('rgb' => 'FFFF00'))
+        ));
 
         $lastColumnIndex = $config['startColumn'] + count($arrData) - 1;
         for ($i = $config['startColumn']; $i <= $lastColumnIndex; $i++) {
