@@ -789,6 +789,31 @@ class ContractController extends ActionController
         return $viewModel;
     }
 
+    public function printAction()
+    {
+
+        $ids = !empty($this->_params['data']['cid']) ? $this->_params['data']['cid'] : [$this->params('id')];
+        $items = $this->getServiceLocator()->get('Admin\Model\ContractTable')->listItem(array('ids' => $ids), array('task' => 'list-print-multi'));
+        $items = $items->toArray();
+
+        if (empty($items)) {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+        }
+
+        $this->_viewModel['items'] = $items;
+        $this->_viewModel['units'] = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'unit')), array('task' => 'cache')), array('key' => 'id', 'value' => 'object'));
+        $this->_viewModel['products'] = $this->getServiceLocator()->get('Admin\Model\ProductsTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['user'] = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['product_type'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'product-type')), array('task' => 'cache'));
+        $this->_viewModel['location_city'] = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
+        $this->_viewModel['location_district'] = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+
+        return $viewModel;
+    }
+
     // Xuất mẫu hóa đơn VAT
     public function exportVATAction()
     {

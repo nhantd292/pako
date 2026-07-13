@@ -406,7 +406,7 @@ function contractLock(url) {
 * In đơn hàng
 * copy from ele project
 */
-function contractPrint(target="") {
+function contractPrint(target="", action="print-multi") {
 	var itemId = [];
 
 	jQuery(formAdmin + ' .checkboxes').each(function () {
@@ -417,9 +417,9 @@ function contractPrint(target="") {
 	});
 
 	if(itemId.length > 0) {
-		var ajaxUrl = jQuery(formAdmin).attr('action').replace('/filter', '/print-multi');
+		var ajaxUrl = jQuery(formAdmin).attr('action').replace('/filter', '/'+action);
 		submitForm(ajaxUrl, target);
-		jQuery(formAdmin).attr('action', jQuery(formAdmin).attr('action').replace('/print-multi', '/filter'));
+		jQuery(formAdmin).attr('action', jQuery(formAdmin).attr('action').replace('/'+action, '/filter'));
 		setTimeout(function() {
 			location.reload();
 		}, 1000);
