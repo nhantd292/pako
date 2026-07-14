@@ -63,10 +63,10 @@ foreach ($this->items as $item) {
     $product_html .= '<tr><td colspan="3">Phí giao hàng</td><td class="text-right">'.number_format($item['fee_shipp']).'</td></tr>';
     $product_html .= '<tr><td colspan="3" class="text-bold">Tiền trước thuế</td><td  class="text-bold text-right">'.number_format($total_price).'</td></tr>';
     $product_html .= '<tr><td colspan="3">Thuế GTGT</td><td class="text-right">'.number_format($total_vat).'</td></tr>';
-    $product_html .= '<tr><td colspan="3" class="text-bold">Tổng thanh toán</td><td class="text-bold text-right">'.number_format($total_price + $total_vat).'</td></tr>';
+    $product_html .= '<tr><td colspan="3" class="text-bold">Tổng thanh toán</td><td class="text-bold text-right">'.number_format($total_price + $total_vat + $item['fee_shipp']).'</td></tr>';
     $product_html .= '<tr><td colspan="3" class="text-bold">Giảm giá</td><td class="text-bold text-right">'.number_format($item['discount']).'</td></tr>';
     $product_html .= '<tr><td colspan="3" class="text-bold">Đã thanh toán</td><td class="text-bold text-right">'.number_format($item['paid_cash'] + $item['paid_transfer']).'</td></tr>';
-    $product_html .= '<tr><td colspan="3" class="text-bold">Còn phải thu</td><td class="text-bold text-right">'.number_format($item['price_total'] - ($item['discount'] + $item['paid_cash'] + $item['paid_transfer'])).'</td></tr>';
+    $product_html .= '<tr><td colspan="3" class="text-bold">Còn phải thu</td><td class="text-bold text-right">'.number_format($item['price_total'] + $item['fee_shipp'] - ($item['discount'] + $item['paid_cash'] + $item['paid_transfer'])).'</td></tr>';
 
     ?>
 <div class="print-page">
