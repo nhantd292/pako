@@ -3,6 +3,7 @@ $dateFormat = new \ZendX\Functions\Date();
 $number = new \ZendX\Functions\Number();
 $i = 0;
 foreach ($this->items as $item) {
+    $company = $this->branch[$item['sale_branch_id']]['content'];
     $code = $item['code'];
     $user = $this->user[$item['created_by']]['name'];
     $options = !empty($item['options']) ? unserialize($item['options']) : array();
@@ -73,7 +74,7 @@ foreach ($this->items as $item) {
     <div class="content-print">
         <div class="head-print">
             <div class="company">
-                <h3>CÔNG TY TNHH SẢN XUẤT VÀ THƯƠNG MẠI XUẤT<br>NHẬP KHẨU FOREWIN</h3>
+                <h3><?php echo $company; ?></h3>
                 <p>Cụm công nghiệp làng nghề Minh Phương, TT Yên Lạc, Yên Lạc, Vĩnh Phúc</p>
                 <p>Hotline: 0389835912</p>
             </div>
@@ -94,12 +95,22 @@ foreach ($this->items as $item) {
                     <th>Thành tiền</th>
                 </tr>
                 <?php echo $product_html; ?>
-            </table>
+            </table><br>
+            <p>Số tiền viết bằng chữ: <i class="text-bold"><?php echo $number->convertString($item['price_total'] + $item['fee_shipp'] - ($item['discount'] + $item['paid_cash'] + $item['paid_transfer']))?></i></p><br>
+            <p class="text-center">Cảm ơn quý khách đã tin tưởng lựa chọn sản phẩm của cửa hàng</p>
         </div>
+        <div class="sign">
+            <div class="left">
+                <p><b>Người lập</b><br>(ký/họ tên)</p>
+            </div>
+            <div class="right">
+                <p><b>Khách hàng</b><br>(ký/họ tên)</p>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!--    <br clear="all" style="page-break-before:always"/>-->
 <?php
 }
 ?>
@@ -111,6 +122,14 @@ foreach ($this->items as $item) {
         box-sizing:border-box;
         moz-box-sizing:border-box;
         webkit-box-sizing:border-box;
+    }
+    .sign{
+        display: flex;
+        justify-content: space-between;
+    }
+    .sign > div{
+        padding: 20px;
+        text-align: center;
     }
     .text-center{
         text-align: center;
@@ -141,7 +160,6 @@ foreach ($this->items as $item) {
         padding: 5px;
         text-transform: capitalize;
         font-size: 13px;
-        /*font-weight: bold;*/
     }
     .content-print {
         width: 100%;
@@ -151,7 +169,6 @@ foreach ($this->items as $item) {
         padding: 20px;
     }
 
-    /* Thêm cấu hình phân trang khi in */
     .print-page {
         page-break-after: always;
         page-break-inside: avoid;
