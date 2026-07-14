@@ -3,110 +3,104 @@ $dateFormat = new \ZendX\Functions\Date();
 $number = new \ZendX\Functions\Number();
 $i = 0;
 foreach ($this->items as $item) {
-    if(1) {
-
-        $code = $item['code'];
-        $user = $this->user[$item['created_by']]['name'];
-        $options = !empty($item['options']) ? unserialize($item['options']) : array();
-        $contact_name = $item['contact_name'];
-        $contact_phone = $item['contact_phone'];
-        $contact_license_plate = $item['contact_license_plate'];
-        $note = $options['sale_note'];
-        $date = date('d/m/Y');
+    $code = $item['code'];
+    $user = $this->user[$item['created_by']]['name'];
+    $options = !empty($item['options']) ? unserialize($item['options']) : array();
+    $contact_name = $item['contact_name'];
+    $contact_phone = $item['contact_phone'];
+    $contact_license_plate = $item['contact_license_plate'];
+    $note = $options['sale_note'];
+    $date = date('d/m/Y');
 //        $contact_phone = substr_replace($contact_phone, "****", 3, 4);
-        $products = $options['product'];
-        $address = $item['address'];
-        $location_district = $this->location_district[$item['location_district_id']]['name'];
-        $location_city = $this->location_city[$item['location_city_id']]['name'];
+    $products = $options['product'];
+    $address = $item['address'];
+    $location_district = $this->location_district[$item['location_district_id']]['name'];
+    $location_city = $this->location_city[$item['location_city_id']]['name'];
 
 
-        $infor_contact = '<div class="label">
-                                <p><span class="title text-bold">Khách hàng:</span> ' . $contact_name . '</p>
-                                <p><span class="title text-bold">Số điện thoại:</span> ' . $contact_phone . '</p>
-                                <p><span class="title text-bold">Địa chỉ:</span> ' . $address.', '. $location_district .', '.$location_city. '</p>
-                            </div>
-                            <div class="label">
-                                <p><span class="title text-bold">Ngày tháng:</span> ' . $date . '</p>
-                                <p><span class="title text-bold">Đơn hàng:</span> ' . $code . '</p>
-                                <p><span class="title text-bold">Tên sales:</span> ' . $user . '</p>
-                            </div>
-                            <p></p>';
+    $infor_contact = '<div class="label">
+                            <p><span class="title text-bold">Khách hàng:</span> ' . $contact_name . '</p>
+                            <p><span class="title text-bold">Số điện thoại:</span> ' . $contact_phone . '</p>
+                            <p><span class="title text-bold">Địa chỉ:</span> ' . $address.', '. $location_district .', '.$location_city. '</p>
+                        </div>
+                        <div class="label">
+                            <p><span class="title text-bold">Ngày tháng:</span> ' . $date . '</p>
+                            <p><span class="title text-bold">Đơn hàng:</span> ' . $code . '</p>
+                            <p><span class="title text-bold">Tên sales:</span> ' . $user . '</p>
+                        </div>
+                        <p></p>';
 
 
-        $product_html = '';
-        $index = 0;
-        foreach ($products as $key => $value) {
-            $index++;
-            $product_code   = $value['code'];
-            $product_name   = $value['full_name'];
-            $product_unit   = $this->units[$this->products[$value['product_id']]['unit_id']]['name'];
-            $product_number = $value['numbers'];
-            $product_price = $value['price'];
-            $product_total = $value['total'];
+    $product_html = '';
+    $index = 0;
+    $total_vat = $total_price = 0;
+    foreach ($products as $key => $value) {
+        $index++;
+        $product_code   = $value['code'];
+        $product_name   = $value['full_name'];
+        $product_unit   = $this->units[$this->products[$value['product_id']]['unit_id']]['name'];
+        $product_number = $value['numbers'];
+        $product_price  = round($value['price']/1.08);
+        $product_total  = $product_price * $product_number;
+        $total_vat += $value['total'] - $product_total;
+        $total_price += $product_total;
 
-            $contract_code_return = $value['product_return_id'] ? '<span class="text-red">('.$this->ProductReturn[$value['product_return_id']]['contract_code'].')</span>' : '';
+        $contract_code_return = $value['product_return_id'] ? '<span class="text-red">('.$this->ProductReturn[$value['product_return_id']]['contract_code'].')</span>' : '';
 
-            $product_html .= '<tr>
-                                    <td>' . $index . '</td>
-                                    <td>' . $product_code . '</td>
-                                    <td>' . $product_name . '</td>
-                                    <td class="text-center">' . $product_unit . '</td>
-                                    <td class="text-center">' . $product_number . '</td>
-                                    <td class="text-right">' . number_format($product_price) . '</td>
-                                    <td class="text-right">' . number_format($product_total) . '</td>
-                                </tr>
-                                ';
-        }
-        $product_html .= '<tr><td colspan="3" rowspan="8">Ghi chú' . $note . '</td></tr>';
-        $product_html .= '<tr><td colspan="3" class="text-bold">Tiền hàng</td><td class="text-bold">100</td></tr>';
-        $product_html .= '<tr><td colspan="3">Phí giao hàng</td><td>100</td></tr>';
-        $product_html .= '<tr><td colspan="3" class="text-bold">Tiền trước thuế</td><td class="text-bold">100</td></tr>';
-        $product_html .= '<tr><td colspan="3">Thuế GTGT</td><td>100</td></tr>';
-        $product_html .= '<tr><td colspan="3" class="text-bold">Tổng thanh toán</td><td class="text-bold">100</td></tr>';
-        $product_html .= '<tr><td colspan="3" class="text-bold">Ghi nợ</td><td class="text-bold">100</td></tr>';
-        $product_html .= '<tr><td colspan="3" class="text-bold">Còn phải thu</td><td class="text-bold">100</td></tr>';
+        $product_html .= '<tr>
+                                <td>' . $index . '</td>
+                                <td>' . $product_code . '</td>
+                                <td>' . $product_name . '</td>
+                                <td class="text-center">' . $product_unit . '</td>
+                                <td class="text-center">' . $product_number . '</td>
+                                <td class="text-right">' . number_format($product_price) . '</td>
+                                <td class="text-right">' . number_format($product_total) . '</td>
+                            </tr>
+                            ';
+    }
+    $product_html .= '<tr><td colspan="3" rowspan="9">Ghi chú' . $note . '</td></tr>';
+    $product_html .= '<tr><td colspan="3" class="text-bold">Tiền hàng</td><td class="text-bold text-right">'.number_format($total_price).'</td></tr>';
+    $product_html .= '<tr><td colspan="3">Phí giao hàng</td><td class="text-right">'.number_format($item['fee_shipp']).'</td></tr>';
+    $product_html .= '<tr><td colspan="3" class="text-bold">Tiền trước thuế</td><td  class="text-bold text-right">'.number_format($total_price).'</td></tr>';
+    $product_html .= '<tr><td colspan="3">Thuế GTGT</td><td class="text-right">'.number_format($total_vat).'</td></tr>';
+    $product_html .= '<tr><td colspan="3" class="text-bold">Tổng thanh toán</td><td class="text-bold text-right">'.number_format($total_price + $total_vat).'</td></tr>';
+    $product_html .= '<tr><td colspan="3" class="text-bold">Giảm giá</td><td class="text-bold text-right">'.number_format($item['discount']).'</td></tr>';
+    $product_html .= '<tr><td colspan="3" class="text-bold">Đã thanh toán</td><td class="text-bold text-right">'.number_format($item['paid_cash'] + $item['paid_transfer']).'</td></tr>';
+    $product_html .= '<tr><td colspan="3" class="text-bold">Còn phải thu</td><td class="text-bold text-right">'.number_format($item['price_total'] - ($item['discount'] + $item['paid_cash'] + $item['paid_transfer'])).'</td></tr>';
 
-        ?>
-
-        <div class="content-print">
-            <div class="head-print">
-<!--                <div class="logo">-->
-<!--                    <img src="/public/files/upload/default/images/logo-ok2.png">-->
-<!--                </div>-->
-                <div class="company">
-                    <h3>CÔNG TY TNHH SẢN XUẤT VÀ THƯƠNG MẠI XUẤT<br>NHẬP KHẨU FOREWIN</h3>
-                    <p>Cụm công nghiệp làng nghề Minh Phương, TT Yên Lạc, Yên Lạc, Vĩnh Phúc</p>
-                    <p>Hotline: 0389835912</p>
-                </div>
-            </div>
-            <div class="infor-contact">
-                <h4>PHIẾU GIAO HÀNG</h4>
-                <?php echo $infor_contact; ?>
-            </div>
-            <div class="infor-order">
-                <table border="1">
-                    <tr>
-                        <th>STT</th>
-                        <th>Mã SKU</th>
-                        <th>Tên hàng hóa</th>
-                        <th>ĐVT</th>
-                        <th>SL</th>
-                        <th>Đơn giá</th>
-                        <th>Thành tiền</th>
-                    </tr>
-                    <?php echo $product_html; ?>
-                </table>
+    ?>
+<div class="print-page">
+    <div class="content-print">
+        <div class="head-print">
+            <div class="company">
+                <h3>CÔNG TY TNHH SẢN XUẤT VÀ THƯƠNG MẠI XUẤT<br>NHẬP KHẨU FOREWIN</h3>
+                <p>Cụm công nghiệp làng nghề Minh Phương, TT Yên Lạc, Yên Lạc, Vĩnh Phúc</p>
+                <p>Hotline: 0389835912</p>
             </div>
         </div>
-        <br clear="all" style="page-break-before:always"/>
-        <?php
-    }
-    else{?>
-        <div class="content-print">
-            Đơn <?php echo $item['code']; ?> chưa có trạng thái sản xuất
+        <div class="infor-contact">
+            <h4>PHIẾU GIAO HÀNG</h4>
+            <?php echo $infor_contact; ?>
         </div>
-        <?php
-    }
+        <div class="infor-order">
+            <table border="1">
+                <tr>
+                    <th>STT</th>
+                    <th>Mã SKU</th>
+                    <th>Tên hàng hóa</th>
+                    <th>ĐVT</th>
+                    <th>SL</th>
+                    <th>Đơn giá</th>
+                    <th>Thành tiền</th>
+                </tr>
+                <?php echo $product_html; ?>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!--    <br clear="all" style="page-break-before:always"/>-->
+<?php
 }
 ?>
 
@@ -150,12 +144,17 @@ foreach ($this->items as $item) {
         /*font-weight: bold;*/
     }
     .content-print {
-        min-width: 210mm;
-        max-width: 297mm;
+        width: 100%;
+        max-width: 210mm;
         margin: auto;
         background: #fff;
         padding: 20px;
-        /*background: #fff url("/public/files/upload/default/images/bg.png") no-repeat center;*/
+    }
+
+    /* Thêm cấu hình phân trang khi in */
+    .print-page {
+        page-break-after: always;
+        page-break-inside: avoid;
     }
     .content-print .head-print{
         width: 100%;
@@ -212,7 +211,39 @@ foreach ($this->items as $item) {
         display: inline-block;
     }
 
+    /* Cấu hình đặc biệt khi nhấn Ctrl + P (In thực tế) */
     @media print {
+        body {
+            background: #fff;
+            color: #000;
+        }
+
+        /* Loại bỏ hoàn toàn margin/padding thừa của trình duyệt */
+        @page {
+            size: A4 portrait;
+            margin: 10mm 10mm 10mm 10mm;
+        }
+
+        .content-print {
+            padding: 0;
+            margin: 0;
+            width: 100%;
+        }
+
+        .print-page {
+            display: block;
+            page-break-after: always; /* Luôn ngắt trang khi hết 1 đơn */
+        }
+
+        /* Cho phép bảng tự động ngắt sang trang thứ 2 nếu dài quá 297mm */
+        table {
+            page-break-inside: auto;
+        }
+        tr {
+            page-break-inside: avoid;
+            page-break-after: auto;
+        }
+
         tr.title{
             background-color: #d8d8d8 !important;
             -webkit-print-color-adjust: exact;
