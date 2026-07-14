@@ -147,7 +147,8 @@
                 $status_check           = $item->ghtk_status ? $this->status_check[$item->ghtk_status]['name'] : '';
             $status_acccounting     = $item->status_acounting_id ? $this->status_accounting[$item->status_acounting_id]['name'] : '';
 
-            $status = 'Sales: '.$status_sales.'<br>'.'Giục đơn: '.$status_check.'<br>'.'Kế toán: '.$status_acccounting;
+//            $status = 'Sales: '.$status_sales.'<br>'.'Giục đơn: '.$status_check.'<br>'.'Kế toán: '.$status_acccounting;
+            $status = $status_check ? 'Giục đơn: '.$status_check : '';
 
             $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
 
@@ -272,7 +273,7 @@
     							<th '.$rowSpan.'>'. $cid .'</th>
                                 <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.'</th>
     							<td '.$rowSpan.'>'. $order_status .' '.$invoiced.'</td>
-    							<td '.$rowSpan.'><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a></td>
+    							<td '.$rowSpan.'><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a><br>'.$status.'</td>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>
     							<td '.$rowSpan.'>Lên đơn: '. $date .'<br>Xuất kho: '.$shipped_date.'<br>Xuất HĐ: '.$date_invoice.'</td>
     							<td '.$rowSpan.'>'. $user_name .'<br>'.$care_name.'</td>
