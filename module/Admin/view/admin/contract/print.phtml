@@ -10,7 +10,7 @@ foreach ($this->items as $item) {
     $contact_name = $item['contact_name'];
     $contact_phone = $item['contact_phone'];
     $contact_license_plate = $item['contact_license_plate'];
-    $note = $options['sale_note'];
+    $note = $item['sale_note'];
     $date = date('d/m/Y');
 //        $contact_phone = substr_replace($contact_phone, "****", 3, 4);
     $products = $options['product'];
@@ -60,7 +60,7 @@ foreach ($this->items as $item) {
                             </tr>
                             ';
     }
-    $product_html .= '<tr><td colspan="3" rowspan="9">Ghi chú' . $note . '</td></tr>';
+    $product_html .= '<tr><td colspan="3" rowspan="9">Ghi chú: ' . $note . '</td></tr>';
     $product_html .= '<tr><td colspan="3" class="text-bold">Tiền hàng</td><td class="text-bold text-right">'.number_format($total_price).'</td></tr>';
     $product_html .= '<tr><td colspan="3">Phí giao hàng</td><td class="text-right">'.number_format($item['fee_shipp']).'</td></tr>';
     $product_html .= '<tr><td colspan="3" class="text-bold">Tiền trước thuế</td><td  class="text-bold text-right">'.number_format($total_price).'</td></tr>';
