@@ -1373,9 +1373,9 @@ class ApiController extends ActionController
                     if (!empty($contract_item)) {
                         // Tạo hóa đơn kov trừ số lượng hàng trong kho
 //                        if($data['ORDER_STATUS'] == 105 || $data['ORDER_STATUS'] == 103){ // trạng thái Đã lấy hàng/Đã nhập kho trên viettel post
-                        if ($data['ORDER_STATUS'] == 105 || $data['ORDER_STATUS'] == 200) { // trạng thái Đã lấy hàng/Đã nhập kho trên viettel post
-                            $this->updateNumberKiotviet($contract_item);
-                        }
+//                        if ($data['ORDER_STATUS'] == 105 || $data['ORDER_STATUS'] == 200) { // trạng thái Đã lấy hàng/Đã nhập kho trên viettel post
+//                            $this->updateNumberKiotviet($contract_item);
+//                        }
                         if ($data['ORDER_STATUS'] == 501 && empty($contract_item['date_success'])) {
                             $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'])), array('task' => 'update-contract-succes'));
                         }
