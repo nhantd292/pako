@@ -35,13 +35,14 @@ foreach ($this->items as $item) {
     $product_html = '';
     $index = 0;
     $total_vat = $total_price = 0;
+    $vat_value = $item['option_vat'] == 'yes' ? 1.08 : 1;
     foreach ($products as $key => $value) {
         $index++;
         $product_code   = $value['code'];
         $product_name   = $value['full_name'];
         $product_unit   = $this->units[$this->products[$value['product_id']]['unit_id']]['name'];
         $product_number = $value['numbers'];
-        $product_price  = round($value['price']/1.08);
+        $product_price  = round($value['price']/$vat_value);
         $product_total  = $product_price * $product_number;
         $total_vat += $value['total'] - $product_total;
         $total_price += $product_total;
