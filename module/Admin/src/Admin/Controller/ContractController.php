@@ -808,6 +808,7 @@ class ContractController extends ActionController
         $this->_viewModel['branch'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
         $this->_viewModel['location_city'] = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 1), array('task' => 'cache'));
         $this->_viewModel['location_district'] = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
+        $this->_viewModel['warehouse'] = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
 
         $viewModel = new ViewModel($this->_viewModel);
         $viewModel->setTerminal(true);

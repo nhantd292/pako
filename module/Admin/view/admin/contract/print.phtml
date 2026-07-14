@@ -75,8 +75,8 @@ foreach ($this->items as $item) {
         <div class="head-print">
             <div class="company">
                 <h3><?php echo $company; ?></h3>
-                <p>Cụm công nghiệp làng nghề Minh Phương, TT Yên Lạc, Yên Lạc, Vĩnh Phúc</p>
-                <p>Hotline: 0389835912</p>
+                <p><?php echo $this->warehouse[$item['inventory_id']]['address']; ?></p>
+                <p>Hotline: <?php echo $this->user[$item['created_by']]['phone']; ?></p>
             </div>
         </div>
         <div class="infor-contact">
@@ -128,7 +128,7 @@ foreach ($this->items as $item) {
         justify-content: space-between;
     }
     .sign > div{
-        padding: 20px;
+        padding: 20px 60px;
         text-align: center;
     }
     .text-center{
