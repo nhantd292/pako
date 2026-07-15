@@ -148,7 +148,7 @@
             $status_acccounting     = $item->status_acounting_id ? $this->status_accounting[$item->status_acounting_id]['name'] : '';
 
 //            $status = 'Sales: '.$status_sales.'<br>'.'Giục đơn: '.$status_check.'<br>'.'Kế toán: '.$status_acccounting;
-            $status = $status_check ? 'viettel: '.$status_check : '';
+            $status = $status_check ? '<span style="font-weight: normal;">viettel: '.$status_check : '</span>';
 
             $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
 
@@ -272,8 +272,8 @@
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'"'.$color_text_row.'>
     							<th '.$rowSpan.'>'. $cid .'</th>
                                 <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.'</th>
-    							<td '.$rowSpan.'>'. $order_status .' '.$invoiced.'</td>
-    							<td '.$rowSpan.'><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a><br>'.$status.'</td>
+    							<th '.$rowSpan.' class="controls" style="left:83px;">'. $order_status .' '.$invoiced.'</th>
+    							<th '.$rowSpan.' class="controls" style="left:193px;"><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a><br>'.$status.'</th>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>
     							<td '.$rowSpan.'>Lên đơn: '. $date .'<br>Xuất kho: '.$shipped_date.'<br>Xuất HĐ: '.$date_invoice.'</td>
     							<td '.$rowSpan.'>'. $user_name .'<br>'.$care_name.'</td>
@@ -281,7 +281,9 @@
             if (count($options['product']) > 0) {
                 foreach($options['product'] as $key => $item_product) {
                     if ($key == 0 && !empty($item_product['product_id'])) {
-                        $xhtmlItems    .= '<td>' . $item_product['full_name'].'</td>
+                        $xhtmlItems    .= '
+                                            <td>' . $item_product['full_name'].'</td>
+                                            <td>' . $item_product['weight'].' kg</td>
                                             <td class="text-center">' . (new \ZendX\Functions\StringHelper)->badgeCount($item_product['numbers']?:1) . '</td>
                                             <td class="text-right">' . number_format($item_product['price']) . '</td>
                                             <td>' . $item_product['car_year'] . '</td>
@@ -312,6 +314,7 @@
                     if ($key > 0 && !empty($item_product['product_id'])) {
                         $xhtmlItems .= '<tr ' . $color_text_row . '>
                                     <td>' . $item_product['full_name'].'</td>
+                                    <td>' . $item_product['weight'].' kg</td>
                                     <td class="text-center">' . (new \ZendX\Functions\StringHelper)->badgeCount($item_product['numbers']?:1) . '</td>
                                     <td class="text-right">' . number_format($item_product['price']) . '</td>
                                     <td>' . $item_product['car_year'] . '</td>
@@ -333,12 +336,13 @@
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th width="30" class="table-checkbox fix-head"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';
     $xhtmlHead .= '<th width="70" class="fix-head" style="left: 23px;">Công cụ</th>';
-    $xhtmlHead .= '<th width="180">Trạng thái</th>';
-    $xhtmlHead .= '<th width="200">Mã số đơn</th>';
+    $xhtmlHead .= '<th width="180" class="fix-head" style="left: 83px;">Trạng thái</th>';
+    $xhtmlHead .= '<th width="200" class="fix-head" style="left: 193px;">Mã số đơn</th>';
     $xhtmlHead .= '<th width="200">Mã đơn giao vận</th>';
     $xhtmlHead .= '<th width="80">Ngày</th>';
     $xhtmlHead .= '<th width="150">Nhân viên</th>';
     $xhtmlHead .= '<th width="200">Sản phẩm</th>';
+    $xhtmlHead .= '<th width="50">KG</th>';
     $xhtmlHead .= '<th width="120" class="text-center">Số lượng'.$text_total_number.'</th>';
     $xhtmlHead .= '<th width="120" class="text-center">Giá bán</th>';
     $xhtmlHead .= '<th width="150">Tên xe - năm sx</th>';
