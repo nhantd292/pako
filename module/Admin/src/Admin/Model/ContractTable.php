@@ -3771,14 +3771,17 @@ class ContractTable extends DefaultTable {
             if(!empty($arrData['ghtk_status'])){
                 $data['ghtk_status'] = $arrData['ghtk_status'];
             }
+            if(!empty($arrData['unit_transport'])){
+                $data['unit_transport'] = $arrData['unit_transport'];
+            }
             if(!empty($arrData['ghtk_code'])){
                 $data['ghtk_code'] = $arrData['ghtk_code'];
             }
             if(!empty($arrData['viettel_status'])){
                 $data['viettel_status'] = $arrData['viettel_status'];
             }
-            if(!empty($arrData['price_transport'])){
-                $data['price_transport'] = $arrData['price_transport'];
+            if(!empty($arrData['fee_shipp'])){
+                $data['fee_shipp'] = $arrData['fee_shipp'];
             }
             if(!empty($arrData['status_history'])){
                 $arrData['status_history']['created'] = date('Y-m-d H:i:s');

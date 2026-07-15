@@ -1268,7 +1268,7 @@ class ApiController extends ActionController
                         $arrParam['id'] = $contract_item['id'];
                         $arrParam['ghtk_status'] = $data['status_id'];
                         $arrParam['ghtk_code'] = $data['label_id'];
-                        $arrParam['price_transport'] = $data['fee'];
+                        $arrParam['fee_shipp'] = $data['fee'];
                         $arrParam['status_history'] = $data;
                         $this->updateWebhookStatus($arrParam, $contract_item);
 //                        $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem(array('data' => $arrParam, 'item' => $contract_item),  array('task' => 'update-webhook-status'));
@@ -1324,7 +1324,7 @@ class ApiController extends ActionController
 
                         $arrParam['id'] = $contract_item['id'];
                         $arrParam['ghtk_status'] = $data['Status'];
-                        $arrParam['price_transport'] = $data['TotalFee'];
+                        $arrParam['fee_shipp'] = $data['TotalFee'];
                         $arrParam['status_history'] = $data;
                         $this->updateWebhookStatus($arrParam, $contract_item);
 //                        $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem(array('data' => $arrParam, 'item' => $contract_item),  array('task' => 'update-webhook-status'));
@@ -1383,7 +1383,8 @@ class ApiController extends ActionController
                         $arrParam['id'] = $contract_item['id'];
                         $arrParam['ghtk_status'] = $data['ORDER_STATUS'];
                         $arrParam['ghtk_code'] = $data['ORDER_NUMBER'];
-                        $arrParam['price_transport'] = $data['MONEY_TOTAL'];
+                        $arrParam['fee_shipp'] = $data['MONEY_TOTAL'];
+                        $arrParam['unit_transport'] = $data['viettel'];
                         $arrParam['status_history'] = $data;
                         $this->updateWebhookStatus($arrParam, $contract_item);
 //                        $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem(array('data' => $arrParam, 'item' => $contract_item),  array('task' => 'update-webhook-status'));
