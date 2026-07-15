@@ -148,7 +148,7 @@
             $status_acccounting     = $item->status_acounting_id ? $this->status_accounting[$item->status_acounting_id]['name'] : '';
 
 //            $status = 'Sales: '.$status_sales.'<br>'.'Giục đơn: '.$status_check.'<br>'.'Kế toán: '.$status_acccounting;
-            $status = $status_check ? 'Giục đơn: '.$status_check : '';
+            $status = $status_check ? 'viettel: '.$status_check : '';
 
             $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
 
