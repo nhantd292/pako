@@ -95,7 +95,7 @@
     if($this->items->count() > 0) {
         $stt = 0;
         $sum = 0;
-        $total_number = $total_price = $total_cod = $total_discount =  $total_price_owed = $total_paid_cash = $total_paid_transfer = 0;
+        $total_number = $total_price = $total_vat = $total_fee_other = $total_cod = $total_discount =  $total_price_owed = $total_paid_cash = $total_paid_transfer = 0;
         foreach ($this->items AS $key => $item) {
         	$stt++;
         	$cid                    = @$this->xFormInput('cid[]', $item->id, array('type' => 'checkbox', 'class' => 'checkboxes'));
@@ -111,12 +111,16 @@
             $contact_name           = $item->contact_name;
             $index_number           = $item->index_number;
             $fee_cod                = number_format($item->price_transport);
-            $price_total            = $item->price_total + $item->fee_other;
+            $vat                    = $item->option_vat == 'yes' ? $item->vat : 0 ;
+            $price_total            = $item->option_vat == 'yes' ? $item->price_total - $item->vat: $item->price_total;
+            $fee_other              = $item->fee_other;
             $price_owed             = $item->price_owed;
             
             if($this->params['ssFilter']['filter_user']){
                 if ($item->user_id == $this->params['ssFilter']['filter_user']){
                     $total_price           += $price_total;
+                    $total_fee_other       += $fee_other;
+                    $total_vat             += $vat;
                     $total_cod             += $item->price_transport;
                     $total_paid_cash       += $item->paid_cash;
                     $total_paid_transfer   += $item->paid_transfer;
@@ -126,6 +130,8 @@
             }
             else{
                 $total_price           += $price_total;
+                $total_fee_other       += $fee_other;
+                $total_vat             += $vat;
                 $total_cod             += $item->price_transport;
                 $total_paid_cash       += $item->paid_cash;
                 $total_paid_transfer   += $item->paid_transfer;
@@ -295,6 +301,7 @@
                 $xhtmlItems    .= '<td></td><td></td><td></td>';
             }
             $xhtmlItems .= '
+                            <td '.$rowSpan.' class="text-right">'. number_format($vat + $fee_other) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($price_total) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_transfer) .'</td>
@@ -326,6 +333,7 @@
     }
 
     $text_total = '<br><span  class="text-red">' . number_format($total_price) . '</span>';
+    $text_total_vat = '<br><span  class="text-red">' . number_format($total_vat + $total_fee_other) . '</span>';
     $text_total_paid_cash = '<br><span  class="text-red">' . number_format($total_paid_cash) . '</span>';
     $text_total_paid_transfer = '<br><span  class="text-red">' . number_format($total_paid_transfer) . '</span>';
     $text_total_discount = '<br><span  class="text-red">' . number_format($total_discount) . '</span>';
@@ -346,7 +354,8 @@
     $xhtmlHead .= '<th width="120" class="text-center">Số lượng'.$text_total_number.'</th>';
     $xhtmlHead .= '<th width="120" class="text-center">Giá bán</th>';
     $xhtmlHead .= '<th width="150">Tên xe - năm sx</th>';
-    $xhtmlHead .= '<th width="80" class="text-right">Tổng tiền'.$text_total.'</th>';
+$xhtmlHead .= '<th width="80" class="text-right">Thu khác'.$text_total_vat.'</th>';
+    $xhtmlHead .= '<th width="80" class="text-right">Tiền hàng'.$text_total.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Trả tiền mặt'.$text_total_paid_cash.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Chuyển khoản'.$text_total_paid_transfer.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Giảm giá'.$text_total_discount.'</th>';
