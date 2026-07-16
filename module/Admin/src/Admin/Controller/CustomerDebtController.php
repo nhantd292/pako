@@ -736,7 +736,7 @@ class CustomerDebtController extends ActionController
         exit;
     }
 
-    public function exportv2Action()
+    public function exportV2Action()
     {
         $dateFormat = new \ZendX\Functions\Date();
         $file_name = 'thu_chi_khach_hang_ ' . date('Y_m_d') . '.xlsx';
