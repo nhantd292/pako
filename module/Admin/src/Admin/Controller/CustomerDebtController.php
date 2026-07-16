@@ -803,13 +803,16 @@ class CustomerDebtController extends ActionController
         $old_debt = NULL;
         $run_debt = 0;
         foreach ($items as $item) {
+
             if ($old_debt == NULL) {
                 $old_debt = $item['old_debt'];
             }
+            $vat_value = $item['option_vat'] == 'yes' ? 1.08 : 1;
             if ($item['id'] != $id) {
                 $run_debt += ($item['price_total'] + $item['discount'] + $item['paid_cash'] + $item['paid_transfer']);
                 $id = $item['id'];
 
+                # thêm sản phẩm đầu tiên
                 if ($item['type'] == KMH) {
                     $item['code'] = $item['orders_code'];
                     $item['name'] = 'Bán hàng';
@@ -851,16 +854,52 @@ class CustomerDebtController extends ActionController
                 }
                 $startRow++;
 
+
+                # thêm thu khác nếu có
+                if ($item['fee_other'] > 0) {
+
+                    if ($item['type'] == KMH) {
+                        $item['code'] = "Thu khác";
+                        $item['total'] = $item['fee_other'];
+                        $item['name'] = '';
+                        $item['debt'] = '';
+                        $item['debt2'] = '';
+                        $item['created'] = '';
+                    }
+
+                    $startColumn = $config['startColumn'];
+
+                    foreach ($arrData as $key => $data) {
+                        $colLetter = $arrColumn[$startColumn];
+                        $value = $item[$data['field']];
+                        $objPHPExcel->setActiveSheetIndex($config['sheetData'])->setCellValue($colLetter . $startRow, $value);
+
+                        // Thêm Border cho dòng Header của item
+                        $objPHPExcel->getActiveSheet()->getStyle($colLetter . $startRow)->applyFromArray($styleBorder);
+
+                        // Định dạng số cho dòng Header của item nếu có giá trị số
+                        if (isset($data['format']) && $data['format'] == 'number' && $value !== '' && $value !== null && is_numeric($value)) {
+                            $objPHPExcel->getActiveSheet()->getStyle($colLetter . $startRow)->getNumberFormat()->setFormatCode('#,##0');
+                        }
+
+                        $startColumn++;
+                    }
+                    $startRow++;
+                }
+
                 if ($item['type'] == KMH) {
+                    $product_price  = round($item['cdetail_price']/$vat_value);
+                    $vat  = ($item['cdetail_price'] - $product_price);
+
                     $item['created'] = '';
                     $item['code'] = $products[$item['cdetail_product_id']]['code'];
                     $item['name'] = $products[$item['cdetail_product_id']]['name'];
                     $item['unit'] = $units[$products[$item['cdetail_product_id']]['unit_id']]['name'];
                     $item['quantity'] = $item['cdetail_quantity'];
-                    $item['price'] = $item['cdetail_price'];
+                    $item['price'] = $product_price;
                     $item['discount'] = 0;
-                    $item['vat'] = 0;
-                    $item['price'] = $item['cdetail_price'];
+                    $item['vat'] = $vat;
+                    $item['price'] = $product_price;
                     $item['total'] = $item['cdetail_price_total'];
                     $item['debt'] = '';
                     $item['debt2'] = '';
@@ -886,15 +925,18 @@ class CustomerDebtController extends ActionController
             }
             else {
                 if ($item['type'] == KMH) {
+                    $product_price  = round($item['cdetail_price']/$vat_value);
+                    $vat  = ($item['cdetail_price'] - $product_price);
+
                     $item['created'] = '';
                     $item['code'] = $products[$item['cdetail_product_id']]['code'];
                     $item['name'] = $products[$item['cdetail_product_id']]['name'];
                     $item['unit'] = $units[$products[$item['cdetail_product_id']]['unit_id']]['name'];
                     $item['quantity'] = $item['cdetail_quantity'];
-                    $item['price'] = $item['cdetail_price'];
+                    $item['price'] = $product_price;
                     $item['discount'] = 0;
-                    $item['vat'] = 0;
-                    $item['price'] = $item['cdetail_price'];
+                    $item['vat'] = $vat;
+                    $item['price'] = $product_price;
                     $item['total'] = $item['cdetail_price_total'];
                     $item['debt'] = '';
                     $item['debt2'] = '';

@@ -224,7 +224,11 @@ class CustomerDebtTable extends DefaultTable {
 
                 $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name'), 'inner')
                         # lấy thông tin sản phẩm liên kết đơn hàng
-                        -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code'), 'left')
+                        -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array(
+                            'orders_code' => 'code',
+                            'option_vat' => 'option_vat',
+                            'fee_other' => 'fee_other',
+                        ), 'left')
                         -> join(TABLE_CONTRACT_DETAIL, TABLE_CONTRACT_DETAIL .'.contract_id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array(
                             'cdetail_product_id' => 'product_id',
                             'cdetail_quantity' => 'numbers',
