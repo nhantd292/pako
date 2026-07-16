@@ -22,12 +22,12 @@
             array('element' => $myForm->get('filter_sale_group'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_user'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_delivery_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_status_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_unit_transport'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_status_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6 hidden'),
+            array('element' => $myForm->get('filter_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_state'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_update_kov_false'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_coincider'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-            array('element' => $myForm->get('filter_unit_transport'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_returned'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_shipper_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_production_type_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -60,12 +60,12 @@
 //            array('element' => $myForm->get('filter_send_ghtk'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_user'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_delivery_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_status_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-//            array('element' => $myForm->get('filter_status'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_unit_transport'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+            array('element' => $myForm->get('filter_status_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6 hidden'),
+            array('element' => $myForm->get('filter_status'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_state'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
             array('element' => $myForm->get('filter_inventory_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_coincider'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-            array('element' => $myForm->get('filter_unit_transport'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_returned'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_shipper_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //            array('element' => $myForm->get('filter_care_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -272,8 +272,8 @@
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'"'.$color_text_row.'>
     							<th '.$rowSpan.'>'. $cid .'</th>
                                 <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.'</th>
-    							<th '.$rowSpan.' class="controls" style="left:83px;">'. $order_status .' '.$invoiced.'</th>
-    							<th '.$rowSpan.' class="controls" style="left:193px;"><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a><br>'.$status.'</th>
+    							<td '.$rowSpan.' class="controls" style="left:83px;">'. $order_status .' '.$invoiced.'</td>
+    							<td '.$rowSpan.' class="controls" style="left:193px;"><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a><br>'.$status.'</td>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>
     							<td '.$rowSpan.'>Lên đơn: '. $date .'<br>Xuất kho: '.$shipped_date.'<br>Xuất HĐ: '.$date_invoice.'</td>
     							<td '.$rowSpan.'>'. $user_name .'<br>'.$care_name.'</td>
@@ -336,8 +336,8 @@
     $xhtmlHead  = '<tr>';
     $xhtmlHead .= '<th width="30" class="table-checkbox fix-head"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';
     $xhtmlHead .= '<th width="70" class="fix-head" style="left: 23px;">Công cụ</th>';
-    $xhtmlHead .= '<th width="180" class="fix-head" style="left: 83px;">Trạng thái</th>';
-    $xhtmlHead .= '<th width="200" class="fix-head" style="left: 193px;">Mã số đơn</th>';
+    $xhtmlHead .= '<th width="180">Trạng thái</th>';
+    $xhtmlHead .= '<th width="200">Mã số đơn</th>';
     $xhtmlHead .= '<th width="200">Mã đơn giao vận</th>';
     $xhtmlHead .= '<th width="80">Ngày</th>';
     $xhtmlHead .= '<th width="150">Nhân viên</th>';

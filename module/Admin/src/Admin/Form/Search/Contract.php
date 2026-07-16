@@ -147,7 +147,7 @@ class Contract extends Form{
                 'class'		=> 'form-control select2 select2_basic',
             ),
             'options'		=> array(
-                'empty_option'	=> '- Trạng thái -',
+                'empty_option'	=> '- Trạng thái crm -',
                 'disable_inarray_validator' => true,
                 'value_options' => \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
             ),
@@ -371,7 +371,8 @@ class Contract extends Form{
                 'class'		=> 'form-control select2 select2_basic',
             ),
             'options'		=> array(
-                'empty_option'	=> '- Trạng thái -',
+                'empty_option'	=> '- Trạng thái giao vận
+                 -',
                 'disable_inarray_validator' => true,
                 'value_options'	=> $list_status,
             ),

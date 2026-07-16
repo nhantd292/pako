@@ -169,6 +169,7 @@ class ContractController extends ActionController
         }
 
         $myForm = new \Admin\Form\Search\Contract($this, $this->_params);
+        $this->_params['ssFilter']['filter_status_type'] = 'ghtk_status';
         $myForm->setData($this->_params['ssFilter']);
         $user_branch = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->getItem(['id' => $this->_params['ssFilter']['filter_sale_branch']]);
 
