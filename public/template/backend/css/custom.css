@@ -273,7 +273,7 @@ input[type="file"]:focus, input[type="radio"]:focus, input[type="checkbox"]:focu
 .select2-search input{ padding: 0 5px !important; min-height: 28px; line-height: 100%; font-size: 12px;}
 .select2-results .select2-result-label{ padding: 6px 7px 5px;}
 .select2-hidden-accessible{ display: none;}
-.select2-container-multi .select2-choices .select2-search-field input{ min-height: 29px; line-height: 29px; padding: 0 6px;}
+.select2-container-multi .select2-choices .select2-search-field input{ min-height: 26px; line-height: 26px; padding: 0 6px;}
 .select2-container-multi .select2-choices .select2-search-choice{ margin: 4px 0 4px 4px; height: 21px; line-height: 20px; padding: 0 5px 0 16px; }
 .select2-search-choice-close{ top: 3px;}
 .select2-container.select2-allowclear .select2-choice abbr{ display: none !important;}
