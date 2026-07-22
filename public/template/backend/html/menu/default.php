@@ -275,6 +275,11 @@
                     <i class="fa fa-money"></i> <span class="title">Bảng giá sản phẩm</span><span class="arrow"></span>
                 </a>
             </li>
+            <li>
+                <a href="<?php echo $this->url('routeAdmin/default', array('controller' => 'products', 'action' => 'print-barcode'));?>" target="_self">
+                    <i class="fa fa-barcode"></i> <span class="title">In mã barcode</span><span class="arrow"></span>
+                </a>
+            </li>
         </ul>
     </li>
     <li class="parent">

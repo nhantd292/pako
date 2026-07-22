@@ -1,0 +1,224 @@
+<?php
+if ($this->is_post) {
+    ?>
+    <!DOCTYPE html>
+    <html lang="vi">
+    <head>
+        <meta charset="UTF-8">
+        <title>In Tem Mã Vạch</title>
+        <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+
+        <style>
+            @page {
+                size: 50mm 50mm;
+                margin: 0;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                padding: 0;
+                font-family: Arial, sans-serif;
+                background-color: #fff;
+            }
+
+            .barcode-page {
+                width: 50mm;
+                height: 50mm;
+                padding: 1.5mm; /* Thu nhỏ padding một chút để có thêm không gian */
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                text-align: center;
+                page-break-after: always;
+                break-after: page;
+                overflow: hidden;
+            }
+
+            .barcode-page .name {
+                margin: 0;
+                font-size: 11px; /* Tên sản phẩm vừa phải */
+                font-weight: bold;
+                line-height: 1.2;
+                max-height: 2.4em;
+                overflow: hidden;
+            }
+
+            .barcode-page svg {
+                width: 100%;
+                max-height: 32mm; /* Mở rộng chiều cao tối đa cho mã vạch + chữ */
+            }
+
+            .barcode-page .code-text {
+                margin: 0;
+                font-size: 10px;
+                font-weight: 600;
+            }
+
+            /* 3. Tối ưu khi bấm Ctrl+P / In thực tế */
+            @media print {
+                html, body {
+                    width: 50mm;
+                    height: 50mm;
+                }
+            }
+        </style>
+    </head>
+    <body onload="window.print();">
+
+    <?php
+    foreach ($this->products as $product) {
+        $quantity = (int)$product['quantity'];
+        $name = htmlspecialchars($product['name'], ENT_QUOTES, 'UTF-8');
+        $code = htmlspecialchars($product['code'], ENT_QUOTES, 'UTF-8');
+
+        for ($i = 0; $i < $quantity; $i++) {
+            ?>
+            <div class="barcode-page">
+                <p class="name"><?= $name ?></p>
+                <svg class="barcode" data-code="<?= $code ?>"></svg>
+            </div>
+            <?php
+        }
+    }
+    ?>
+
+    <script>
+        // Tự động chuyển đổi tất cả mã code thành mã vạch BARCODE (CODE128)
+        document.addEventListener("DOMContentLoaded", function() {
+            var elements = document.querySelectorAll(".barcode");
+            elements.forEach(function(el) {
+                var code = el.getAttribute("data-code");
+                if (code) {
+                    JsBarcode(el, code, {
+                        format: "CODE128",
+                        displayValue: true,    // Hiển thị chữ bên dưới
+                        fontSize: 18,          // TĂNG KÍCH THƯỚC CHỮ (mặc định là 12, bạn tăng lên 18-20 tùy ý)
+                        fontOptions: "bold",   // Bôi đậm chữ cho dễ đọc
+                        textMargin: 4,         // Khoảng cách giữa vạch và chữ
+                        height: 60,            // Tăng độ cao của các sọc mã vạch
+                        width: 2,              // Độ rộng của từng vạch
+                        margin: 0,
+                        marginTop: 5
+                    });
+                }
+            });
+        });
+    </script>
+    </body>
+    </html>
+    <?php
+}
+else {
+    $arrControl = array(
+        array('name' => 'save', 'caption' => 'In', 'link' => 'javascript:;', 'icon' => 'fa fa-print', 'attributes' => array('onclick' => 'javascript:ProductsPrint(\'_blank\');', 'class' => 'btn')),
+        array('name' => 'close', 'caption' => 'Hủy', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn')),
+    );
+
+    ?>
+
+    <form method="post" action="" class="horizontal-form adminForm" role="form" name="adminForm" id="adminForm">
+        <div class="page-control">
+            <div class="title pull-left">
+                <?php echo $this->caption; ?>
+            </div>
+            <div class="control pull-right">
+                <?php echo $this->partial($this->params['module'] . '/partial/control-default.phtml', array('control' => $arrControl)); ?>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+
+        <div class="page-content">
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12 form-section" style="padding: 0px;">
+                        <div>
+                            <span class="title-load-product">Sản phẩm</span>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group" style="margin-bottom: 5px;">
+                                <select name="filter_products_type" class="form-control select2 select2_basic"
+                                        style="display: none;">
+                                    <option value="">- Chọn nhóm hàng -</option>
+                                    <?php foreach ($this->products_type as $key => $value) { ?>
+                                        <option value="<?= $key ?>"><?= $value ?></option>
+                                        <?php
+                                    } ?>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="control-element">
+                                    <input type="text" name="filter_keyword" class="form-control" value=""
+                                           placeholder="Nhập tên sản phẩm" autocomplete="off">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-12" style="padding: 0px;">
+                        <div id="loadProducts">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h3 class="form-section">Danh sách sản phẩm</h3>
+                        <div class="contract_product table-scrollable" style="min-height: 400px">
+                            <table class="table table-striped table-bordered table-hover table-product">
+                                <thead>
+                                <tr>
+                                    <th width="100px" class="text-center">Mã SP</th>
+                                    <th width="150px" class="text-center">Tên SP</th>
+                                    <th width="80px" class="text-center">S.lượng</th>
+                                    <th width="30px" class="text-center">Xóa</th>
+                                </tr>
+                                </thead>
+                                <tbody class="product_body list-product-contract">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <link href="/public/template/backend/css/contract.css?v=<?php echo date('dmYHis'); ?>" media="screen"
+          rel="stylesheet" type="text/css">
+
+
+    <?php $this->headScript()->captureStart() ?>
+
+    $("input[name='filter_keyword']").on('keydown', function (e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+    var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val()};
+    load_action('#loadProducts', '<?php echo $this->url('routeAdmin/default', array('controller' => 'api', 'action' => 'loadProductsVat')); ?>', data);
+    return false;
+    }
+    });
+
+    $(`select[name="filter_products_type"], select[name="customer_type_id"], select[name="inventory_output_id"]`).change(function () {
+    var data = {filter_products_type: $(`select[name="filter_products_type"]`).val(), filter_keyword: $(`input[name="filter_keyword"]`).val()};
+    load_action('#loadProducts', '<?php echo $this->url('routeAdmin/default', array('controller' => 'api', 'action' => 'loadProductsVat')); ?>', data);
+    });
+
+    <?php $this->headScript()->captureEnd() ?>
+
+
+    <?php $this->HeadScript()->appendFile('/public/template/backend/js/contracts/products-print-barcode.js', 'text/javascript'); ?>
+
+
+    <?php
+}
+?>
+
+

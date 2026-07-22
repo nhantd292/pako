@@ -447,6 +447,32 @@ function contractPrintProduction(target="") {
 	}
 }
 
+/*
+* In mã vạch
+*/
+function ProductsPrint(target="", action="print-barcode") {
+	// Có sản phẩm trong danh sách không?
+	if ($('.list-product-contract tr').length == 0) {
+		xToastr('error', 'Chưa có sản phẩm để in', '');
+		return;
+	}
+
+	var form = $(formAdmin);
+
+	var oldAction = form.attr('action');
+	var oldTarget = form.attr('target');
+
+	var url = oldAction.replace('/filter', '/' + action);
+
+	form.attr('action', url);
+	form.attr('target', target);
+
+	form[0].submit();
+
+	form.attr('action', oldAction);
+	form.attr('target', oldTarget);
+}
+
 /**
  * Author: NamNV
  * Desciption: Popup ajax đến action
