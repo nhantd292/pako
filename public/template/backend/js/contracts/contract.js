@@ -92,10 +92,12 @@ updateTotal(false)
 
 function updateTotal() {
     var total_contract = 0;
+    var total_number = 0;
     $.each($('.list-product-contract tr'), function (index, value) {
         var price = $(this).find('.price > input').val() ? $(this).find('.price > input').val() : 0;
         var number = $(this).find('.numbers input').val() ? $(this).find('.numbers input').val() : 0;
         total_contract += parseInt(unFormatNumber(price) * unFormatNumber(number));
+        total_number += parseInt(unFormatNumber(number));
     });
     var price_total = total_contract;
 
@@ -113,5 +115,6 @@ function updateTotal() {
 
 
     $("input[name=price_total]").val(formatNumber(price_total))
+    $(".total_number").text(formatNumber(total_number))
     $("input[name=new_debt]").val(formatNumber(amount_owed + (price_total + fee_shipp + fee_other) - (paid_cash + paid_transfer + discount)))
 }
