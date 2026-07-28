@@ -418,6 +418,7 @@ class CustomerDebtTable extends DefaultTable {
                 'note'                 => $arrData['note'],
 
 	            'created'               => date('Y-m-d H:i:s'),
+	            'created_real'          => date('Y-m-d H:i:s'),
 	            'created_by'            => $this->userInfo->getUserInfo('id'),
                 'status'                => 1,
                 'ordering'              => 255,
