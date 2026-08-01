@@ -202,6 +202,10 @@ class CustomerDebtTable extends DefaultTable {
                     $select->where->greaterThan('created', $arrParam['created']);
     			}
 
+    			if(isset($arrParam['created_end']) && $arrParam['created_end'] != '') {
+                    $select->where->lessThan('created', $arrParam['created_end']);
+    			}
+
                 if(isset($arrParam['customer_id']) && $arrParam['customer_id'] != '') {
                     $select->where->equalTo('customer_id', $arrParam['customer_id']);
                 }
@@ -546,6 +550,10 @@ class CustomerDebtTable extends DefaultTable {
 
             if(isset($arrData['accept'])){
                 $data['accept'] = $arrData['accept'];
+            }
+
+            if(isset($arrData['created'])){
+                $data['created'] = $arrData['created'];
             }
 
             $this->tableGateway->update($data, array('id' => $id));

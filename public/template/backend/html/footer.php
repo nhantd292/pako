@@ -20,6 +20,7 @@
 <script src="<?php echo $this->arrParams['template']['urlPlugin'] . '/fancybox/source/jquery.fancybox.pack.js';?>" type="text/javascript"></script>
 <script src="<?php echo $this->arrParams['template']['urlPlugin'] . '/jquery-inputmask/jquery.inputmask.bundle.min.js';?>" type="text/javascript"></script>
 <script src="<?php echo $this->arrParams['template']['urlPlugin'] . '/bootstrap-datepicker/js/bootstrap-datepicker.js';?>" type="text/javascript"></script>
+<script src="<?php echo $this->arrParams['template']['urlPlugin'] . '/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js';?>" type="text/javascript"></script>
 <script src="<?php echo $this->arrParams['template']['urlPlugin'] . '/bootstrap-colorpicker/js/bootstrap-colorpicker.js';?>" type="text/javascript"></script>
 <script src="<?php echo $this->arrParams['template']['urlPlugin'] . '/numeric.min.js';?>" type="text/javascript"></script>
 <script src="<?php echo $this->arrParams['template']['urlPlugin'] . '/bootstrap-modal/js/bootstrap-modalmanager.js';?>" type="text/javascript"></script>

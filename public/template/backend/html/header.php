@@ -13,6 +13,7 @@
     <link href="<?php echo $this->arrParams['template']['urlPlugin'];?>/bootstrap-toastr/toastr.min.css" media="screen" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->arrParams['template']['urlPlugin'];?>/fancybox/source/jquery.fancybox.css" media="screen" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->arrParams['template']['urlPlugin'];?>/bootstrap-datepicker/css/datepicker.css" media="screen" rel="stylesheet" type="text/css">
+    <link href="<?php echo $this->arrParams['template']['urlPlugin'];?>/bootstrap-datetimepicker/css/datetimepicker.css" media="screen" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->arrParams['template']['urlPlugin'];?>/bootstrap-colorpicker/css/colorpicker.css" media="screen" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->arrParams['template']['urlPlugin'];?>/bootstrap-modal/css/bootstrap-modal-bs3patch.css" media="screen" rel="stylesheet" type="text/css">
     <link href="<?php echo $this->arrParams['template']['urlPlugin'];?>/bootstrap-modal/css/bootstrap-modal.css" media="screen" rel="stylesheet" type="text/css">

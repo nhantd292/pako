@@ -41,8 +41,8 @@
             $created        = $dateFormat->formatToView($item['created'], 'd/m/Y H:i:s');
             $cid            = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
             $ordering       = @$this->xFormInput('ordering['. $id .']', $item->ordering, array('class' => 'form-control input-xs'));
-            $created_by             = $this->user[$item->created_by]['name'];
-            $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
+            $created_by     = $this->user[$item->created_by]['name'];
+            $order_status   = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
             
             // Link Action
             $linkDetail   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail', 'id' => $id));
@@ -52,7 +52,7 @@
     							<td class="text-center">'. $cid .'</td>
                                 <td class="text-center">'. $index .'</td>
     							<td class="text-center text-bold"><a href="'. $linkDetail .'">'.  $item['code'] .'</a></td>
-    							<td class="text-center">'. $item['note'] .'</td>
+    							<td>'. $item['note'] .'</td>
     							<td class="text-center">'.$created .'</td>
     							<td>'. $this->warehouse[$item['inventory_output_id']]['name'] .'</td>
     							<td>'. $this->warehouse[$item['inventory_input_id']]['name'] .'</td>

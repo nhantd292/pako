@@ -41,6 +41,7 @@
             $id             = $item['id'];
             $cid            = $this->xFormInput('cid[]', $item['id'], array('type' => 'checkbox', 'class' => 'checkboxes'));
             $created        = $dateFormat->formatToView($item['created'], 'd/m/Y H:i:s');
+            $created_real   = $dateFormat->formatToView($item['created_real'], 'd/m/Y H:i:s');
             $cid            = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
             $ordering       = @$this->xFormInput('ordering['. $id .']', $item->ordering, array('class' => 'form-control input-xs'));
             $created_by     = $this->user[$item->created_by]['name'];
@@ -54,12 +55,21 @@
             $linkDelete = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'delete', 'id' => $id));
             $controlDelete = (in_array($item['type'],[THU,CHI]) && $item['accept'] == 0) ? $this->linkAdminHtml($linkDelete, array('type' => 'icon', 'title' => 'Xóa', 'class' => 'btn btn-xs red', 'icon' => 'fa fa-trash')): '';
 
-            if ($item['type'] == THU)
+            if ($item['type'] == THU){
+                $Sort = 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'sort')) . '\', {\'id\': \'' . $item['id'] . '\'});';
+                $linkSort = '<a href="'.$Sort.'"> <i class="fa fa-sort sort-btn" aria-hidden="true"></i></a>';
                 $linkDetail = '<a href="'.$detail_revenue_url.'"> '. $item['code'] .'</a>';
-            elseif ($item['type'] == CHI)
+            }
+            elseif ($item['type'] == CHI){
                 $linkDetail = '<a href="'.$detail_expense_url.'"> '. $item['code'] .'</a>';
-            else
+                $Sort = 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'sort')) . '\', {\'id\': \'' . $item['id'] . '\'});';
+                $linkSort = '<a href="'.$Sort.'"> <i class="fa fa-sort sort-btn" aria-hidden="true"></i></a>';
+            }
+            else{
                 $linkDetail = $item['code'];
+                $linkSort = "";
+            }
+
 
             $link_category = '';
             if (!empty($item['orders_id'])) {
@@ -95,7 +105,7 @@
                                 <td class="text-center">'. $index .'</td>
                                 <td class="text-center">'. $controlDelete .'</td>
     							<td class="text-center"><a href="javascript:;" onclick="'.$linkPopupAccept.'">'. $accept .'</a></td>
-    							<td class="text-center text-bold">'.$linkDetail.'</td>
+    							<td class="text-bold">'.$linkDetail.' '.$linkSort.'</td>
     							<td class="">'.  $item['customer_name'] .'</td>
     							<td class="text-center">'.  $item['customer_phone'] .'</td>
     							<td class="text-center">'. $this->debt_type[$item['type']] .'</td>
@@ -109,7 +119,7 @@
     							<td>'. $order_status .'</td>
     							<td>'. $item['note'] .'</td>
     							<td>'. $item['warehouse_name'] .'</td>
-    							<td>'. $created_by.'</br>'.$created .'</td>
+    							<td>'. $created_by.'</br>'.$created.'</br>'.$created_real .'</td>
     						</tr>';
         }
     }
@@ -196,3 +206,16 @@
     	</div>
 	</div>
 </form>
+<style>
+    .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td{
+        vertical-align: middle;
+    }
+    .sort-btn{
+        margin-left: 5px;
+        padding: 0px 5px;
+        background: #42a7ff;
+        border-radius: 3px;
+        color: #fff;
+        font-size: 10px;
+    }
+</style>

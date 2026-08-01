@@ -1193,4 +1193,120 @@ class CustomerDebtController extends ActionController
         $this->goRoute(array('action' => 'index'));
     }
 
+    public function sortAction()
+    {
+        $date     = new \ZendX\Functions\Date();
+        if (!empty($this->_params['data']['id'])) {
+            $item = $this->getTable()->getItem(array('id' => $this->_params['data']['id']), array('task' => 'type-id'));
+            $timestampGoc = strtotime($item['created']);
+            $filter_date_begin = date('Y-m-d', strtotime('-30 days', $timestampGoc)); # lấy mốc trước 30 ngày
+            $filter_date_end = date('Y-m-d', strtotime('+30 days', $timestampGoc)); # lấy mốc sau 30 ngày
+
+            $list_item = $this->getTable()->listItem(array(
+                'ssFilter' => array(
+                    'filter_date_begin' => $filter_date_begin,
+                    'filter_date_end' => $filter_date_end,
+                    'filter_customer_id' => $item['customer_id'],
+                )
+            ), array('task' => 'list-item', 'paginator' => false));
+            $debt_type = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'debt-type')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
+            $contact = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $item['customer_id']));
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+        }
+        if ($this->getRequest()->isPost()) {
+            $myForm = new \Admin\Form\CustomerDebt\Sort($this->getServiceLocator());
+            $myForm->setInputFilter(new \Admin\Filter\CustomerDebt\Sort($this->_params['data']));
+            $arrData = array(
+                'id' => $item['id'],
+                'created' => $date->formatToView($item['created'], "d/m/Y H:i:s"),
+            );
+
+            $myForm->setData($arrData);
+
+            $connection = $this->getConnection();
+
+            if ($this->_params['data']['modal'] == 'success') {
+                $myForm->setData($this->_params['data']);
+                if ($myForm->isValid()) {
+                    echo "<pre>";
+                    print_r($this->_params['data']);
+                    echo "</pre>";
+                    exit;
+
+                    $sort_item = $this->getTable()->getItem(array('id' => $this->_params['data']['sort_item']), array('task' => 'type-id'));
+
+                    $connection->beginTransaction();
+                    # 1. cập nhật ngày tạo
+                    $sort_item_created = strtotime($sort_item['created']);
+                    $new_item_created = date('Y-m-d H:i:s', strtotime('+1 minute', $sort_item_created));
+                    $this->getTable()->saveItem(array('data' => array('id' => $item['id'], 'created' => $new_item_created)), array('task' => 'update-item'));
+
+                    if ($item['created'] > $sort_item['created']) {
+                        # echo "di chuyển xuống"; # cập nhật từ vị trí đó tới hết
+                        # 2. cập nhật các bản ghi bị ảnh hưởng
+                        $list_update = $this->getTable()->listItem(array(
+                            'created' => $sort_item['created'],
+//                            'created_end' => $item['created'],
+                            'customer_id' => $item['customer_id'],
+                        ), array('task' => 'list-update'));
+
+                        $old_value = $sort_item['new_debt'];
+                        foreach ($list_update as $debt) {
+                            $new_debt = $old_value - ($debt->price_total + $debt->paid_cash + $debt->paid_transfer + $debt->discount);
+                            $data_update = array(
+                                'id' => $debt->id,
+                                'old_debt' => $old_value,
+                                'new_debt' => $new_debt,
+                            );
+                            $this->getTable()->saveItem(array('data' => $data_update), array('task' => 'update-value'));
+                            $old_value = $new_debt;
+                        }
+                    }
+                    else{
+                        # echo "di chuyển lên"; # phải cập nhật từ bản ghi phía trước bản ghi bị di chuyển
+                        # 2. cập nhật các bản ghi bị ảnh hưởng
+                        $list_update = $this->getTable()->listItem(array(
+                            'created' => $item['created'],
+                            'customer_id' => $item['customer_id'],
+                        ), array('task' => 'list-update'));
+
+                        $old_value = $item['old_debt'];
+                        foreach ($list_update as $debt) {
+                            $new_debt = $old_value - ($debt->price_total + $debt->paid_cash + $debt->paid_transfer + $debt->discount);
+                            $data_update = array(
+                                'id' => $debt->id,
+                                'old_debt' => $old_value,
+                                'new_debt' => $new_debt,
+                            );
+                            $this->getTable()->saveItem(array('data' => $data_update), array('task' => 'update-value'));
+                            $old_value = $new_debt;
+                        }
+                    }
+                    $connection->commit();
+
+                    $this->flashMessenger()->addMessage('Sắp xếp lại thu chi khách hàng thành công');
+                    echo 'success';
+                    return $this->response;
+                }
+            }
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+        }
+
+        $this->_viewModel['myForm'] = $myForm;
+        $this->_viewModel['item'] = $item;
+        $this->_viewModel['list_item'] = $list_item;
+        $this->_viewModel['debt_type'] = $debt_type;
+        $this->_viewModel['contact'] = $contact;
+        $this->_viewModel['user'] = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['bill_type'] = array('paid' => 'Thu', 'accrued' => 'Chi', 'surcharge' => 'Phụ phí');
+        $this->_viewModel['paid_type'] = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array("table" => "document", "where" => array("code" => "bill-type-paid"), "order" => array("ordering" => "ASC", "created" => "ASC", "name" => "ASC"), "view" => array("key" => "id", "value" => "name", "sprintf" => "%s")), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+        $this->_viewModel['caption'] = 'Sắp xếp vị trí';
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+        return $viewModel;
+    }
+
 }
