@@ -195,8 +195,12 @@ class CustomerDebtTable extends DefaultTable {
 
 		if($options['task'] == 'list-update') {
 			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+			    $order_type = 'ASC';
+                if(isset($arrParam['order_type']) && $arrParam['order_type'] != '') {
+                    $order_type = 'DESC';
+                }
 
-                $select -> order(array('created' => 'ASC'));
+                $select -> order(array('created' => $order_type));
 
     			if(isset($arrParam['created']) && $arrParam['created'] != '') {
                     $select->where->greaterThan('created', $arrParam['created']);
@@ -204,6 +208,25 @@ class CustomerDebtTable extends DefaultTable {
 
     			if(isset($arrParam['created_end']) && $arrParam['created_end'] != '') {
                     $select->where->lessThan('created', $arrParam['created_end']);
+    			}
+
+                if(isset($arrParam['customer_id']) && $arrParam['customer_id'] != '') {
+                    $select->where->equalTo('customer_id', $arrParam['customer_id']);
+                }
+    		});
+		}
+
+		if($options['task'] == 'list-choice') {
+			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+
+                $select -> order(array('created' => 'ASC'));
+
+    			if(isset($arrParam['created']) && $arrParam['created'] != '') {
+                    $select->where->greaterThanOrEqualTo('created', $arrParam['created']);
+    			}
+
+    			if(isset($arrParam['created_end']) && $arrParam['created_end'] != '') {
+                    $select->where->lessThanOrEqualTo('created', $arrParam['created_end']);
     			}
 
                 if(isset($arrParam['customer_id']) && $arrParam['customer_id'] != '') {

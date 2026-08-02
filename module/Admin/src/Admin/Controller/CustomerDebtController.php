@@ -1229,29 +1229,30 @@ class CustomerDebtController extends ActionController
             if ($this->_params['data']['modal'] == 'success') {
                 $myForm->setData($this->_params['data']);
                 if ($myForm->isValid()) {
-                    echo "<pre>";
-                    print_r($this->_params['data']);
-                    echo "</pre>";
-                    exit;
-
-                    $sort_item = $this->getTable()->getItem(array('id' => $this->_params['data']['sort_item']), array('task' => 'type-id'));
 
                     $connection->beginTransaction();
                     # 1. cập nhật ngày tạo
-                    $sort_item_created = strtotime($sort_item['created']);
-                    $new_item_created = date('Y-m-d H:i:s', strtotime('+1 minute', $sort_item_created));
-                    $this->getTable()->saveItem(array('data' => array('id' => $item['id'], 'created' => $new_item_created)), array('task' => 'update-item'));
+                    $created_new = $date->formatToData($this->_params['data']['created']);
+                    $this->getTable()->saveItem(array('data' => array('id' => $item['id'], 'created' => $created_new)), array('task' => 'update-item'));
 
-                    if ($item['created'] > $sort_item['created']) {
+                    if ($item['created'] > $created_new) {
                         # echo "di chuyển xuống"; # cập nhật từ vị trí đó tới hết
+
+                        # vị trí bản ghi mốc để lấy nợ cũ
+                        $sort_item = $this->getTable()->listItem(array(
+                            'order_type' => 'DESC',
+                            'created_end' => $created_new,
+                            'customer_id' => $item['customer_id'],
+                        ), array('task' => 'list-update'))->current();
+
                         # 2. cập nhật các bản ghi bị ảnh hưởng
                         $list_update = $this->getTable()->listItem(array(
-                            'created' => $sort_item['created'],
-//                            'created_end' => $item['created'],
+                            'created' => $created_new,
+                            'created_end' => $item['created'],
                             'customer_id' => $item['customer_id'],
-                        ), array('task' => 'list-update'));
+                        ), array('task' => 'list-choice'));
 
-                        $old_value = $sort_item['new_debt'];
+                        $old_value = !empty($sort_item) ? $sort_item['new_debt'] : 0;
                         foreach ($list_update as $debt) {
                             $new_debt = $old_value - ($debt->price_total + $debt->paid_cash + $debt->paid_transfer + $debt->discount);
                             $data_update = array(
@@ -1265,11 +1266,13 @@ class CustomerDebtController extends ActionController
                     }
                     else{
                         # echo "di chuyển lên"; # phải cập nhật từ bản ghi phía trước bản ghi bị di chuyển
+
                         # 2. cập nhật các bản ghi bị ảnh hưởng
                         $list_update = $this->getTable()->listItem(array(
                             'created' => $item['created'],
+                            'created_end' => $created_new,
                             'customer_id' => $item['customer_id'],
-                        ), array('task' => 'list-update'));
+                        ), array('task' => 'list-choice'));
 
                         $old_value = $item['old_debt'];
                         foreach ($list_update as $debt) {
