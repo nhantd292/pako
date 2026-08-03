@@ -41,6 +41,18 @@ class CustomerDebt extends Form
             ),
         ));
 
+        // Loại ngày
+        $this->add(array(
+            'name' => 'filter_date_type',
+            'type' => 'Select',
+            'attributes' => array(
+                'class' => 'form-control select2 select2_basic',
+            ),
+            'options' => array(
+                'value_options' => array('created_real' => 'Ngày tạo phiếu', 'created' => 'Ngày sắp xếp'),
+            )
+        ));
+
         // Bắt đầu từ ngày
         $this->add(array(
             'name' => 'filter_date_begin',

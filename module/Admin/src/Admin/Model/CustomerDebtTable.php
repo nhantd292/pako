@@ -19,16 +19,21 @@ class CustomerDebtTable extends DefaultTable {
                     -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_input_id', array( 'warehouse_input_code' => 'code', 'warehouse_input_id' => 'id'), 'left')
                     -> join(TABLE_WAREHOUSE_OUTPUT, TABLE_WAREHOUSE_OUTPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_output_id', array( 'warehouse_output_code' => 'code', 'warehouse_output_id' => 'id'), 'left');
 
+                $date_type = 'created_real';
+                if(isset($ssFilter['filter_date_type']) && $ssFilter['filter_date_type'] != '') {
+                    $date_type = $ssFilter['filter_date_type'];
+                }
+
                 if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
                     $select -> where -> NEST
-                        -> greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']))
+                        -> greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.'.$date_type, $date->formatToData($ssFilter['filter_date_begin']))
                         ->AND
-                        -> lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.'.$date_type, $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
                         -> UNNEST;
                 } elseif (!empty($ssFilter['filter_date_begin'])) {
-                    $select->where->greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']));
+                    $select->where->greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.'.$date_type, $date->formatToData($ssFilter['filter_date_begin']));
                 } elseif (!empty($ssFilter['filter_date_end'])) {
-                    $select->where->lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                    $select->where->lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.'.$date_type, $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
                 }
 
                 if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
@@ -119,16 +124,21 @@ class CustomerDebtTable extends DefaultTable {
                         -> join(TABLE_WAREHOUSE_INPUT, TABLE_WAREHOUSE_INPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_input_id', array( 'warehouse_input_code' => 'code', 'warehouse_input_id' => 'id'), 'left')
                         -> join(TABLE_WAREHOUSE_OUTPUT, TABLE_WAREHOUSE_OUTPUT .'.id = '. TABLE_CUSTOMER_DEBT .'.warehouse_output_id', array( 'warehouse_output_code' => 'code', 'warehouse_output_id' => 'id'), 'left');
 
+                $date_type = 'created_real';
+                if(isset($ssFilter['filter_date_type']) && $ssFilter['filter_date_type'] != '') {
+                    $date_type = $ssFilter['filter_date_type'];
+                }
+
                 if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
                     $select -> where -> NEST
-                        -> greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']))
+                        -> greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.'.$date_type, $date->formatToData($ssFilter['filter_date_begin']))
                         ->AND
-                        -> lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.'.$date_type, $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
                         -> UNNEST;
                 } elseif (!empty($ssFilter['filter_date_begin'])) {
-                    $select->where->greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_begin']));
+                    $select->where->greaterThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.'.$date_type, $date->formatToData($ssFilter['filter_date_begin']));
                 } elseif (!empty($ssFilter['filter_date_end'])) {
-                    $select->where->lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                    $select->where->lessThanOrEqualTo(TABLE_CUSTOMER_DEBT .'.'.$date_type, $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
                 }
 
     			if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {

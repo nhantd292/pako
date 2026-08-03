@@ -27,6 +27,7 @@ class CustomerDebtController extends ActionController
         $this->_params['ssFilter']['order'] = !empty($ssFilter->order) ? $ssFilter->order : 'DESC';
         $this->_params['ssFilter']['filter_status'] = $ssFilter->filter_status;
         $this->_params['ssFilter']['filter_keyword'] = $ssFilter->filter_keyword;
+        $this->_params['ssFilter']['filter_date_type'] = $ssFilter->filter_date_type;
         $this->_params['ssFilter']['filter_date_begin'] = $ssFilter->filter_date_begin;
         $this->_params['ssFilter']['filter_date_end'] = $ssFilter->filter_date_end;
         $this->_params['ssFilter']['filter_state'] = $ssFilter->filter_state;
@@ -62,6 +63,7 @@ class CustomerDebtController extends ActionController
             $ssFilter->order = $data['order'];
             $ssFilter->filter_status = $data['filter_status'];
             $ssFilter->filter_keyword = $data['filter_keyword'];
+            $ssFilter->filter_date_type = $data['filter_date_type'];
             $ssFilter->filter_date_begin = $data['filter_date_begin'];
             $ssFilter->filter_date_end = $data['filter_date_end'];
             $ssFilter->filter_state = $data['filter_state'];
@@ -1069,7 +1071,7 @@ class CustomerDebtController extends ActionController
                 'id' => $item['id'],
                 'content' => $debt_type[$item['type']],
                 'note' => $item['note'],
-                'date' => $date->formatToView($item['date']),
+                'date' => $date->formatToView($item['created_real']),
             );
 
             $myForm->setData($arrData);
