@@ -23,6 +23,8 @@
     $myForm->get('filter_action')->setValue($this->params['action']);
     $elements = array(
         array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_customer_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_user'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -47,6 +49,7 @@
             $phone                  = $item->phone;
             $name                   = $item->name;
             $amount_owed            = $item->amount_owed;
+            $new_debt               = $item->new_debt;
             $user_id                = $item->user_id ? $this->user[$item->user_id]['name'] : '';
             $sale_group_id          = $item->sale_group_id ? '<br>'. $this->sale_group[$item->sale_group_id]['name'] : '';
             $sale_branch_id         = $item->sale_branch_id ? ' - '. $this->sale_branch[$item->sale_branch_id]['name'] : '';
@@ -59,11 +62,11 @@
             $xhtmlItems .= '<tr id="tr_'. $id .'">';
             $xhtmlItems .= '<td class="text-center">'. $index .'</td>';
             $xhtmlItems .= '<td>'. $name .'</td>';
-            $xhtmlItems .= '<td class="" style="inline-size: 200px;overflow-wrap: break-word;">'. $location_town.' - '.$location_district.' - '.$location_city.'</td>';
+            $xhtmlItems .= '<td class="" style="inline-size: 200px;overflow-wrap: break-word;">'. $address.' - '.$location_district.' - '.$location_city.'</td>';
             $xhtmlItems .= '<td>'. $phone .'</td>';
             $xhtmlItems .= '<td><div class="col-100 text-wrap">'. $customer_type.'</div></td>';
             $xhtmlItems .= '<td>'. $user_id . $sale_group_id . $sale_branch_id .'</td>';
-            $xhtmlItems .= '<td class="mask_currency text-right text-bold text-red">'. $amount_owed .'</td>';
+            $xhtmlItems .= '<td class="mask_currency text-right text-bold text-red">'. $new_debt .'</td>';
             $xhtmlItems .= '<td></td>';
     		$xhtmlItems .= '</tr>';
         }

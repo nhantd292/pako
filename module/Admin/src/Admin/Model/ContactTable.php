@@ -177,12 +177,84 @@ class ContactTable extends DefaultTable {
             })->current();
 	    }
 
-        if($options['task'] == 'sum-debt') {
+        if($options['task'] == 'sum-debt1') {
             $result    = $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
                 $ssFilter   = $arrParam['ssFilter'];
 
                 $select->columns(array(
                     'total_amount_owed' => new \Zend\Db\Sql\Expression('SUM(amount_owed)')
+                ));
+
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $filter_keyword = trim($ssFilter['filter_keyword']);
+                    $select->where->NEST
+                        ->like('name', '%' . $filter_keyword . '%')
+                        ->Or
+                        ->like('phone', '%' . $filter_keyword . '%')
+                        ->UNNEST;
+                }
+
+                if(!empty($ssFilter['filter_customer_type'])) {
+                    $select -> where -> equalTo('customer_type_id', $ssFilter['filter_customer_type']);
+                }
+
+                if(!empty($ssFilter['filter_debt_type'])) {
+                    if ($ssFilter['filter_debt_type'] == 'receivable') {
+                        $select -> where -> greaterThan('amount_owed', 0);
+                    }
+                    else{
+                        $select -> where -> lessThan('amount_owed', 0);
+                    }
+                }
+
+                if(!empty($ssFilter['filter_user'])) {
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CONTACT .'.user_id', $ssFilter['filter_user'])
+                        ->Or
+                        -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
+                        -> UNNEST;
+                }
+            })->current();
+            return $result;
+        }
+
+        if($options['task'] == 'sum-debt') {
+            $result    = $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $ssFilter   = $arrParam['ssFilter'];
+                $date      = new \ZendX\Functions\Date();
+
+                // 1. Khởi tạo Subquery tìm bản ghi mới nhất theo customer_id
+                $subSelect = new \Zend\Db\Sql\Select(TABLE_CUSTOMER_DEBT);
+                $subSelect->columns(array(
+                    'customer_id',
+                    'max_created' => new \Zend\Db\Sql\Expression('MAX(created)')
+                ));
+                $subSelect->group('customer_id');
+
+                // Đưa điều kiện lọc thời gian vào subquery
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $subSelect->where->greaterThanOrEqualTo('created', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->lessThanOrEqualTo('created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59'));
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $subSelect->where->greaterThanOrEqualTo('created', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $subSelect->where->lessThanOrEqualTo('created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59'));
+                }
+
+                if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
+                    $subSelect->where->equalTo('customer_id', $ssFilter['filter_customer_id']);
+                }
+
+
+                $select->join(array('t1' => TABLE_CUSTOMER_DEBT), TABLE_CONTACT . '.id = t1.customer_id', array(
+                    'new_debt',
+                    'debt_created' => 'created',
+                    'debt_created_real' => 'created_real',
+                ),'inner');
+                $select->join(array('t2' => $subSelect), 't1.customer_id = t2.customer_id AND t1.created = t2.max_created', array(),'inner');
+
+                $select->columns(array(
+                    'total_amount_owed' => new \Zend\Db\Sql\Expression('SUM(new_debt)')
                 ));
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
@@ -363,7 +435,7 @@ class ContactTable extends DefaultTable {
     		});
 		}
 
-        if($options['task'] == 'list-debt') {
+        if($options['task'] == 'list-debt1') {
             $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options) {
                 $paginator = $arrParam['paginator'];
                 $ssFilter = $arrParam['ssFilter'];
@@ -407,6 +479,95 @@ class ContactTable extends DefaultTable {
                         -> UNNEST;
                 }
             });
+        }
+
+        if($options['task'] == 'list-debt') {
+            $result = $this->tableGateway->select(function (Select $select) use ($arrParam, $options) {
+                $paginator = $arrParam['paginator'];
+                $ssFilter  = $arrParam['ssFilter'];
+                $date      = new \ZendX\Functions\Date();
+
+                // 1. Khởi tạo Subquery tìm bản ghi mới nhất theo customer_id
+                $subSelect = new \Zend\Db\Sql\Select(TABLE_CUSTOMER_DEBT);
+                $subSelect->columns(array(
+                    'customer_id',
+                    'max_created' => new \Zend\Db\Sql\Expression('MAX(created)')
+                ));
+                $subSelect->group('customer_id');
+
+                // Đưa điều kiện lọc thời gian vào subquery
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $subSelect->where->greaterThanOrEqualTo('created', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->lessThanOrEqualTo('created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59'));
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $subSelect->where->greaterThanOrEqualTo('created', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $subSelect->where->lessThanOrEqualTo('created', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59'));
+                }
+
+                if(isset($ssFilter['filter_customer_id']) && $ssFilter['filter_customer_id'] != '') {
+                    $subSelect->where->equalTo('customer_id', $ssFilter['filter_customer_id']);
+                }
+
+
+                $select->join(array('t1' => TABLE_CUSTOMER_DEBT), TABLE_CONTACT . '.id = t1.customer_id', array(
+                    'new_debt',
+                    'debt_created' => 'created',
+                    'debt_created_real' => 'created_real',
+                ),'inner');
+                $select->join(array('t2' => $subSelect), 't1.customer_id = t2.customer_id AND t1.created = t2.max_created', array(),'inner');
+
+                // 5. Phân trang
+                if (!isset($options['paginator']) || $options['paginator'] == true) {
+                    $select->limit($paginator['itemCountPerPage'])
+                        ->offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
+                }
+
+                // 6. Các bộ lọc
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $filter_keyword = trim($ssFilter['filter_keyword']);
+                    $select->where->NEST
+                        ->like(TABLE_CONTACT.'.name', '%' . $filter_keyword . '%')
+                        ->OR
+                        ->like(TABLE_CONTACT.'.phone', '%' . $filter_keyword . '%')
+                        ->UNNEST;
+                }
+
+                if(!empty($ssFilter['filter_customer_type'])) {
+                    $select->where->equalTo(TABLE_CONTACT.'.customer_type_id', $ssFilter['filter_customer_type']);
+                }
+
+                // Xử lý lọc theo loại công nợ (Chú ý: Dùng t1.new_debt)
+                if(!empty($ssFilter['filter_debt_type'])) {
+                    $debt_column = 't1.new_debt'; // Chỉ định rõ từ alias t1
+
+                    if ($ssFilter['filter_debt_type'] == 'receivable') {
+                        $select->where->greaterThan($debt_column, 0);
+                        $select->order(array($debt_column . ' DESC'));
+                    } else {
+                        $select->where->lessThan($debt_column, 0);
+                        $select->order(array($debt_column . ' ASC'));
+                    }
+                } else {
+                    // Sắp xếp mặc định
+                    $select->order(array('t1.created DESC'));
+                }
+
+                if(!empty($ssFilter['filter_user'])) {
+                    $select->where->NEST
+                        ->equalTo(TABLE_CONTACT .'.user_id', $ssFilter['filter_user'])
+                        ->OR
+                        ->like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
+                        ->UNNEST;
+                }
+
+//                 echo "<pre>";
+//                 print_r($select->getSqlString($this->tableGateway->getAdapter()->getPlatform()));
+//                 echo "</pre>";
+                // die();
+            });
+
+            return $result;
         }
 		
 		if($options['task'] == 'search') {
