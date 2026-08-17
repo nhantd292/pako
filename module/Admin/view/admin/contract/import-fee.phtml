@@ -11,7 +11,7 @@
     
     $elements = array(
         array('div' => '', 'boxClass' => 'col-md-12', 'boxId' => 'result_check_contact'),
-        array('element' => $myForm->get('file_import'), 'label' => 'Chọn file cần cập nhật <a href="'. URL_FILES .'/template/Nhap_phu_phi_don_hang.xlsx"><b>(Tải file mẫu)</b></a>', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
+        array('element' => $myForm->get('file_import'), 'label' => 'Chọn file cần cập nhật <a href="'. URL_FILES .'/template/Doi_soat_tien_cuoc.xlsx"><b>(Tải file mẫu)</b></a>', 'validate' => array('require' => true), 'boxClass' => 'col-md-3'),
         array('element' => $myForm->get('submit'), 'label' => '', 'boxClass' => 'col-md-12'),
     );
     
@@ -50,8 +50,10 @@
             						<th class="col-50 text-center">STT</th>
             						<th>Mã vận đơn</th>
             						<th>Mã đơn hàng shop</th>
-                                    <th class="text-right">Phụ phí</th>
-                                    <th class="text-right">Ngày thanh toán</th>
+<!--                                    <th class="text-right">Phụ phí</th>-->
+                                    <th class="text-right">Tiền cước(VNĐ)</th>
+<!--                                    <th class="text-right">Ngày thanh toán</th>-->
+                                    <th class="text-right">Ngày tạo bưu phẩm</th>
             					</tr>
             				</thead>
             				<tbody>

@@ -3780,9 +3780,9 @@ class ContractTable extends DefaultTable {
             if(!empty($arrData['viettel_status'])){
                 $data['viettel_status'] = $arrData['viettel_status'];
             }
-            if(!empty($arrData['fee_shipp'])){
-                $data['fee_shipp'] = $arrData['fee_shipp'];
-            }
+//            if(!empty($arrData['fee_shipp'])){
+//                $data['fee_shipp'] = $arrData['fee_shipp'];
+//            }
             if(!empty($arrData['status_history'])){
                 $arrData['status_history']['created'] = date('Y-m-d H:i:s');
                 $status_history[] = $arrData['status_history'];

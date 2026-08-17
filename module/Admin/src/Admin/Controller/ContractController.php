@@ -1620,7 +1620,8 @@ class ContractController extends ActionController
     {
         $myForm = new \Admin\Form\Contract\Import($this->getServiceLocator(), $this->_params);
         $myForm->setInputFilter(new \Admin\Filter\Contract\Import($this->_params));
-        $this->_viewModel['caption'] = 'Nhập phụ phí phát sinh';
+//        $this->_viewModel['caption'] = 'Nhập phụ phí phát sinh';
+        $this->_viewModel['caption'] = 'Đối soát Viettel Post';
         $this->_viewModel['myForm'] = $myForm;
         $viewModel = new ViewModel($this->_viewModel);
         $date = new \ZendX\Functions\Date();
