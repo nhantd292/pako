@@ -562,7 +562,7 @@ class CustomerDebtController extends ActionController
         exit;
     }
 
-    public function exportv1Action()
+    public function exportV1Action()
     {
         $dateFormat = new \ZendX\Functions\Date();
         $file_name = 'thu_chi_khach_hang_ ' . date('Y_m_d') . '.xlsx';
@@ -774,6 +774,7 @@ class CustomerDebtController extends ActionController
             array('field' => 'total', 'format' => 'number', 'title' => 'Thành Tiền'),
             array('field' => 'debt', 'format' => 'number', 'title' => 'Ghi nợ'),
             array('field' => 'debt2', 'format' => 'number', 'title' => 'Ghi có'),
+            array('field' => 'sale_note', 'title' => 'Ghi chú'),
         );
 
         $objPHPExcel = new \PHPExcel();
@@ -867,6 +868,7 @@ class CustomerDebtController extends ActionController
                         $item['debt'] = '';
                         $item['debt2'] = '';
                         $item['created'] = '';
+                        $item['sale_note'] = '';
                     }
 
                     $startColumn = $config['startColumn'];
@@ -905,6 +907,7 @@ class CustomerDebtController extends ActionController
                     $item['total'] = $item['cdetail_price_total'];
                     $item['debt'] = '';
                     $item['debt2'] = '';
+                    $item['sale_note'] = '';
                 }
                 if ($item['type'] == KTH) {
                     $item['created'] = '';
@@ -942,6 +945,7 @@ class CustomerDebtController extends ActionController
                     $item['total'] = $item['cdetail_price_total'];
                     $item['debt'] = '';
                     $item['debt2'] = '';
+                    $item['sale_note'] = '';
                 }
                 if ($item['type'] == KTH) {
                     $item['created'] = '';

@@ -265,6 +265,7 @@ class CustomerDebtTable extends DefaultTable {
                             'orders_code' => 'code',
                             'option_vat' => 'option_vat',
                             'fee_other' => 'fee_other',
+                            'sale_note' ,
                         ), 'left')
                         -> join(TABLE_CONTRACT_DETAIL, TABLE_CONTRACT_DETAIL .'.contract_id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array(
                             'cdetail_product_id' => 'product_id',
