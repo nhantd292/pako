@@ -183,9 +183,9 @@ class ContractController extends ActionController
         $this->_viewModel['location_district'] = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 2), array('task' => 'cache'));
         $this->_viewModel['location_town'] = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(array('level' => 3), array('task' => 'cache'));
         $this->_viewModel['shippers'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'shipper')), array('task' => 'cache'));
-                $this->_viewModel['viettelKeyList'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'viettel-key', 'key_ghtk_ids' => explode(',', $user_branch['key_viettel_ids']))), array('task' => 'list-all'));
-                $this->_viewModel['ghtkKeyList']            = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghtk-key', 'key_ghtk_ids' => explode(',', $user_branch['key_ghtk_ids']))), array('task' => 'list-all'));
-                $this->_viewModel['ghnKeyList']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghn-key', 'key_ghn_ids' => explode(',', $user_branch['key_ghn_ids']))), array('task' => 'list-all'));
+        $this->_viewModel['viettelKeyList'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'viettel-key', 'key_ghtk_ids' => explode(',', $user_branch['key_viettel_ids']))), array('task' => 'list-all'));
+        $this->_viewModel['ghtkKeyList'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghtk-key', 'key_ghtk_ids' => explode(',', $user_branch['key_ghtk_ids']))), array('task' => 'list-all'));
+        $this->_viewModel['ghnKeyList'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghn-key', 'key_ghn_ids' => explode(',', $user_branch['key_ghn_ids']))), array('task' => 'list-all'));
 //        $this->_viewModel['viettelKeyList'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'viettel-key')), array('task' => 'list-all'));
 //        $this->_viewModel['ghtkKeyList'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghtk-key')), array('task' => 'list-all'));
 //        $this->_viewModel['ghnKeyList'] = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'ghn-key')), array('task' => 'list-all'));
@@ -302,7 +302,11 @@ class ContractController extends ActionController
                     # tạo phiếu thu cho khách hàng
                     $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
                     if ($count_debt > 0) {
-                        $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item', 'paginator' => false));
+                        $paginator = array(
+                            'currentPageNumber' => 1,
+                            'itemCountPerPage' => 1
+                        );
+                        $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id), 'paginator' => $paginator), array('task' => 'list-item'));
                         $list_debt = $list_debt->toArray();
                         $ucdebt = $list_debt[0];
                         $old_debt = $ucdebt['new_debt'];
@@ -335,10 +339,10 @@ class ContractController extends ActionController
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
 
                     # tăng tổng số đơn và tổng doanh số cho khách hàng
-                    $arrParamContact['data']['id']                		= $contact_item['id'];
-                    $arrParamContact['data']['contract_total']    		= $contact_item['contract_total'] + 1;
-                    $arrParamContact['data']['contract_number']   		= $contact_item['contract_total'] + 1;
-                    $arrParamContact['data']['contract_price_total']    = $contact_item['contract_price_total'] + $number->formatToData($price_total);
+                    $arrParamContact['data']['id'] = $contact_item['id'];
+                    $arrParamContact['data']['contract_total'] = $contact_item['contract_total'] + 1;
+                    $arrParamContact['data']['contract_number'] = $contact_item['contract_total'] + 1;
+                    $arrParamContact['data']['contract_price_total'] = $contact_item['contract_price_total'] + $number->formatToData($price_total);
                     $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($arrParamContact, array('task' => 'edit-item'));
 
                     $connection->commit();
@@ -406,8 +410,7 @@ class ContractController extends ActionController
 
                     $connection->commit();
                     $this->flashMessenger()->addSuccessMessage('Đơn hàng chuyển sang trạng thái "ĐANG XỬ LÝ"');
-                }
-                else {
+                } else {
                     $this->flashMessenger()->addErrorMessage('Chỉ có thể XỬ LÝ đơn hàng khi đơn hàng ở trạng thái phiếu tạm!');
                 }
             }
@@ -565,7 +568,7 @@ class ContractController extends ActionController
                 return false;
             }
 //            if (in_array($contract['state'], array(COMPLETE_STATUS, CANCEL_STATUS)) && !in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)) {
-            $state_desc = array(COMPLETE_STATUS => 'HOÀN THÀNH', CANCEL_STATUS => 'HỦY', RETURN_STATUS => 'HOÀN ĐƠN', DELIVERING_STATUS => 'ĐANG GIAO HÀNG' );
+            $state_desc = array(COMPLETE_STATUS => 'HOÀN THÀNH', CANCEL_STATUS => 'HỦY', RETURN_STATUS => 'HOÀN ĐƠN', DELIVERING_STATUS => 'ĐANG GIAO HÀNG');
             if (in_array($contract['state'], array(COMPLETE_STATUS, CANCEL_STATUS, RETURN_STATUS, DELIVERING_STATUS))) {
                 $state_text = $state_desc[$contract['state']];
                 $this->flashMessenger()->addErrorMessage('Đơn hàng đã ở trạng thái "' . $state_text . '" không thể cập nhật dữ liệu!');
@@ -707,8 +710,8 @@ class ContractController extends ActionController
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     # cập nhật tổng doanh số cho khách hàng
-                    $arrParamContact['data']['id']                		= $contact_item['id'];
-                    $arrParamContact['data']['contract_price_total']    = $contact_item['contract_price_total'] - ($contract['price_total'] + $contract['fee_other']) + $number->formatToData($price_total);
+                    $arrParamContact['data']['id'] = $contact_item['id'];
+                    $arrParamContact['data']['contract_price_total'] = $contact_item['contract_price_total'] - ($contract['price_total'] + $contract['fee_other']) + $number->formatToData($price_total);
                     $this->getServiceLocator()->get('Admin\Model\ContactTable')->saveItem($arrParamContact, array('task' => 'edit-item'));
 
                     $connection->commit();
@@ -1056,9 +1059,9 @@ class ContractController extends ActionController
             $item['price'] = round($item['price'] / (1 + $item['percent_vat'] / 100));
             $item['total'] = round($net_numbers * $item['price']);
             $item['pay_type'] = 'TM/CK';
-            $item['customer_name'] = $item['option_mtt'] == 'cn' ? $item['customer_name'] :'Bán cho người tiêu dùng';
-            $item['customer_phone'] = $item['option_mtt'] == 'cn' ? $item['customer_phone'] :'';
-            $item['company_address'] = $item['option_mtt'] == 'cn' ? $location_district[$item['location_district_id']]['name'] .' - '. $location_city[$item['location_city_id']]['name'] :'';
+            $item['customer_name'] = $item['option_mtt'] == 'cn' ? $item['customer_name'] : 'Bán cho người tiêu dùng';
+            $item['customer_phone'] = $item['option_mtt'] == 'cn' ? $item['customer_phone'] : '';
+            $item['company_address'] = $item['option_mtt'] == 'cn' ? $location_district[$item['location_district_id']]['name'] . ' - ' . $location_city[$item['location_city_id']]['name'] : '';
 
             if (array_key_exists($item['contract_id'], $tm)) {
                 $tm[$item['contract_id']] += $item['total'];
@@ -1403,20 +1406,20 @@ class ContractController extends ActionController
                                 }
 
                                 $data_vat = array(
-                                    'quantity'              => $number,
-                                    'quantity_begin'        => $quantity_begin,
-                                    'quantity_end'          => $quantity_begin - $number,
-                                    'products_id'           => $item['product_id'],
-                                    'contract_detail_id'    => $item['id'],
-                                    'type'                  => 'out',
-                                    'note'                  => '',
+                                    'quantity' => $number,
+                                    'quantity_begin' => $quantity_begin,
+                                    'quantity_end' => $quantity_begin - $number,
+                                    'products_id' => $item['product_id'],
+                                    'contract_detail_id' => $item['id'],
+                                    'type' => 'out',
+                                    'note' => '',
 
-                                    'contract_code'         => $contract['code'],
-                                    'contract_id'           => $contract['id'],
-                                    'sale_branch_id'        => $contract['sale_branch_id'],
-                                    'user_id'               => $contract['created_by'],
-                                    'created'               => $contract['date_invoice'],
-                                    'created_by'            => $contract['created_by'],
+                                    'contract_code' => $contract['code'],
+                                    'contract_id' => $contract['id'],
+                                    'sale_branch_id' => $contract['sale_branch_id'],
+                                    'user_id' => $contract['created_by'],
+                                    'created' => $contract['date_invoice'],
+                                    'created_by' => $contract['created_by'],
                                 );
                                 $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat), array('task' => 'add-item'));
                             }
@@ -1442,19 +1445,19 @@ class ContractController extends ActionController
                             }
 
                             $data_vat_5 = array(
-                                'quantity'              => $_SAN5CHO,
-                                'quantity_begin'        => $quantity_begin,
-                                'quantity_end'          => $quantity_begin - $_SAN5CHO,
-                                'products_id'           => $pro5['id'],
-                                'type'                  => 'out',
-                                'note'                  => '',
+                                'quantity' => $_SAN5CHO,
+                                'quantity_begin' => $quantity_begin,
+                                'quantity_end' => $quantity_begin - $_SAN5CHO,
+                                'products_id' => $pro5['id'],
+                                'type' => 'out',
+                                'note' => '',
 
-                                'contract_code'         => $contract['code'],
-                                'contract_id'           => $contract['id'],
-                                'sale_branch_id'        => $contract['sale_branch_id'],
-                                'user_id'               => $contract['created_by'],
-                                'created'               => $contract['date_invoice'],
-                                'created_by'            => $contract['created_by'],
+                                'contract_code' => $contract['code'],
+                                'contract_id' => $contract['id'],
+                                'sale_branch_id' => $contract['sale_branch_id'],
+                                'user_id' => $contract['created_by'],
+                                'created' => $contract['date_invoice'],
+                                'created_by' => $contract['created_by'],
                             );
                             $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat_5), array('task' => 'add-item'));
                         }
@@ -1479,19 +1482,19 @@ class ContractController extends ActionController
                             }
 
                             $data_vat_7 = array(
-                                'quantity'              => $_SAN7CHO,
-                                'quantity_begin'        => $quantity_begin,
-                                'quantity_end'          => $quantity_begin - $_SAN7CHO,
-                                'products_id'           => $pro5['id'],
-                                'type'                  => 'out',
-                                'note'                  => '',
+                                'quantity' => $_SAN7CHO,
+                                'quantity_begin' => $quantity_begin,
+                                'quantity_end' => $quantity_begin - $_SAN7CHO,
+                                'products_id' => $pro5['id'],
+                                'type' => 'out',
+                                'note' => '',
 
-                                'contract_code'         => $contract['code'],
-                                'contract_id'           => $contract['id'],
-                                'sale_branch_id'        => $contract['sale_branch_id'],
-                                'user_id'               => $contract['created_by'],
-                                'created'               => $contract['date_invoice'],
-                                'created_by'            => $contract['created_by'],
+                                'contract_code' => $contract['code'],
+                                'contract_id' => $contract['id'],
+                                'sale_branch_id' => $contract['sale_branch_id'],
+                                'user_id' => $contract['created_by'],
+                                'created' => $contract['date_invoice'],
+                                'created_by' => $contract['created_by'],
                             );
                             $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat_7), array('task' => 'add-item'));
                         }
@@ -1534,11 +1537,10 @@ class ContractController extends ActionController
                             $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $contract['inventory_id']), array('task' => 'filter'));
                             $quantity_new = $inventory->quantity - $detail_item->numbers;
                             if ($quantity_new < 0) {
-                                $this->flashMessenger()->addErrorMessage('Đơn hàng: '. $contract['code'] .' Số lượng sản phẩm "' . $inventory->products_name . '" trong kho "' . $inventory->warehouse_name . '" không đủ!');
+                                $this->flashMessenger()->addErrorMessage('Đơn hàng: ' . $contract['code'] . ' Số lượng sản phẩm "' . $inventory->products_name . '" trong kho "' . $inventory->warehouse_name . '" không đủ!');
                                 $connection->rollback();
                                 continue 2;
-                            }
-                            else{
+                            } else {
                                 $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
                             }
 
@@ -1558,7 +1560,7 @@ class ContractController extends ActionController
                         $connection->commit();
                     }
                 }
-                $message = ' Đã xác nhận ' . $count_update . ' đơn hàng ĐANG GIAO HÀNG: '. implode(',', $array_success);
+                $message = ' Đã xác nhận ' . $count_update . ' đơn hàng ĐANG GIAO HÀNG: ' . implode(',', $array_success);
                 $this->flashMessenger()->addSuccessMessage($message);
             }
         }
@@ -1600,15 +1602,14 @@ class ContractController extends ActionController
                         $array_success[] = $contract['code'];
 
                         $connection->commit();
-                    }
-                    else{
+                    } else {
                         $array_error[] = $contract['code'];
                     }
                 }
-                $message = ' Đã xác nhận ' . $count_update . ' đơn hàng HOÀN THÀNH: '. implode(',', $array_success);
+                $message = ' Đã xác nhận ' . $count_update . ' đơn hàng HOÀN THÀNH: ' . implode(',', $array_success);
                 $this->flashMessenger()->addSuccessMessage($message);
                 if (!empty($array_error)) {
-                    $message2 = ' Đơn hàng: '. implode(',', $array_error) . ' chưa ở trạng thái đang giao hàng không thể HOÀN THÀNH';
+                    $message2 = ' Đơn hàng: ' . implode(',', $array_error) . ' chưa ở trạng thái đang giao hàng không thể HOÀN THÀNH';
                     $this->flashMessenger()->addErrorMessage($message2);
                 }
             }
@@ -1616,12 +1617,13 @@ class ContractController extends ActionController
         $this->goRoute(array('action' => 'index'));
     }
 
+    // Nhập cước phí vận chuyển
     public function importFeeAction()
     {
         $myForm = new \Admin\Form\Contract\Import($this->getServiceLocator(), $this->_params);
         $myForm->setInputFilter(new \Admin\Filter\Contract\Import($this->_params));
 //        $this->_viewModel['caption'] = 'Nhập phụ phí phát sinh';
-        $this->_viewModel['caption'] = 'Đối soát Viettel Post';
+        $this->_viewModel['caption'] = 'Đối soát cước phí Viettel Post';
         $this->_viewModel['myForm'] = $myForm;
         $viewModel = new ViewModel($this->_viewModel);
         $date = new \ZendX\Functions\Date();
@@ -1662,6 +1664,189 @@ class ContractController extends ActionController
                     }
                 } else {
                     echo 'Nhập mã vận đơn';
+                }
+                return $this->response;
+            }
+        } else {
+            if ($this->getRequest()->isPost()) {
+                $myForm->setData($this->_params['data']);
+                if ($myForm->isValid()) {
+                    if (!empty($this->_params['data']['file_import']['tmp_name'])) {
+                        $upload = new \ZendX\File\Upload();
+                        $file_import = $upload->uploadFile('file_import', PATH_FILES . '/import/', array());
+                    }
+                    $viewModel->setVariable('file_import', $file_import);
+                    $viewModel->setVariable('import', true);
+
+                    require_once PATH_VENDOR . '/Excel/PHPExcel/IOFactory.php';
+                    $objPHPExcel = \PHPExcel_IOFactory::load(PATH_FILES . '/import/' . $file_import);
+
+                    $sheetData = $objPHPExcel->getActiveSheet(1)->toArray(null, true, true, true);
+                    $viewModel->setVariable('sheetData', $sheetData);
+                }
+            }
+        }
+
+        return $viewModel;
+    }
+
+    // Đối soát COD
+    public function importAction()
+    {
+        $myForm = new \Admin\Form\Contract\Import($this->getServiceLocator(), $this->_params);
+        $myForm->setInputFilter(new \Admin\Filter\Contract\Import($this->_params));
+        $this->_viewModel['caption'] = 'Đối soát COD';
+        $this->_viewModel['myForm'] = $myForm;
+        $viewModel = new ViewModel($this->_viewModel);
+        $date_format = new \ZendX\Functions\Date();
+        $number = new \ZendX\Functions\Number();
+
+        if ($this->getRequest()->isXmlHttpRequest()) {
+            if ($this->getRequest()->isPost()) {
+                if (!empty($this->_params['data']['ghtk_code'])) {
+                    $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('ghtk_code' => $this->_params['data']['ghtk_code']), array('task' => 'ghtk-code'));
+                    if (empty($contract)) {
+                        $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('code' => $this->_params['data']['code']), array('task' => 'by-code'));
+                    }
+                    if (empty($contract)) {
+                        echo json_encode(array(
+                            'status' => 1,
+                            'data' => [],
+                            'message' => 'Mã vận đơn không tồn tại',
+                        ));
+                        return $this->response;
+                    } else {
+                        $date_cod = $date_format->formatToView($this->_params['data']['date']);
+                        $check_date = $date_format->check_date_format_to_data($date_cod);
+                        if ($check_date == false) {
+                            echo json_encode(array(
+                                'status' => 1,
+                                'data' => [],
+                                'message' => 'Sai định dạng ngày',
+                            ));
+                            return $this->response;
+                        }
+
+                        $date = $date_format->formatToData($this->_params['data']['date'], 'Y-m-d');
+                        $cod = $number->formatToData($this->_params['data']['cod']);
+                        $cod_can_thu = ($contract['price_total'] + $contract['fee_other']) - ($contract['paid_cash'] + $contract['paid_transfer'] + $contract['discount']);
+                        if ($cod != $cod_can_thu) {
+                            echo json_encode(array(
+                                'status' => 2,
+                                'data' => array(
+                                    'price_owed' => number_format($cod_can_thu),
+                                    'compare' => number_format($cod - $cod_can_thu)
+                                ),
+                                'message' => 'Khiếu lại',
+                            ));
+                            return $this->response;
+                        }
+
+                        $check_exist = $this->getServiceLocator()->get('Admin\Model\ContractCodTable')->countItem(['ssFilter' => ['filter_date' => $date, 'filter_contract_id' => $contract['id']]], array('task' => 'list-item'));
+                        if ($check_exist == 0) {
+                            $connection = $this->getConnection();
+                            $connection->beginTransaction();
+                            # tạo lịch sử cod
+                            $params_data = array(
+                                'contract_id' => $contract['id'],
+                                'date' => $date,
+                                'cod' => $cod,
+                            );
+                            $id = $this->getServiceLocator()->get('Admin\Model\ContractCodTable')->saveItem(array('data' => $params_data), array('task' => 'add-item'));
+                            if ($id) {
+                                # tạo phiếu thu cho khách hàng
+                                $customer_id = $contract['contact_id'];
+                                $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
+                                if ($count_debt > 0) {
+                                    $paginator = array(
+                                        'currentPageNumber' => 1,
+                                        'itemCountPerPage' => 1
+                                    );
+                                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id), 'paginator' => $paginator), array('task' => 'list-item'));
+                                    $list_debt = $list_debt->toArray();
+                                    $ucdebt = $list_debt[0];
+                                    $old_debt = $ucdebt['new_debt'];
+                                } else {
+                                    $contact_item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $customer_id));
+                                    $old_debt = $contact_item['amount_owed'];
+                                }
+
+                                $paid_cash = 0;
+                                $paid_transfer = $cod;
+                                $new_debt = $old_debt - ($paid_cash + $paid_transfer);
+                                $data_debt = array(
+                                    'customer_id' => $customer_id,
+                                    'type' => THU,
+                                    'inventory_id' => $contract['inventory_id'],
+                                    'price_total' => 0,
+                                    'discount' => 0,
+                                    'paid_cash' => $paid_cash,
+                                    'paid_transfer' => $paid_transfer,
+                                    'old_debt' => $old_debt,
+                                    'new_debt' => $new_debt,
+                                    'state' => NEW_STATUS,
+                                    'category' => 'khach-tra-tien-mua-hang',
+                                    'note' => "Thanh toán đơn hàng ".$contract['code'],
+                                    'date' => $date,
+                                );
+                                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
+
+
+                                echo json_encode(array(
+                                    'status' => 3,
+                                    'data' => array(
+                                        'price_owed' => number_format($cod),
+                                        'compare' => number_format($cod - $cod_can_thu)
+                                    ),
+                                    'message' => 'Đối soát thành công',
+                                ));
+
+                            }
+
+                            $connection->commit();
+                        } else {
+                            echo json_encode(array(
+                                'status' => 1,
+                                'data' => [],
+                                'message' => 'Tồn tại',
+                            ));
+                            return $this->response;
+                        }
+
+
+//                        $cod_ghtk = (int)str_replace(',', '', $this->_params['data']['cod']);
+//                        $price_owed = (int)$contract['price_owed'];
+//                        $price_reduce_sale = (int)$contract['price_reduce_sale'];
+//                        if (($price_owed - $price_reduce_sale) != $cod_ghtk) {
+//                            $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('item' => $contract, 'data' => array('id' => $contract['id'], 'status_acounting_id' => 'khieu-lai', 'price_paid' => $cod_ghtk)), array('task' => 'compare-order'));
+//                            echo json_encode(array(
+//                                'status' => 2,
+//                                'data' => array(
+//                                    'price_owed' => number_format($price_owed),
+//                                    'price_reduce_sale' => number_format($price_reduce_sale),
+//                                    'compare' => number_format($price_owed - $price_reduce_sale)
+//                                ),
+//                                'message' => 'Khiếu lại',
+//                            ));
+//                        } else {
+//                            $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('item' => $contract, 'data' => array('id' => $contract['id'], 'status_acounting_id' => 'da-doi-soat', 'price_paid' => $cod_ghtk)), array('task' => 'compare-order'));
+//                            echo json_encode(array(
+//                                'status' => 3,
+//                                'data' => array(
+//                                    'price_owed' => number_format($price_owed),
+//                                    'price_reduce_sale' => number_format($price_reduce_sale),
+//                                    'compare' => number_format($price_owed - $price_reduce_sale)
+//                                ),
+//                                'message' => 'Đối soát thành công',
+//                            ));
+//                        }
+                    }
+                } else {
+                    echo json_encode(array(
+                        'status' => 1,
+                        'data' => [],
+                        'message' => 'Mã vận đơn không tồn tại',
+                    ));
                 }
                 return $this->response;
             }
@@ -1733,20 +1918,20 @@ class ContractController extends ActionController
                         }
 
                         $data_vat = array(
-                            'quantity'              => $number,
-                            'quantity_begin'        => $quantity_begin,
-                            'quantity_end'          => $quantity_begin - $number,
-                            'products_id'           => $item['product_id'],
-                            'contract_detail_id'    => $item['id'],
-                            'type'                  => 'out',
-                            'note'                  => '',
+                            'quantity' => $number,
+                            'quantity_begin' => $quantity_begin,
+                            'quantity_end' => $quantity_begin - $number,
+                            'products_id' => $item['product_id'],
+                            'contract_detail_id' => $item['id'],
+                            'type' => 'out',
+                            'note' => '',
 
-                            'contract_code'         => $contract['code'],
-                            'contract_id'           => $contract['id'],
-                            'sale_branch_id'        => $contract['sale_branch_id'],
-                            'user_id'               => $contract['created_by'],
-                            'created'               => $contract['date_invoice'],
-                            'created_by'            => $contract['created_by'],
+                            'contract_code' => $contract['code'],
+                            'contract_id' => $contract['id'],
+                            'sale_branch_id' => $contract['sale_branch_id'],
+                            'user_id' => $contract['created_by'],
+                            'created' => $contract['date_invoice'],
+                            'created_by' => $contract['created_by'],
                         );
                         $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat), array('task' => 'add-item'));
                     }
@@ -1772,19 +1957,19 @@ class ContractController extends ActionController
                 }
 
                 $data_vat_5 = array(
-                    'quantity'              => $_SAN5CHO,
-                    'quantity_begin'        => $quantity_begin,
-                    'quantity_end'          => $quantity_begin - $_SAN5CHO,
-                    'products_id'           => $pro5['id'],
-                    'type'                  => 'out',
-                    'note'                  => '',
+                    'quantity' => $_SAN5CHO,
+                    'quantity_begin' => $quantity_begin,
+                    'quantity_end' => $quantity_begin - $_SAN5CHO,
+                    'products_id' => $pro5['id'],
+                    'type' => 'out',
+                    'note' => '',
 
-                    'contract_code'         => $contract['code'],
-                    'contract_id'           => $contract['id'],
-                    'sale_branch_id'        => $contract['sale_branch_id'],
-                    'user_id'               => $contract['created_by'],
-                    'created'               => $contract['date_invoice'],
-                    'created_by'            => $contract['created_by'],
+                    'contract_code' => $contract['code'],
+                    'contract_id' => $contract['id'],
+                    'sale_branch_id' => $contract['sale_branch_id'],
+                    'user_id' => $contract['created_by'],
+                    'created' => $contract['date_invoice'],
+                    'created_by' => $contract['created_by'],
                 );
                 $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat_5), array('task' => 'add-item'));
             }
@@ -1808,19 +1993,19 @@ class ContractController extends ActionController
                 }
 
                 $data_vat_7 = array(
-                    'quantity'              => $_SAN7CHO,
-                    'quantity_begin'        => $quantity_begin,
-                    'quantity_end'          => $quantity_begin - $_SAN7CHO,
-                    'products_id'           => $pro5['id'],
-                    'type'                  => 'out',
-                    'note'                  => '',
+                    'quantity' => $_SAN7CHO,
+                    'quantity_begin' => $quantity_begin,
+                    'quantity_end' => $quantity_begin - $_SAN7CHO,
+                    'products_id' => $pro5['id'],
+                    'type' => 'out',
+                    'note' => '',
 
-                    'contract_code'         => $contract['code'],
-                    'contract_id'           => $contract['id'],
-                    'sale_branch_id'        => $contract['sale_branch_id'],
-                    'user_id'               => $contract['created_by'],
-                    'created'               => $contract['date_invoice'],
-                    'created_by'            => $contract['created_by'],
+                    'contract_code' => $contract['code'],
+                    'contract_id' => $contract['id'],
+                    'sale_branch_id' => $contract['sale_branch_id'],
+                    'user_id' => $contract['created_by'],
+                    'created' => $contract['date_invoice'],
+                    'created_by' => $contract['created_by'],
                 );
                 $this->getServiceLocator()->get('Admin\Model\WarehouseVatDetailTable')->saveItem(array('data' => $data_vat_7), array('task' => 'add-item'));
             }
@@ -3138,81 +3323,7 @@ class ContractController extends ActionController
 //        exit;
 //    }
 //
-//    public function importAction()
-//    {
-//        $myForm = new \Admin\Form\Contract\Import($this->getServiceLocator(), $this->_params);
-//        $myForm->setInputFilter(new \Admin\Filter\Contract\Import($this->_params));
-//        $this->_viewModel['caption'] = 'Đối soát giao hàng tiết kiệm';
-//        $this->_viewModel['myForm']  = $myForm;
-//        $viewModel                   = new ViewModel($this->_viewModel);
-//
-//        if ($this->getRequest()->isXmlHttpRequest()) {
-//            if ($this->getRequest()->isPost()) {
-//                if(!empty($this->_params['data']['ghtk_code'])){
-//                    $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('ghtk_code' => $this->_params['data']['ghtk_code']), array('task' => 'ghtk-code'));
-//                    if(empty($contract)){
-//                        $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('code' => $this->_params['data']['code']), array('task' => 'by-code'));
-//                    }
-//                    if (empty($contract)) {
-//                        echo json_encode(array(
-//                            'status'=> 1,
-//                            'data' => [],
-//                            'message' => 'Mã vận đơn không tồn tại',
-//                        ));
-//                    } else {
-//                        $cod_ghtk = (int)str_replace(',', '', $this->_params['data']['cod']);
-//                        $price_owed = (int)$contract['price_owed'];
-//                        $price_reduce_sale = (int)$contract['price_reduce_sale'];
-//                        if (($price_owed - $price_reduce_sale) != $cod_ghtk) {
-//                            $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('item'=> $contract, 'data' => array('id' => $contract['id'], 'status_acounting_id' => 'khieu-lai', 'price_paid' => $cod_ghtk)), array('task' => 'compare-order'));
-//                            echo json_encode(array(
-//                                'status'=> 2,
-//                                'data' => ['price_owed' => number_format($price_owed), 'price_reduce_sale' => number_format($price_reduce_sale), 'compare' => number_format($price_owed - $price_reduce_sale) ],
-//                                'message' => 'Khiếu lại',
-//                            ));
-//                        } else {
-//                            $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('item'=> $contract, 'data' => array('id' => $contract['id'], 'status_acounting_id' => 'da-doi-soat', 'price_paid' => $cod_ghtk)), array('task' => 'compare-order'));
-//                            echo json_encode(array(
-//                                'status'=> 3,
-//                                'data' => ['price_owed' => number_format($price_owed), 'price_reduce_sale' => number_format($price_reduce_sale), 'compare' => number_format($price_owed - $price_reduce_sale) ],
-//                                'message' => 'Đối soát thành công',
-//                            ));
-//                        }
-//                    }
-//                }
-//                else{
-//                    echo json_encode(array(
-//                        'status'=> 1,
-//                        'data' => [],
-//                        'message' => 'Mã vận đơn không tồn tại',
-//                    ));
-//                }
-//                return $this->response;
-//            }
-//        }
-//        else {
-//            if ($this->getRequest()->isPost()) {
-//                $myForm->setData($this->_params['data']);
-//                if ($myForm->isValid()) {
-//                    if (!empty($this->_params['data']['file_import']['tmp_name'])) {
-//                        $upload      = new \ZendX\File\Upload();
-//                        $file_import = $upload->uploadFile('file_import', PATH_FILES . '/import/', array());
-//                    }
-//                    $viewModel->setVariable('file_import', $file_import);
-//                    $viewModel->setVariable('import', true);
-//
-//                    require_once PATH_VENDOR . '/Excel/PHPExcel/IOFactory.php';
-//                    $objPHPExcel = \PHPExcel_IOFactory::load(PATH_FILES . '/import/' . $file_import);
-//
-//                    $sheetData = $objPHPExcel->getActiveSheet(1)->toArray(null, true, true, true);
-//                    $viewModel->setVariable('sheetData', $sheetData);
-//                }
-//            }
-//        }
-//
-//        return $viewModel;
-//    }
-//
+
 
 //
 //    // cập nhật công nợ khách hàng
@@ -3815,26 +3926,27 @@ class ContractController extends ActionController
 //    }
 //
     // Đẩy đơn hàng sang viettel post
-    public function sendViettelPostAction() {
+    public function sendViettelPostAction()
+    {
         $id_viettel_key = $this->params('id');
-        if(!empty($id_viettel_key)){
+        if (!empty($id_viettel_key)) {
             $ditem = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->getItem(array('id' => $id_viettel_key));
             $viettel_key = $ditem->alias;
-            if(!empty($viettel_key)){
+            if (!empty($viettel_key)) {
 //                $this->updateToken($viettel_key);
-                $myForm   = new \Admin\Form\Contract\SendViettelPost($this, array('token' => $viettel_key));
+                $myForm = new \Admin\Form\Contract\SendViettelPost($this, array('token' => $viettel_key));
 
-                $this->_viewModel['myForm']         = $myForm;
-                $this->_viewModel['caption']        = 'Đẩy đơn hàng sang Viettel Post bằng tài khoản: '.$ditem->name;
+                $this->_viewModel['myForm'] = $myForm;
+                $this->_viewModel['caption'] = 'Đẩy đơn hàng sang Viettel Post bằng tài khoản: ' . $ditem->name;
 
-                if($this->getRequest()->isPost()){
-                    if($this->_params['data']['modal'] == 'success') {
+                if ($this->getRequest()->isPost()) {
+                    if ($this->_params['data']['modal'] == 'success') {
                         $myForm->setInputFilter(new \Admin\Filter\Contract\SendViettelPost(array('data' => $this->_params['data'],)));
                         $myForm->setData($this->_params['data']);
-                        if($myForm->isValid()) {
+                        if ($myForm->isValid()) {
                             $locations = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(null, array('task' => 'cache'));
 
-                            $list_data_id   = json_decode($this->_params['data']['list_data_id'], true);
+                            $list_data_id = json_decode($this->_params['data']['list_data_id'], true);
                             $groupaddressId = $this->_params['data']['groupaddressId'];
                             $inventorys = json_decode($this->viettelpost('/user/listInventory', [], 'GET', $viettel_key), true);
                             $inventory_item = [];
@@ -3848,30 +3960,30 @@ class ContractController extends ActionController
                             }
 
                             $listData_ghtk = [];
-                            foreach($list_data_id as $id) {
+                            foreach ($list_data_id as $id) {
                                 $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id['id']));
                                 if (empty($contract['ghtk_code'])) {
                                     $products = [];
                                     $total_weight = 0;
                                     $list_name = [];
                                     $contract['options'] = unserialize($contract['options'])['product'];
-                                    foreach($contract['options'] as $key => $value){
-                                        $list_name[] = $value['full_name'].' - '.$value['car_year'];
+                                    foreach ($contract['options'] as $key => $value) {
+                                        $list_name[] = $value['full_name'] . ' - ' . $value['car_year'];
                                         $value['weight'] = (float)str_replace(',', '.', $value['weight']);
-                                        if($value['weight'] > 1 || count($contract['options']) == 1){
+                                        if ($value['weight'] > 1 || count($contract['options']) == 1) {
                                             $total_weight += $value['weight'] * 1000;
-                                            $pro['PRODUCT_NAME'] = $value['full_name'].' - '.$value['car_year'];
+                                            $pro['PRODUCT_NAME'] = $value['full_name'] . ' - ' . $value['car_year'];
                                             $pro['PRODUCT_WEIGHT'] = $value['weight'] * 1000;
                                             $pro['PRODUCT_QUANTITY'] = $value['numbers'];
                                             $pro['PRODUCT_PRICE'] = $value['price'];
                                             $products[] = $pro;
                                         }
                                     }
-                                    $order_item['ORDER_NUMBER'] =$contract['code'];
-                                    $order_item['GROUPADDRESS_ID']  = $inventory_item['groupaddressId'];
-                                    $order_item['SENDER_FULLNAME']  = $inventory_item['name'];
-                                    $order_item['SENDER_ADDRESS']   = $inventory_item['address'];
-                                    $order_item['SENDER_PHONE']     = $inventory_item['phone'];
+                                    $order_item['ORDER_NUMBER'] = $contract['code'];
+                                    $order_item['GROUPADDRESS_ID'] = $inventory_item['groupaddressId'];
+                                    $order_item['SENDER_FULLNAME'] = $inventory_item['name'];
+                                    $order_item['SENDER_ADDRESS'] = $inventory_item['address'];
+                                    $order_item['SENDER_PHONE'] = $inventory_item['phone'];
 
                                     $order_item['RECEIVER_FULLNAME'] = $contract['name'];
                                     $full_address = [];
@@ -3895,8 +4007,8 @@ class ContractController extends ActionController
                                     $services = json_decode($this->viettelpost('/order/getPriceAllNlp', $s_data, 'POST', $viettel_key), true)['RESULT'];
                                     $order_service = '';
                                     $gia_cuoc = 1000000000;
-                                    foreach($services as $ser){
-                                        if($ser['GIA_CUOC'] < $gia_cuoc){
+                                    foreach ($services as $ser) {
+                                        if ($ser['GIA_CUOC'] < $gia_cuoc) {
                                             $gia_cuoc = $ser['GIA_CUOC'];
                                             $order_service = $ser['MA_DV_CHINH'];
                                         }
@@ -3924,29 +4036,28 @@ class ContractController extends ActionController
                                 }
                             }
                             # thực hiện đẩy đơn sang vtp
-                            foreach ($listData_ghtk as $key => $value){
+                            foreach ($listData_ghtk as $key => $value) {
                                 $result = $this->viettelpost('/order/createOrderNlp', $value, 'POST', $viettel_key);
                                 $res = json_decode($result, true);
 
-                                if($res['status'] == 200 and $res['error'] == false){
+                                if ($res['status'] == 200 and $res['error'] == false) {
                                     $contract_code_success[] = $value['ORDER_NUMBER'];
-                                    $arrParam['id']             = $key;
-                                    $arrParam['ghtk_code']      = $res['data']['ORDER_NUMBER'];
-                                    $arrParam['ghtk_result']    = $res['data'];
+                                    $arrParam['id'] = $key;
+                                    $arrParam['ghtk_code'] = $res['data']['ORDER_NUMBER'];
+                                    $arrParam['ghtk_result'] = $res['data'];
                                     $arrParam['unit_transport'] = 'viettel';
-                                    $arrParam['token']          = $viettel_key;
-                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem(array('data' => $arrParam),  array('task' => 'update-ghtk'));
-                                }
-                                else{
-                                    $contract_code_error[] = 'Đơn số : '. $value['ORDER_NUMBER'] .' gặp lỗi do '.$res['message'];
+                                    $arrParam['token'] = $viettel_key;
+                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem(array('data' => $arrParam), array('task' => 'update-ghtk'));
+                                } else {
+                                    $contract_code_error[] = 'Đơn số : ' . $value['ORDER_NUMBER'] . ' gặp lỗi do ' . $res['message'];
                                 }
                             }
 
-                            if(!empty($contract_code_success)){
-                                $this->flashMessenger()->addSuccessMessage('Các đơn đã đẩy thành công sang Viettel Post '.implode(', ', $contract_code_success) );
+                            if (!empty($contract_code_success)) {
+                                $this->flashMessenger()->addSuccessMessage('Các đơn đã đẩy thành công sang Viettel Post ' . implode(', ', $contract_code_success));
                             }
-                            if(!empty($contract_code_error)){
-                                $this->flashMessenger()->addErrorMessage('Chưa đẩy thành công '.implode(', ', $contract_code_error) );
+                            if (!empty($contract_code_error)) {
+                                $this->flashMessenger()->addErrorMessage('Chưa đẩy thành công ' . implode(', ', $contract_code_error));
                             }
 
                             echo 'success';
@@ -3956,7 +4067,7 @@ class ContractController extends ActionController
                 }
             }
         }
-        $viewModel =  new ViewModel($this->_viewModel);
+        $viewModel = new ViewModel($this->_viewModel);
         $viewModel->setTerminal(true);
 
         return $viewModel;

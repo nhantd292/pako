@@ -133,7 +133,11 @@ class CustomerDebtController extends ActionController
                 # tạo phiếu thu cho khách hàng
                 $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
                 if ($count_debt > 0) {
-                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item', 'paginator' => false));
+                    $paginator = array(
+                        'currentPageNumber' => 1,
+                        'itemCountPerPage' => 1
+                    );
+                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id), 'paginator' => $paginator), array('task' => 'list-item'));
                     $list_debt = $list_debt->toArray();
                     $ucdebt = $list_debt[0];
                     $old_debt = $ucdebt['new_debt'];
@@ -296,7 +300,11 @@ class CustomerDebtController extends ActionController
                 # tạo phiếu chi cho khách hàng
                 $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
                 if ($count_debt > 0) {
-                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item', 'paginator' => false));
+                    $paginator = array(
+                        'currentPageNumber' => 1,
+                        'itemCountPerPage' => 1
+                    );
+                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id), 'paginator' => $paginator), array('task' => 'list-item'));
                     $list_debt = $list_debt->toArray();
                     $ucdebt = $list_debt[0];
                     $old_debt = $ucdebt['new_debt'];
