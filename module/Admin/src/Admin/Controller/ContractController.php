@@ -1639,28 +1639,34 @@ class ContractController extends ActionController
                     if (empty($contract)) {
                         echo 'Đơn hàng không tồn tại';
                     } else {
-                        $check_date = $date->check_date_format_to_data($this->_params['data']['date']);
-                        if ($check_date == true) {
-                            $date = $date->formatToData($this->_params['data']['date'], 'Y-m-d');
-                            $fee = $number->formatToData($this->_params['data']['fee']);
-                            $check_exist = $this->getServiceLocator()->get('Admin\Model\ContractFeeTable')->countItem(['ssFilter' => ['filter_date' => $date, 'filter_contract_id' => $contract['id']]], array('task' => 'list-item'));
-                            if ($check_exist == 0) {
-                                $params_data = array(
-                                    'contract_id' => $contract['id'],
-                                    'date' => $date,
-                                    'fee' => $fee,
-                                );
-                                $id = $this->getServiceLocator()->get('Admin\Model\ContractFeeTable')->saveItem(array('data' => $params_data), array('task' => 'add-item'));
-                                if ($id) {
-                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('item' => $contract, 'data' => array('id' => $contract['id'], 'fee' => $fee, 'ghtk_code' => $this->_params['data']['ghtk_code'])), array('task' => 'update-ship-ext'));
-                                    echo 'Hoàn thành';
+                        if ($contract['fee_shipp'] > 0) {
+                            echo 'Đơn đã được cập nhật tự động';
+                        }
+                        else{
+                            $check_date = $date->check_date_format_to_data($this->_params['data']['date']);
+                            if ($check_date == true) {
+                                $date = $date->formatToData($this->_params['data']['date'], 'Y-m-d');
+                                $fee = $number->formatToData($this->_params['data']['fee']);
+                                $check_exist = $this->getServiceLocator()->get('Admin\Model\ContractFeeTable')->countItem(['ssFilter' => ['filter_date' => $date, 'filter_contract_id' => $contract['id']]], array('task' => 'list-item'));
+                                if ($check_exist == 0) {
+                                    $params_data = array(
+                                        'contract_id' => $contract['id'],
+                                        'date' => $date,
+                                        'fee' => $fee,
+                                    );
+                                    $id = $this->getServiceLocator()->get('Admin\Model\ContractFeeTable')->saveItem(array('data' => $params_data), array('task' => 'add-item'));
+                                    if ($id) {
+                                        $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('item' => $contract, 'data' => array('id' => $contract['id'], 'fee' => $fee, 'ghtk_code' => $this->_params['data']['ghtk_code'])), array('task' => 'update-ship-ext'));
+                                        echo 'Hoàn thành';
+                                    }
+                                } else {
+                                    echo 'Tồn tại';
                                 }
                             } else {
-                                echo 'Tồn tại';
+                                echo 'Sai định dạng ngày';
                             }
-                        } else {
-                            echo 'Sai định dạng ngày';
                         }
+
                     }
                 } else {
                     echo 'Nhập mã vận đơn';

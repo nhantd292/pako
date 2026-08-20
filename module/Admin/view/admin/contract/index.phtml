@@ -406,11 +406,11 @@ $xhtmlHead .= '<th width="80" class="text-right">Thu khác'.$text_total_vat.'</t
                 array( 'name' => 'print', 'caption' => 'In đóng hàng', 'link' => 'javascript:;',  'icon' => 'fa-print', 'attributes' => array( 'onclick' => 'javascript:contractPrint(\'_blank\');') ),
                 array( 'name' => 'print', 'caption' => 'In giao hàng', 'link' => 'javascript:;',  'icon' => 'fa-print', 'attributes' => array( 'onclick' => 'javascript:contractPrint(\'_blank\', \'print\');') ),
                 array( 'name' => 'import', 'caption' => 'Đối soát COD', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import')), 'icon' => 'fa fa-check-square-o' ),
+                array( 'name' => 'import-fee', 'caption' => 'Đối soát cước phí Viettel Post', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import-fee')), 'icon' => 'fa fa-upload' ),
                 array( 'name' => 'exportVAT', 'caption' => 'Xuất mẫu hóa đơn VAT', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport(\'exportVAT\');')) ,
                 array( 'name' => 'exportVAT', 'caption' => 'Xuất mẫu hóa đơn máy tính tiền', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport(\'exportPOS\');')) ,
                 array( 'name' => 'exportToVTP', 'caption' => 'Xuất dữ liệu đẩy sang Viettel port', 'link' => 'javascript:;', 'icon' => 'fa-file-excel-o', 'attributes' => array('onclick'=>'javascript:contractExport(\'exportToVTP\');')) ,
 //                array( 'name' => 'import-fee', 'caption' => 'Nhập phụ phí giao vận', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import-fee')), 'icon' => 'fa fa-upload' ),
-                array( 'name' => 'import-fee', 'caption' => 'Đối soát Viettel Post', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import-fee')), 'icon' => 'fa fa-upload' ),
 
 //                array( 'name' => 'transfer', 'caption' => 'Thêm quyền giục đơn', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:changeUser(\'changeDelivery\');') ),
 //                array( 'name' => 'transfer', 'caption' => 'Thêm quyền chăm sóc', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:changeUser(\'shareOrder\');') ),
