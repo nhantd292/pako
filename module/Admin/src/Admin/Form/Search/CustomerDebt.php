@@ -49,7 +49,7 @@ class CustomerDebt extends Form
                 'class' => 'form-control select2 select2_basic',
             ),
             'options' => array(
-                'value_options' => array('created_real' => 'Ngày tạo phiếu', 'created' => 'Ngày sắp xếp'),
+                'value_options' => array('created_real' => 'Ngày tạo phiếu', 'created' => 'Ngày sắp xếp', 'date' => 'Ngày thu chi'),
             )
         ));
 
@@ -150,6 +150,19 @@ class CustomerDebt extends Form
             'options'		=> array(
                 'empty_option'	=> '- Nhập sổ quỹ -',
                 'value_options'	=> array( 1	=> 'Đã vào sổ quỹ', 0 => 'Chờ vào sổ quỹ', 2 => 'không vào sổ quỹ'),
+            )
+        ));
+
+        // accept
+        $this->add(array(
+            'name'			=> 'filter_cod_status',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Phiếu COD -',
+                'value_options'	=> array( 1	=> 'Tạo từ COD', 0 => 'Tạo thường'),
             )
         ));
 

@@ -32,6 +32,7 @@ class CustomerDebtController extends ActionController
         $this->_params['ssFilter']['filter_date_end'] = $ssFilter->filter_date_end;
         $this->_params['ssFilter']['filter_state'] = $ssFilter->filter_state;
         $this->_params['ssFilter']['filter_accept'] = $ssFilter->filter_accept;
+        $this->_params['ssFilter']['filter_cod_status'] = $ssFilter->filter_cod_status;
         $this->_params['ssFilter']['filter_type'] = $ssFilter->filter_type;
         $this->_params['ssFilter']['filter_category'] = $ssFilter->filter_category;
         $this->_params['ssFilter']['filter_inventory_id'] = $ssFilter->filter_inventory_id;
@@ -68,6 +69,7 @@ class CustomerDebtController extends ActionController
             $ssFilter->filter_date_end = $data['filter_date_end'];
             $ssFilter->filter_state = $data['filter_state'];
             $ssFilter->filter_accept = $data['filter_accept'];
+            $ssFilter->filter_cod_status = $data['filter_cod_status'];
             $ssFilter->filter_type = $data['filter_type'];
             $ssFilter->filter_category = $data['filter_category'];
             $ssFilter->filter_inventory_id = $data['filter_inventory_id'];

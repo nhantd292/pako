@@ -56,6 +56,10 @@ class CustomerDebtTable extends DefaultTable {
                         -> UNNEST;
                 }
 
+                if(isset($ssFilter['filter_cod_status']) && $ssFilter['filter_cod_status'] != '') {
+                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.cod_status', $ssFilter['filter_cod_status']);
+                }
+
                 if(isset($ssFilter['filter_option_mtt']) && $ssFilter['filter_option_mtt'] != '') {
                     $select->where->equalTo(TABLE_CONTRACT.'.option_mtt', $ssFilter['filter_option_mtt']);
                 }
@@ -160,6 +164,10 @@ class CustomerDebtTable extends DefaultTable {
                             -> UNNEST
                         -> UNNEST;
                 }
+
+    			if(isset($ssFilter['filter_cod_status']) && $ssFilter['filter_cod_status'] != '') {
+    			    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.cod_status', $ssFilter['filter_cod_status']);
+    			}
 
     			if(isset($ssFilter['filter_option_mtt']) && $ssFilter['filter_option_mtt'] != '') {
     			    $select->where->equalTo(TABLE_CONTRACT.'.option_mtt', $ssFilter['filter_option_mtt']);
@@ -453,7 +461,8 @@ class CustomerDebtTable extends DefaultTable {
                 'type_transaction'      => $arrData['type_transaction'],
                 'category'              => $arrData['category'],
                 'state'                 => $arrData['state'],
-                'note'                 => $arrData['note'],
+                'note'                  => $arrData['note'],
+                'cod_status'            => !empty($arrData['cod_status']) ? $arrData['cod_status'] : 0,
 
 	            'created'               => date('Y-m-d H:i:s'),
 	            'created_real'          => date('Y-m-d H:i:s'),

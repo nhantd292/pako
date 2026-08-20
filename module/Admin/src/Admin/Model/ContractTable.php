@@ -46,6 +46,8 @@ class ContractTable extends DefaultTable {
                         -> like(TABLE_CONTRACT. '.phone', '%'. $filter_keyword .'%')
                         ->Or
                         -> equalTo(TABLE_CONTRACT. '.code', $filter_keyword) // mã đơn
+                        ->Or
+                        -> equalTo(TABLE_CONTRACT. '.ghtk_code', $filter_keyword) // mã vận đơn
                         -> UNNEST;
 
                 }
@@ -708,6 +710,8 @@ class ContractTable extends DefaultTable {
                         -> like(TABLE_CONTRACT. '.phone', '%'. $filter_keyword .'%')
                         ->Or
                         -> equalTo(TABLE_CONTRACT. '.code', $filter_keyword) // mã đơn
+                        ->Or
+                        -> equalTo(TABLE_CONTRACT. '.ghtk_code', $filter_keyword) // mã vận đơn
                         -> UNNEST;
 
                 }

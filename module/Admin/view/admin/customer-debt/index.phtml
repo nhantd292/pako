@@ -12,6 +12,7 @@
 
     $elements = array(
         array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_cod_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_date_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -43,6 +44,7 @@
             $cid            = $this->xFormInput('cid[]', $item['id'], array('type' => 'checkbox', 'class' => 'checkboxes'));
             $created        = $dateFormat->formatToView($item['created'], 'd/m/Y H:i:s');
             $created_real   = $dateFormat->formatToView($item['created_real'], 'd/m/Y H:i:s');
+            $date           = $dateFormat->formatToView($item['date'], 'd/m/Y');
             $cid            = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
             $ordering       = @$this->xFormInput('ordering['. $id .']', $item->ordering, array('class' => 'form-control input-xs'));
             $created_by     = $this->user[$item->created_by]['name'];
@@ -120,7 +122,7 @@
     							<td>'. $order_status .'</td>
     							<td>'. $item['note'] .'</td>
     							<td>'. $item['warehouse_name'] .'</td>
-    							<td>'. $created_by.'</br>'.$created.'</br>'.$created_real .'</td>
+    							<td>'. $created_by.'</br>'.$created.'</br>'.$created_real.'</br>'.$date .'</td>
     						</tr>';
         }
     }

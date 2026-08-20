@@ -1794,6 +1794,7 @@ class ContractController extends ActionController
                                     'category' => 'khach-tra-tien-mua-hang',
                                     'note' => "Thanh toán đơn hàng ".$contract['code'],
                                     'date' => $date,
+                                    'cod_status' => 1,
                                 );
                                 $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
 
