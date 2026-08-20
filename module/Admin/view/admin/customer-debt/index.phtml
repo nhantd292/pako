@@ -1,219 +1,227 @@
 <?php
-    // Filter
-    $myForm				= $this->myForm;
-    $model = $this->model;
-    $myForm->prepare();
-    $dateFormat = new \ZendX\Functions\Date();
-    $numberFormat = new \ZendX\Functions\Number();
+// Filter
+$myForm = $this->myForm;
+$model = $this->model;
+$myForm->prepare();
+$dateFormat = new \ZendX\Functions\Date();
+$numberFormat = new \ZendX\Functions\Number();
 
-    $userInfo = new \ZendX\System\UserInfo();
-    $curent_user = $userInfo->getUserInfo();
-    $permission_ids = explode(',', $curent_user['permission_ids']);
+$userInfo = new \ZendX\System\UserInfo();
+$curent_user = $userInfo->getUserInfo();
+$permission_ids = explode(',', $curent_user['permission_ids']);
 
-    $elements = array(
-        array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_cod_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_date_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_state'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_accept'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_inventory_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_user'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_category'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_customer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_option_mtt'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('order')),
-        array('element' => $myForm->get('order_by')),
-    );
-    $xhtmlFilter = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
+$elements = array(
+    array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_cod_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_date_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_date_begin'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_date_end'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_state'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_accept'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_type'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_inventory_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_user'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_category'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_customer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_option_mtt'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('filter_reset'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+    array('element' => $myForm->get('order')),
+    array('element' => $myForm->get('order_by')),
+);
+$xhtmlFilter = $this->partialLoop($this->params['module'] . '/partial/form-default.phtml', $elements);
 
-    // Danh sách
-    $xhtmlItems = '';
-    
-    if(!empty($this->items)) {
-        $index = 0;
-        $list_item  = $this->items;
-        $total_price = 0;
-        foreach ($list_item AS $item) {
-            $index++;
-            $id             = $item['id'];
-            $cid            = $this->xFormInput('cid[]', $item['id'], array('type' => 'checkbox', 'class' => 'checkboxes'));
-            $created        = $dateFormat->formatToView($item['created'], 'd/m/Y H:i:s');
-            $created_real   = $dateFormat->formatToView($item['created_real'], 'd/m/Y H:i:s');
-            $date           = $dateFormat->formatToView($item['date'], 'd/m/Y');
-            $cid            = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
-            $ordering       = @$this->xFormInput('ordering['. $id .']', $item->ordering, array('class' => 'form-control input-xs'));
-            $created_by     = $this->user[$item->created_by]['name'];
+// Danh sách
+$xhtmlItems = '';
 
-            $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
-            
-            // Link Action
-            $detail_revenue_url   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail-revenue', 'id' => $id));
-            $detail_expense_url   = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail-expense', 'id' => $id));
+if (!empty($this->items)) {
+    $index = 0;
+    $list_item = $this->items;
+    $total_price = 0;
+    foreach ($list_item as $item) {
+        $index++;
+        $id = $item['id'];
+        $cid = $this->xFormInput('cid[]', $item['id'], array('type' => 'checkbox', 'class' => 'checkboxes'));
+        $created = $dateFormat->formatToView($item['created'], 'd/m/Y H:i:s');
+        $created_real = $dateFormat->formatToView($item['created_real'], 'd/m/Y H:i:s');
+        $date = $dateFormat->formatToView($item['date'], 'd/m/Y');
+        $cid = @$this->xFormInput('cid[]', $id, array('type' => 'checkbox', 'class' => 'checkboxes'));
+        $ordering = @$this->xFormInput('ordering[' . $id . ']', $item->ordering, array('class' => 'form-control input-xs'));
+        $created_by = $this->user[$item->created_by]['name'];
 
-            $linkDelete = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'delete', 'id' => $id));
-            $controlDelete = (in_array($item['type'],[THU,CHI]) && $item['accept'] == 0) ? $this->linkAdminHtml($linkDelete, array('type' => 'icon', 'title' => 'Xóa', 'class' => 'btn btn-xs red', 'icon' => 'fa fa-trash')): '';
+        $order_status = '<span class="btn btn-xs ' . $this->order_status[$item->state]->content . '">' . $this->order_status[$item->state]->name . '</span>';
 
-            if ($item['type'] == THU){
-                $Sort = 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'sort')) . '\', {\'id\': \'' . $item['id'] . '\'});';
-                $linkSort = '<a href="'.$Sort.'"> <i class="fa fa-sort sort-btn" aria-hidden="true"></i></a>';
-                $linkDetail = '<a href="'.$detail_revenue_url.'"> '. $item['code'] .'</a>';
-            }
-            elseif ($item['type'] == CHI){
-                $linkDetail = '<a href="'.$detail_expense_url.'"> '. $item['code'] .'</a>';
-                $Sort = 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'sort')) . '\', {\'id\': \'' . $item['id'] . '\'});';
-                $linkSort = '<a href="'.$Sort.'"> <i class="fa fa-sort sort-btn" aria-hidden="true"></i></a>';
-            }
-            else{
-                $linkDetail = $item['code'];
-                $linkSort = "";
-            }
+        // Link Action
+        $detail_revenue_url = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail-revenue', 'id' => $id));
+        $detail_expense_url = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'detail-expense', 'id' => $id));
+
+        $linkDelete = $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'delete', 'id' => $id));
+        $controlDelete = (in_array($item['type'], [THU, CHI]) && $item['accept'] == 0) ? $this->linkAdminHtml($linkDelete, array('type' => 'icon', 'title' => 'Xóa', 'class' => 'btn btn-xs red', 'icon' => 'fa fa-trash')) : '';
+
+        if ($item['type'] == THU) {
+            $Sort = 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'sort')) . '\', {\'id\': \'' . $item['id'] . '\'});';
+            $linkSort = '<a href="' . $Sort . '"> <i class="fa fa-sort sort-btn" aria-hidden="true"></i></a>';
+            $linkDetail = '<a href="' . $detail_revenue_url . '"> ' . $item['code'] . '</a>';
+        } elseif ($item['type'] == CHI) {
+            $linkDetail = '<a href="' . $detail_expense_url . '"> ' . $item['code'] . '</a>';
+            $Sort = 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'sort')) . '\', {\'id\': \'' . $item['id'] . '\'});';
+            $linkSort = '<a href="' . $Sort . '"> <i class="fa fa-sort sort-btn" aria-hidden="true"></i></a>';
+        } else {
+            $linkDetail = $item['code'];
+            $linkSort = "";
+        }
 
 
-            $link_category = '';
-            if (!empty($item['orders_id'])) {
-                $link_category = '<a href="/xadmin/contract/detail/id/'.$item['orders_id'].'/" target="_blank"> '. $item['orders_code'] .'</a>';
-            }
-            if (!empty($item['orders_return_id'])) {
-                $link_category = '<a href="/xadmin/orders-return/detail/id/'.$item['orders_return_id'].'/" target="_blank"> '. $item['orders_return_code'] .'</a>';
-            }
-            if (!empty($item['warehouse_input_id'])) {
-                $link_category = '<a href="/xadmin/warehouse-input/detail/id/'.$item['warehouse_input_id'].'/" target="_blank"> '. $item['warehouse_input_code'] .'</a>';
-            }
-            if (!empty($item['warehouse_output_id'])) {
-                $link_category = '<a href="/xadmin/warehouse-output/detail/id/'.$item['warehouse_output_id'].'/" target="_blank"> '. $item['warehouse_output_code'] .'</a>';
-            }
+        $link_category = '';
+        if (!empty($item['orders_id'])) {
+            $link_category = '<a href="/xadmin/contract/detail/id/' . $item['orders_id'] . '/" target="_blank"> ' . $item['orders_code'] . '</a>';
+        }
+        if (!empty($item['orders_return_id'])) {
+            $link_category = '<a href="/xadmin/orders-return/detail/id/' . $item['orders_return_id'] . '/" target="_blank"> ' . $item['orders_return_code'] . '</a>';
+        }
+        if (!empty($item['warehouse_input_id'])) {
+            $link_category = '<a href="/xadmin/warehouse-input/detail/id/' . $item['warehouse_input_id'] . '/" target="_blank"> ' . $item['warehouse_input_code'] . '</a>';
+        }
+        if (!empty($item['warehouse_output_id'])) {
+            $link_category = '<a href="/xadmin/warehouse-output/detail/id/' . $item['warehouse_output_id'] . '/" target="_blank"> ' . $item['warehouse_output_code'] . '</a>';
+        }
 
 //            if($item['state'] == COMPLETE_STATUS and ($item['paid_cash'] != 0 or $item['paid_transfer'] != 0)) {
-            if(!in_array($item['state'], [CANCEL_STATUS, NEW_STATUS])  and ($item['paid_cash'] != 0 or $item['paid_transfer'] != 0)) {
+        if (!in_array($item['state'], [CANCEL_STATUS, NEW_STATUS]) and ($item['paid_cash'] != 0 or $item['paid_transfer'] != 0)) {
 //                $accept = !empty($item['accept']) ? '<sapn class="btn-accepted">Đã vào sổ quỹ</sapn>' : '<sapn class="btn-pending">Chờ vào sổ quỹ</sapn>';
-                if ($item['accept'] == 0) {
-                    $accept = '<sapn class="btn-pending">Chờ vào sổ quỹ</sapn>';
-                }
-                elseif ($item['accept'] == 1)
-                    $accept = '<sapn class="btn-accepted">Đã vào sổ quỹ</sapn>';
-                else
-                    $accept = '<sapn class="btn-not-accepted">Không vào sổ quỹ</sapn>';
-            }
+            if ($item['accept'] == 0) {
+                $accept = '<sapn class="btn-pending">Chờ vào sổ quỹ</sapn>';
+            } elseif ($item['accept'] == 1)
+                $accept = '<sapn class="btn-accepted">Đã vào sổ quỹ</sapn>';
             else
-                $accept = '';
-            $linkPopupAccept = $item['accept'] == 0 ? 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'accept')) . '\', {\'id\': \'' . $item['id'] . '\'});' : '#';
+                $accept = '<sapn class="btn-not-accepted">Không vào sổ quỹ</sapn>';
+        } else
+            $accept = '';
+        $linkPopupAccept = $item['accept'] == 0 ? 'javascript:popupAction(\'' . $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'accept')) . '\', {\'id\': \'' . $item['id'] . '\'});' : '#';
 
-            $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
-    							<td class="text-center">'. $cid .'</td>
-                                <td class="text-center">'. $index .'</td>
-                                <td class="text-center">'. $controlDelete .'</td>
-    							<td class="text-center"><a href="javascript:;" onclick="'.$linkPopupAccept.'">'. $accept .'</a></td>
-    							<td class="text-bold">'.$linkDetail.' '.$linkSort.'</td>
-    							<td class="">'.  $item['customer_name'] .'</td>
-    							<td class="text-center">'.  $item['customer_phone'] .'</td>
-    							<td class="text-center">'. $this->debt_type[$item['type']] .'</td>
-    							<td>'.$this->debt_category[$item['category']].'</br><span class="">'.$link_category.'</span></td>
-    							<td class="text-right mask_currency text-green">'. abs($item['price_total']) .'</td>
-    							<td class="text-right mask_currency text-purple">'. abs($item['discount']) .'</td>
-    							<td class="text-right mask_currency text-purple">'. abs($item['paid_cash']) .'</td>
-    							<td class="text-right mask_currency text-purple">'. abs($item['paid_transfer']) .'</td>
-    							<td class="text-right mask_currency text-orange">'. $item['old_debt'] .'</td>
-    							<td class="text-right mask_currency text-red">'. $item['new_debt'] .'</td>
-    							<td>'. $order_status .'</td>
-    							<td>'. $item['note'] .'</td>
-    							<td>'. $item['warehouse_name'] .'</td>
-    							<td>'. $created_by.'</br>'.$created.'</br>'.$created_real.'</br>'.$date .'</td>
+        $xhtmlItems .= '<tr id="tr_' . $id . '" data-contact="' . $item['contact_id'] . '">
+    							<td class="text-center">' . $cid . '</td>
+                                <td class="text-center">' . $index . '</td>
+                                <td class="text-center">' . $controlDelete . '</td>
+    							<td class="text-center"><a href="javascript:;" onclick="' . $linkPopupAccept . '">' . $accept . '</a></td>
+    							<td class="text-bold">' . $linkDetail . ' ' . $linkSort . '</td>
+    							<td class="">' . $item['customer_name'] . '</td>
+    							<td class="text-center">' . $item['customer_phone'] . '</td>
+    							<td class="text-center">' . $this->debt_type[$item['type']] . '</td>
+    							<td>' . $this->debt_category[$item['category']] . '</br><span class="">' . $link_category . '</span></td>
+    							<td class="text-right mask_currency text-green">' . abs($item['price_total']) . '</td>
+    							<td class="text-right mask_currency text-purple">' . abs($item['discount']) . '</td>
+    							<td class="text-right mask_currency text-purple">' . abs($item['paid_cash']) . '</td>
+    							<td class="text-right mask_currency text-purple">' . abs($item['paid_transfer']) . '</td>
+    							<td class="text-right mask_currency text-orange">' . $item['old_debt'] . '</td>
+    							<td class="text-right mask_currency text-red">' . $item['new_debt'] . '</td>
+    							<td>' . $order_status . '</td>
+    							<td>' . $item['note'] . '</td>
+    							<td>' . $item['warehouse_name'] . '</td>
+    							<td>' . $created_by . '</br>' . $created . '</br>' . $created_real . '</br>' . $date . '</td>
     						</tr>';
-        }
     }
+}
 
-    // Head
-    $xhtmlHead  = '<tr>';
-    $xhtmlHead .= '<th width="20" class="table-checkbox text-center"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';;
-    $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
-    $xhtmlHead .= '<th class="col-50">Công cụ</th>';
-    $xhtmlHead .= '<th class="text-center">Nhập sổ quỹ</th>';
-    $xhtmlHead .= '<th class="text-center" width="50">Mã phiếu</th>';
-    $xhtmlHead .= '<th class="text-center" width="150">Khách hàng</th>';
-    $xhtmlHead .= '<th class="text-center" width="80">Điện thoại</th>';
-    $xhtmlHead .= '<th class="text-center" width="130" >Loại phiếu</th>';
-    $xhtmlHead .= '<th class="text-center" width="130" >Danh mục</th>';
-    $xhtmlHead .= '<th class="text-center" width="50">Tổng tiền hàng</th>';
-    $xhtmlHead .= '<th class="text-center" width="50">Giảm giá</th>';
-    $xhtmlHead .= '<th class="text-center" width="50">Tiền mặt</th>';
-    $xhtmlHead .= '<th class="text-center" width="50">Chuyển khoản</th>';
-    $xhtmlHead .= '<th class="text-center" width="50">Nợ cũ</th>';
-    $xhtmlHead .= '<th class="text-center" width="50">Nợ lại</th>';
-    $xhtmlHead .= '<th class="text-center" width="100">Trạng thái</th>';
-    $xhtmlHead .= '<th class="text-center" width="100">Nội dung</th>';
-    $xhtmlHead .= '<th class="text-center" width="100">kho hàng</th>';
-    $xhtmlHead .= '<th class="text-center" width="15">Người tạo</th>';
-    $xhtmlHead .= '</tr>';
-    
-    // Control
-    $arrControl = array(
-        array( 'name' => 'add-expense', 'caption' => 'Thêm phiếu chi', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add-expense')), 'icon' => 'fa-minus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn red', ) ),
-        array( 'name' => 'add-revenue', 'caption' => 'Thêm phiếu thu', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add-revenue')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn green', ) ),
-        array(
-            'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
-            'children' => array(
-                array( 'name' => 'export', 'caption' => 'Xuất bản excel', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'export-v2')), 'icon' => 'fa-file-excel-o', ),
-                array(
-                    'name' => 'acceptNotFund',
-                    'caption' => 'Xác nhận - không nhập sổ quỹ',
-                    'link' => 'javascript:;',
-                    'icon' => 'fa fa-check',
-                    'attributes' => array(
-                        'onclick' => 'javascript:updateItem(\'acceptNotFund\', \'Các phiếu thu chi chỉ được xác nhận không vào sổ quỹ một lần! <br> Bạn có chắc chắn muốn xác nhận với các phiếu này ?\');',
-                        'title' => 'Xác nhận không nhập sổ quỹ',
-                    ),
+// Head
+$xhtmlHead = '<tr>';
+$xhtmlHead .= '<th width="20" class="table-checkbox text-center"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';;
+$xhtmlHead .= '<th class="text-center" width="20">STT</th>';
+$xhtmlHead .= '<th class="col-50">Công cụ</th>';
+$xhtmlHead .= '<th class="text-center">Nhập sổ quỹ</th>';
+$xhtmlHead .= '<th class="text-center" width="50">Mã phiếu</th>';
+$xhtmlHead .= '<th class="text-center" width="150">Khách hàng</th>';
+$xhtmlHead .= '<th class="text-center" width="80">Điện thoại</th>';
+$xhtmlHead .= '<th class="text-center" width="130" >Loại phiếu</th>';
+$xhtmlHead .= '<th class="text-center" width="130" >Danh mục</th>';
+$xhtmlHead .= '<th class="text-center" width="50">Tổng tiền hàng</th>';
+$xhtmlHead .= '<th class="text-center" width="50">Giảm giá</th>';
+$xhtmlHead .= '<th class="text-center" width="50">Tiền mặt</th>';
+$xhtmlHead .= '<th class="text-center" width="50">Chuyển khoản</th>';
+$xhtmlHead .= '<th class="text-center" width="50">Nợ cũ</th>';
+$xhtmlHead .= '<th class="text-center" width="50">Nợ lại</th>';
+$xhtmlHead .= '<th class="text-center" width="100">Trạng thái</th>';
+$xhtmlHead .= '<th class="text-center" width="100">Nội dung</th>';
+$xhtmlHead .= '<th class="text-center" width="100">kho hàng</th>';
+$xhtmlHead .= '<th class="text-center" width="15">Người tạo</th>';
+$xhtmlHead .= '</tr>';
+
+// Control
+$arrControl = array(
+    array('name' => 'add-expense', 'caption' => 'Thêm phiếu chi', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add-expense')), 'icon' => 'fa-minus', 'attributes' => array('onclick' => 'javascript:void(0)', 'class' => 'btn red',)),
+    array('name' => 'add-revenue', 'caption' => 'Thêm phiếu thu', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add-revenue')), 'icon' => 'fa-plus', 'attributes' => array('onclick' => 'javascript:void(0)', 'class' => 'btn green',)),
+    array(
+        'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array('class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown',),
+        'children' => array(
+            array('name' => 'export', 'caption' => 'Xuất bản excel', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'export-v2')), 'icon' => 'fa-file-excel-o',),
+            array(
+                'name' => 'acceptNotFund',
+                'caption' => 'Xác nhận - không nhập sổ quỹ',
+                'link' => 'javascript:;',
+                'icon' => 'fa fa-check',
+                'attributes' => array(
+                    'onclick' => 'javascript:updateItem(\'acceptNotFund\', \'Các phiếu thu chi chỉ được xác nhận không vào sổ quỹ một lần! <br> Bạn có chắc chắn muốn xác nhận với các phiếu này ?\');',
+                    'title' => 'Xác nhận không nhập sổ quỹ',
                 ),
+            ),
+            array(
+                'name' => 'acceptNotFund',
+                'caption' => 'Hoàn thành phiếu thu COD',
+                'link' => 'javascript:;',
+                'icon' => 'fa fa-check',
+                'attributes' => array(
+                    'onclick' => 'javascript:updateItem(\'completeCod\', \'Các phiếu thu chi chỉ được hoàn thành một lần! <br> Bạn có chắc chắn muốn hoàn thành với các phiếu này ?\');',
+                    'title' => 'Hoàn thành phiếu thu COD',
                 ),
-            'children-class' => 'dropdown-menu pull-right'
+            ),
         ),
-    );
+        'children-class' => 'dropdown-menu pull-right'
+    ),
+);
 ?>
-<form action="<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'filter')); ?>" name="adminFormFilter" id="adminFormFilter" method="post">
+<form action="<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'filter')); ?>"
+      name="adminFormFilter" id="adminFormFilter" method="post">
     <div class="page-control">
-    	<div class="title pull-left">
-    		<?php echo $this->caption;?>
-    	</div>
-    	<div class="control pull-right">
-			<?php echo $this->partial($this->params['module'] . '/partial/control-index.phtml', array( 'control' => $arrControl, 'params' => $this->params));?>
-		</div>
-		<div class="clearfix"></div>
-	</div>
-    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
+        <div class="title pull-left">
+            <?php echo $this->caption; ?>
+        </div>
+        <div class="control pull-right">
+            <?php echo $this->partial($this->params['module'] . '/partial/control-index.phtml', array('control' => $arrControl, 'params' => $this->params)); ?>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success')); ?>
     <?php echo $this->flashMessenger()->render('error', array('alert', 'alert-danger')); ?>
     <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
     <div class="page-filter">
-    	<div class="row">
-    		<?php echo $xhtmlFilter;?>
-    	</div>
+        <div class="row">
+            <?php echo $xhtmlFilter; ?>
+        </div>
     </div>
     <div class="page-content">
-    	<div class="table-manager" id="table-manager">
-    		<div class="table-scrollable table-fixed">
-    			<table class="table table-striped table-bordered table-hover">
-    				<thead>
-    					<?php echo $xhtmlHead;?>
-    				</thead>
-    				<tbody>
-    					<?php echo $xhtmlItems;?>
-    				</tbody>
-    			</table>
-    		</div>
-    		<?php
-            	echo $this->paginationControl(\ZendX\Paginator\Paginator::createPaginator($this->count, $this->params['paginator']), 'sliding', $this->params['module'] . '/partial/paginator.phtml', array('currentURL' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'options' => $this->params['paginator']['options'])); 
+        <div class="table-manager" id="table-manager">
+            <div class="table-scrollable table-fixed">
+                <table class="table table-striped table-bordered table-hover">
+                    <thead>
+                    <?php echo $xhtmlHead; ?>
+                    </thead>
+                    <tbody>
+                    <?php echo $xhtmlItems; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php
+            echo $this->paginationControl(\ZendX\Paginator\Paginator::createPaginator($this->count, $this->params['paginator']), 'sliding', $this->params['module'] . '/partial/paginator.phtml', array('currentURL' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'index')), 'options' => $this->params['paginator']['options']));
             ?>
-    	</div>
-	</div>
+        </div>
+    </div>
 </form>
 <style>
-    .table>thead>tr>td, .table>tbody>tr>td, .table>tfoot>tr>td{
+    .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
         vertical-align: middle;
     }
-    .sort-btn{
+
+    .sort-btn {
         margin-left: 5px;
         padding: 0px 5px;
         background: #42a7ff;

@@ -1209,6 +1209,34 @@ class CustomerDebtController extends ActionController
         $this->goRoute(array('action' => 'index'));
     }
 
+    // Hoàn thành các phiếu thu cod
+    public function completeCodAction()
+    {
+        if ($this->getRequest()->isPost()) {
+            if (!empty($this->_params['data']['cid'])) {
+                $cid = $this->_params['data']['cid'];
+                $count_update = 0;
+                $arr_complete = [];
+                foreach ($cid as $id) {
+                    $item = $this->getTable()->getItem(array('id' => $id));
+                    // Chỉ lấy ra những phiếu được tạo từ cod
+                    if ($item['cod_status'] == 1 && $item['state'] != COMPLETE_STATUS) {
+                        $data_debt = array(
+                            'id' => $id,
+                            'state' => COMPLETE_STATUS,
+                        );
+                        $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $item), array('task' => 'edit-item'));
+                        $count_update += 1;
+                        $arr_complete[] = $item['code'];
+                    }
+                }
+                $message = ' Đã hoàn thành ' . $count_update . ' Phiếu thu chi: '.implode(',', $arr_complete).' ';
+                $this->flashMessenger()->addSuccessMessage($message);
+            }
+        }
+        $this->goRoute(array('action' => 'index'));
+    }
+
     public function sortAction()
     {
         $date     = new \ZendX\Functions\Date();
