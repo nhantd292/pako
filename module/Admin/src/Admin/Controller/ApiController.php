@@ -1390,6 +1390,39 @@ class ApiController extends ActionController
                                 }
                             }
                         }
+//                        if (in_array($data['ORDER_STATUS'], array(500))) {
+//                            if (in_array($contract_item['state'], array(PROCESSING_STATUS, NEW_STATUS))) {
+//                                // thay đổi trạng thái
+//                                $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'], 'state' => DELIVERING_STATUS)), array('task' => 'update-state'));
+//                                // ghi nhận ngày giao hàng
+//                                if ($contract_item['shipped'] == 0) {
+//                                    $params['data']['id'] = $contract_item['id'];
+//                                    $params['data']['shipped'] = 1;
+//                                    $this->getTable()->saveItem($params, array('task' => 'update-shipped'));
+//                                }
+//
+//                                # cập nhật tồn kho cho sản phẩm.
+//                                $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contract_item['id']), array('task' => 'list-ajax'));
+//                                foreach ($products_detail as $detail_item) {
+//                                    $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $contract_item['inventory_id']), array('task' => 'filter'));
+//                                    $quantity_new = $inventory->quantity - $detail_item->numbers;
+//                                    if ($quantity_new < 0) {
+//                                        $this->flashMessenger()->addErrorMessage('Đơn hàng: ' . $contract_item['code'] . ' Số lượng sản phẩm "' . $inventory->products_name . '" trong kho "' . $inventory->warehouse_name . '" không đủ!');
+//                                    } else {
+//                                        $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
+//                                    }
+//
+//                                }
+//
+//                                // chuyển trạng thái cho thu chi khách hàng
+//                                $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+//                                $data_debt = array(
+//                                    'id' => $debt_item_old->id,
+//                                    'state' => DELIVERING_STATUS,
+//                                );
+//                                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+//                            }
+//                        }
                         if ($data['ORDER_STATUS'] == 501 && empty($contract_item['date_success'])) {
                             $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'])), array('task' => 'update-contract-succes'));
                         }
