@@ -1371,11 +1371,25 @@ class ApiController extends ActionController
                         $contract_item = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('code' => $code), array('task' => 'by-code'));
                     }
                     if (!empty($contract_item)) {
-                        // Tạo hóa đơn kov trừ số lượng hàng trong kho
-//                        if($data['ORDER_STATUS'] == 105 || $data['ORDER_STATUS'] == 103){ // trạng thái Đã lấy hàng/Đã nhập kho trên viettel post
-//                        if ($data['ORDER_STATUS'] == 105 || $data['ORDER_STATUS'] == 200) { // trạng thái Đã lấy hàng/Đã nhập kho trên viettel post
-//                            $this->updateNumberKiotviet($contract_item);
-//                        }
+                        if ($data['ORDER_STATUS'] == 105 || $data['ORDER_STATUS'] == 200 || $data['ORDER_STATUS'] == 103) { // trạng thái Đã lấy hàng/Đã nhập kho trên viettel post
+                            if ($contract_item['shipped'] == 0) {
+                                # cập nhập thời gian xuất kho
+                                $params['data']['id'] = $contract_item['id'];
+                                $params['data']['shipped'] = 1;
+                                $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($params, array('task' => 'update-shipped'));
+
+                                # cập nhật trạng thái đang xử lý nếu đơn hàng đang ở trạng thái phiếu tạm
+                                if ($contract_item['state'] == NEW_STATUS) {
+                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'], 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
+                                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $contract_item['id']), array('task' => 'type-id'));
+                                    $data_debt = array(
+                                        'id' => $debt_item_old->id,
+                                        'state' => PROCESSING_STATUS,
+                                    );
+                                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+                                }
+                            }
+                        }
                         if ($data['ORDER_STATUS'] == 501 && empty($contract_item['date_success'])) {
                             $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'])), array('task' => 'update-contract-succes'));
                         }
