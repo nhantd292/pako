@@ -196,7 +196,7 @@
             'children' => array(
                 array( 'name' => 'transfer', 'caption' => 'Chuyển quyền quản lý', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:contactChangeUser();') ),
 //                array( 'name' => 'divider' ),
-//                array( 'name' => 'delete', 'caption' => 'Xóa', 'link' => 'javascript:;', 'icon' => 'fa-trash', 'attributes' => array( 'onclick' => 'javascript:deleteItem(\'multi\', \'all\');' ) ),
+                array( 'name' => 'delete', 'caption' => 'Xóa', 'link' => 'javascript:;', 'icon' => 'fa-trash', 'attributes' => array( 'onclick' => 'javascript:deleteItem(\'multi\', \'all\');' ) ),
 //                array( 'name' => 'divider' ),
 //                array( 'name' => 'check', 'caption' => 'Check data', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'check-info')), 'icon' => 'fa-database' ),
 //                array( 'name' => 'divider' ),
@@ -217,7 +217,8 @@
 		</div>
 		<div class="clearfix"></div>
 	</div>
-    <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
+    <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
+    <?php echo $this->flashMessenger()->renderCurrent('success', array('alert', 'alert-success')); ?>
     <div class="page-filter">
     	<div class="row">
     		<?php echo $xhtmlFilter;?>

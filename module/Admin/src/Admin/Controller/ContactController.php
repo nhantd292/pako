@@ -805,6 +805,25 @@ class ContactController extends ActionController
 
         return $viewModel;
     }
+
+    public function deleteAction() {
+        if($this->getRequest()->isPost()) {
+            if(!empty($this->_params['data']['cid'])) {
+                $curent_user = $this->_userInfo->getUserInfo();
+                $permission_ids = explode(',', $curent_user['permission_ids']);
+                if(in_array(SYSTEM, $permission_ids)){
+                    $cdata = $this->getTable()->deleteItem($this->_params, array('task' => 'delete-item'));
+                    $message = 'Xóa '. $cdata .' '.$this->caption.' thành công';
+                    $this->flashMessenger()->addSuccessMessage($message);
+                }
+                else{
+                    $this->flashMessenger()->addErrorMessage("Bạn không có quyền xóa liên hệ");
+                }
+            }
+        }
+
+        $this->goRoute(array('action' => 'index'));
+    }
 }
 
 
