@@ -71,7 +71,9 @@ class OrdersReturnController extends ActionController{
         }
         else{
             if (in_array(ACCOUNTING, $permission_ids)) {
-                $this->_params['ssFilter']['filter_inventory_id'] = $curent_user['inventory_id'];
+                if (!empty($curent_user['inventory_id'])) {
+                    $this->_params['ssFilter']['filter_inventory_id'] = $curent_user['inventory_id'];
+                }
             }
         }
 
