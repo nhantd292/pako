@@ -336,7 +336,15 @@ class Contract extends Form {
             'options'		=> array(
                 'empty_option'	=> '- Chọn -',
                 'disable_inarray_validator' => true,
-                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+//                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(
+                    array(
+                        'ssFilter' => array(
+                            'filter_status' => 1,
+                        ),
+                        ''
+                    ), array('task' => 'list-item', 'paginator' => false)
+                ), array('key' => 'id', 'value' => 'name')),
             ),
         ));
 
