@@ -1371,60 +1371,76 @@ class ApiController extends ActionController
                         $contract_item = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('code' => $code), array('task' => 'by-code'));
                     }
                     if (!empty($contract_item)) {
-                        if ($data['ORDER_STATUS'] == 105 || $data['ORDER_STATUS'] == 200 || $data['ORDER_STATUS'] == 103) { // trạng thái Đã lấy hàng/Đã nhập kho trên viettel post
-                            if ($contract_item['shipped'] == 0) {
-                                # cập nhập thời gian xuất kho
-                                $params['data']['id'] = $contract_item['id'];
-                                $params['data']['shipped'] = 1;
-                                $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($params, array('task' => 'update-shipped'));
-
-                                # cập nhật trạng thái đang xử lý nếu đơn hàng đang ở trạng thái phiếu tạm
-                                if ($contract_item['state'] == NEW_STATUS) {
-                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'], 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
-                                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $contract_item['id']), array('task' => 'type-id'));
-                                    $data_debt = array(
-                                        'id' => $debt_item_old->id,
-                                        'state' => PROCESSING_STATUS,
-                                    );
-                                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
-                                }
+                        if (in_array($data['ORDER_STATUS'], array(100,102,103))) { // cập nhật trạng thái đang xử lý
+                            if ($contract_item['state'] == NEW_STATUS) {
+                                $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'], 'state' => PROCESSING_STATUS)), array('task' => 'update-state'));
+                                $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $contract_item['id']), array('task' => 'type-id'));
+                                $data_debt = array(
+                                    'id' => $debt_item_old->id,
+                                    'state' => PROCESSING_STATUS,
+                                );
+                                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
                             }
                         }
-//                        if (in_array($data['ORDER_STATUS'], array(500))) {
-//                            if (in_array($contract_item['state'], array(PROCESSING_STATUS, NEW_STATUS))) {
-//                                // thay đổi trạng thái
-//                                $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'], 'state' => DELIVERING_STATUS)), array('task' => 'update-state'));
-//                                // ghi nhận ngày giao hàng
-//                                if ($contract_item['shipped'] == 0) {
-//                                    $params['data']['id'] = $contract_item['id'];
-//                                    $params['data']['shipped'] = 1;
-//                                    $this->getTable()->saveItem($params, array('task' => 'update-shipped'));
-//                                }
-//
-//                                # cập nhật tồn kho cho sản phẩm.
-//                                $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contract_item['id']), array('task' => 'list-ajax'));
-//                                foreach ($products_detail as $detail_item) {
-//                                    $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $contract_item['inventory_id']), array('task' => 'filter'));
-//                                    $quantity_new = $inventory->quantity - $detail_item->numbers;
-//                                    if ($quantity_new < 0) {
-//                                        $this->flashMessenger()->addErrorMessage('Đơn hàng: ' . $contract_item['code'] . ' Số lượng sản phẩm "' . $inventory->products_name . '" trong kho "' . $inventory->warehouse_name . '" không đủ!');
-//                                    } else {
-//                                        $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
-//                                    }
-//
-//                                }
-//
-//                                // chuyển trạng thái cho thu chi khách hàng
-//                                $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
-//                                $data_debt = array(
-//                                    'id' => $debt_item_old->id,
-//                                    'state' => DELIVERING_STATUS,
-//                                );
-//                                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
-//                            }
-//                        }
+                        # Cập nhật trạng thái đang giao hàng
+                        if (in_array($data['ORDER_STATUS'], array(505,506,507,202,515,200,502,500,300,400,104,504))) {
+                            if (in_array($contract_item['state'], array(PROCESSING_STATUS, NEW_STATUS))) {
+                                // thay đổi trạng thái
+                                $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'], 'state' => DELIVERING_STATUS)), array('task' => 'update-state'));
+                                // ghi nhận ngày giao hàng
+                                if ($contract_item['shipped'] == 0) {
+                                    $params['data']['id'] = $contract_item['id'];
+                                    $params['data']['shipped'] = 1;
+                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($params, array('task' => 'update-shipped'));
+                                }
+
+                                # cập nhật tồn kho cho sản phẩm.
+                                $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contract_item['id']), array('task' => 'list-ajax'));
+                                foreach ($products_detail as $detail_item) {
+                                    $inventory = $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->getItem(array('products_id' => $detail_item->product_id, 'warehouse_id' => $contract_item['inventory_id']), array('task' => 'filter'));
+                                    $quantity_new = $inventory->quantity - $detail_item->numbers;
+                                    $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
+                                }
+
+                                // chuyển trạng thái cho thu chi khách hàng
+                                $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $contract_item['id']), array('task' => 'type-id'));
+                                $data_debt = array(
+                                    'id' => $debt_item_old->id,
+                                    'state' => DELIVERING_STATUS,
+                                );
+                                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+                            }
+                        }
+                        // Cập nhật trạng thái hoàn thành
                         if ($data['ORDER_STATUS'] == 501 && empty($contract_item['date_success'])) {
+                            $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'], 'state' => COMPLETE_STATUS)), array('task' => 'update-state'));
+                            $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $contract_item['id']), array('task' => 'type-id'));
+                            $data_debt = array(
+                                'id' => $debt_item_old->id,
+                                'state' => COMPLETE_STATUS,
+                            );
+                            $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
                             $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'])), array('task' => 'update-contract-succes'));
+                        }
+                        // Cập nhật trạng thái hủy
+                        if ($data['ORDER_STATUS'] == 107) {
+                            if ($contract_item['state'] == NEW_STATUS) {
+                                $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'], 'state' => CANCEL_STATUS)), array('task' => 'update-state'));
+
+                                # Sửa phiếu thu chi khách hàng
+                                $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $contract_item['id']), array('task' => 'type-id'));
+                                $data_debt = array(
+                                    'id' => $debt_item_old->id,
+                                    'price_total' => 0,
+                                    'discount' => 0,
+                                    'paid_cash' => 0,
+                                    'paid_transfer' => 0,
+                                    'new_debt' => $debt_item_old->old_debt,
+                                    'state' => CANCEL_STATUS,
+                                );
+                                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+                            }
                         }
 
                         $arrParam['id'] = $contract_item['id'];
@@ -1434,21 +1450,16 @@ class ApiController extends ActionController
                         $arrParam['unit_transport'] = 'viettel';
                         $arrParam['status_history'] = $data;
                         $this->updateWebhookStatus($arrParam, $contract_item);
-//                        $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem(array('data' => $arrParam, 'item' => $contract_item),  array('task' => 'update-webhook-status'));
 
                         $response->setStatusCode(Response::STATUS_CODE_200);
                         $response->setContent(json_encode(array('status' => '200', 'success' => true, 'message' => 'update status success')));
                     } else {
-//                        $response->setStatusCode(Response::STATUS_CODE_404);
-//                        $response->setContent(json_encode(array('status' => '404', 'success' => false, 'message' => 'Order reference invalid')));
                         # trả về status 200 ghi log và bypass
                         $this->logRequest(file_get_contents('php://input'));
                         $response->setStatusCode(Response::STATUS_CODE_200);
                         $response->setContent(json_encode(array('status' => '200', 'success' => true, 'message' => 'Order reference invalid - bypass')));
                     }
                 } else {
-//                    $response->setStatusCode(Response::STATUS_CODE_404);
-//                    $response->setContent(json_encode(array('status' => '404', 'success' => false, 'message' => 'Token invalid')));
                     $this->logRequest(file_get_contents('php://input'));
                     $response->setStatusCode(Response::STATUS_CODE_200);
                     $response->setContent(json_encode(array('status' => '200', 'success' => true, 'message' => 'Token invalid - bypass')));
