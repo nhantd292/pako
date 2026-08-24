@@ -334,5 +334,11 @@ class User extends InputFilter {
 		    'name'		=> 'company_position_care_id',
 		    'required'	=> false,
 		));
+
+		// kho hàng
+		$this->add(array(
+		    'name'		=> 'inventory_id',
+		    'required'	=> false,
+		));
 	}
 }
