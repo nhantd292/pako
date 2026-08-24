@@ -114,6 +114,11 @@ class OrdersReturnDetailController extends ActionController {
                 $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
             }
         }
+        else{
+            if (in_array(ACCOUNTING, $permission_ids)) {
+                $this->_params['ssFilter']['filter_inventory_id'] = $curent_user['inventory_id'];
+            }
+        }
 
         $myForm	= new \Admin\Form\Search\BaseSearch($this->getServiceLocator(), $this->_params);
         $myForm->setData($this->_params['ssFilter']);

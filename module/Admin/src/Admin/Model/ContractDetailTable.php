@@ -31,6 +31,10 @@ class ContractDetailTable extends DefaultTable {
                     $select->where->equalTo(TABLE_CONTRACT.'.state', $ssFilter['filter_state']);
                 }
 
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.inventory_id', $ssFilter['filter_inventory_id']);
+                }
+
                 if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] == 1) {
                     $select->where->expression(TABLE_CONTRACT_DETAIL . '.numbers > ' . TABLE_CONTRACT_DETAIL . '.numbers_return',array());
                 }
@@ -104,6 +108,10 @@ class ContractDetailTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
                     $select->where->equalTo(TABLE_CONTRACT.'.state', $ssFilter['filter_state']);
+                }
+
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
 
                 if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] == 1) {

@@ -69,6 +69,11 @@ class OrdersReturnController extends ActionController{
         if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)){
             $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
         }
+        else{
+            if (in_array(ACCOUNTING, $permission_ids)) {
+                $this->_params['ssFilter']['filter_inventory_id'] = $curent_user['inventory_id'];
+            }
+        }
 
         $myForm    = new \Admin\Form\Search\OrdersRetrun($this, $this->_params['ssFilter']);
         $myForm->setData($this->_params['ssFilter']);

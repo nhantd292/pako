@@ -28,6 +28,10 @@ class OrdersReturnDetailTable extends DefaultTable {
                     $select->where->equalTo(TABLE_ORDERS_RETURN.'.state', $ssFilter['filter_state']);
                 }
 
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_ORDERS_RETURN.'.inventory_id', $ssFilter['filter_inventory_id']);
+                }
+
                 if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] != true) {
                     $select->where->greaterThan(TABLE_ORDERS_RETURN_DETAIL.'.numbers', TABLE_ORDERS_RETURN_DETAIL.'.numbers_return');
                 }
@@ -85,6 +89,10 @@ class OrdersReturnDetailTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
                     $select->where->equalTo(TABLE_ORDERS_RETURN.'.state', $ssFilter['filter_state']);
+                }
+
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_ORDERS_RETURN.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
 
                 if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] != true) {

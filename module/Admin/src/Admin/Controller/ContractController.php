@@ -167,6 +167,11 @@ class ContractController extends ActionController
                 $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
             }
         }
+        else{
+            if (in_array(ACCOUNTING, $permission_ids)) {
+                $this->_params['ssFilter']['filter_inventory_id'] = $curent_user['inventory_id'];
+            }
+        }
 
         $myForm = new \Admin\Form\Search\Contract($this, $this->_params);
         $this->_params['ssFilter']['filter_status_type'] = 'ghtk_status';
