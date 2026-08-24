@@ -5,11 +5,12 @@
     
     $elements = array(
         array('element' => $myForm->get('filter_keyword'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_status'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_status'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_permission'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_company_department'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_company_position'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_sale_branch'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+        array('element' => $myForm->get('filter_inventory_id'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //        array('element' => $myForm->get('filter_sale_group'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
 //        array('element' => $myForm->get('filter_kov_branch_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_submit'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
@@ -28,6 +29,7 @@
     $xhtmlHead .= '<th>Mã nhân viên</th>';
     $xhtmlHead .= '<th>Email</th>';
     $xhtmlHead .= '<th>Điện thoại</th>';
+    $xhtmlHead .= '<th>Kho hàng</th>';
     $xhtmlHead .= '<th>Phòng ban</th>';
     $xhtmlHead .= '<th>Chức vụ</th>';
 //    $xhtmlHead .= '<th>Chức vụ kiêm nhiệm</th>';
@@ -50,6 +52,7 @@
             $email                  = $item->email;
             $name                   = $item->name;
             $phone                  = $item->phone;
+            $inventory              = $this->warehouse[$item->inventory_id]['name'];
             $login_time             = $item->login_time ? date_format(date_create($item->login_time), 'd/m/Y H:i:s') : '';
             $company_branch_id      = $item->company_branch_id ? $this->company_branch[$item->company_branch_id]['name'] : '';
             $company_department_id  = $item->company_department_id ? $this->company_department[$item->company_department_id]['name'] : '';
@@ -92,6 +95,7 @@
     							<td>'. $code .'</td>
     							<td>'. $email .'</td>
     							<td>'. $phone .'</td>
+    							<td>'. $inventory .'</td>
     							<td>'. $company_department_id .'</td>
     							<td>'. $company_position_id .'</td>
     							<td>'. $sale_branch_id .'</td>

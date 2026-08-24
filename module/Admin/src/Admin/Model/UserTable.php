@@ -46,6 +46,10 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
 	                $select -> where -> literal('FIND_IN_SET(\''. $ssFilter['filter_permission'] .'\', permission_ids)');
 	            }
 	            
+	            if(!empty($ssFilter['filter_inventory_id'])) {
+	                $select -> where -> equalTo('inventory_id', $ssFilter['filter_inventory_id']);
+	            }
+
 	            if(!empty($ssFilter['filter_company_branch'])) {
 	                $select -> where -> equalTo('company_branch_id', $ssFilter['filter_company_branch']);
 	            }
@@ -116,6 +120,10 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
 	            if(isset($ssFilter['filter_permission']) && $ssFilter['filter_permission'] != '') {
 	                $select -> where -> literal('FIND_IN_SET(\''. $ssFilter['filter_permission'] .'\', permission_ids)');
 	            }
+
+                if(!empty($ssFilter['filter_inventory_id'])) {
+                    $select -> where -> equalTo('inventory_id', $ssFilter['filter_inventory_id']);
+                }
 	            
 	            if(!empty($ssFilter['filter_company_branch'])) {
 	                $select -> where -> equalTo('company_branch_id', $ssFilter['filter_company_branch']);
@@ -600,6 +608,7 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
 				'sale_group_ids'        => $sale_group_ids,
 				'encode_phone'          => $encode_phone,
 				'branch_sale_group_id'  => $arrData['branch_sale_group_id'],
+                'inventory_id'          => $arrData['inventory_id'],
 			);
 			
 			$arrOptions = array('password_status' => $arrData['password_status']);
@@ -631,6 +640,7 @@ class UserTable extends AbstractTableGateway implements ServiceLocatorAwareInter
 				'kov_branch_id'         => $arrData['kov_branch_id'],
 			    'sale_group_ids'        => $sale_group_ids,
                 'branch_sale_group_id'  => $arrData['branch_sale_group_id'],
+                'inventory_id'          => $arrData['inventory_id'],
 			);
 
 			// Chỉ có admin mới được cập nhật

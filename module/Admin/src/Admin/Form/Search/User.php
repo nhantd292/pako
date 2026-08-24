@@ -40,6 +40,19 @@ class User extends Form{
 		        'value_options'	=> array( 1	=> 'Hiển thị', 0 => 'Không hiển thị'),
 		    )
 		));
+
+        $this->add(array(
+            'name'			=> 'filter_inventory_id',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Kho hàng -',
+                'disable_inarray_validator' => true,
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            ),
+        ));
 		
 		// Nhóm quyền truy cập
 		$this->add(array(

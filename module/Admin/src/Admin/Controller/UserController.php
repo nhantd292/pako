@@ -28,6 +28,7 @@ class UserController extends ActionController {
         $this->_params['ssFilter']['filter_sale_branch']        = $ssFilter->filter_sale_branch;
         $this->_params['ssFilter']['filter_sale_group']         = $ssFilter->filter_sale_group;
         $this->_params['ssFilter']['filter_kov_branch_id']      = $ssFilter->filter_kov_branch_id;
+        $this->_params['ssFilter']['filter_inventory_id']       = $ssFilter->filter_inventory_id;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : 50;
@@ -58,6 +59,7 @@ class UserController extends ActionController {
             $ssFilter->filter_sale_branch           = $data['filter_sale_branch'];
             $ssFilter->filter_sale_group            = $data['filter_sale_group'];
             $ssFilter->filter_kov_branch_id         = $data['filter_kov_branch_id'];
+            $ssFilter->filter_inventory_id          = $data['filter_inventory_id'];
         }
     
         $this->goRoute();
@@ -93,6 +95,7 @@ class UserController extends ActionController {
         $this->_viewModel['sale_branch']        = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache'));
         $this->_viewModel['sale_group']         = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
         $this->_viewModel['kov_branch']         = $this->getServiceLocator()->get('Admin\Model\kovBranchesTable')->listItem(null, array('task' => 'cache'));
+        $this->_viewModel['warehouse']          = $this->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['caption']            = 'Người dùng - Danh sách';
         
         return new ViewModel($this->_viewModel);
