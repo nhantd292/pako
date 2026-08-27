@@ -291,7 +291,7 @@ class ContactController extends ActionController
                     unset($item['history_return']);
                     unset($item['history_content']);
 
-                    $item['phone'] = $phone_code ? substr_replace($item['phone'], "***", 4, 3): $item['phone'];
+//                    $item['phone'] = $phone_code ? substr_replace($item['phone'], "***", 4, 3): $item['phone'];
                     $myForm->setData($item);
                 }
                 $task    = 'edit-item';
