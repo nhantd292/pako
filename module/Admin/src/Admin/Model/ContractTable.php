@@ -1873,9 +1873,12 @@ class ContractTable extends DefaultTable {
             $data = array();
 			$data['price_reduce_sale'] = $number->formatToData($arrData['price_reduce_sale']);
             $data['note_accounting'] = $arrData['note_accounting'];
-
-			$this->tableGateway->update($data, array('id' => $id));
-			return $id;
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Update Contract Table failed: ' . $e->getMessage());
+            }
 		}
 
 		// cập nhật giảm trừ doanh thu

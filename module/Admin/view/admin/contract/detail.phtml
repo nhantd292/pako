@@ -16,6 +16,7 @@ $elementsContact = array(
     array('element' => $this->warehouse[$this->item['inventory_id']]['name'], 'label' => 'Kho hàng', 'boxClass' => 'col-md-2'),
     array('element' => $this->sale_branch[$this->item['sale_branch_id']]['name'], 'label' => 'Chi nhánh', 'boxClass' => 'col-md-2'),
     array('element' => $this->item['sale_note'] ? $this->item['sale_note'] : '.', 'label' => 'Ghi chú', 'boxClass' => 'col-md-3'),
+    array('element' => $this->item['note_accounting'] ? $this->item['note_accounting'] : '.', 'label' => 'Ghi chú Giảm trừ DT', 'boxClass' => 'col-md-3'),
     array('element' => $this->location_city[$this->item['location_city_id']]['name'], 'label' => 'Tỉnh thành', 'boxClass' => 'col-md-3'),
     array('element' => $this->location_district[$this->item['location_district_id']]['name'], 'label' => 'Phường xã', 'boxClass' => 'col-md-3'),
     array('element' => $this->item['address'], 'label' => 'Địa chỉ nơi ở', 'boxClass' => 'col-md-3'),
@@ -51,6 +52,7 @@ $elementsPrice = array(
     array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_cash'] .'</span>', 'label' => 'Trả tiền mặt (2)', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-purple">'. $this->item['paid_transfer'] .'</span>', 'label' => 'Chuyển khoản (3)', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-purple">'. $this->item['discount'] .'</span>', 'label' => 'Giảm giá (4)', 'boxClass' => 'col-md-4'),
+    array('element' => '<span class="mask_currency text-purple">'. $this->item['price_reduce_sale'] .'</span>', 'label' => 'Giảm trừ doanh thu', 'boxClass' => 'col-md-4'),
     array('element' => '<span class="mask_currency text-red">'. $debt_item->old_debt .'</span> ', 'label' => 'Nợ cũ (5)', 'boxClass' => 'col-md-6'),
     array('element' => '<span class="mask_currency text-orange">'. $debt_item->new_debt .'</span> ', 'label' => 'Nợ lại:', 'boxClass' => 'col-md-6'),
 );

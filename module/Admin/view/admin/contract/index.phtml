@@ -95,7 +95,7 @@
     if($this->items->count() > 0) {
         $stt = 0;
         $sum = 0;
-        $total_number = $total_price = $total_vat = $total_fee_other = $total_cod = $total_discount =  $total_price_owed = $total_paid_cash = $total_paid_transfer = 0;
+        $total_number = $total_price = $total_vat = $total_fee_other = $total_cod = $total_discount =  $total_price_owed = $total_paid_cash = $total_paid_transfer = $total_price_reduce_sale = 0;
         foreach ($this->items AS $key => $item) {
         	$stt++;
         	$cid                    = @$this->xFormInput('cid[]', $item->id, array('type' => 'checkbox', 'class' => 'checkboxes'));
@@ -125,6 +125,7 @@
                     $total_paid_cash       += $item->paid_cash;
                     $total_paid_transfer   += $item->paid_transfer;
                     $total_discount        += $item->discount;
+                    $total_price_reduce_sale        += $item->price_reduce_sale;
                     $total_price_owed      += $item->price_owed;
                 }
             }
@@ -136,6 +137,7 @@
                 $total_paid_cash       += $item->paid_cash;
                 $total_paid_transfer   += $item->paid_transfer;
                 $total_discount        += $item->discount;
+                $total_price_reduce_sale        += $item->price_reduce_sale;
                 $total_price_owed      += $item->price_owed;
             }
 
@@ -237,6 +239,7 @@
                 $contact_name           = $options['contact_info']['name'];
             }
             $controlAddHistoryContract = '<a href="javascript:;" onclick="'. $linkAddHistoryContract .'" title="Thêm lịch sử chăm sóc" class="btn btn-xs green"><i class="fa fa-volume-control-phone"></i></a>';
+            $controlEditReduce = '<a href="javascript:;" onclick="'. $linkEditReduce .'" title="Thêm giảm trừ doanh thu" class="btn btn-xs red"><i class="fa fa fa-money"></i></a>';
 
 
             $rowSpan = '';
@@ -277,7 +280,7 @@
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'"'.$color_text_row.'>
     							<th '.$rowSpan.'>'. $cid .'</th>
-                                <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.'</th>
+                                <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.$controlEditReduce.'</th>
     							<td '.$rowSpan.' class="controls" style="left:83px;">'. $order_status .' '.$invoiced.'</td>
     							<td '.$rowSpan.' class="controls" style="left:193px;"><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a><br>'.$status.'</td>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>
@@ -306,6 +309,7 @@
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_transfer) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->discount) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($item->price_reduce_sale) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->fee_shipp) .'</td>
                             <td '.$rowSpan.'>'. $this->fee_type[$item->fee_type]['name'] .'</td>
                             <td '.$rowSpan.'>'. $contact_name .'</td>
@@ -337,6 +341,7 @@
     $text_total_paid_cash = '<br><span  class="text-red">' . number_format($total_paid_cash) . '</span>';
     $text_total_paid_transfer = '<br><span  class="text-red">' . number_format($total_paid_transfer) . '</span>';
     $text_total_discount = '<br><span  class="text-red">' . number_format($total_discount) . '</span>';
+    $text_total_price_reduce_sale = '<br><span  class="text-red">' . number_format($total_price_reduce_sale) . '</span>';
     $text_total_price_owed = '<br><span  class="text-red">' . number_format($total_price_owed) . '</span>';
     $text_total_number = $total_number > 0 ? '<br><span class="text-red">' . number_format($total_number) . '</span>' : '';
 
@@ -359,6 +364,7 @@ $xhtmlHead .= '<th width="80" class="text-right">Thu khác'.$text_total_vat.'</t
     $xhtmlHead .= '<th width="80" class="text-right">Trả tiền mặt'.$text_total_paid_cash.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Chuyển khoản'.$text_total_paid_transfer.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Giảm giá'.$text_total_discount.'</th>';
+    $xhtmlHead .= '<th width="80" class="text-right">Giảm trừ DT'.$text_total_price_reduce_sale.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Phí giao hàng'.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Người trả phí'.'</th>';
     $xhtmlHead .= '<th width="150">Tên khách hàng</th>';

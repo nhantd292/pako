@@ -701,9 +701,11 @@ class ContractController extends ActionController
                     $paid_cash = $number->formatToData($this->_params['data']['paid_cash']);
                     $paid_transfer = $number->formatToData($this->_params['data']['paid_transfer']);
 
+                    $price_reduce_sale = $number->formatToData($contract['price_reduce_sale']); # giảm trừ doanh thu
+
                     $fee_other = $number->formatToData($this->_params['data']['fee_other']);
 
-                    $price_total = $products_price_total + $fee_other;
+                    $price_total = $products_price_total + $fee_other - $price_reduce_sale;
                     $new_debt = $debt_item_old->old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
                     $data_debt = array(
                         'id' => $debt_item_old->id,
@@ -2029,6 +2031,232 @@ class ContractController extends ActionController
         $this->goRoute(array('action' => 'index'));
     }
 
+    // Thêm giảm trừ doanh thu
+    public function editReduceAction() {
+        $myForm = new \Admin\Form\Contract\EditReduce($this->getServiceLocator(), $this->_params);
+        $number = new \ZendX\Functions\Number();
+        $dateFormat = new \ZendX\Functions\Date();
+        $id = $this->_params['data']['id'];
+
+        if(!empty($id)) {
+            $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id));
+            $myForm->setData($contract);
+            if($contract['lock']){
+                return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'modal'));
+            }
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+        }
+
+        if($this->getRequest()->isPost()){
+            if($this->_params['data']['modal'] == 'success') {
+                $myForm->setInputFilter(new \Admin\Filter\Contract\EditReduce($this->_params));
+                $myForm->setData($this->_params['data']);
+                $connection = $this->getConnection();
+
+                if($myForm->isValid()){
+                    $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
+                    $this->_params['item'] = $contract;
+                    ##### begin #####
+                    $connection->beginTransaction();
+                    # thêm giảm trừ dt
+                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-reduce'));
+
+                    # Sửa phiếu thu chi khách hàng
+                    $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
+
+                    $discount = $number->formatToData($contract['discount']);
+                    $paid_cash = $number->formatToData($contract['paid_cash']);
+                    $paid_transfer = $number->formatToData($contract['paid_transfer']);
+                    $price_reduce_sale = $number->formatToData($this->_params['data']['price_reduce_sale']); # giảm trừ doanh thu
+
+                    $fee_other = $number->formatToData($contract['fee_other']);
+
+                    $price_total = $contract['price_total'] + $fee_other - $price_reduce_sale;
+                    $new_debt = $debt_item_old->old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
+                    $data_debt = array(
+                        'id' => $debt_item_old->id,
+                        'price_total' => -$price_total,
+                        'discount' => $discount,
+                        'paid_cash' => $paid_cash,
+                        'paid_transfer' => $paid_transfer,
+                        'new_debt' => $new_debt,
+                    );
+                    $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
+
+
+                    $connection->commit();
+                    ##### end #####
+
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
+                    echo 'success';
+                    return $this->response;
+                }
+            } else {
+                $myForm->setData($this->_params['data']);
+            }
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
+        }
+
+        $this->_viewModel['myForm']     = $myForm;
+        $this->_viewModel['contract']   = $contract;
+        $this->_viewModel['caption']    = 'Giảm trừ doanh thu';
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+
+        return $viewModel;
+    }
+
+    // Đẩy đơn sang viettel
+    public function sendViettelPostAction()
+    {
+        $id_viettel_key = $this->params('id');
+        if (!empty($id_viettel_key)) {
+            $ditem = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->getItem(array('id' => $id_viettel_key));
+            $viettel_key = $ditem->alias;
+            if (!empty($viettel_key)) {
+//                $this->updateToken($viettel_key);
+                $myForm = new \Admin\Form\Contract\SendViettelPost($this, array('token' => $viettel_key));
+
+                $this->_viewModel['myForm'] = $myForm;
+                $this->_viewModel['caption'] = 'Đẩy đơn hàng sang Viettel Post bằng tài khoản: ' . $ditem->name;
+
+                if ($this->getRequest()->isPost()) {
+                    if ($this->_params['data']['modal'] == 'success') {
+                        $myForm->setInputFilter(new \Admin\Filter\Contract\SendViettelPost(array('data' => $this->_params['data'],)));
+                        $myForm->setData($this->_params['data']);
+                        if ($myForm->isValid()) {
+                            $locations = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(null, array('task' => 'cache'));
+
+                            $list_data_id = json_decode($this->_params['data']['list_data_id'], true);
+                            $groupaddressId = $this->_params['data']['groupaddressId'];
+                            $inventorys = json_decode($this->viettelpost('/user/listInventory', [], 'GET', $viettel_key), true);
+                            $inventory_item = [];
+                            if (isset($inventorys['data'])) {
+                                foreach ($inventorys['data'] as $ki => $vi) {
+                                    if ($vi['groupaddressId'] == $groupaddressId) {
+                                        $inventory_item = $vi;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            $listData_ghtk = [];
+                            foreach ($list_data_id as $id) {
+                                $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id['id']));
+                                if (empty($contract['ghtk_code'])) {
+                                    $products = [];
+                                    $total_weight = 0;
+                                    $list_name = [];
+                                    $contract['options'] = unserialize($contract['options'])['product'];
+                                    foreach ($contract['options'] as $key => $value) {
+                                        $list_name[] = $value['full_name'] . ' - ' . $value['car_year'];
+                                        $value['weight'] = (float)str_replace(',', '.', $value['weight']);
+                                        if ($value['weight'] > 1 || count($contract['options']) == 1) {
+                                            $total_weight += $value['weight'] * 1000;
+                                            $pro['PRODUCT_NAME'] = $value['full_name'] . ' - ' . $value['car_year'];
+                                            $pro['PRODUCT_WEIGHT'] = $value['weight'] * 1000;
+                                            $pro['PRODUCT_QUANTITY'] = $value['numbers'];
+                                            $pro['PRODUCT_PRICE'] = $value['price'];
+                                            $products[] = $pro;
+                                        }
+                                    }
+                                    $order_item['ORDER_NUMBER'] = $contract['code'];
+                                    $order_item['GROUPADDRESS_ID'] = $inventory_item['groupaddressId'];
+                                    $order_item['SENDER_FULLNAME'] = $inventory_item['name'];
+                                    $order_item['SENDER_ADDRESS'] = $inventory_item['address'];
+                                    $order_item['SENDER_PHONE'] = $inventory_item['phone'];
+
+                                    $order_item['RECEIVER_FULLNAME'] = $contract['name'];
+                                    $full_address = [];
+                                    $full_address[] = $contract['address'];
+//                                    $full_address[] = $locations[$contract['location_town_id']]->fullname;
+                                    $full_address[] = $locations[$contract['location_district_id']]->fullname;
+                                    $full_address[] = $locations[$contract['location_city_id']]->fullname;
+                                    $order_item['RECEIVER_ADDRESS'] = implode(', ', $full_address);
+                                    $order_item['RECEIVER_PHONE'] = $contract['phone'];
+
+                                    # Tính dịch vụ vận chuyển phù hợp
+                                    $s_data = array(
+                                        "SENDER_ADDRESS" => $order_item['SENDER_ADDRESS'],
+                                        "RECEIVER_ADDRESS" => $order_item['RECEIVER_ADDRESS'],
+                                        "PRODUCT_TYPE" => "HH",
+                                        "PRODUCT_WEIGHT" => $total_weight,
+                                        "PRODUCT_PRICE" => $contract['price_total'] - $contract['price_deposits'],
+                                        "MONEY_COLLECTION" => $contract['price_total'] - $contract['price_deposits'],
+                                        "TYPE" => 1
+                                    );
+                                    $services = json_decode($this->viettelpost('/order/getPriceAllNlp', $s_data, 'POST', $viettel_key), true)['RESULT'];
+                                    $order_service = '';
+                                    $gia_cuoc = 1000000000;
+                                    foreach ($services as $ser) {
+                                        if ($ser['GIA_CUOC'] < $gia_cuoc) {
+                                            $gia_cuoc = $ser['GIA_CUOC'];
+                                            $order_service = $ser['MA_DV_CHINH'];
+                                        }
+                                    }
+
+                                    $order_item["PRODUCT_NAME"] = implode(', ', $list_name);
+                                    $order_item["PRODUCT_DESCRIPTION"] = $contract['sale_note'];
+                                    $order_item["PRODUCT_QUANTITY"] = $contract['total_number_product'];
+                                    $order_item["PRODUCT_PRICE"] = $contract['price_total'];
+                                    $order_item["PRODUCT_WEIGHT"] = $total_weight;
+                                    $order_item["PRODUCT_LENGTH"] = 0;
+                                    $order_item["PRODUCT_WIDTH"] = 0;
+                                    $order_item["PRODUCT_HEIGHT"] = 0;
+                                    $order_item["ORDER_PAYMENT"] = $contract['fee_type'] == 'seller' ? 3 : 2; # 3 người bán trả, 2 người mua trả
+                                    $order_item["ORDER_SERVICE"] = $order_service;
+                                    $order_item["PRODUCT_TYPE"] = "HH";
+                                    $order_item["ORDER_SERVICE_ADD"] = null;
+                                    $order_item["ORDER_NOTE"] = $contract['ghtk_note'];
+                                    $order_item["MONEY_COLLECTION"] = $contract['price_total'] - $contract['price_deposits'];
+                                    $order_item["EXTRA_MONEY"] = 0;
+                                    $order_item["CHECK_UNIQUE"] = true;
+                                    $order_item["PRODUCT_DETAIL"] = $products;
+
+                                    $listData_ghtk[$contract['id']] = $order_item;
+                                }
+                            }
+                            # thực hiện đẩy đơn sang vtp
+                            foreach ($listData_ghtk as $key => $value) {
+                                $result = $this->viettelpost('/order/createOrderNlp', $value, 'POST', $viettel_key);
+                                $res = json_decode($result, true);
+
+                                if ($res['status'] == 200 and $res['error'] == false) {
+                                    $contract_code_success[] = $value['ORDER_NUMBER'];
+                                    $arrParam['id'] = $key;
+                                    $arrParam['ghtk_code'] = $res['data']['ORDER_NUMBER'];
+                                    $arrParam['ghtk_result'] = $res['data'];
+                                    $arrParam['unit_transport'] = 'viettel';
+                                    $arrParam['token'] = $viettel_key;
+                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem(array('data' => $arrParam), array('task' => 'update-ghtk'));
+                                } else {
+                                    $contract_code_error[] = 'Đơn số : ' . $value['ORDER_NUMBER'] . ' gặp lỗi do ' . $res['message'];
+                                }
+                            }
+
+                            if (!empty($contract_code_success)) {
+                                $this->flashMessenger()->addSuccessMessage('Các đơn đã đẩy thành công sang Viettel Post ' . implode(', ', $contract_code_success));
+                            }
+                            if (!empty($contract_code_error)) {
+                                $this->flashMessenger()->addErrorMessage('Chưa đẩy thành công ' . implode(', ', $contract_code_error));
+                            }
+
+                            echo 'success';
+                            return $this->response;
+                        }
+                    }
+                }
+            }
+        }
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+
+        return $viewModel;
+    }
+
 //    // Danh sách đơn hàng giục đơn
 //    public function indexShippingAction() {
 //        $ssFilter = new Container(__CLASS__.'shipping');
@@ -3338,7 +3566,6 @@ class ContractController extends ActionController
 //    }
 //
 
-
 //
 //    // cập nhật công nợ khách hàng
 //    public function editPricePaidAction() {
@@ -3940,152 +4167,7 @@ class ContractController extends ActionController
 //    }
 //
     // Đẩy đơn hàng sang viettel post
-    public function sendViettelPostAction()
-    {
-        $id_viettel_key = $this->params('id');
-        if (!empty($id_viettel_key)) {
-            $ditem = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->getItem(array('id' => $id_viettel_key));
-            $viettel_key = $ditem->alias;
-            if (!empty($viettel_key)) {
-//                $this->updateToken($viettel_key);
-                $myForm = new \Admin\Form\Contract\SendViettelPost($this, array('token' => $viettel_key));
 
-                $this->_viewModel['myForm'] = $myForm;
-                $this->_viewModel['caption'] = 'Đẩy đơn hàng sang Viettel Post bằng tài khoản: ' . $ditem->name;
-
-                if ($this->getRequest()->isPost()) {
-                    if ($this->_params['data']['modal'] == 'success') {
-                        $myForm->setInputFilter(new \Admin\Filter\Contract\SendViettelPost(array('data' => $this->_params['data'],)));
-                        $myForm->setData($this->_params['data']);
-                        if ($myForm->isValid()) {
-                            $locations = $this->getServiceLocator()->get('Admin\Model\LocationsTable')->listItem(null, array('task' => 'cache'));
-
-                            $list_data_id = json_decode($this->_params['data']['list_data_id'], true);
-                            $groupaddressId = $this->_params['data']['groupaddressId'];
-                            $inventorys = json_decode($this->viettelpost('/user/listInventory', [], 'GET', $viettel_key), true);
-                            $inventory_item = [];
-                            if (isset($inventorys['data'])) {
-                                foreach ($inventorys['data'] as $ki => $vi) {
-                                    if ($vi['groupaddressId'] == $groupaddressId) {
-                                        $inventory_item = $vi;
-                                        break;
-                                    }
-                                }
-                            }
-
-                            $listData_ghtk = [];
-                            foreach ($list_data_id as $id) {
-                                $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id['id']));
-                                if (empty($contract['ghtk_code'])) {
-                                    $products = [];
-                                    $total_weight = 0;
-                                    $list_name = [];
-                                    $contract['options'] = unserialize($contract['options'])['product'];
-                                    foreach ($contract['options'] as $key => $value) {
-                                        $list_name[] = $value['full_name'] . ' - ' . $value['car_year'];
-                                        $value['weight'] = (float)str_replace(',', '.', $value['weight']);
-                                        if ($value['weight'] > 1 || count($contract['options']) == 1) {
-                                            $total_weight += $value['weight'] * 1000;
-                                            $pro['PRODUCT_NAME'] = $value['full_name'] . ' - ' . $value['car_year'];
-                                            $pro['PRODUCT_WEIGHT'] = $value['weight'] * 1000;
-                                            $pro['PRODUCT_QUANTITY'] = $value['numbers'];
-                                            $pro['PRODUCT_PRICE'] = $value['price'];
-                                            $products[] = $pro;
-                                        }
-                                    }
-                                    $order_item['ORDER_NUMBER'] = $contract['code'];
-                                    $order_item['GROUPADDRESS_ID'] = $inventory_item['groupaddressId'];
-                                    $order_item['SENDER_FULLNAME'] = $inventory_item['name'];
-                                    $order_item['SENDER_ADDRESS'] = $inventory_item['address'];
-                                    $order_item['SENDER_PHONE'] = $inventory_item['phone'];
-
-                                    $order_item['RECEIVER_FULLNAME'] = $contract['name'];
-                                    $full_address = [];
-                                    $full_address[] = $contract['address'];
-//                                    $full_address[] = $locations[$contract['location_town_id']]->fullname;
-                                    $full_address[] = $locations[$contract['location_district_id']]->fullname;
-                                    $full_address[] = $locations[$contract['location_city_id']]->fullname;
-                                    $order_item['RECEIVER_ADDRESS'] = implode(', ', $full_address);
-                                    $order_item['RECEIVER_PHONE'] = $contract['phone'];
-
-                                    # Tính dịch vụ vận chuyển phù hợp
-                                    $s_data = array(
-                                        "SENDER_ADDRESS" => $order_item['SENDER_ADDRESS'],
-                                        "RECEIVER_ADDRESS" => $order_item['RECEIVER_ADDRESS'],
-                                        "PRODUCT_TYPE" => "HH",
-                                        "PRODUCT_WEIGHT" => $total_weight,
-                                        "PRODUCT_PRICE" => $contract['price_total'] - $contract['price_deposits'],
-                                        "MONEY_COLLECTION" => $contract['price_total'] - $contract['price_deposits'],
-                                        "TYPE" => 1
-                                    );
-                                    $services = json_decode($this->viettelpost('/order/getPriceAllNlp', $s_data, 'POST', $viettel_key), true)['RESULT'];
-                                    $order_service = '';
-                                    $gia_cuoc = 1000000000;
-                                    foreach ($services as $ser) {
-                                        if ($ser['GIA_CUOC'] < $gia_cuoc) {
-                                            $gia_cuoc = $ser['GIA_CUOC'];
-                                            $order_service = $ser['MA_DV_CHINH'];
-                                        }
-                                    }
-
-                                    $order_item["PRODUCT_NAME"] = implode(', ', $list_name);
-                                    $order_item["PRODUCT_DESCRIPTION"] = $contract['sale_note'];
-                                    $order_item["PRODUCT_QUANTITY"] = $contract['total_number_product'];
-                                    $order_item["PRODUCT_PRICE"] = $contract['price_total'];
-                                    $order_item["PRODUCT_WEIGHT"] = $total_weight;
-                                    $order_item["PRODUCT_LENGTH"] = 0;
-                                    $order_item["PRODUCT_WIDTH"] = 0;
-                                    $order_item["PRODUCT_HEIGHT"] = 0;
-                                    $order_item["ORDER_PAYMENT"] = $contract['fee_type'] == 'seller' ? 3 : 2; # 3 người bán trả, 2 người mua trả
-                                    $order_item["ORDER_SERVICE"] = $order_service;
-                                    $order_item["PRODUCT_TYPE"] = "HH";
-                                    $order_item["ORDER_SERVICE_ADD"] = null;
-                                    $order_item["ORDER_NOTE"] = $contract['ghtk_note'];
-                                    $order_item["MONEY_COLLECTION"] = $contract['price_total'] - $contract['price_deposits'];
-                                    $order_item["EXTRA_MONEY"] = 0;
-                                    $order_item["CHECK_UNIQUE"] = true;
-                                    $order_item["PRODUCT_DETAIL"] = $products;
-
-                                    $listData_ghtk[$contract['id']] = $order_item;
-                                }
-                            }
-                            # thực hiện đẩy đơn sang vtp
-                            foreach ($listData_ghtk as $key => $value) {
-                                $result = $this->viettelpost('/order/createOrderNlp', $value, 'POST', $viettel_key);
-                                $res = json_decode($result, true);
-
-                                if ($res['status'] == 200 and $res['error'] == false) {
-                                    $contract_code_success[] = $value['ORDER_NUMBER'];
-                                    $arrParam['id'] = $key;
-                                    $arrParam['ghtk_code'] = $res['data']['ORDER_NUMBER'];
-                                    $arrParam['ghtk_result'] = $res['data'];
-                                    $arrParam['unit_transport'] = 'viettel';
-                                    $arrParam['token'] = $viettel_key;
-                                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->updateItem(array('data' => $arrParam), array('task' => 'update-ghtk'));
-                                } else {
-                                    $contract_code_error[] = 'Đơn số : ' . $value['ORDER_NUMBER'] . ' gặp lỗi do ' . $res['message'];
-                                }
-                            }
-
-                            if (!empty($contract_code_success)) {
-                                $this->flashMessenger()->addSuccessMessage('Các đơn đã đẩy thành công sang Viettel Post ' . implode(', ', $contract_code_success));
-                            }
-                            if (!empty($contract_code_error)) {
-                                $this->flashMessenger()->addErrorMessage('Chưa đẩy thành công ' . implode(', ', $contract_code_error));
-                            }
-
-                            echo 'success';
-                            return $this->response;
-                        }
-                    }
-                }
-            }
-        }
-        $viewModel = new ViewModel($this->_viewModel);
-        $viewModel->setTerminal(true);
-
-        return $viewModel;
-    }
 //
 //    // Đẩy đơn hàng sang giao hàng nhanh
 //    public function sendGhnAction() {
@@ -4424,50 +4506,6 @@ class ContractController extends ActionController
 //        $this->goUrl('/xreport/index/index/id/acounting/code/import/');
 //    }
 //
-//    // Thêm giảm trừ doanh thu
-//    public function editReduceAction() {
-//        $myForm = new \Admin\Form\Contract\EditReduce($this->getServiceLocator(), $this->_params);
-//
-//        if(!empty($this->_params['data']['id'])) {
-//            $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $this->_params['data']['id']));
-//            $myForm->setData($contract);
-//            if($contract['lock']){
-//                return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'modal'));
-//            }
-//        } else {
-//            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
-//        }
-//
-//        if($this->getRequest()->isPost()){
-//            if($this->_params['data']['modal'] == 'success') {
-//                $myForm->setInputFilter(new \Admin\Filter\Contract\EditReduce($this->_params));
-//                $myForm->setData($this->_params['data']);
-//
-//                if($myForm->isValid()){
-//                    $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
-//                    $this->_params['item'] = $contract;
-//                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-reduce'));
-//                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
-//                    echo 'success';
-//                    return $this->response;
-//                }
-//            } else {
-//                $myForm->setData($this->_params['data']);
-//            }
-//        } else {
-//            return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
-//        }
-//
-//        $this->_viewModel['myForm']     = $myForm;
-//        $this->_viewModel['contract']   = $contract;
-//        $this->_viewModel['caption']    = 'Giảm trừ doanh thu';
-//
-//        $viewModel = new ViewModel($this->_viewModel);
-//        $viewModel->setTerminal(true);
-//
-//        return $viewModel;
-//    }
-//
 //    // Thêm lịch sử chăm sóc đơn hàng
 //    public function addHistoryContractAction() {
 //        $myForm = new \Admin\Form\Contract\AddHistoryContract($this->getServiceLocator(), $this->_params);
@@ -4518,7 +4556,7 @@ class ContractController extends ActionController
 //        return $viewModel;
 //    }
 //
-//    // Thêm giảm trừ doanh thu
+//    // Thêm tiền hỗ trợ ship
 //    public function editShippingFeeAction() {
 //        $myForm = new \Admin\Form\Contract\ShippingFee($this->getServiceLocator(), $this->_params);
 //
@@ -4562,7 +4600,7 @@ class ContractController extends ActionController
 //        return $viewModel;
 //    }
 //
-//    // Thêm giảm trừ doanh thu
+//    // Sửa ngày xuất kho
 //    public function editShippedDateAction() {
 //        $myForm = new \Admin\Form\Contract\ShippedDate($this->getServiceLocator(), $this->_params);
 //        $dateFormat = new \ZendX\Functions\Date();
