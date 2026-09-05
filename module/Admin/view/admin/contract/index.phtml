@@ -308,7 +308,7 @@
                             <td '.$rowSpan.' class="text-right">'. number_format($price_total) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_transfer) .'</td>
-                            <td '.$rowSpan.' class="text-right">'. number_format($item->discount) .'</td>
+                            <!--<td '.$rowSpan.' class="text-right">'. number_format($item->discount) .'</td>-->
                             <td '.$rowSpan.' class="text-right">'. number_format($item->price_reduce_sale) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->fee_shipp) .'</td>
                             <td '.$rowSpan.'>'. $this->fee_type[$item->fee_type]['name'] .'</td>
@@ -359,11 +359,11 @@
     $xhtmlHead .= '<th width="120" class="text-center">Số lượng'.$text_total_number.'</th>';
     $xhtmlHead .= '<th width="120" class="text-center">Giá bán</th>';
     $xhtmlHead .= '<th width="150">Tên xe - năm sx</th>';
-$xhtmlHead .= '<th width="80" class="text-right">Thu khác'.$text_total_vat.'</th>';
+    $xhtmlHead .= '<th width="80" class="text-right">Thu khác'.$text_total_vat.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Tiền hàng'.$text_total.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Trả tiền mặt'.$text_total_paid_cash.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Chuyển khoản'.$text_total_paid_transfer.'</th>';
-    $xhtmlHead .= '<th width="80" class="text-right">Giảm giá'.$text_total_discount.'</th>';
+//    $xhtmlHead .= '<th width="80" class="text-right">Giảm giá'.$text_total_discount.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Giảm trừ DT'.$text_total_price_reduce_sale.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Phí giao hàng'.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Người trả phí'.'</th>';
