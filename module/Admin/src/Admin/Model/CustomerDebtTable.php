@@ -46,7 +46,7 @@ class CustomerDebtTable extends DefaultTable {
                 if(isset($ssFilter['filter_accept']) && $ssFilter['filter_accept'] != '') {
                     $select -> where -> NEST
                         -> equalTo(TABLE_CUSTOMER_DEBT.'.accept', $ssFilter['filter_accept'])
-                        -> equalTo(TABLE_CUSTOMER_DEBT.'.state', COMPLETE_STATUS)
+                        -> in(TABLE_CUSTOMER_DEBT.'.state', [DELIVERING_STATUS,PROCESSING_STATUS,COMPLETE_STATUS])
                         ->And
                         -> NEST
                         -> NotEqualTo(TABLE_CUSTOMER_DEBT.'.paid_cash', 0)
@@ -155,7 +155,7 @@ class CustomerDebtTable extends DefaultTable {
                 if(isset($ssFilter['filter_accept']) && $ssFilter['filter_accept'] != '') {
                     $select -> where -> NEST
                         -> equalTo(TABLE_CUSTOMER_DEBT.'.accept', $ssFilter['filter_accept'])
-                        -> equalTo(TABLE_CUSTOMER_DEBT.'.state', COMPLETE_STATUS)
+                        -> in(TABLE_CUSTOMER_DEBT.'.state', [DELIVERING_STATUS,PROCESSING_STATUS,COMPLETE_STATUS])
                         ->And
                             -> NEST
                             -> NotEqualTo(TABLE_CUSTOMER_DEBT.'.paid_cash', 0)
