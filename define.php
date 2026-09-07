@@ -157,6 +157,7 @@ define('MARKETING', 'marketing'); // Nhân viên Mkt
 define('GROUP_MKT_LEADER', 'group-marketing-leader'); // Trưởng nhóm MKT
 define('GROUP_SALES_LEADER', 'group-sales-leader'); // Trưởng nhóm Sales
 define('CHECK_MANAGER', 'check_manager'); // Quản lý giục đơn
+define('REDUCE', 'reduce');
 
 // status code
 define('STATUS_CONTACT_CANCEL', 'huy');

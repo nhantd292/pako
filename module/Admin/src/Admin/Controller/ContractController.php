@@ -2035,13 +2035,18 @@ class ContractController extends ActionController
     public function editReduceAction() {
         $myForm = new \Admin\Form\Contract\EditReduce($this->getServiceLocator(), $this->_params);
         $number = new \ZendX\Functions\Number();
-        $dateFormat = new \ZendX\Functions\Date();
         $id = $this->_params['data']['id'];
+
 
         if(!empty($id)) {
             $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $id));
             $myForm->setData($contract);
-            if($contract['lock']){
+
+            $curent_user = $this->_userInfo->getUserInfo();
+            $permission_ids = explode(',', $curent_user['permission_ids']);
+            $check_viettel = !in_array(REDUCE, $permission_ids) && !in_array(SYSTEM, $permission_ids) && $contract['unit_transport'] !== 'viettel';
+
+            if($contract['lock'] || $check_viettel){
                 return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'modal'));
             }
         } else {
