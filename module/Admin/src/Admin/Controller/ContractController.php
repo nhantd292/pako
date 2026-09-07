@@ -166,6 +166,10 @@ class ContractController extends ActionController
             } elseif (in_array(REDUCE_VIETTEL, $permission_ids)) {
                 $this->_params['ssFilter']['filter_unit_transport'] = 'viettel';
                 $ssFilter->filter_unit_transport = 'viettel';
+            }elseif (in_array(ACCOUNTING, $permission_ids)) {
+                if (!empty($curent_user['inventory_id'])) {
+                    $this->_params['ssFilter']['filter_inventory_id'] = $curent_user['inventory_id'];
+                }
             } else {
                 $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
             }
