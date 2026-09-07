@@ -90,7 +90,7 @@ class CustomerDebtController extends ActionController
         $ssFilter = new Container(__CLASS__.'index');
         $curent_user = $this->_userInfo->getUserInfo();
         $permission_ids = explode(',', $curent_user['permission_ids']);
-        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)){
+        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(ACCOUNTING, $permission_ids)){
             $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
         }
 

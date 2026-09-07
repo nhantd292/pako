@@ -110,6 +110,11 @@ class OrdersReturnDetailController extends ActionController {
                 $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
                 $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
             }
+            elseif (in_array(ACCOUNTING, $permission_ids)) {
+                if (!empty($curent_user['inventory_id'])) {
+                    $this->_params['ssFilter']['filter_inventory_id'] = $curent_user['inventory_id'];
+                }
+            }
             else{
                 $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
             }

@@ -149,7 +149,7 @@ class ContactController extends ActionController
         // Phân quyền view
         $curent_user = $this->_userInfo->getUserInfo();
         $permission_ids = explode(',', $curent_user['permission_ids']);
-        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(MANAGER, $permission_ids)){
+        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(MANAGER, $permission_ids) && !in_array(ACCOUNTING, $permission_ids)){
             if(in_array(GDCN, $permission_ids) || in_array(SALEADMIN, $permission_ids)){
                 $this->_params['ssFilter']['filter_sale_branch'] = $curent_user['sale_branch_id'];
                 $ssFilter->filter_sale_branch = $curent_user['sale_branch_id'];
@@ -203,7 +203,7 @@ class ContactController extends ActionController
     public function receivableAction(){
         $curent_user = $this->_userInfo->getUserInfo();
         $permission_ids = explode(',', $curent_user['permission_ids']);
-        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids)){
+        if(!in_array(SYSTEM, $permission_ids) && !in_array(ADMIN, $permission_ids) && !in_array(ACCOUNTING, $permission_ids)){
             $this->_params['ssFilter']['filter_user'] = $curent_user['id'];
         }
 
