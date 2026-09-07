@@ -87,6 +87,8 @@ class CustomerDebtTable extends DefaultTable {
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $select->where->NEST
                         ->like(TABLE_CUSTOMER_DEBT.'.code', '%'. $ssFilter['filter_keyword'] . '%')
+                        ->Or
+                        ->like(TABLE_CONTRACT.'.code', '%'. $ssFilter['filter_keyword'] . '%')
                         ->UNNEST;
                 }
 
@@ -195,8 +197,10 @@ class CustomerDebtTable extends DefaultTable {
     			
     			if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
     		        $select->where->NEST
-                			      ->like(TABLE_CUSTOMER_DEBT.'.code', '%'. $ssFilter['filter_keyword'] . '%')
-                			      ->UNNEST;
+                		->like(TABLE_CUSTOMER_DEBT.'.code', '%'. $ssFilter['filter_keyword'] . '%')
+                        ->Or
+                        ->like(TABLE_CONTRACT.'.code', '%'. $ssFilter['filter_keyword'] . '%')
+                		->UNNEST;
     			}
 
                 if(!empty($ssFilter['filter_user'])) {
