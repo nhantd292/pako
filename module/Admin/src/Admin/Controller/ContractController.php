@@ -837,7 +837,7 @@ class ContractController extends ActionController
     }
 
     // Xuất mẫu hóa đơn VAT
-    public function exportVATAction()
+    public function exportVatAction()
     {
         $dateFormat = new \ZendX\Functions\Date();
         $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('ssFilter' => $this->_params['data']), array('task' => 'list-item', 'paginator' => false))->toArray();
@@ -1014,7 +1014,7 @@ class ContractController extends ActionController
     }
 
     // Xuất mẫu hóa đơn máy tính tiền
-    public function exportPOSAction()
+    public function exportPosAction()
     {
         $dateFormat = new \ZendX\Functions\Date();
         $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('ssFilter' => $this->_params['data']), array('task' => 'list-item', 'paginator' => false))->toArray();
@@ -1202,7 +1202,7 @@ class ContractController extends ActionController
     }
 
     # xuất file excel import vtp
-    public function exportToVTPAction()
+    public function exportToVtpAction()
     {
         $dateFormat = new \ZendX\Functions\Date();
         $items = $this->getServiceLocator()->get('Admin\Model\ContractTable')->listItem(array('ids' => $this->_params['data']['cid']), array('task' => 'list-print-multi'))->toArray();
