@@ -92,16 +92,19 @@ if ($this->item['state'] == PROCESSING_STATUS) {
     }
 }
 if ($this->item['state'] == DELIVERING_STATUS) {
-    if ($this->item['created_by'] == $this->uid || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+    if ($this->item['created_by'] == $this->uid || in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(ACCOUNTING, $permission_ids)) {
         $complete_action = array('name' => 'complete', 'caption' => 'Hoàn thành', 'link' => 'javascript:;', 'icon' => 'fa-save', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'complete\', \' Bạn có chắc chắn muốn hoàn thành đơn hàng\');', 'class' => 'btn green'));
     }
-    if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+    if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(ACCOUNTING, $permission_ids)) {
         $return_action = array('name' => 'return', 'caption' => 'Hoàn đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'return\', \' Bạn có chắc chắn muốn hoàn đơn hàng\');', 'class' => 'btn purple'));
 //        $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
     }
 }
 if ($this->item['state'] == COMPLETE_STATUS) {
     if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
+        if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(ACCOUNTING, $permission_ids)) {
+            $return_action = array('name' => 'return', 'caption' => 'Hoàn đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'return\', \' Bạn có chắc chắn muốn hoàn đơn hàng\');', 'class' => 'btn purple'));
+        }
 //        $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
     }
 }

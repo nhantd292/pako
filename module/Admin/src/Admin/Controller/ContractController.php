@@ -489,7 +489,7 @@ class ContractController extends ActionController
                 }
             }
             if ($control_action == RETURN_STATUS) {
-                if (($item['state'] == DELIVERING_STATUS) && (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids))) {
+                if (($item['state'] == DELIVERING_STATUS || $item['state'] == COMPLETE_STATUS) && (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(ACCOUNTING, $permission_ids))) {
                     ##### begin #####
                     $connection->beginTransaction();
                     # cập nhật trạng thái hoàn cho đơn hàng.
@@ -503,7 +503,6 @@ class ContractController extends ActionController
                         $this->getServiceLocator()->get('Admin\Model\ProductsInventoryTable')->saveItem(array('data' => array('quantity' => $quantity_new, 'id' => $inventory->id)), array('task' => 'edit-item'));
                     }
 
-
                     # Sửa phiếu thu chi khách hàng
                     $debt_item_old = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->getItem(array('orders_id' => $id), array('task' => 'type-id'));
 
@@ -513,7 +512,6 @@ class ContractController extends ActionController
                     $discount = 0;
                     $price_total = 0;
                     $new_debt = $debt_item_old->old_debt - ($discount + $paid_cash + $paid_transfer - $price_total);
-
 
                     $data_debt = array(
                         'id' => $debt_item_old->id,
