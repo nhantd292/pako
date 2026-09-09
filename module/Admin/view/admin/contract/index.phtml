@@ -174,6 +174,7 @@
             $sale_branch_created_by = $this->user[$item->created_by]['sale_branch_id'] ? ' - '.  $this->sale_branch[$this->user[$item->created_by]['sale_branch_id']]['name'] : '';
 
             $order_type             = $item->status_store ? 'Đơn cửa hàng' : 'Đơn thường';
+            $return_status          = $item->return_status == 1 ? '<br><span class="btn btn-xs purple">Hoàn 1 phần</span>' : '';
 
             $options                = $item->options ? unserialize($item['options']) : array();
             $contact_options        = $item->contact_options ? unserialize($item['contact_options']) : array();
@@ -283,7 +284,7 @@
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'"'.$color_text_row.'>
     							<th '.$rowSpan.'>'. $cid .'</th>
                                 <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.$controlEditReduce.'</th>
-    							<td '.$rowSpan.' class="controls" style="left:83px;">'. $order_status .' '.$invoiced.'<br>'.$date_return.'</td>
+    							<td '.$rowSpan.' class="controls" style="left:83px;">'. $order_status .' '.$invoiced.'<br>'.$date_return.$return_status.'</td>
     							<td '.$rowSpan.' class="controls" style="left:193px;"><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a><br>'.$status.'</td>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>
     							<td '.$rowSpan.'>Lên đơn: '. $date .'<br>Xuất kho: '.$shipped_date.'<br>Xuất HĐ: '.$date_invoice.'</td>
