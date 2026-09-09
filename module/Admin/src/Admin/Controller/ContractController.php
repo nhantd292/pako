@@ -494,6 +494,7 @@ class ContractController extends ActionController
                     $connection->beginTransaction();
                     # cập nhật trạng thái hoàn cho đơn hàng.
                     $this->getTable()->saveItem(array('data' => array('id' => $id, 'state' => RETURN_STATUS)), array('task' => 'update-state'));
+                    $this->getTable()->saveItem(array('data' => array('id' => $id)), array('task' => 'update-date-return'));
 
                     # cập nhật tồn kho cho sản phẩm.
                     $products_detail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $id), array('task' => 'list-ajax'));

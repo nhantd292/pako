@@ -3533,6 +3533,19 @@ class ContractTable extends DefaultTable {
             }
         }
 
+        if($options['task'] == 'update-date-return') {
+            $data = array(
+                'date_return' => date('Y-m-d H:i:s'),
+            );
+
+            try {
+                $this->tableGateway->update($data, array('id' => $arrData['id']));
+                return $arrData['id'];
+            } catch (\Exception $e) {
+                throw new \Exception('Update date return contract failed: ' . $e->getMessage());
+            }
+        }
+
         if($options['task'] == 'update-kov-code') {
             $data = array(
                 'kov_code' => $arrData['kov_code'],
