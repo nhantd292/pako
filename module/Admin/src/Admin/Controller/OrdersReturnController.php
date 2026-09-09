@@ -313,6 +313,7 @@ class OrdersReturnController extends ActionController{
                     foreach ($products_detail as $detail_item) {
                         // cập nhật số lượng hàng trả cho bảng contract detail
                         $contract_detail_item_update = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->getItem(array('id' => $detail_item['orders_detail_id']));
+                        $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_detail_item_update['contract_id'])), array('task' => 'update-return-status'));
                         $number_return_new = $contract_detail_item_update['numbers_return'] + $detail_item['quantity'];
                         $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem(array('data' => array('id' => $detail_item['orders_detail_id'], 'numbers_return' => $number_return_new)), array('task' => 'update-number'));
                         $net_number = $detail_item['contract_detail_quantity'] - $detail_item['contract_detail_quantity_return'];

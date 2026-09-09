@@ -62,6 +62,7 @@ class ContractController extends ActionController
         $this->_params['ssFilter']['filter_status_shipped'] = $ssFilter->filter_status_shipped;
         $this->_params['ssFilter']['filter_fee_type'] = $ssFilter->filter_fee_type;
         $this->_params['ssFilter']['filter_warning_price'] = $ssFilter->filter_warning_price;
+        $this->_params['ssFilter']['filter_return_status'] = $ssFilter->filter_return_status;
 
         // Thiết lập lại thông số phân trang
         $this->_paginator['itemCountPerPage'] = !empty($ssFilter->pagination_option) ? $ssFilter->pagination_option : $this->_paginator['itemCountPerPage'];
@@ -120,6 +121,7 @@ class ContractController extends ActionController
             $ssFilter->filter_status_shipped = $data['filter_status_shipped'];
             $ssFilter->filter_fee_type = $data['filter_fee_type'];
             $ssFilter->filter_warning_price = $data['filter_warning_price'];
+            $ssFilter->filter_return_status = $data['filter_return_status'];
 
             $ssFilter->filter_sale_group = $data['filter_sale_group'];
             if (!empty($data['filter_sale_branch'])) {
@@ -489,7 +491,7 @@ class ContractController extends ActionController
                 }
             }
             if ($control_action == RETURN_STATUS) {
-                if (($item['state'] == DELIVERING_STATUS || $item['state'] == COMPLETE_STATUS) && (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(ACCOUNTING, $permission_ids))) {
+                if ($item['return_status'] == 0 && ($item['state'] == DELIVERING_STATUS || $item['state'] == COMPLETE_STATUS) && (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(ACCOUNTING, $permission_ids))) {
                     ##### begin #####
                     $connection->beginTransaction();
                     # cập nhật trạng thái hoàn cho đơn hàng.
@@ -527,8 +529,9 @@ class ContractController extends ActionController
                     $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
                     $connection->commit();
-                } else {
-                    $this->flashMessenger()->addErrorMessage('Bạn không thể hoàn thành đơn hàng!');
+                }
+                else {
+                    $this->flashMessenger()->addErrorMessage('Bạn không thể hoàn thành đơn hàng! đơn hàng phải ở trạng thái Đang giao hàng/Hoàn thành và chưa có hàng trả lại 1 phần mới có thể hoàn hàng.');
                 }
             }
 

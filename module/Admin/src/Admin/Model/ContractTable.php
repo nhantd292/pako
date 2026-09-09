@@ -237,6 +237,9 @@ class ContractTable extends DefaultTable {
                 if(isset($ssFilter['filter_invoiced']) && $ssFilter['filter_invoiced'] != '') {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.invoiced', $ssFilter['filter_invoiced']);
                 }
+                if(isset($ssFilter['filter_return_status']) && $ssFilter['filter_return_status'] != '') {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.return_status', $ssFilter['filter_return_status']);
+                }
 
                 if(isset($ssFilter['filter_status_shipped']) && $ssFilter['filter_status_shipped'] != '') {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.shipped', $ssFilter['filter_status_shipped']);
@@ -900,6 +903,9 @@ class ContractTable extends DefaultTable {
                 }
                 if(isset($ssFilter['filter_invoiced']) && $ssFilter['filter_invoiced'] != '') {
                     $select -> where -> equalTo(TABLE_CONTRACT .'.invoiced', $ssFilter['filter_invoiced']);
+                }
+                if(isset($ssFilter['filter_return_status']) && $ssFilter['filter_return_status'] != '') {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.return_status', $ssFilter['filter_return_status']);
                 }
 
                 if(isset($ssFilter['filter_status_shipped']) && $ssFilter['filter_status_shipped'] != '') {
@@ -3543,6 +3549,19 @@ class ContractTable extends DefaultTable {
                 return $arrData['id'];
             } catch (\Exception $e) {
                 throw new \Exception('Update date return contract failed: ' . $e->getMessage());
+            }
+        }
+
+        if($options['task'] == 'update-return-status') {
+            $data = array(
+                'return_status' => 1,
+            );
+
+            try {
+                $this->tableGateway->update($data, array('id' => $arrData['id']));
+                return $arrData['id'];
+            } catch (\Exception $e) {
+                throw new \Exception('Update return status contract failed: ' . $e->getMessage());
             }
         }
 

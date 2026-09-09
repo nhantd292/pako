@@ -181,6 +181,19 @@ class Contract extends Form{
 
         // Loại hóa đơn
         $this->add(array(
+            'name' => 'filter_return_status',
+            'type' => 'Select',
+            'attributes' => array(
+                'class' => 'form-control select2 select2_basic',
+            ),
+            'options' => array(
+                'empty_option'	=> '- Hoàn một phẩn -',
+                'value_options' => array('1' => 'Đơn hoàn một phần'),
+            )
+        ));
+
+        // Loại hóa đơn
+        $this->add(array(
             'name' => 'filter_option_vat',
             'type' => 'Select',
             'attributes' => array(
