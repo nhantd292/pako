@@ -106,6 +106,7 @@
             $shipped_date           = $dateFormat->formatToView($item->shipped_date);
             $date_invoice           = $dateFormat->formatToView($item->date_invoice);
             $contact_date           = $dateFormat->formatToView($item->contact_date, 'd/m/Y H:i');
+            $date_return            = $dateFormat->formatToView($item->date_return, 'd/m/Y H:i');
             $contact_contract_first_date = $dateFormat->formatToView($item->contact_contract_first_date, 'd/m/Y H:i');
             $contact_phone          = $phone_code && $item->contact_phone && $item->user_id != $curent_user['id'] && $item->created != $curent_user['id'] && $item->care_id != $curent_user['id'] ? substr_replace($item->contact_phone, "***", 4, 3) : $item->contact_phone;
             $contact_name           = $item->contact_name;
@@ -281,7 +282,7 @@
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'"'.$color_text_row.'>
     							<th '.$rowSpan.'>'. $cid .'</th>
                                 <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.$controlEditReduce.'</th>
-    							<td '.$rowSpan.' class="controls" style="left:83px;">'. $order_status .' '.$invoiced.'</td>
+    							<td '.$rowSpan.' class="controls" style="left:83px;">'. $order_status .' '.$invoiced.'<br>'.$date_return.'</td>
     							<td '.$rowSpan.' class="controls" style="left:193px;"><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a><br>'.$status.'</td>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>
     							<td '.$rowSpan.'>Lên đơn: '. $date .'<br>Xuất kho: '.$shipped_date.'<br>Xuất HĐ: '.$date_invoice.'</td>
