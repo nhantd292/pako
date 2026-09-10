@@ -140,6 +140,8 @@ class Contract extends Form{
             )
         ));
 
+        $crm_status = \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
+        $crm_status[1] = 'Hoàn một phần';
         $this->add(array(
             'name'			=> 'filter_state',
             'type'			=> 'Select',
@@ -149,7 +151,7 @@ class Contract extends Form{
             'options'		=> array(
                 'empty_option'	=> '- Trạng thái crm -',
                 'disable_inarray_validator' => true,
-                'value_options' => \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name')),
+                'value_options' => $crm_status,
             ),
         ));
 

@@ -139,7 +139,11 @@ class ContractTable extends DefaultTable {
                 }
 
                 if(!empty($ssFilter['filter_state'])) {
-                    $select -> where -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state']);
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state'])
+                        ->OR
+                        -> equalTo(TABLE_CONTRACT .'.return_status', $ssFilter['filter_state'])
+                        -> UNNEST;
                 }
 
                 if(!empty($ssFilter['filter_customer_id'])) {
@@ -803,7 +807,11 @@ class ContractTable extends DefaultTable {
                 }
 
                 if(!empty($ssFilter['filter_state'])) {
-                    $select -> where -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state']);
+                    $select -> where -> NEST
+                        -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state'])
+                        ->OR
+                        -> equalTo(TABLE_CONTRACT .'.return_status', $ssFilter['filter_state'])
+                        -> UNNEST;
                 }
 
                 if(!empty($ssFilter['filter_product'])) {
