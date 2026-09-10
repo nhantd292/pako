@@ -139,11 +139,12 @@ class ContractTable extends DefaultTable {
                 }
 
                 if(!empty($ssFilter['filter_state'])) {
-                    $select -> where -> NEST
-                        -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state'])
-                        ->OR
-                        -> equalTo(TABLE_CONTRACT .'.return_status', $ssFilter['filter_state'])
-                        -> UNNEST;
+                    if (in_array($ssFilter['filter_state'], [1, 2])) {
+                        $select -> where -> equalTo(TABLE_CONTRACT .'.return_status', $ssFilter['filter_state']);
+                    }
+                    else{
+                        $select -> where -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state']);
+                    }
                 }
 
                 if(!empty($ssFilter['filter_customer_id'])) {
@@ -807,11 +808,12 @@ class ContractTable extends DefaultTable {
                 }
 
                 if(!empty($ssFilter['filter_state'])) {
-                    $select -> where -> NEST
-                        -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state'])
-                        ->OR
-                        -> equalTo(TABLE_CONTRACT .'.return_status', $ssFilter['filter_state'])
-                        -> UNNEST;
+                    if (in_array($ssFilter['filter_state'], [1, 2])) {
+                        $select -> where -> equalTo(TABLE_CONTRACT .'.return_status', $ssFilter['filter_state']);
+                    }
+                    else{
+                        $select -> where -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state']);
+                    }
                 }
 
                 if(!empty($ssFilter['filter_product'])) {
@@ -923,6 +925,9 @@ class ContractTable extends DefaultTable {
                 if(isset($ssFilter['filter_warning_price']) && $ssFilter['filter_warning_price'] != '') {
                     $select -> where -> equalTo('warning_price', $ssFilter['filter_warning_price']);
                 }
+                echo "<pre>";
+                print_r($select->getSqlString());
+                echo "</pre>";
     		});
 		}
 
