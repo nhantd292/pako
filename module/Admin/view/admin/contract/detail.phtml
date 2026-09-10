@@ -102,10 +102,10 @@ if ($this->item['state'] == DELIVERING_STATUS) {
 }
 if ($this->item['state'] == COMPLETE_STATUS) {
     if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids)) {
-        if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(ACCOUNTING, $permission_ids)) {
-            $return_action = array('name' => 'return', 'caption' => 'Hoàn đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'return\', \' Bạn có chắc chắn muốn hoàn đơn hàng\');', 'class' => 'btn purple'));
-        }
         $edit_action = array('name' => 'edit', 'caption' => 'Sửa', 'link' => $linkEdit, 'onclick' => '', 'icon' => 'fa-times', 'attributes' => array('class' => 'btn yellow'));
+    }
+    if (in_array(SYSTEM, $permission_ids) || in_array(ADMIN, $permission_ids) || in_array(ACCOUNTING, $permission_ids)) {
+        $return_action = array('name' => 'return', 'caption' => 'Hoàn đơn', 'link' => 'javascript:;', 'icon' => 'fa-paste', 'attributes' => array('onclick' => 'javascript:controlSubmitFormConfirm(\'return\', \' Bạn có chắc chắn muốn hoàn đơn hàng\');', 'class' => 'btn purple'));
     }
 }
 
