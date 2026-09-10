@@ -43,7 +43,9 @@ class OrdersReturnDetailTable extends DefaultTable {
                         ->Or
                         -> like(TABLE_PRODUCTS. '.name', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_PRODUCTS. '.code', '%'. $filter_keyword .'%')// mã sản phẩm
+                        -> like(TABLE_PRODUCTS. '.code', '%'. $filter_keyword .'%')
+                        ->Or
+                        -> like(TABLE_CONTRACT. '.code', '%'. $filter_keyword .'%')
                         -> UNNEST;
                 }
 
@@ -106,7 +108,9 @@ class OrdersReturnDetailTable extends DefaultTable {
                         ->Or
                         -> like(TABLE_PRODUCTS. '.name', '%'. $filter_keyword .'%')
                         ->Or
-                        -> like(TABLE_PRODUCTS. '.code', '%'. $filter_keyword .'%')// mã sản phẩm
+                        -> like(TABLE_PRODUCTS. '.code', '%'. $filter_keyword .'%')
+                        ->Or
+                        -> like(TABLE_CONTRACT. '.code', '%'. $filter_keyword .'%')
                         -> UNNEST;
                 }
 

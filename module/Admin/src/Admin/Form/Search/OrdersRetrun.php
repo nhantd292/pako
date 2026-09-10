@@ -64,7 +64,7 @@ class OrdersRetrun extends Form{
                 'class'		=> 'form-control select2 select2_basic',
             ),
             'options'		=> array(
-                'empty_option'	=> '- Kho xuất hàng -',
+                'empty_option'	=> '- Kho nhận hàng -',
                 'disable_inarray_validator' => true,
                 'value_options'	=> \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\WarehouseTable')->listItem(null, array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
             ),
