@@ -925,9 +925,6 @@ class ContractTable extends DefaultTable {
                 if(isset($ssFilter['filter_warning_price']) && $ssFilter['filter_warning_price'] != '') {
                     $select -> where -> equalTo('warning_price', $ssFilter['filter_warning_price']);
                 }
-                echo "<pre>";
-                print_r($select->getSqlString());
-                echo "</pre>";
     		});
 		}
 
