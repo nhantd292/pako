@@ -174,7 +174,16 @@
             $sale_branch_created_by = $this->user[$item->created_by]['sale_branch_id'] ? ' - '.  $this->sale_branch[$this->user[$item->created_by]['sale_branch_id']]['name'] : '';
 
             $order_type             = $item->status_store ? 'Đơn cửa hàng' : 'Đơn thường';
-            $return_status          = $item->return_status == 1 ? '<br><span class="btn btn-xs purple">Hoàn 1 phần</span>' : '';
+//            $return_status          = $item->return_status == 1 ? '<br><span class="btn btn-xs purple">Hoàn 1 phần</span>' : '';
+            if ($item->return_status == 1) {
+                $return_status = '<br><span class="btn btn-xs purple">Hoàn 1 phần</span>';
+            }
+            elseif ($item->return_status == 2) {
+                $return_status = '<br><span class="btn btn-xs purple">Hoàn tất cả</span>';
+            }
+            else{
+                $return_status = '';
+            }
 
             $options                = $item->options ? unserialize($item['options']) : array();
             $contact_options        = $item->contact_options ? unserialize($item['contact_options']) : array();
