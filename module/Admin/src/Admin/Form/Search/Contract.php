@@ -142,6 +142,7 @@ class Contract extends Form{
 
         $crm_status = \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
         $crm_status[1] = 'Hoàn một phần';
+        $crm_status[2] = 'Hoàn tất cả';
         $this->add(array(
             'name'			=> 'filter_state',
             'type'			=> 'Select',

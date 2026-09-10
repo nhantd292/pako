@@ -54,3 +54,19 @@ FROM x_contact c
 ) lcd ON c.id = lcd.customer_id
 WHERE (c.amount_owed != lcd.new_debt OR c.amount_owed IS NULL)
   AND lcd.new_debt IS NOT NULL;
+
+-- cập nhật đơn hàng hoàn một phần hay hoàn tất cả
+UPDATE x_contract c
+    INNER JOIN (
+    SELECT
+    contract_id,
+    SUM(numbers) AS total_numbers,
+    SUM(numbers_return) AS total_return
+    FROM x_contract_detail
+    GROUP BY contract_id
+    HAVING total_return > 0
+    ) d ON c.id = d.contract_id
+    SET c.return_status = CASE
+        WHEN d.total_numbers = d.total_return THEN 2
+        ELSE 1
+END;
