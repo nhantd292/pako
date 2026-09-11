@@ -120,7 +120,9 @@
             
             if($this->params['ssFilter']['filter_user']){
                 if ($item->user_id == $this->params['ssFilter']['filter_user']){
-                    $total_price           += $price_total;
+                    if ($item->state != 'cancel' && $item->return_status != 2) {
+                        $total_price           += $price_total;
+                    }
                     $total_fee_other       += $fee_other;
                     $total_vat             += $vat;
                     $total_cod             += $item->price_transport;
@@ -132,7 +134,9 @@
                 }
             }
             else{
-                $total_price           += $price_total;
+                if ($item->state != 'cancel' && $item->return_status != 2) {
+                    $total_price           += $price_total;
+                }
                 $total_fee_other       += $fee_other;
                 $total_vat             += $vat;
                 $total_cod             += $item->price_transport;
