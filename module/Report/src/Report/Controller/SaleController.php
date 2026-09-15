@@ -1952,8 +1952,8 @@ class SaleController extends ActionController {
 
                     // Hàng hoàn
                     if ($value['state'] == CANCEL_STATUS || $value['return_status'] == 2) {
-                        $data_report[$value['user_id']]['sales_cancel_sale'] += $value['price_total'];
-                        $data_report['total']['sales_cancel_sale'] += $value['price_total'];
+                        $data_report[$value['user_id']]['return'] += $value['price_total'];
+                        $data_report['total']['return'] += $value['price_total'];
                     }
 
                     // DS thành công
