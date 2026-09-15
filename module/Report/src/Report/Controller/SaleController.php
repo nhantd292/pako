@@ -1943,8 +1943,8 @@ class SaleController extends ActionController {
                     $data_report['total']['fee_other'] += $value['fee_other'] + $value['vat'];
 
                     // Phí vận chuyển
-                    $data_report[$value['user_id']]['transport'] += $value['price_transport'];
-                    $data_report['total']['transport'] += $value['price_transport'];
+                    $data_report[$value['user_id']]['transport'] += $value['fee_shipp'];
+                    $data_report['total']['transport'] += $value['fee_shipp'];
 
                     // Tổng giá vốn
                     $data_report[$value['user_id']]['cost'] += $value['cost_price_total'];
