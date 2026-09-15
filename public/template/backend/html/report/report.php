@@ -59,54 +59,30 @@ $is_accounting = true;
         <?php }?>
 
 
-        <?php if($is_system || $is_admin || $is_marketing){?>
-            <li>
-                <a href="javascript:;">
-                    <i class="fa fa-bar-chart"></i>
-                    <span class="title">Báo cáo Marketing</span><span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <!--				<li>-->
-                    <!--					<a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'marketing', 'code' => 'overview'));?><!--">-->
-                    <!--                        <i class="fa fa-dot-circle-o"></i>-->
-                    <!--                        Báo cáo Marketing-->
-                    <!--                    </a>-->
-                    <!--				</li>-->
-                    <li>
-                        <a href="<?php echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'marketing', 'code' => 'overview12'));?>">
-                            <i class="fa fa-dot-circle-o"></i>
-                            Báo cáo MKT thành công
-                        </a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'marketing', 'code' => 'overview13'));?>">
-                            <i class="fa fa-dot-circle-o"></i>
-                            Báo cáo MKT xuất hàng
-                        </a>
-                    </li>
-                    <?php if($is_system || $is_admin){?>
-                        <!--				<li>-->
-                        <!--					<a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'marketing', 'code' => 'overview2'));?><!--">-->
-                        <!--                        <i class="fa fa-dot-circle-o"></i>-->
-                        <!--                        Báo cáo Marketing 2-->
-                        <!--                    </a>-->
-                        <!--				</li>-->
-                        <!--				<li>-->
-                        <!--					<a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'marketing', 'code' => 'overview22'));?><!--">-->
-                        <!--                        <i class="fa fa-dot-circle-o"></i>-->
-                        <!--                        Báo cáo Marketing 2 mới-->
-                        <!--                    </a>-->
-                        <!--				</li>-->
-                    <?php }?>
+<!--        --><?php //if($is_system || $is_admin || $is_marketing){?>
+<!--            <li>-->
+<!--                <a href="javascript:;">-->
+<!--                    <i class="fa fa-bar-chart"></i>-->
+<!--                    <span class="title">Báo cáo Marketing</span><span class="arrow"></span>-->
+<!--                </a>-->
+<!--                <ul class="sub-menu">-->
 <!--                    <li>-->
-<!--                        <a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'marketing', 'code' => 'sources'));?><!--">-->
+<!--                        <a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'marketing', 'code' => 'overview12'));?><!--">-->
 <!--                            <i class="fa fa-dot-circle-o"></i>-->
-<!--                            Báo cáo kênh nguồn-->
+<!--                            Báo cáo MKT thành công-->
 <!--                        </a>-->
 <!--                    </li>-->
-                </ul>
-            </li>
-        <?php }?>
+<!--                    <li>-->
+<!--                        <a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'marketing', 'code' => 'overview13'));?><!--">-->
+<!--                            <i class="fa fa-dot-circle-o"></i>-->
+<!--                            Báo cáo MKT xuất hàng-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                    --><?php //if($is_system || $is_admin){?>
+<!--                    --><?php //}?>
+<!--                </ul>-->
+<!--            </li>-->
+<!--        --><?php //}?>
 
         <?php if($is_system || $is_admin || $is_sales){?>
             <li>
@@ -116,53 +92,47 @@ $is_accounting = true;
                 </a>
                 <ul class="sub-menu">
                     <li>
-                        <a href="<?php echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'sale', 'code' => 'sale3'));?>"><i class="fa fa-dot-circle-o"></i> Báo cáo doanh thu sale</a>
-                    </li>
-                    <li>
-                        <a href="<?php echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'sale', 'code' => 'share'));?>"><i class="fa fa-dot-circle-o"></i> Báo cáo nhận số - Tỉ lệ chốt</a>
+                        <a href="<?php echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'sale', 'code' => 'sale4'));?>"><i class="fa fa-dot-circle-o"></i> Báo cáo doanh số sale</a>
                     </li>
 <!--                    <li>-->
-<!--                        <a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'sale', 'code' => 'sale-store'));?><!--"><i class="fa fa-dot-circle-o"></i> Báo cáo doanh thu cửa hàng</a>-->
-<!--                    </li>-->
-<!--                    <li>-->
-<!--                        <a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'sale', 'code' => 'sale2'));?><!--"><i class="fa fa-dot-circle-o"></i> Báo cáo sale chi tiết</a>-->
+<!--                        <a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'sale', 'code' => 'share'));?><!--"><i class="fa fa-dot-circle-o"></i> Báo cáo nhận số - Tỉ lệ chốt</a>-->
 <!--                    </li>-->
                 </ul>
             </li>
         <?php }?>
 
-        <?php if($is_system || $is_admin || $is_check_oder){?>
-            <li>
-                <a href="javascript:;">
-                    <i class="fa fa-bar-chart"></i>
-                    <span class="title">Báo cáo giục đơn</span><span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a href="<?php echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'check', 'code' => 'overview'));?>">
-                            <i class="fa fa-dot-circle-o"></i>
-                            Báo cáo giục đơn
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        <?php }?>
-
-        <?php if($is_system || $is_admin || $is_accounting){?>
-            <li>
-                <a href="javascript:;">
-                    <i class="fa fa-bar-chart"></i>
-                    <span class="title">Báo cáo kế toán</span><span class="arrow"></span>
-                </a>
-                <ul class="sub-menu">
-                    <li>
-                        <a href="<?php echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'acounting', 'code' => 'import'));?>">
-                            <i class="fa fa-dot-circle-o"></i>
-                            Báo cáo nhập hàng
-                        </a>
-                    </li>
-                </ul>
-            </li>
-        <?php }?>
+<!--        --><?php //if($is_system || $is_admin || $is_check_oder){?>
+<!--            <li>-->
+<!--                <a href="javascript:;">-->
+<!--                    <i class="fa fa-bar-chart"></i>-->
+<!--                    <span class="title">Báo cáo giục đơn</span><span class="arrow"></span>-->
+<!--                </a>-->
+<!--                <ul class="sub-menu">-->
+<!--                    <li>-->
+<!--                        <a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'check', 'code' => 'overview'));?><!--">-->
+<!--                            <i class="fa fa-dot-circle-o"></i>-->
+<!--                            Báo cáo giục đơn-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </li>-->
+<!--        --><?php //}?>
+<!---->
+<!--        --><?php //if($is_system || $is_admin || $is_accounting){?>
+<!--            <li>-->
+<!--                <a href="javascript:;">-->
+<!--                    <i class="fa fa-bar-chart"></i>-->
+<!--                    <span class="title">Báo cáo kế toán</span><span class="arrow"></span>-->
+<!--                </a>-->
+<!--                <ul class="sub-menu">-->
+<!--                    <li>-->
+<!--                        <a href="--><?php //echo $this->url('routeReport/default', array('controller' => 'index', 'action' => 'index', 'id' => 'acounting', 'code' => 'import'));?><!--">-->
+<!--                            <i class="fa fa-dot-circle-o"></i>-->
+<!--                            Báo cáo nhập hàng-->
+<!--                        </a>-->
+<!--                    </li>-->
+<!--                </ul>-->
+<!--            </li>-->
+<!--        --><?php //}?>
     </ul>
 </div>
