@@ -2128,6 +2128,50 @@ class ContractController extends ActionController
         return $viewModel;
     }
 
+    // Thêm tiền hỗ trợ ship
+    public function editShippingFeeAction() {
+        $myForm = new \Admin\Form\Contract\ShippingFee($this->getServiceLocator(), $this->_params);
+
+        if(!empty($this->_params['data']['id'])) {
+            $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $this->_params['data']['id']));
+            $myForm->setData($contract);
+            if($contract['lock']){
+                return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'modal'));
+            }
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+        }
+
+        if($this->getRequest()->isPost()){
+            if($this->_params['data']['modal'] == 'success') {
+                $myForm->setInputFilter(new \Admin\Filter\Contract\ShippingFee($this->_params));
+                $myForm->setData($this->_params['data']);
+
+                if($myForm->isValid()){
+                    $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
+                    $this->_params['item'] = $contract;
+                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-shipping-fee'));
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
+                    echo 'success';
+                    return $this->response;
+                }
+            } else {
+                $myForm->setData($this->_params['data']);
+            }
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
+        }
+
+        $this->_viewModel['myForm']     = $myForm;
+        $this->_viewModel['contract']   = $contract;
+        $this->_viewModel['caption']    = 'Thêm tiền hỗ trợ ship';
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+
+        return $viewModel;
+    }
+
     // Đẩy đơn sang viettel
     public function sendViettelPostAction()
     {
@@ -4568,50 +4612,6 @@ class ContractController extends ActionController
 //        $this->_viewModel['history_contract'] = $history_contract;
 //        $this->_viewModel['user']             = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
 //        $this->_viewModel['caption']          = 'Lịch sử chăm sóc đơn hàng';
-//
-//        $viewModel = new ViewModel($this->_viewModel);
-//        $viewModel->setTerminal(true);
-//
-//        return $viewModel;
-//    }
-//
-//    // Thêm tiền hỗ trợ ship
-//    public function editShippingFeeAction() {
-//        $myForm = new \Admin\Form\Contract\ShippingFee($this->getServiceLocator(), $this->_params);
-//
-//        if(!empty($this->_params['data']['id'])) {
-//            $contract = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $this->_params['data']['id']));
-//            $myForm->setData($contract);
-//            if($contract['lock']){
-//                return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'lock', 'type' => 'modal'));
-//            }
-//        } else {
-//            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
-//        }
-//
-//        if($this->getRequest()->isPost()){
-//            if($this->_params['data']['modal'] == 'success') {
-//                $myForm->setInputFilter(new \Admin\Filter\Contract\ShippingFee($this->_params));
-//                $myForm->setData($this->_params['data']);
-//
-//                if($myForm->isValid()){
-//                    $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
-//                    $this->_params['item'] = $contract;
-//                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem($this->_params, array('task' => 'update-shipping-fee'));
-//                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
-//                    echo 'success';
-//                    return $this->response;
-//                }
-//            } else {
-//                $myForm->setData($this->_params['data']);
-//            }
-//        } else {
-//            return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
-//        }
-//
-//        $this->_viewModel['myForm']     = $myForm;
-//        $this->_viewModel['contract']   = $contract;
-//        $this->_viewModel['caption']    = 'Thêm tiền hỗ trợ ship';
 //
 //        $viewModel = new ViewModel($this->_viewModel);
 //        $viewModel->setTerminal(true);

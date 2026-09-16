@@ -1935,8 +1935,7 @@ class ContractTable extends DefaultTable {
 		if ($options['task'] == 'update-shipping-fee') {
 			$id = $arrData['id'];
             $data = array();
-			$data['shipping_fee'] = $number->formatToData($arrData['shipping_fee']);
-            $data['returned'] = 1;
+			$data['fee_shipp'] = $number->formatToData($arrData['fee_shipp']);
 
 			$this->tableGateway->update($data, array('id' => $id));
 			return $id;

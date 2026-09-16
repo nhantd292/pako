@@ -8,7 +8,7 @@ class ShippingFee extends InputFilter {
 	public function __construct($options = null){
 	    // tiền giảm trừ doanh thu
 	    $this->add(array(
-	        'name'		=> 'shipping_fee',
+	        'name'		=> 'fee_shipp',
 	        'required'	=> true,
 	        'validators'	=> array(
 	            array(

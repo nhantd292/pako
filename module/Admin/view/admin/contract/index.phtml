@@ -256,6 +256,7 @@
             }
             $controlAddHistoryContract = '<a href="javascript:;" onclick="'. $linkAddHistoryContract .'" title="Thêm lịch sử chăm sóc" class="btn btn-xs green"><i class="fa fa-volume-control-phone"></i></a>';
             $controlEditReduce = '<a href="javascript:;" onclick="'. $linkEditReduce .'" title="Thêm giảm trừ doanh thu" class="btn btn-xs red"><i class="fa fa fa-money"></i></a>';
+            $controlEditShipping = '<a href="javascript:;" onclick="'. $linkEditShippingFee .'" title="Cập nhật phí giao hàng" class="btn btn-xs blue"><i class="fa fa fa-truck"></i></a>';
 
 
             $rowSpan = '';
@@ -296,7 +297,7 @@
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'"'.$color_text_row.'>
     							<th '.$rowSpan.'>'. $cid .'</th>
-                                <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.$controlEditReduce.'</th>
+                                <th '.$rowSpan.' class="controls" style="left:23px;">'.$controlAddHistoryContract.$controlPrint.$controlEditReduce.$controlEditShipping.'</th>
     							<td '.$rowSpan.' class="controls" style="left:83px;">'. $order_status .' '.$invoiced.'<br>'.$date_return.$return_status.'</td>
     							<td '.$rowSpan.' class="controls" style="left:193px;"><a href="'.$linkDetail.'" class="text-bold '.$warning_price_text.'">'. $code .'</a><br>'.$status.'</td>
     							<td '.$rowSpan.'>'. $ghtk_code .'</td>

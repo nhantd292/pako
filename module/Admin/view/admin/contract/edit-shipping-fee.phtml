@@ -3,7 +3,7 @@
     $myForm->prepare();
     
     $elements = array(
-        array('element' => $myForm->get('shipping_fee'), 'label' => 'Phí ships khách hàng hỗ trợ', 'boxClass' => 'col-md-6', 'validate' => array('require' => true)),
+        array('element' => $myForm->get('fee_shipp'), 'label' => 'Phí ships hàng', 'boxClass' => 'col-md-6', 'validate' => array('require' => true)),
         array('element' => $myForm->get('id'), 'validate' => array('require' => true)),
         array('element' => $myForm->get('modal'), 'validate' => array('require' => true))
     );

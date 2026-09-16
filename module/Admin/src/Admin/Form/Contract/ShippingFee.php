@@ -33,7 +33,7 @@ class ShippingFee extends Form {
 		
 		// Phí ships khách hàng hỗ trợ khi không nhận hàng
 		$this->add(array(
-		    'name'			=> 'shipping_fee',
+		    'name'			=> 'fee_shipp',
 		    'type'			=> 'Text',
 		    'attributes'	=> array(
 		        'class'		=> 'form-control mask_currency',
