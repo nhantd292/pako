@@ -144,6 +144,7 @@ class ContractTable extends DefaultTable {
                     }
                     else{
                         $select -> where -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state']);
+                        $select -> where -> notEqualTo(TABLE_CONTRACT .'.return_status', 2);
                     }
                 }
 
@@ -813,6 +814,7 @@ class ContractTable extends DefaultTable {
                     }
                     else{
                         $select -> where -> equalTo(TABLE_CONTRACT .'.state', $ssFilter['filter_state']);
+                        $select -> where -> notEqualTo(TABLE_CONTRACT .'.return_status', 2);
                     }
                 }
 
