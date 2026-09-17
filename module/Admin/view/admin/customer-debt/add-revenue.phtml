@@ -54,8 +54,15 @@ $xhtmlTop = $this->partialLoop($this->params['module'] . '/partial/form-default.
             <div class="col-md-4">
                 <?php echo $xhtmlBottom;?>
             </div>
+            <div class="col-md-12">
+                <div id="loadContracts" class="col-md-12">
+                </div>
+            </div>
 		</div>
 	</div>
 </form>
 
+<?php $this->headScript()->captureStart() ?>
+    var url_loadContracts = '<?php echo $this->url('routeAdmin/default',array('controller' => 'api', 'action' => 'loadContracts'));?>';
+<?php $this->headScript()->captureEnd() ?>
 <?php $this->HeadScript()->appendFile('/public/template/backend/js/contracts/revenue.js','text/javascript');?>

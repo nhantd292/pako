@@ -285,6 +285,37 @@ class ApiController extends ActionController
         return $this->getResponse()->setContent(json_encode($responseData));
     }
 
+    public function loadContractsAction()
+    {
+        $itemPerpage = 50;
+        $curentPage = $this->_params['data']['curentPage'] ? $this->_params['data']['curentPage'] : 1;
+        $paginator = array(
+            'itemCountPerPage' => $itemPerpage,
+            'currentPageNumber' => $curentPage
+        );
+        $ssFilter = array(
+            'filter_customer_id'  => !empty($this->_params['data']['filter_customer_id']) ? $this->_params['data']['filter_customer_id'] : 'customer_id',
+            'filter_inventory_id' => !empty($this->_params['data']['filter_inventory_id']) ? $this->_params['data']['filter_inventory_id'] : 'inventory_id',
+            'filter_add_revenue' => 1,
+        );
+
+        $param = array(
+            'paginator' => $paginator,
+            'ssFilter' => $ssFilter
+        );
+
+        $this->_viewModel['contracts'] = $this->getServiceLocator()->get('Admin\Model\ContractTable')->listItem($param, array('task' => 'list-item'));;
+        $this->_viewModel['count'] = $this->getServiceLocator()->get('Admin\Model\ContractTable')->countItem($param, array('task' => 'list-item'));
+        $this->_viewModel['itemPerpage'] = $itemPerpage;
+        $this->_viewModel['curentPage'] = $curentPage;
+        $this->_viewModel['order_status'] = \ZendX\Functions\CreateArray::create($this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'object'));
+
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+        return $viewModel;
+    }
+
     public function loadKovProductsAction()
     {
         $itemPerpage = 20;

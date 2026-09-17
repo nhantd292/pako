@@ -818,6 +818,11 @@ class ContractTable extends DefaultTable {
                     }
                 }
 
+                if(!empty($ssFilter['filter_add_revenue'])) {
+                    $select -> where -> notIn(TABLE_CONTRACT .'.state', [RETURN_STATUS, CANCEL_STATUS]);
+                    $select -> where -> notEqualTo(TABLE_CONTRACT .'.return_status', 2);
+                }
+
                 if(!empty($ssFilter['filter_product'])) {
                     foreach($ssFilter['filter_product'] as $key => $value){
                         $select -> where -> like(TABLE_CONTRACT .'.options', '%'.$value.'%');
