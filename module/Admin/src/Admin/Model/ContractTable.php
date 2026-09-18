@@ -1668,9 +1668,16 @@ class ContractTable extends DefaultTable {
             if($arrData['send_zalo_notifi_care']){
                 $data['send_zalo_notifi_care'] = $arrData['send_zalo_notifi_care'];
             }
+            if($arrData['paid']){
+                $data['paid'] = $arrData['paid'];
+            }
 
-            $this->tableGateway->update($data, array('id' => $id));
-            return true;
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return true;
+            } catch (\Exception $e) {
+                throw new \Exception('Update contract table false: ' . $e->getMessage());
+            }
 		}
 
 		// Cập nhật lịch sử chăm sóc đơn hàng

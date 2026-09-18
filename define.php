@@ -98,6 +98,7 @@ define('TABLE_COMBO_PRODUCT', TABLE_PREFIX . 'combo_product'); // Bảng combo s
 
 define('TABLE_CUSTOMER_TYPE', TABLE_PREFIX . 'customer_type'); // Bảng phân loại khách hàng.
 define('TABLE_CUSTOMER_DEBT', TABLE_PREFIX . 'customer_debt'); // Bảng thu chi khách hàng.
+define('TABLE_CUSTOMER_DEBT_DETAIL', TABLE_PREFIX . 'customer_debt_detail'); // Bảng phẩn bổ tiền theo đơn hàng
 
 // Quản lý sản phẩm
 define('TABLE_PRODUCTS', TABLE_PREFIX . 'products'); // Sản phẩm

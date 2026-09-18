@@ -23,6 +23,7 @@ if($page > 1){
 }
 $xhtml .= '<div class="listProduct" >';
 $customer_type_id = '';
+$stt = 0;
 foreach ($this->contracts as $item) {
     $stt++;
     $id                     = $item->id;
@@ -38,15 +39,6 @@ foreach ($this->contracts as $item) {
     $price_total            = $item->option_vat == 'yes' ? $item->price_total - $item->vat: $item->price_total;
     $fee_other              = $item->fee_other;
     $price_owed             = $item->price_owed;
-
-    $total_fee_other       += $fee_other;
-    $total_vat             += $vat;
-    $total_cod             += $item->price_transport;
-    $total_paid_cash       += $item->paid_cash;
-    $total_paid_transfer   += $item->paid_transfer;
-    $total_discount        += $item->discount;
-    $total_price_reduce_sale        += $item->price_reduce_sale;
-    $total_price_owed      += $item->price_owed;
 
     $order_status = '<span class="btn btn-xs '.$this->order_status[$item->state]->content.'">'.$this->order_status[$item->state]->name.'</span>';
 
@@ -95,12 +87,17 @@ foreach ($this->contracts as $item) {
         $xhtmlItems    .= '<td></td><td></td><td></td>';
     }
     $xhtmlItems .= '
-                            <td '.$rowSpan.' class="text-right">'. number_format($vat + $fee_other) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($price_total) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($vat + $fee_other) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($item->discount) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_transfer) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->price_reduce_sale) .'</td>
-                            <td '.$rowSpan.' class="text-right">'. number_format($item->fee_shipp) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash + $item->paid_transfer) .'</td>
+                            <td '.$rowSpan.' class="text-right text-red">'. number_format($price_total + $fee_other - $item->discount - $item->paid_cash - $item->paid_transfer) .'</td>
+                            <td '.$rowSpan.' class="text-right">
+                            <input class="form-control text-right w-110 mask_currency" type="text" name="contracts['.$id.']" value="">
+                            </td>
                         </tr>';
 
     if (count($options['product']) > 0) {
@@ -121,15 +118,18 @@ $xhtmlHead .= '<th width="20">STT</th>';
 $xhtmlHead .= '<th width="50">Trạng thái</th>';
 $xhtmlHead .= '<th width="200">Mã số đơn</th>';
 $xhtmlHead .= '<th width="80">Ngày</th>';
-$xhtmlHead .= '<th width="100">Sản phẩm</th>';
-$xhtmlHead .= '<th width="60" class="text-center">Số lượng</th>';
-$xhtmlHead .= '<th width="100" class="text-center">Giá bán</th>';
-$xhtmlHead .= '<th width="80" class="text-right">Thu khác</th>';
-$xhtmlHead .= '<th width="80" class="text-right">Tổng tiền hàng</th>';
+$xhtmlHead .= '<th width="200">Sản phẩm</th>';
+$xhtmlHead .= '<th width="40" class="text-center">SL</th>';
+$xhtmlHead .= '<th width="70" class="text-center">Giá bán</th>';
+$xhtmlHead .= '<th width="70" class="text-right">Tổng tiền hàng</th>';
+$xhtmlHead .= '<th width="70" class="text-right">Thu khác</th>';
+$xhtmlHead .= '<th width="70" class="text-right">Giảm giá</th>';
 $xhtmlHead .= '<th width="80" class="text-right">Trả tiền mặt</th>';
 $xhtmlHead .= '<th width="80" class="text-right">Chuyển khoản</th>';
 $xhtmlHead .= '<th width="80" class="text-right">Giảm trừ DT</th>';
-$xhtmlHead .= '<th width="80" class="text-right">Phí giao hàng'.'</th>';
+$xhtmlHead .= '<th width="80" class="text-right">Đã thanh toán</th>';
+$xhtmlHead .= '<th width="80" class="text-right">Còn nợ</th>';
+$xhtmlHead .= '<th width="80" class="text-right">Phân bổ</th>';
 $xhtmlHead .= '</tr>';
 
 $xhtml .= '<div class="pagination">'.$show_infor.$pageText.'</div>';
@@ -147,3 +147,8 @@ $htmlContracts = '<div class="table-scrollable table-fixed">
     		</div>';
 echo $htmlContracts;
 ?>
+<style>
+    .w-110{
+        width: 110px;
+    }
+</style>

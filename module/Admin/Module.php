@@ -92,6 +92,11 @@ class Module {
                     $tableGateway = new TableGateway(TABLE_CONTRACT_FEE, $adapter, null);
                     return new \Admin\Model\ContractFeeTable($tableGateway);
                 },
+                'Admin\Model\CustomerDebtDetailTable' => function ($sm) {
+                    $adapter = $sm->get('dbConfig');
+                    $tableGateway = new TableGateway(TABLE_CUSTOMER_DEBT_DETAIL, $adapter, null);
+                    return new \Admin\Model\CustomerDebtDetailTable($tableGateway);
+                },
                 'Admin\Model\ContractCodTable' => function ($sm) {
                     $adapter = $sm->get('dbConfig');
                     $tableGateway = new TableGateway(TABLE_CONTRACT_COD, $adapter, null);
