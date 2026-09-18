@@ -821,6 +821,20 @@ class ContractTable extends DefaultTable {
                 if(!empty($ssFilter['filter_add_revenue'])) {
                     $select -> where -> notIn(TABLE_CONTRACT .'.state', [RETURN_STATUS, CANCEL_STATUS]);
                     $select -> where -> notEqualTo(TABLE_CONTRACT .'.return_status', 2);
+                    $select -> where->NEST
+                        ->notEqualTo(
+                            new Expression(
+                                TABLE_CONTRACT . '.price_total'
+                                . ' + ' . TABLE_CONTRACT . '.fee_other'
+                                . ' - ' . TABLE_CONTRACT . '.discount'
+                                . ' - ' . TABLE_CONTRACT . '.paid_cash'
+                                . ' - ' . TABLE_CONTRACT . '.paid_transfer'
+                                . ' - ' . TABLE_CONTRACT . '.paid'
+                                . ' - ' . TABLE_CONTRACT . '.price_reduce_sale'
+                            ),
+                            0
+                        )
+                        ->UNNEST;
                 }
 
                 if(!empty($ssFilter['filter_product'])) {

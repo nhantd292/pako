@@ -93,8 +93,8 @@ foreach ($this->contracts as $item) {
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_transfer) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->price_reduce_sale) .'</td>
-                            <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash + $item->paid_transfer) .'</td>
-                            <td '.$rowSpan.' class="text-right text-red">'. number_format($price_total + $fee_other - $item->discount - $item->paid_cash - $item->paid_transfer) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($item->paid) .'</td>
+                            <td '.$rowSpan.' class="text-right text-red">'. number_format($price_total + $fee_other + $vat - $item->discount - $item->paid_cash - $item->paid_transfer - $item->paid - $item->price_reduce_sale) .'</td>
                             <td '.$rowSpan.' class="text-right">
                             <input class="form-control text-right w-110 mask_currency" type="text" name="contracts['.$id.']" value="">
                             </td>
@@ -127,7 +127,7 @@ $xhtmlHead .= '<th width="70" class="text-right">Giảm giá</th>';
 $xhtmlHead .= '<th width="80" class="text-right">Trả tiền mặt</th>';
 $xhtmlHead .= '<th width="80" class="text-right">Chuyển khoản</th>';
 $xhtmlHead .= '<th width="80" class="text-right">Giảm trừ DT</th>';
-$xhtmlHead .= '<th width="80" class="text-right">Đã thanh toán</th>';
+$xhtmlHead .= '<th width="80" class="text-right">Đã thu</th>';
 $xhtmlHead .= '<th width="80" class="text-right">Còn nợ</th>';
 $xhtmlHead .= '<th width="80" class="text-right">Phân bổ</th>';
 $xhtmlHead .= '</tr>';

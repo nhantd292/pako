@@ -327,9 +327,10 @@
                             <td '.$rowSpan.' class="text-right">'. number_format($price_total) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_cash) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->paid_transfer) .'</td>
-                            <td '.$rowSpan.' class="text-right">'. number_format($item->paid) .'</td>
                             <!--<td '.$rowSpan.' class="text-right">'. number_format($item->discount) .'</td>-->
                             <td '.$rowSpan.' class="text-right">'. number_format($item->price_reduce_sale) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($item->paid) .'</td>
+                            <td '.$rowSpan.' class="text-right">'. number_format($vat + $fee_other + $price_total - $item->paid_cash - $item->paid_transfer - $item->discount - $item->price_reduce_sale - $item->paid) .'</td>
                             <td '.$rowSpan.' class="text-right">'. number_format($item->fee_shipp) .'</td>
                             <td '.$rowSpan.'>'. $this->fee_type[$item->fee_type]['name'] .'</td>
                             <td '.$rowSpan.'>'. $contact_name .'</td>
@@ -360,10 +361,10 @@
     $text_total_vat = '<br><span  class="text-red">' . number_format($total_vat + $total_fee_other) . '</span>';
     $text_total_paid_cash = '<br><span  class="text-red">' . number_format($total_paid_cash) . '</span>';
     $text_total_paid_transfer = '<br><span  class="text-red">' . number_format($total_paid_transfer) . '</span>';
-    $text_total_paid = '<br><span  class="text-red">' . number_format($total_paid) . '</span>';
     $text_total_discount = '<br><span  class="text-red">' . number_format($total_discount) . '</span>';
     $text_total_price_reduce_sale = '<br><span  class="text-red">' . number_format($total_price_reduce_sale) . '</span>';
-    $text_total_price_owed = '<br><span  class="text-red">' . number_format($total_price_owed) . '</span>';
+    $text_total_paid = '<br><span  class="text-red">' . number_format($total_paid) . '</span>';
+    $text_total_price_owed = '<br><span  class="text-red">' . number_format($total_vat + $total_fee_other + $total_price - $total_paid_cash - $total_paid_transfer - $total_discount - $total_price_reduce_sale - $total_paid) . '</span>';
     $text_total_number = $total_number > 0 ? '<br><span class="text-red">' . number_format($total_number) . '</span>' : '';
 
     // Head
@@ -384,9 +385,10 @@
     $xhtmlHead .= '<th width="80" class="text-right">Tiền hàng'.$text_total.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Trả tiền mặt'.$text_total_paid_cash.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Chuyển khoản'.$text_total_paid_transfer.'</th>';
+$xhtmlHead .= '<th width="80" class="text-right">Giảm trừ DT'.$text_total_price_reduce_sale.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Đã Thu'.$text_total_paid.'</th>';
+    $xhtmlHead .= '<th width="80" class="text-right">Công nợ'.$text_total_price_owed.'</th>';
 //    $xhtmlHead .= '<th width="80" class="text-right">Giảm giá'.$text_total_discount.'</th>';
-    $xhtmlHead .= '<th width="80" class="text-right">Giảm trừ DT'.$text_total_price_reduce_sale.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Phí giao hàng'.'</th>';
     $xhtmlHead .= '<th width="80" class="text-right">Người trả phí'.'</th>';
     $xhtmlHead .= '<th width="150">Tên khách hàng</th>';
