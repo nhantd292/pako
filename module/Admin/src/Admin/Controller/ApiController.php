@@ -1456,7 +1456,7 @@ class ApiController extends ActionController
                         }
                         // Cập nhật trạng thái hủy
                         if ($data['ORDER_STATUS'] == 107) {
-                            if ($contract_item['state'] == NEW_STATUS) {
+                            if (in_array($contract_item['state'], array(PROCESSING_STATUS, NEW_STATUS))) {
                                 $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => array('id' => $contract_item['id'], 'state' => CANCEL_STATUS)), array('task' => 'update-state'));
 
                                 # Sửa phiếu thu chi khách hàng
