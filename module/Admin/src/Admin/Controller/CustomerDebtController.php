@@ -314,9 +314,10 @@ class CustomerDebtController extends ActionController
             $controlAction = $this->_params['data']['control-action'];
 
             if ($myForm->isValid()) {
-                $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
+//                $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                 $customer_id = $this->_params['data']['customer_id'];
                 $contact_item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $customer_id));
+                $this->_params['data']['contracts'] = array_filter($this->_params['data']['contracts']);
 
                 ##### begin #####
                 $connection->beginTransaction();
@@ -354,6 +355,27 @@ class CustomerDebtController extends ActionController
                     'date' => $this->_params['data']['date'],
                 );
                 $result = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
+
+                # Tạo phân bổ cho đơn hàng từ phiếu chi
+                if (!empty($this->_params['data']['contracts'])) {
+                    foreach ($this->_params['data']['contracts'] as $contract_id => $price) {
+                        $price = $number->formatToData($price);
+                        # tạo phân bổ
+                        $data_customer_debt_detail = array(
+                            'contract_id'       => $contract_id,
+                            'customer_debt_id'  => $result,
+                            'price'             => $price,
+                        );
+                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtDetailTable')->saveItem(array('data' => $data_customer_debt_detail), array('task' => 'add-item'));
+                        # thêm giá trị vào đơn hàng
+                        $contract_item = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $contract_id));
+                        $data_contract_update = array(
+                            'id' => $contract_id,
+                            'ck' => $contract_item['ck'] + $price,
+                        );
+                        $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $data_contract_update), array('task' => 'update-item'));
+                    }
+                }
 
 
                 $connection->commit();

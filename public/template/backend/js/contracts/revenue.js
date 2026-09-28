@@ -10,8 +10,9 @@ function updateTotal() {
     $("input[name=new_debt]").val(formatNumber(amount_owed - (paid_cash + paid_transfer)))
 }
 
-var data = {filter_customer_id: $(`input[name="customer_id"]`).val()};
 $(`input[name="customer_id"]`).change(function () {
+    var data = {filter_customer_id: $(`input[name="customer_id"]`).val(), filter_add_revenue: 1};
     load_action('#loadContracts', url_loadContracts, data);
 });
+var data = {filter_customer_id: $(`input[name="customer_id"]`).val(), filter_add_revenue: 1};
 load_action('#loadContracts', url_loadContracts, data);

@@ -1685,6 +1685,9 @@ class ContractTable extends DefaultTable {
             if($arrData['paid']){
                 $data['paid'] = $arrData['paid'];
             }
+            if($arrData['ck']){
+                $data['ck'] = $arrData['ck'];
+            }
 
             try {
                 $this->tableGateway->update($data, array('id' => $id));
