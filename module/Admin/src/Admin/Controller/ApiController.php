@@ -295,7 +295,7 @@ class ApiController extends ActionController
         );
         $ssFilter = array(
             'filter_customer_id'  => !empty($this->_params['data']['filter_customer_id']) ? $this->_params['data']['filter_customer_id'] : 'customer_id',
-            'filter_inventory_id' => !empty($this->_params['data']['filter_inventory_id']) ? $this->_params['data']['filter_inventory_id'] : 'inventory_id',
+//            'filter_inventory_id' => !empty($this->_params['data']['filter_inventory_id']) ? $this->_params['data']['filter_inventory_id'] : 'inventory_id',
             'filter_add_revenue' => 1,
         );
 

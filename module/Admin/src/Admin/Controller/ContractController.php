@@ -1819,7 +1819,22 @@ class ContractController extends ActionController
                                     'date' => $date,
                                     'cod_status' => 1,
                                 );
-                                $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
+                                $result = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
+
+                                # Tạo phân bổ cho đơn hàng từ phiếu thu
+                                # tạo phân bổ
+                                $data_customer_debt_detail = array(
+                                    'contract_id'       => $contract['id'],
+                                    'customer_debt_id'  => $result,
+                                    'price'             => $cod,
+                                );
+                                $this->getServiceLocator()->get('Admin\Model\CustomerDebtDetailTable')->saveItem(array('data' => $data_customer_debt_detail), array('task' => 'add-item'));
+                                # thêm giá trị vào đơn hàng
+                                $data_contract_update = array(
+                                    'id' => $contract['id'],
+                                    'paid' => $contract['paid'] + $cod,
+                                );
+                                $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $data_contract_update), array('task' => 'update-item'));
 
 
                                 echo json_encode(array(

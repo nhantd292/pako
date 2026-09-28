@@ -102,8 +102,12 @@ class ContractCodTable extends DefaultTable {
                 'created_by'    => $this->userInfo->getUserInfo('id'),
             );
 
-            $this->tableGateway->insert($data);
-            return $id;
+            try {
+                $this->tableGateway->insert($data);
+                return $id;
+            } catch (\Exception $e) {
+                throw new \Exception('Insert Contract COD Table failed: ' . $e->getMessage());
+            }
         }
 	}
 }
