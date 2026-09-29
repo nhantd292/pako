@@ -1682,10 +1682,10 @@ class ContractTable extends DefaultTable {
             if($arrData['send_zalo_notifi_care']){
                 $data['send_zalo_notifi_care'] = $arrData['send_zalo_notifi_care'];
             }
-            if($arrData['paid']){
+            if(isset($arrData['paid'])){
                 $data['paid'] = $arrData['paid'];
             }
-            if($arrData['ck']){
+            if(isset($arrData['ck'])){
                 $data['ck'] = $arrData['ck'];
             }
 

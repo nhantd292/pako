@@ -14,16 +14,16 @@ class CustomerDebtDetailTable extends DefaultTable {
                 
                 $select -> columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(1)')));
 
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_FEE .'.contract_id',
+                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT_DETAIL .'.contract_id',
                     array(
                         'contract_code' => 'code',
                     ), 'inner');
 
                 if(!empty($ssFilter['filter_date'])) {
-                    $select -> where -> equalTo(TABLE_CONTRACT_FEE .'.date', $ssFilter['filter_date']);
+                    $select -> where -> equalTo(TABLE_CUSTOMER_DEBT_DETAIL .'.date', $ssFilter['filter_date']);
                 }
                 if(!empty($ssFilter['filter_contract_id'])) {
-                    $select -> where -> equalTo(TABLE_CONTRACT_FEE .'.contract_id', $ssFilter['filter_contract_id']);
+                    $select -> where -> equalTo(TABLE_CUSTOMER_DEBT_DETAIL .'.contract_id', $ssFilter['filter_contract_id']);
                 }
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $filter_keyword = trim($ssFilter['filter_keyword']);
@@ -52,11 +52,19 @@ class CustomerDebtDetailTable extends DefaultTable {
                         -> offset(($paginator['currentPageNumber'] - 1) * $paginator['itemCountPerPage']);
                 }
 
-                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_FEE .'.contract_id',
+                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT_DETAIL .'.contract_id',
                     array(
                         'contract_code' => 'code',
                     ), 'inner');
                 $select -> order(array(TABLE_CONTRACT .'.code' => 'DESC'));
+
+                if(!empty($ssFilter['filter_contract_id'])) {
+                    $select -> where -> equalTo(TABLE_CUSTOMER_DEBT_DETAIL .'.contract_id', $ssFilter['filter_contract_id']);
+                }
+
+                if(isset($ssFilter['customer_debt_id']) && $ssFilter['customer_debt_id'] != '') {
+                    $select -> where -> equalTo(TABLE_CUSTOMER_DEBT_DETAIL. '.customer_debt_id', $ssFilter['customer_debt_id']);
+                }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $filter_keyword = trim($ssFilter['filter_keyword']);

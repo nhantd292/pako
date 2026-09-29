@@ -440,6 +440,21 @@ class CustomerDebtController extends ActionController
                     );
                     $this->getTable()->saveItem(array('data' => $data_debt, 'item' => $debt_item_old), array('task' => 'edit-item'));
 
+                    $list_debt_detail = $this->getServiceLocator()->get('Admin\Model\CustomerDebtDetailTable')->listItem(
+                        array('ssFilter' => array('customer_debt_id' => $item['id'])),
+                        array('task' => 'list-item', 'paginator' => false)
+                    )->toArray();
+                    if (!empty($list_debt_detail)) {
+                        foreach ($list_debt_detail as $debt_detail_item) {
+                            $contract_item = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $debt_detail_item['contract_id']));
+                            $data_contract_update = array(
+                                'id' => $contract_item['id'],
+                                'ck' => $contract_item['ck'] - $debt_detail_item['price'],
+                            );
+                            $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $data_contract_update), array('task' => 'update-item'));
+                        }
+                    }
+
                     $connection->commit();
                     $this->flashMessenger()->addSuccessMessage('Hủy phiếu chi thành công!');
                 }
