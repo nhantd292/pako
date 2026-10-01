@@ -131,75 +131,86 @@ class CustomerDebtController extends ActionController
                 $contact_item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $customer_id));
                 $this->_params['data']['contracts'] = array_filter($this->_params['data']['contracts']);
 
-                ##### begin #####
-                $connection->beginTransaction();
-                # tạo phiếu thu cho khách hàng
-                $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
-                if ($count_debt > 0) {
-                    $paginator = array(
-                        'currentPageNumber' => 1,
-                        'itemCountPerPage' => 1
-                    );
-                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id), 'paginator' => $paginator), array('task' => 'list-item'));
-                    $list_debt = $list_debt->toArray();
-                    $ucdebt = $list_debt[0];
-                    $old_debt = $ucdebt['new_debt'];
-                } else {
-                    $old_debt = $contact_item['amount_owed'];
-                }
 
                 $paid_cash = $number->formatToData($this->_params['data']['paid_cash']);
                 $paid_transfer = $number->formatToData($this->_params['data']['paid_transfer']);
-                $new_debt = $old_debt - ($paid_cash + $paid_transfer);
-                $data_debt = array(
-                    'customer_id' => $customer_id,
-                    'type' => THU,
-                    'inventory_id' => $this->_params['data']['inventory_id'],
-                    'price_total' => 0,
-                    'discount' => 0,
-                    'paid_cash' => $paid_cash,
-                    'paid_transfer' => $paid_transfer,
-                    'old_debt' => $old_debt,
-                    'new_debt' => $new_debt,
-                    'state' => NEW_STATUS,
-                    'category' => $this->_params['data']['category'],
-                    'note' => $this->_params['data']['note'],
-                    'date' => $this->_params['data']['date'],
-                );
-                $result = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
-
-                # Tạo phân bổ cho đơn hàng từ phiếu thu
+                $total_price = 0;
                 if (!empty($this->_params['data']['contracts'])) {
                     foreach ($this->_params['data']['contracts'] as $contract_id => $price) {
                         $price = $number->formatToData($price);
-                        # tạo phân bổ
-                        $data_customer_debt_detail = array(
-                            'contract_id'       => $contract_id,
-                            'customer_debt_id'  => $result,
-                            'price'             => $price,
-                        );
-                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtDetailTable')->saveItem(array('data' => $data_customer_debt_detail), array('task' => 'add-item'));
-                        # thêm giá trị vào đơn hàng
-                        $contract_item = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $contract_id));
-                        $data_contract_update = array(
-                            'id' => $contract_id,
-                            'paid' => $contract_item['paid'] + $price,
-                        );
-                        $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $data_contract_update), array('task' => 'update-item'));
+                        $total_price += $price;
                     }
                 }
 
-                $connection->commit();
+                if ($paid_cash+$paid_transfer < $total_price) {
+                    $this->flashMessenger()->addErrorMessage('Số tiền phân bổ lớn hơn số tiền THU thực tế');
+                }
+                else {
+                    ##### begin #####
+                    $connection->beginTransaction();
+                    # tạo phiếu thu cho khách hàng
+                    $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
+                    if ($count_debt > 0) {
+                        $paginator = array(
+                            'currentPageNumber' => 1,
+                            'itemCountPerPage' => 1
+                        );
+                        $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id), 'paginator' => $paginator), array('task' => 'list-item'));
+                        $list_debt = $list_debt->toArray();
+                        $ucdebt = $list_debt[0];
+                        $old_debt = $ucdebt['new_debt'];
+                    } else {
+                        $old_debt = $contact_item['amount_owed'];
+                    }
+                    $new_debt = $old_debt - ($paid_cash + $paid_transfer);
+                    $data_debt = array(
+                        'customer_id' => $customer_id,
+                        'type' => THU,
+                        'inventory_id' => $this->_params['data']['inventory_id'],
+                        'price_total' => 0,
+                        'discount' => 0,
+                        'paid_cash' => $paid_cash,
+                        'paid_transfer' => $paid_transfer,
+                        'old_debt' => $old_debt,
+                        'new_debt' => $new_debt,
+                        'state' => NEW_STATUS,
+                        'category' => $this->_params['data']['category'],
+                        'note' => $this->_params['data']['note'],
+                        'date' => $this->_params['data']['date'],
+                    );
+                    $result = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
 
+                    # Tạo phân bổ cho đơn hàng từ phiếu thu
+                    if (!empty($this->_params['data']['contracts'])) {
+                        foreach ($this->_params['data']['contracts'] as $contract_id => $price) {
+                            $price = $number->formatToData($price);
+                            # tạo phân bổ
+                            $data_customer_debt_detail = array(
+                                'contract_id' => $contract_id,
+                                'customer_debt_id' => $result,
+                                'price' => $price,
+                            );
+                            $this->getServiceLocator()->get('Admin\Model\CustomerDebtDetailTable')->saveItem(array('data' => $data_customer_debt_detail), array('task' => 'add-item'));
+                            # thêm giá trị vào đơn hàng
+                            $contract_item = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $contract_id));
+                            $data_contract_update = array(
+                                'id' => $contract_id,
+                                'paid' => $contract_item['paid'] + $price,
+                            );
+                            $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $data_contract_update), array('task' => 'update-item'));
+                        }
+                    }
 
-                $this->flashMessenger()->addSuccessMessage('Thêm mới ' . $this->caption . ' thành công');
+                    $connection->commit();
+                    $this->flashMessenger()->addSuccessMessage('Thêm mới ' . $this->caption . ' thành công');
 
-                if ($controlAction == 'save-new') {
-                    $this->goRoute(array('action' => 'add-revenue'));
-                } else if ($controlAction == 'save') {
-                    $this->goRoute(array('action' => 'detail-revenue', 'id' => $result));
-                } else {
-                    $this->goRoute();
+                    if ($controlAction == 'save-new') {
+                        $this->goRoute(array('action' => 'add-revenue'));
+                    } else if ($controlAction == 'save') {
+                        $this->goRoute(array('action' => 'detail-revenue', 'id' => $result));
+                    } else {
+                        $this->goRoute();
+                    }
                 }
             }
         }
@@ -335,76 +346,88 @@ class CustomerDebtController extends ActionController
                 $contact_item = $this->getServiceLocator()->get('Admin\Model\ContactTable')->getItem(array('id' => $customer_id));
                 $this->_params['data']['contracts'] = array_filter($this->_params['data']['contracts']);
 
-                ##### begin #####
-                $connection->beginTransaction();
-                # tạo phiếu chi cho khách hàng
-                $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
-                if ($count_debt > 0) {
-                    $paginator = array(
-                        'currentPageNumber' => 1,
-                        'itemCountPerPage' => 1
-                    );
-                    $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id), 'paginator' => $paginator), array('task' => 'list-item'));
-                    $list_debt = $list_debt->toArray();
-                    $ucdebt = $list_debt[0];
-                    $old_debt = $ucdebt['new_debt'];
-                } else {
-                    $old_debt = $contact_item['amount_owed'];
-                }
-
                 $paid_cash = $number->formatToData($this->_params['data']['paid_cash']);
                 $paid_transfer = $number->formatToData($this->_params['data']['paid_transfer']);
-                $new_debt = $old_debt + ($paid_cash + $paid_transfer);
-                $data_debt = array(
-                    'customer_id' => $customer_id,
-                    'type' => CHI,
-                    'inventory_id' => $this->_params['data']['inventory_id'],
-                    'price_total' => 0,
-                    'discount' => 0,
-                    'paid_cash' => -$paid_cash,
-                    'paid_transfer' => -$paid_transfer,
-                    'old_debt' => $old_debt,
-                    'new_debt' => $new_debt,
-                    'state' => NEW_STATUS,
-                    'category' => $this->_params['data']['category'],
-                    'note' => $this->_params['data']['note'],
-                    'date' => $this->_params['data']['date'],
-                );
-                $result = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
-
-                # Tạo phân bổ cho đơn hàng từ phiếu chi
+                $total_price = 0;
                 if (!empty($this->_params['data']['contracts'])) {
                     foreach ($this->_params['data']['contracts'] as $contract_id => $price) {
                         $price = $number->formatToData($price);
-                        # tạo phân bổ
-                        $data_customer_debt_detail = array(
-                            'contract_id'       => $contract_id,
-                            'customer_debt_id'  => $result,
-                            'price'             => $price,
-                        );
-                        $this->getServiceLocator()->get('Admin\Model\CustomerDebtDetailTable')->saveItem(array('data' => $data_customer_debt_detail), array('task' => 'add-item'));
-                        # thêm giá trị vào đơn hàng
-                        $contract_item = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $contract_id));
-                        $data_contract_update = array(
-                            'id' => $contract_id,
-                            'ck' => $contract_item['ck'] + $price,
-                        );
-                        $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $data_contract_update), array('task' => 'update-item'));
+                        $total_price += $price;
                     }
                 }
+                if ($paid_cash+$paid_transfer < $total_price) {
+                    $this->flashMessenger()->addErrorMessage('Số tiền phân bổ lớn hơn số tiền CHI thực tế');
+                }
+                else {
+                    ##### begin #####
+                    $connection->beginTransaction();
+                    # tạo phiếu chi cho khách hàng
+                    $count_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->countItem(array('ssFilter' => array('filter_customer_id' => $customer_id)), array('task' => 'list-item'));
+                    if ($count_debt > 0) {
+                        $paginator = array(
+                            'currentPageNumber' => 1,
+                            'itemCountPerPage' => 1
+                        );
+                        $list_debt = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->listItem(array('ssFilter' => array('filter_customer_id' => $customer_id), 'paginator' => $paginator), array('task' => 'list-item'));
+                        $list_debt = $list_debt->toArray();
+                        $ucdebt = $list_debt[0];
+                        $old_debt = $ucdebt['new_debt'];
+                    } else {
+                        $old_debt = $contact_item['amount_owed'];
+                    }
+
+                    $new_debt = $old_debt + ($paid_cash + $paid_transfer);
+                    $data_debt = array(
+                        'customer_id' => $customer_id,
+                        'type' => CHI,
+                        'inventory_id' => $this->_params['data']['inventory_id'],
+                        'price_total' => 0,
+                        'discount' => 0,
+                        'paid_cash' => -$paid_cash,
+                        'paid_transfer' => -$paid_transfer,
+                        'old_debt' => $old_debt,
+                        'new_debt' => $new_debt,
+                        'state' => NEW_STATUS,
+                        'category' => $this->_params['data']['category'],
+                        'note' => $this->_params['data']['note'],
+                        'date' => $this->_params['data']['date'],
+                    );
+                    $result = $this->getServiceLocator()->get('Admin\Model\CustomerDebtTable')->saveItem(array('data' => $data_debt), array('task' => 'add-item'));
+
+                    # Tạo phân bổ cho đơn hàng từ phiếu chi
+                    if (!empty($this->_params['data']['contracts'])) {
+                        foreach ($this->_params['data']['contracts'] as $contract_id => $price) {
+                            $price = $number->formatToData($price);
+                            # tạo phân bổ
+                            $data_customer_debt_detail = array(
+                                'contract_id' => $contract_id,
+                                'customer_debt_id' => $result,
+                                'price' => $price,
+                            );
+                            $this->getServiceLocator()->get('Admin\Model\CustomerDebtDetailTable')->saveItem(array('data' => $data_customer_debt_detail), array('task' => 'add-item'));
+                            # thêm giá trị vào đơn hàng
+                            $contract_item = $this->getServiceLocator()->get('Admin\Model\ContractTable')->getItem(array('id' => $contract_id));
+                            $data_contract_update = array(
+                                'id' => $contract_id,
+                                'ck' => $contract_item['ck'] + $price,
+                            );
+                            $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $data_contract_update), array('task' => 'update-item'));
+                        }
+                    }
 
 
-                $connection->commit();
+                    $connection->commit();
 
 
-                $this->flashMessenger()->addSuccessMessage('Thêm mới ' . $this->caption . ' thành công');
+                    $this->flashMessenger()->addSuccessMessage('Thêm mới ' . $this->caption . ' thành công');
 
-                if ($controlAction == 'save-new') {
-                    $this->goRoute(array('action' => 'add-expense'));
-                } else if ($controlAction == 'save') {
-                    $this->goRoute(array('action' => 'detail-expense', 'id' => $result));
-                } else {
-                    $this->goRoute();
+                    if ($controlAction == 'save-new') {
+                        $this->goRoute(array('action' => 'add-expense'));
+                    } else if ($controlAction == 'save') {
+                        $this->goRoute(array('action' => 'detail-expense', 'id' => $result));
+                    } else {
+                        $this->goRoute();
+                    }
                 }
             }
         }

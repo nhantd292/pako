@@ -44,6 +44,8 @@ $xhtmlTop = $this->partialLoop($this->params['module'] . '/partial/form-default.
 	</div>
 
     <?php echo $this->flashMessenger()->render('success', array('alert', 'alert-success'));?>
+    <?php echo $this->flashMessenger()->renderCurrent('error', array('alert', 'alert-danger')); ?>
+    <?php echo $this->flashMessenger()->renderCurrent('success', array('alert', 'alert-success')); ?>
 	<?php echo @$this->xViewElementErrors($elements);?>
 	
     <div class="page-content">
