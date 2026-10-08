@@ -1662,10 +1662,10 @@ class ContractController extends ActionController
                     if (empty($contract)) {
                         echo 'Đơn hàng không tồn tại';
                     } else {
-                        if ($contract['fee_shipp'] > 0) {
-                            echo 'Đơn đã được cập nhật tự động';
-                        }
-                        else{
+//                        if ($contract['fee_shipp'] > 0) {
+//                            echo 'Đơn đã được cập nhật tự động';
+//                        }
+//                        else{
                             $check_date = $date->check_date_format_to_data($this->_params['data']['date']);
                             if ($check_date == true) {
                                 $date = $date->formatToData($this->_params['data']['date'], 'Y-m-d');
@@ -1688,8 +1688,7 @@ class ContractController extends ActionController
                             } else {
                                 echo 'Sai định dạng ngày';
                             }
-                        }
-
+//                        }
                     }
                 } else {
                     echo 'Nhập mã vận đơn';
