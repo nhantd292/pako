@@ -1059,7 +1059,7 @@ class CustomerDebtController extends ActionController
                     $item['debt'] = '';
                     $item['debt2'] = '';
                     $item['sale_note'] = '';
-                    $item['cost'] = $item['cdetail_cost'];
+                    $item['cost'] = $item['cdetail_quantity'] * $item['cdetail_cost'];
                 }
                 if ($item['type'] == KTH) {
                     $item['created'] = '';
@@ -1098,7 +1098,7 @@ class CustomerDebtController extends ActionController
                     $item['debt'] = '';
                     $item['debt2'] = '';
                     $item['sale_note'] = '';
-                    $item['cost'] = $item['cdetail_cost'];
+                    $item['cost'] = $item['cdetail_quantity'] * $item['cdetail_cost'];
                 }
                 if ($item['type'] == KTH) {
                     $item['created'] = '';
