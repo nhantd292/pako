@@ -278,12 +278,14 @@ class CustomerDebtTable extends DefaultTable {
                             'option_vat' => 'option_vat',
                             'fee_other' => 'fee_other',
                             'sale_note' ,
+                            'cost_price_total' ,
                         ), 'left')
                         -> join(TABLE_CONTRACT_DETAIL, TABLE_CONTRACT_DETAIL .'.contract_id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array(
                             'cdetail_product_id' => 'product_id',
                             'cdetail_quantity' => 'numbers',
                             'cdetail_price' => 'price',
                             'cdetail_price_total' => 'total',
+                            'cdetail_cost' => 'cost'
                             ), 'left')
 
                         # lấy thông tin sản phẩm liên kết khách trả hàng

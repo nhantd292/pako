@@ -903,6 +903,11 @@ class CustomerDebtController extends ActionController
         $config = array('sheetData' => 0, 'headRow' => 10, 'startRow' => 11, 'startColumn' => 0);
         $arrColumn = array('A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'AA', 'AB', 'AC', 'AD', 'AE', 'AF', 'AG', 'AH', 'AI', 'AJ', 'AK', 'AL', 'AM', 'AN', 'AO', 'AP', 'AQ', 'AR', 'AS', 'AT', 'AU', 'AV', 'AW', 'AX', 'AY', 'AZ', 'BA', 'BB', 'BC', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BK', 'BL', 'BM', 'BN', 'BO', 'BP', 'BQ', 'BR', 'BS', 'BT', 'BU', 'BV', 'BW', 'BX', 'BY', 'BZ');
 
+        $check_root = in_array($this->_userInfo->getUserInfo('id'), [1111111111111111111111,2222222222222222222222]) ? true : false;
+        $title_cost = array();
+        if ($check_root) {
+            $title_cost = array('field' => 'cost', 'format' => 'number', 'title' => 'Giá vốn');
+        }
         // Thêm thuộc tính 'format' => 'number' vào các cột cần định dạng tiền/số
         $arrData = array(
             array('field' => 'created', 'type' => 'datetime', 'title' => 'Thời gian'),
@@ -913,12 +918,14 @@ class CustomerDebtController extends ActionController
             array('field' => 'price', 'format' => 'number', 'title' => 'Đơn giá'),
             array('field' => 'discount', 'format' => 'number', 'title' => 'Giảm giá'),
             array('field' => 'vat', 'format' => 'number', 'title' => 'VAT'),
+            $title_cost,
             array('field' => 'price', 'format' => 'number', 'title' => 'Giá bán/trả'),
             array('field' => 'total', 'format' => 'number', 'title' => 'Thành Tiền'),
             array('field' => 'debt', 'format' => 'number', 'title' => 'Ghi nợ'),
             array('field' => 'debt2', 'format' => 'number', 'title' => 'Ghi có'),
             array('field' => 'sale_note', 'title' => 'Ghi chú'),
         );
+        $arrData = array_filter($arrData);
 
         $objPHPExcel = new \PHPExcel();
         $objPHPExcel->getProperties()->setCreator($this->_userInfo->getUserInfo('name'))->setTitle("Export");
@@ -964,6 +971,7 @@ class CustomerDebtController extends ActionController
                     $item['name'] = 'Bán hàng';
                     $item['debt'] = abs($item['price_total'] + $item['discount']);
                     $item['debt2'] = abs($item['paid_cash'] + $item['paid_transfer']);
+                    $item['cost'] = abs($item['cost_price_total']);
                 }
                 if ($item['type'] == KTH) {
                     $item['code'] = $item['orders_return_code'];
@@ -1051,6 +1059,7 @@ class CustomerDebtController extends ActionController
                     $item['debt'] = '';
                     $item['debt2'] = '';
                     $item['sale_note'] = '';
+                    $item['cost'] = $item['cdetail_cost'];
                 }
                 if ($item['type'] == KTH) {
                     $item['created'] = '';
@@ -1089,6 +1098,7 @@ class CustomerDebtController extends ActionController
                     $item['debt'] = '';
                     $item['debt2'] = '';
                     $item['sale_note'] = '';
+                    $item['cost'] = $item['cdetail_cost'];
                 }
                 if ($item['type'] == KTH) {
                     $item['created'] = '';
