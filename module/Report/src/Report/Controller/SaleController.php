@@ -1908,7 +1908,7 @@ class SaleController extends ActionController {
                 $data_report[$value['id']]['cost']              = 0; // giá vốn
                 $data_report[$value['id']]['profit']            = 0; // Lợi nhuận
             }
-            $data_report['total']['name']              = $value['name'];
+            $data_report['total']['name']              = "Tổng";
             $data_report['total']['sales_total']       = 0; // Tổng doanh số
             $data_report['total']['reduce_sale']       = 0; // giảm trừ doanh thu
             $data_report['total']['return']            = 0; // Hàng hoàn
