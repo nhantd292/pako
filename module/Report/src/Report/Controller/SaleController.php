@@ -1856,7 +1856,7 @@ class SaleController extends ActionController {
         return $viewModel;
     }
 
-    // Báo cáo sale 3: Báo cáo doanh số sales
+    // Báo cáo sale 4: Báo cáo doanh số sales
     public function sale4Action() {
         $date_format     = new \ZendX\Functions\Date();
         $ssFilter = new Container(__CLASS__ . str_replace('-', '_', $this->_params['action']));
@@ -1884,12 +1884,13 @@ class SaleController extends ActionController {
                 }
             }
             // Gán dữ liệu lọc vào session
-            $ssFilter->report['date_begin']     = $this->_params['data']['date_begin'];
-            $ssFilter->report['date_end']       = $this->_params['data']['date_end'];
-            $ssFilter->report['sale_branch_id'] = $this->_params['data']['sale_branch_id'];
-            $ssFilter->report['sale_group_id']  = $this->_params['data']['sale_group_id'];
-            $ssFilter->report['sale_id']        = $this->_params['data']['sale_id'];
-            $ssFilter->report['product_group_id'] = $this->_params['data']['product_group_id'];
+            $ssFilter->report['date_begin']         = $this->_params['data']['date_begin'];
+            $ssFilter->report['date_end']           = $this->_params['data']['date_end'];
+            $ssFilter->report['sale_branch_id']     = $this->_params['data']['sale_branch_id'];
+            $ssFilter->report['sale_group_id']      = $this->_params['data']['sale_group_id'];
+            $ssFilter->report['sale_id']            = $this->_params['data']['sale_id'];
+            $ssFilter->report['product_group_id']   = $this->_params['data']['product_group_id'];
+            $ssFilter->report['customer_type']      = $this->_params['data']['customer_type'];
 
             $sales = $this->getServiceLocator()->get('Admin\Model\UserTable')->report($this->_params, array('task' => 'list-sale'));
 
@@ -1923,6 +1924,7 @@ class SaleController extends ActionController {
                 'filter_date_begin'         => $ssFilter->report['date_begin'],
                 'filter_date_end'           => $ssFilter->report['date_end'],
                 'filter_product_group_id'   => $ssFilter->report['product_group_id'],
+                'filter_customer_type'      => $ssFilter->report['customer_type'],
                 'date_type'                 => "shipped_date",
             );
             $contracts = $this->getServiceLocator()->get('Admin\Model\ContractTable')->report(array('ssFilter' => $where_contract), array('task' => 'join-contact'));
@@ -2048,13 +2050,14 @@ class SaleController extends ActionController {
             $default_date_begin     = date('01/m/Y');
             $default_date_end       = date('t/m/Y');
 
-            $ssFilter->report                   = $ssFilter->report ? $ssFilter->report : array();
-            $ssFilter->report['date_begin']     = $ssFilter->report['date_begin'] ? $ssFilter->report['date_begin'] : $default_date_begin;
-            $ssFilter->report['date_end']       = $ssFilter->report['date_end'] ? $ssFilter->report['date_end'] : $default_date_end;
-            $ssFilter->report['sale_branch_id'] = $ssFilter->report['sale_branch_id'] ? $ssFilter->report['sale_branch_id'] : $this->_userInfo->getUserInfo('sale_branch_id');
-            $ssFilter->report['sale_group_id']  = $ssFilter->report['sale_group_id'] ? $ssFilter->report['sale_group_id'] : $this->_userInfo->getUserInfo('sale_group_id');
-            $ssFilter->report['sale_id']        = $ssFilter->report['sale_id'] ? $ssFilter->report['sale_id'] : '';
-            $ssFilter->report['product_group_id'] = $ssFilter->report['product_group_id'] ? $ssFilter->report['product_group_id'] : '';
+            $ssFilter->report                       = $ssFilter->report ? $ssFilter->report : array();
+            $ssFilter->report['date_begin']         = $ssFilter->report['date_begin'] ? $ssFilter->report['date_begin'] : $default_date_begin;
+            $ssFilter->report['date_end']           = $ssFilter->report['date_end'] ? $ssFilter->report['date_end'] : $default_date_end;
+            $ssFilter->report['sale_branch_id']     = $ssFilter->report['sale_branch_id'] ? $ssFilter->report['sale_branch_id'] : $this->_userInfo->getUserInfo('sale_branch_id');
+            $ssFilter->report['sale_group_id']      = $ssFilter->report['sale_group_id'] ? $ssFilter->report['sale_group_id'] : $this->_userInfo->getUserInfo('sale_group_id');
+            $ssFilter->report['sale_id']            = $ssFilter->report['sale_id'] ? $ssFilter->report['sale_id'] : '';
+            $ssFilter->report['customer_type']      = $ssFilter->report['customer_type'] ? $ssFilter->report['customer_type'] : '';
+            $ssFilter->report['product_group_id']   = $ssFilter->report['product_group_id'] ? $ssFilter->report['product_group_id'] : '';
 
             // Set giá trị cho form
             $myForm	= new \Report\Form\Sales\Sales($this->getServiceLocator(), $ssFilter->report);

@@ -131,6 +131,22 @@ class Sales extends Form{
                 'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "production-type" )), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
             ),
         ));
+
+        // Nhóm khách hàng
+        $this->add(array(
+            'name'			=> 'customer_type',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'multiple'	=> true,
+                'class'		=> 'form-control select2 select2_basic',
+                'data-placeholder'  => 'Nhóm khách hàng',
+            ),
+            'options'		=> array(
+//		        'empty_option'	=> '- Sản phẩm-',
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\CustomerTypeTable')->listItem(array('ssFilter' => array()), array('task' => 'list-item', 'paginator' => false)), array('key' => 'id', 'value' => 'name')),
+            )
+        ));
+
 		
 		// Submit
 		$this->add(array(

@@ -4412,6 +4412,10 @@ class ContractTable extends DefaultTable {
                 if(!empty($ssFilter['filter_product_group_id'])) {
                     $select -> where -> equalTo(TABLE_CONTACT .'.product_group_id', $ssFilter['filter_product_group_id']);
                 }
+
+                if(!empty($ssFilter['filter_customer_type'])) {
+                    $select -> where -> in(TABLE_CONTACT .'.customer_type_id', $ssFilter['filter_customer_type']);
+                }
 	        })->toArray();
 	    }
 
