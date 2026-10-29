@@ -815,6 +815,7 @@ class ApiController extends ActionController
             $contract_id = $this->_params['data']['contract_id'];
             $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contract_id), array('task' => 'list-ajax'));
             $this->_viewModel['items'] = $items;
+            $this->_viewModel['userInfo'] = $this->_userInfo->getUserInfo();;
             $viewModel = new ViewModel($this->_viewModel);
             $viewModel->setTerminal(true);
         } else {

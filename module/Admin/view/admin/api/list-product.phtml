@@ -20,6 +20,9 @@
     $xhtmlHead .= '<th class="text-center">Số Lượng</th>';
     $xhtmlHead .= '<th class="text-center">Số Lượng khách trả lại</th>';
     $xhtmlHead .= '<th class="text-right">Giá sản phẩm</th>';
+    if($this->userInfo['id'] == '1111111111111111111111' || $this->userInfo['id'] == '2222222222222222222222') {
+        $xhtmlHead .= '<th class="text-right">Giá vốn</th>';
+    }
     $xhtmlHead .= '<th class="text-right">Giá bán</th>';
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
     $xhtmlHead .= '<th class="text-right">Khối lượng</th>';
@@ -31,6 +34,10 @@
         $index = 1;
         foreach ($this->items AS $item) {
             $text_warning = $item->price != $item->products_price ? 'text-danger' : '';
+            $cost_html = '';
+            if($this->userInfo['id'] == '1111111111111111111111' || $this->userInfo['id'] == '2222222222222222222222') {
+                $cost_html = '<td class="text-right"><span class="mask_currency">'. $item->cost .'</span></td>';
+            }
 
             $xhtmlItems .= '<tr class="'.$text_warning.'">
     							<td class="text-center">'. $index++.'</td>
@@ -40,6 +47,7 @@
     							<td class="text-center"><span class="mask_currency">'. $item->numbers .'</span></td>
     							<td class="text-center"><span class="mask_currency">'. $item->numbers_return .'</span></td>
     							<td class="text-right"><span class="mask_currency">'. $item->products_price .'</span></td>
+    							'.$cost_html.'
     							<td class="text-right"><span class="mask_currency">'. $item->price .'</span></td>
     							<td class="text-right"><span class="mask_currency">'. $item->total .'</span></td>
     							<td class="text-right"><span class="mask_currency">'. $item->weight .'</span></td>
