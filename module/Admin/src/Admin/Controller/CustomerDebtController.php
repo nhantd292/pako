@@ -36,6 +36,7 @@ class CustomerDebtController extends ActionController
         $this->_params['ssFilter']['filter_type'] = $ssFilter->filter_type;
         $this->_params['ssFilter']['filter_category'] = $ssFilter->filter_category;
         $this->_params['ssFilter']['filter_inventory_id'] = $ssFilter->filter_inventory_id;
+        $this->_params['ssFilter']['filter_sale_branch_id'] = $ssFilter->filter_sale_branch_id;
         $this->_params['ssFilter']['filter_customer_id'] = $ssFilter->filter_customer_id;
         $this->_params['ssFilter']['filter_user'] = $ssFilter->filter_user;
         $this->_params['ssFilter']['filter_option_mtt'] = $ssFilter->filter_option_mtt;
@@ -73,6 +74,7 @@ class CustomerDebtController extends ActionController
             $ssFilter->filter_type = $data['filter_type'];
             $ssFilter->filter_category = $data['filter_category'];
             $ssFilter->filter_inventory_id = $data['filter_inventory_id'];
+            $ssFilter->filter_sale_branch_id = $data['filter_sale_branch_id'];
             $ssFilter->filter_customer_id = $data['filter_customer_id'];
             $ssFilter->filter_user = $data['filter_user'];
             $ssFilter->filter_option_mtt = $data['filter_option_mtt'];

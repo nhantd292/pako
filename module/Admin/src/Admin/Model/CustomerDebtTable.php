@@ -13,6 +13,7 @@ class CustomerDebtTable extends DefaultTable {
                 $date       = new \ZendX\Functions\Date();
 
                 $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name', 'customer_phone' => 'phone'), 'inner')
+                    -> join(TABLE_USER, TABLE_USER .'.id = '. TABLE_CUSTOMER_DEBT .'.created_by', array(), 'inner')
                     -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id'), 'left')
                     -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_CUSTOMER_DEBT .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner')
                     -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array( 'orders_return_code' => 'code', 'orders_return_id' => 'id'), 'left')
@@ -80,6 +81,10 @@ class CustomerDebtTable extends DefaultTable {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
 
+                if(isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') {
+                    $select->where->equalTo(TABLE_USER.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
+                }
+
 //                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
 //                    $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.created_by', $ssFilter['filter_user']);
 //                }
@@ -124,6 +129,7 @@ class CustomerDebtTable extends DefaultTable {
                 $select -> order(array('created' => 'DESC')); // lưu ý không được thay đổi
 
                 $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name', 'customer_phone' => 'phone'), 'inner')
+                        -> join(TABLE_USER, TABLE_USER .'.id = '. TABLE_CUSTOMER_DEBT .'.created_by', array(), 'inner')
                         -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array( 'orders_code' => 'code', 'orders_id' => 'id', 'option_mtt'), 'left')
                         -> join(TABLE_WAREHOUSE, TABLE_WAREHOUSE .'.id = '. TABLE_CUSTOMER_DEBT .'.inventory_id', array( 'warehouse_name' => 'name'), 'inner')
                         -> join(TABLE_ORDERS_RETURN, TABLE_ORDERS_RETURN .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_return_id', array( 'orders_return_code' => 'code', 'orders_return_id' => 'id'), 'left')
@@ -189,6 +195,10 @@ class CustomerDebtTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
+                }
+
+                if(isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') {
+                    $select->where->equalTo(TABLE_USER.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
                 }
 
 //                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {

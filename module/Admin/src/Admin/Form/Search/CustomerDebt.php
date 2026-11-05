@@ -198,6 +198,19 @@ class CustomerDebt extends Form
             )
         ));
 
+        $this->add(array(
+            'name'			=> 'filter_sale_branch_id',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Cơ sở -',
+                'disable_inarray_validator' => true,
+                'value_options'	=> \ZendX\Functions\CreateArray::create($sm->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'sale-branch')), array('task' => 'cache')), array('key' => 'id', 'value' => 'name')),
+            ),
+        ));
+
         // Submit
         $this->add(array(
             'name' => 'filter_submit',
