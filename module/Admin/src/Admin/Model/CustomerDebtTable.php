@@ -82,7 +82,7 @@ class CustomerDebtTable extends DefaultTable {
                 }
 
                 if(isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') {
-                    $select->where->equalTo(TABLE_USER.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
+                    $select->where->equalTo(TABLE_CONTRACT.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
                 }
 
 //                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
@@ -198,7 +198,7 @@ class CustomerDebtTable extends DefaultTable {
                 }
 
                 if(isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') {
-                    $select->where->equalTo(TABLE_USER.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
+                    $select->where->equalTo(TABLE_CONTRACT.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
                 }
 
 //                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
