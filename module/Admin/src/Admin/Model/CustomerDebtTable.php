@@ -351,6 +351,10 @@ class CustomerDebtTable extends DefaultTable {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.customer_id', $ssFilter['filter_customer_id']);
                 }
 
+                if(isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.sale_branch_id', $ssFilter['filter_sale_branch_id']);
+                }
+
                 if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
                     $select->where->equalTo(TABLE_CUSTOMER_DEBT.'.inventory_id', $ssFilter['filter_inventory_id']);
                 }
