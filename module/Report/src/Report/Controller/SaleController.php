@@ -1953,7 +1953,7 @@ class SaleController extends ActionController {
                     $data_report['total']['cost'] += $value['cost_price_total'];
 
                     // Hàng hoàn
-                    if ($value['state'] == CANCEL_STATUS || $value['return_status'] == 2) {
+                    if ($value['state'] == CANCEL_STATUS || $value['state'] == RETURN_STATUS || $value['return_status'] == 2) {
                         $data_report[$value['user_id']]['return'] += $value['price_total'];
                         $data_report['total']['return'] += $value['price_total'];
                     }
