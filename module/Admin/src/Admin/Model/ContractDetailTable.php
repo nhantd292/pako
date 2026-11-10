@@ -126,6 +126,18 @@ class ContractDetailTable extends DefaultTable {
                     $select -> where -> in(TABLE_CONTRACT .'.id', $ssFilter['cid']);
                 }
 
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select->where->greaterThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select->where->lessThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                }
+
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
                     $filter_keyword = trim($ssFilter['filter_keyword']);
                     $select -> where -> NEST
