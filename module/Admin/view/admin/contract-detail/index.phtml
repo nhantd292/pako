@@ -38,6 +38,7 @@
 
     // Danh sách
     $xhtmlItems = '';
+    $show_cost = $this->curent_user['id'] == '1111111111111111111111' || $this->curent_user['id'] == '2222222222222222222222' ? true: false;
 
     if($this->items->count() > 0) {
         $stt = 0;
@@ -87,6 +88,10 @@
             $created_by             = $this->user[$item->contract_created_by]['name'];
 
             $linkContract = $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'detail', 'id' => $item->contract_id));
+            if($show_cost)
+                $column_cost = '<td class="text-right">'. number_format($item->cost) .' </td>';
+            else
+                $column_cost = '';
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'">
                                 <td class="text-center">'. $stt .'</td>
@@ -98,7 +103,7 @@
     							<td class="text-center">'. number_format($item->numbers) .'</td>
     							<td class="text-right">'. number_format($item->price) .'</td>
     							<td class="text-right">'. number_format($item->total) .'</td>
-    							<td class="text-right">'. number_format($item->cost) .'</td>
+    							'.$column_cost.'
     							<td class="text-right">'. number_format($item->weight) .'</td>
     							<td >'. $item->categoryName .'</td>
 							    <td >'. $created_by .'</td>
@@ -117,7 +122,9 @@
     $xhtmlHead .= '<th class="text-center">số lượng</th>';
     $xhtmlHead .= '<th class="text-right">Giá bán</th>';
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
-    $xhtmlHead .= '<th class="text-right">Giá vốn</th>';
+    if($show_cost) {
+        $xhtmlHead .= '<th class="text-right">Giá vốn</th>';
+    }
     $xhtmlHead .= '<th class="text-right">Trọng lượng</th>';
     $xhtmlHead .= '<th>Danh mục</th>';
     $xhtmlHead .= '<th>Người tạo</th>';
