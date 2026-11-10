@@ -10,6 +10,9 @@ class ContractDetailTable extends DefaultTable {
     public function countItem($arrParam = null, $options = null){
 	    if($options['task'] == 'list-item') {
 	        $result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+
+                $date       = new \ZendX\Functions\Date();
+                $number     = new \ZendX\Functions\Number();
                 $ssFilter   = $arrParam['ssFilter'];
                 
                 $select -> columns(array('count' => new \Zend\Db\Sql\Expression('COUNT(1)')));
@@ -41,6 +44,18 @@ class ContractDetailTable extends DefaultTable {
 
                 if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
                     $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
+                }
+
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select->where->greaterThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select->where->lessThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
                 }
 
                 if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
