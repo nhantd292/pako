@@ -1858,6 +1858,7 @@ class SaleController extends ActionController {
 
     // Báo cáo sale 4: Báo cáo doanh số sales
     public function sale4Action() {
+        exit;
         $date_format     = new \ZendX\Functions\Date();
         $ssFilter = new Container(__CLASS__ . str_replace('-', '_', $this->_params['action']));
 
