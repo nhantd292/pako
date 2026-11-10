@@ -88,10 +88,15 @@
             $created_by             = $this->user[$item->contract_created_by]['name'];
 
             $linkContract = $this->url('routeAdmin/default', array('controller' => 'contract', 'action' => 'detail', 'id' => $item->contract_id));
+            $linkEditCost    = 'javascript:popupAction(\''. $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'edit-cost')) .'\', {\'id\': \''. $id .'\'});';
+            $controlEditShipping = '<a href="javascript:;" onclick="'. $linkEditCost .'" title="Cập giá vốn" class="btn btn-xs"><i class="fa fa-edit"></i></a>';
+
             if($show_cost)
-                $column_cost = '<td class="text-right">'. number_format($item->cost) .' </td>';
+                $column_cost = '<td class="text-right">'. number_format($item->cost) .$controlEditShipping.' </td>';
             else
                 $column_cost = '';
+
+
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-id="'. $id .'">
                                 <td class="text-center">'. $stt .'</td>
@@ -123,7 +128,7 @@
     $xhtmlHead .= '<th class="text-right">Giá bán</th>';
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
     if($show_cost) {
-        $xhtmlHead .= '<th class="text-right">Giá vốn</th>';
+        $xhtmlHead .= '<th class="text-center">Giá vốn</th>';
     }
     $xhtmlHead .= '<th class="text-right">Trọng lượng</th>';
     $xhtmlHead .= '<th>Danh mục</th>';

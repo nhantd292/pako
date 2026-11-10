@@ -217,6 +217,7 @@ class ContractDetailTable extends DefaultTable {
         $arrData = $arrParam['data'];
         $contract_id = $arrParam['contract_id'];
 	    $gid     = new \ZendX\Functions\Gid();
+        $number   = new \ZendX\Functions\Number();
 
         if($options['task'] == 'add-item') {
             $id = $gid->getId();
@@ -261,6 +262,15 @@ class ContractDetailTable extends DefaultTable {
             } catch (\Exception $e) {
                 throw new \Exception('update number return failed ('.$arrData['$id'].'): ' . $e->getMessage());
             }
+        }
+
+        if ($options['task'] == 'edit-cost') {
+            $id = $arrData['id'];
+            $data = array();
+            $data['cost'] = $number->formatToData($arrData['cost']);
+
+            $this->tableGateway->update($data, array('id' => $id));
+            return $id;
         }
 
         if($options['task'] == 'delete_product_by_contract_id') {

@@ -196,6 +196,46 @@ class ContractDetailController extends ActionController {
         return new ViewModel($this->_viewModel);
     }
 
+    // Cập nhật giá vốn
+    public function editCostAction() {
+        $myForm = new \Admin\Form\Contract\EditCost($this->getServiceLocator(), $this->_params);
+
+        if(!empty($this->_params['data']['id'])) {
+            $contractDetail = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->getItem(array('id' => $this->_params['data']['id']));
+            $myForm->setData($contractDetail);
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/type', array('controller' => 'notice', 'action' => 'not-found', 'type' => 'modal'));
+        }
+
+        if($this->getRequest()->isPost()){
+            if($this->_params['data']['modal'] == 'success') {
+                $myForm->setInputFilter(new \Admin\Filter\Contract\EditCost($this->_params));
+                $myForm->setData($this->_params['data']);
+
+                if($myForm->isValid()){
+                    $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
+                    $this->_params['item'] = $contractDetail;
+                    $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem($this->_params, array('task' => 'edit-cost'));
+                    $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
+                    echo 'success';
+                    return $this->response;
+                }
+            } else {
+                $myForm->setData($this->_params['data']);
+            }
+        } else {
+            return $this->redirect()->toRoute('routeAdmin/default', array('controller' => 'notice', 'action' => 'not-found'));
+        }
+
+        $this->_viewModel['myForm']     = $myForm;
+        $this->_viewModel['contract']   = $contractDetail;
+        $this->_viewModel['caption']    = 'Cập nhật Giá vốn';
+
+        $viewModel = new ViewModel($this->_viewModel);
+        $viewModel->setTerminal(true);
+
+        return $viewModel;
+    }
 }
 
 
