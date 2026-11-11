@@ -176,7 +176,21 @@ class ContractDetail extends Form{
 
         $list_contract_type = \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array( "where" => array( "code" => "production-type" )), array('task' => 'cache')), array('key' => 'id', 'value' => 'name'));
 
-
+        $crm_status = \ZendX\Functions\CreateArray::create($sm->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'orders-state')), array('task' => 'cache')), array('key' => 'alias', 'value' => 'name'));
+        $crm_status[1] = 'Hoàn một phần';
+        $crm_status[2] = 'Hoàn tất cả';
+        $this->add(array(
+            'name'			=> 'filter_state',
+            'type'			=> 'Select',
+            'attributes'	=> array(
+                'class'		=> 'form-control select2 select2_basic',
+            ),
+            'options'		=> array(
+                'empty_option'	=> '- Trạng thái crm -',
+                'disable_inarray_validator' => true,
+                'value_options' => $crm_status,
+            ),
+        ));
 
         // Đồng bộ kiotviet
         $this->add(array(

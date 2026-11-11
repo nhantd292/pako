@@ -31,6 +31,7 @@ class ContractDetailController extends ActionController {
         $this->_params['ssFilter']['filter_bill_code']      = $ssFilter->filter_bill_code;
         $this->_params['ssFilter']['filter_status_type']    = $ssFilter->filter_status_type;
         $this->_params['ssFilter']['filter_status']         = $ssFilter->filter_status;
+        $this->_params['ssFilter']['filter_state']          = $ssFilter->filter_state;
         $this->_params['ssFilter']['filter_coincider']      = $ssFilter->filter_coincider;
         $this->_params['ssFilter']['filter_send_ghtk']      = $ssFilter->filter_send_ghtk;
         $this->_params['ssFilter']['filter_category']       = $ssFilter->filter_category;
@@ -67,6 +68,7 @@ class ContractDetailController extends ActionController {
             $ssFilter->filter_product 	        = $data['filter_product'];
             $ssFilter->filter_status_type       = $data['filter_status_type'];
             $ssFilter->filter_status            = $data['filter_status'];
+            $ssFilter->filter_state             = $data['filter_state'];
             $ssFilter->filter_user              = $data['filter_user'];
             $ssFilter->filter_action            = $data['filter_action'];
             $ssFilter->filter_coincider 	    = $data['filter_coincider'];
