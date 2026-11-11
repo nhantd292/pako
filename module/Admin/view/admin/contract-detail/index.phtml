@@ -130,7 +130,7 @@
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
     if($show_cost) {
         $xhtmlHead .= '<th class="text-center">Giá vốn</th>';
-        $xhtmlHead .= '<th class="text-center">Tổng Giá vốn</th>';
+        $xhtmlHead .= '<th class="text-right">Tổng Giá vốn<br><span class="text-red">'.number_format($this->total_cost).'</span></th>';
     }
     $xhtmlHead .= '<th class="text-right">Trọng lượng</th>';
     $xhtmlHead .= '<th>Danh mục</th>';

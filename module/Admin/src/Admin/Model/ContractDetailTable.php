@@ -166,6 +166,71 @@ class ContractDetailTable extends DefaultTable {
     		});
 		}
 
+        if($options['task'] == 'list-item-total-cost') {
+            $result = $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $ssFilter   = $arrParam['ssFilter'];
+                $date       = new \ZendX\Functions\Date();
+
+                // 1. CHỈ SELECT CỘT TỔNG (Dùng \Zend\Db\Sql\Expression)
+                $select->columns(array(
+                    'total_cost' => new \Zend\Db\Sql\Expression('SUM(' . TABLE_CONTRACT_DETAIL . '.numbers * ' . TABLE_CONTRACT_DETAIL . '.cost)')
+                ));
+
+                // 2. GIỮ NGUYÊN CÁC JOIN (cần thiết để WHERE hoạt động, nhưng không cần lấy data nên để array rỗng)
+                $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id', array(), 'inner');
+                $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_CONTRACT_DETAIL .'.product_id', array(), 'inner');
+
+                // KO DÙNG LIMIT, OFFSET VÀ ORDER BY Ở ĐÂY
+
+                // 3. COPY NGUYÊN XI CÁC ĐIỀU KIỆN WHERE TỪ 'list-item' XUỐNG
+                if(isset($ssFilter['filter_contact_id']) && $ssFilter['filter_contact_id'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.contact_id', $ssFilter['filter_contact_id']);
+                }
+                if(isset($ssFilter['filter_user']) && $ssFilter['filter_user'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.user_id', $ssFilter['filter_user']);
+                }
+                if(isset($ssFilter['filter_state']) && $ssFilter['filter_state'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.state', $ssFilter['filter_state']);
+                }
+                if(isset($ssFilter['filter_inventory_id']) && $ssFilter['filter_inventory_id'] != '') {
+                    $select->where->equalTo(TABLE_CONTRACT.'.inventory_id', $ssFilter['filter_inventory_id']);
+                }
+                if(isset($ssFilter['filter_numbers_return']) && $ssFilter['filter_numbers_return'] == 1) {
+                    $select->where->expression(TABLE_CONTRACT_DETAIL . '.numbers > ' . TABLE_CONTRACT_DETAIL . '.numbers_return',array());
+                }
+                if(isset($ssFilter['filter_products_type']) && $ssFilter['filter_products_type'] != '') {
+                    $select->where->equalTo(TABLE_PRODUCTS.'.products_type_id', $ssFilter['filter_products_type']);
+                }
+                if(isset($ssFilter['cid']) && $ssFilter['cid'] != '') {
+                    $select -> where -> in(TABLE_CONTRACT .'.id', $ssFilter['cid']);
+                }
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select->where->greaterThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select->where->lessThanOrEqualTo(TABLE_CONTRACT .'.date', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                }
+                if(isset($ssFilter['filter_keyword']) && $ssFilter['filter_keyword'] != '') {
+                    $filter_keyword = trim($ssFilter['filter_keyword']);
+                    $select -> where -> NEST
+                        -> like(TABLE_CONTRACT. '.code', '%'. $filter_keyword .'%')
+                        ->Or
+                        -> like(TABLE_CONTRACT_DETAIL. '.full_name', '%'. $filter_keyword .'%')
+                        ->Or
+                        -> like(TABLE_CONTRACT_DETAIL. '.code', '%'. $filter_keyword .'%')
+                        -> UNNEST;
+                }
+            });
+
+            // Vì kết quả chỉ trả về 1 dòng duy nhất chứa tổng, ta gọi current() luôn
+            return $result->current();
+        }
+
 //		if($options['task'] == 'list-ajax') {
 //			$result	= $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
 //                $date       = new \ZendX\Functions\Date();

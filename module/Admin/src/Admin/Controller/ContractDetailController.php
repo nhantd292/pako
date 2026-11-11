@@ -128,6 +128,7 @@ class ContractDetailController extends ActionController {
 
         $this->_viewModel['myForm']	                = $myForm;
         $this->_viewModel['items']                  = $this->getTable()->listItem($this->_params, array('task' => 'list-item'));
+        $this->_viewModel['total_cost']             = $this->getTable()->listItem($this->_params, array('task' => 'list-item-total-cost'))->total_cost;
         $this->_viewModel['count']                  = $this->getTable()->countItem($this->_params, array('task' => 'list-item'));
         $this->_viewModel['user']                   = $this->getServiceLocator()->get('Admin\Model\UserTable')->listItem(null, array('task' => 'cache'));
         $this->_viewModel['sale_group']             = $this->getServiceLocator()->get('Admin\Model\DocumentTable')->listItem(array('where' => array('code' => 'lists-group')), array('task' => 'cache'));
