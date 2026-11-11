@@ -92,7 +92,8 @@
             $controlEditShipping = '<a href="javascript:;" onclick="'. $linkEditCost .'" title="Cập giá vốn" class="btn btn-xs"><i class="fa fa-edit"></i></a>';
 
             if($show_cost)
-                $column_cost = '<td class="text-right">'. number_format($item->cost) .$controlEditShipping.' </td>';
+                $column_cost = '<td class="text-right">'. number_format($item->cost) .$controlEditShipping.' </td>
+                                <td class="text-right">'. number_format($item->cost*$item->numbers) .' </td>';
             else
                 $column_cost = '';
 
@@ -129,6 +130,7 @@
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
     if($show_cost) {
         $xhtmlHead .= '<th class="text-center">Giá vốn</th>';
+        $xhtmlHead .= '<th class="text-center">Tổng Giá vốn</th>';
     }
     $xhtmlHead .= '<th class="text-right">Trọng lượng</th>';
     $xhtmlHead .= '<th>Danh mục</th>';
