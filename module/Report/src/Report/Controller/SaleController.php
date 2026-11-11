@@ -1858,7 +1858,6 @@ class SaleController extends ActionController {
 
     // Báo cáo sale 4: Báo cáo doanh số sales
     public function sale4Action() {
-        exit;
         $date_format     = new \ZendX\Functions\Date();
         $ssFilter = new Container(__CLASS__ . str_replace('-', '_', $this->_params['action']));
 
@@ -1994,9 +1993,16 @@ class SaleController extends ActionController {
                     }
                 }
             }
+            $curent_user_id = $this->_userInfo->getUserInfo('id');
+            $show_cost = $curent_user_id == '1111111111111111111111' || $curent_user_id == '2222222222222222222222' ? true : false;
 
             $xhtmlItems = '';
             foreach ($key_sort as $key => $value){
+                $cost_html = '';
+                if ($show_cost) {
+                    $cost_html = '<td class="mask_currency text-right">'.$data_report[$value['id']]['cost'].'</td>
+        						<td class="mask_currency text-right">'.$data_report[$value['id']]['profit'].'</td>';
+                }
                 $xhtmlItems .= '<tr>
         		                <th class="text-bold">'.$data_report[$value['id']]['name'].'</th> <!--Tên nhân viên-->
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['sales_total'].'</td>
@@ -2005,12 +2011,16 @@ class SaleController extends ActionController {
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['fee_other'].'</td> 
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['sales_complete'].'</td>
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['percent_return'].'%</td>
-        						<td class="mask_currency text-right">'.$data_report[$value['id']]['transport'].'</td>
-        						<td class="mask_currency text-right">'.$data_report[$value['id']]['cost'].'</td>
-        						<td class="mask_currency text-right">'.$data_report[$value['id']]['profit'].'</td>';
+        						<td class="mask_currency text-right">'.$data_report[$value['id']]['transport'].'</td>';
+                $xhtmlItems .= $cost_html;
                 $xhtmlItems .=  '</tr>';
             }
             // Hiển thị dòng tổng tất cả.
+            $cost_total_html = '';
+            if ($show_cost) {
+                $cost_total_html = '<td class="mask_currency text-right">'.$data_report['total']['cost'].'</td>
+        						<td class="mask_currency text-right">'.$data_report['total']['profit'].'</td>';
+            }
             $xhtmlItems .= '<tr class="text-bold text-red">
         		                <th class="text-bold">'.$data_report['total']['name'].'</th> <!--Tên nhân viên-->
         						<td class="mask_currency text-right">'.$data_report['total']['sales_total'].'</td>
@@ -2019,11 +2029,15 @@ class SaleController extends ActionController {
         						<td class="mask_currency text-right">'.$data_report['total']['fee_other'].'</td> 
         						<td class="mask_currency text-right">'.$data_report['total']['sales_complete'].'</td>
         						<td class="mask_currency text-right">'.$data_report['total']['percent_return'].'%</td>
-        						<td class="mask_currency text-right">'.$data_report['total']['transport'].'</td>
-        						<td class="mask_currency text-right">'.$data_report['total']['cost'].'</td>
-        						<td class="mask_currency text-right">'.$data_report['total']['profit'].'</td>';
-            $xhtmlItems .=  '</tr>';
+        						<td class="mask_currency text-right">'.$data_report['total']['transport'].'</td>';
+            $xhtmlItems .= $cost_total_html;
+            $xhtmlItems .= '</tr>';
 
+            $cost_header_html = '';
+            if ($show_cost) {
+                $cost_header_html = '<th class="text-center">Giá vốn</th>
+                            		<th class="text-center">Lợi nhuận thuần</th>';
+            }
             $result['reportTable'] = '<thead>
                         				    <tr>
                             					<th class="text-center fix-head">Tên nhân viên</th>
@@ -2034,8 +2048,7 @@ class SaleController extends ActionController {
                             					<th class="text-center">DS thành công</th>
                             					<th class="text-center">% Hoàn</th>
                             					<th class="text-center">Phí vận chuyển</th>
-                            					<th class="text-center">Giá vốn</th>
-                            					<th class="text-center">Lợi nhuận thuần</th>
+                            					'.$cost_header_html.'
                         					</tr>
                         				</thead>
                         				<tbody>
