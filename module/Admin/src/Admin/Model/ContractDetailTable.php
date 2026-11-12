@@ -21,6 +21,7 @@ class ContractDetailTable extends DefaultTable {
                 $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_CONTRACT_DETAIL .'.product_id', array(), 'inner');
 
                 $select -> order(array(TABLE_CONTRACT_DETAIL .'.contract_id' => 'DESC'));
+                $select -> where -> equalTo(TABLE_CONTRACT .'.delete', 0);
 
                 if(isset($ssFilter['filter_contact_id']) && $ssFilter['filter_contact_id'] != '') {
                     $select->where->equalTo(TABLE_CONTRACT.'.contact_id', $ssFilter['filter_contact_id']);
@@ -112,6 +113,8 @@ class ContractDetailTable extends DefaultTable {
                 $select -> join(TABLE_PRODUCTS, TABLE_PRODUCTS .'.id = '. TABLE_CONTRACT_DETAIL .'.product_id', array('products_unit_id' => 'unit_id', 'products_name_vat' => 'name_vat'), 'inner');
 
                 $select -> order(array(TABLE_CONTRACT .'.created' => 'DESC'));
+
+                $select -> where -> equalTo(TABLE_CONTRACT .'.delete', 0);
 
                 if(isset($ssFilter['filter_contact_id']) && $ssFilter['filter_contact_id'] != '') {
                     $select->where->equalTo(TABLE_CONTRACT.'.contact_id', $ssFilter['filter_contact_id']);

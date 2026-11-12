@@ -1940,6 +1940,12 @@ class SaleController extends ActionController {
                     $data_report[$value['user_id']]['reduce_sale'] += $value['price_reduce_sale'];
                     $data_report['total']['reduce_sale'] += $value['price_reduce_sale'];
 
+                    // Hàng hoàn
+                    if ($value['state'] == CANCEL_STATUS || $value['state'] == RETURN_STATUS || $value['return_status'] == 2) {
+                        $data_report[$value['user_id']]['return'] += $value['price_total'];
+                        $data_report['total']['return'] += $value['price_total'];
+                    }
+
                     // Thu khác + VAT
                     $data_report[$value['user_id']]['fee_other'] += $value['fee_other'] + $value['vat'];
                     $data_report['total']['fee_other'] += $value['fee_other'] + $value['vat'];
@@ -1951,12 +1957,6 @@ class SaleController extends ActionController {
                     // Tổng giá vốn
                     $data_report[$value['user_id']]['cost'] += $value['cost_price_total'];
                     $data_report['total']['cost'] += $value['cost_price_total'];
-
-                    // Hàng hoàn
-                    if ($value['state'] == CANCEL_STATUS || $value['state'] == RETURN_STATUS || $value['return_status'] == 2) {
-                        $data_report[$value['user_id']]['return'] += $value['price_total'];
-                        $data_report['total']['return'] += $value['price_total'];
-                    }
 
                     // DS thành công
                     if ($value['state'] == COMPLETE_STATUS) {

@@ -70,3 +70,18 @@ UPDATE x_contract c
         WHEN d.total_numbers = d.total_return THEN 2
         ELSE 1
 END;
+
+-- Tìm ra những đơn hàng mà tổng giá vốn trong đơn hàng khác với tổng giá vốn của tất cả các sản phẩm trong chi tiết đơn hàng.
+SELECT
+    c.id AS contract_id,
+    c.cost_price_total AS total_in_contract,
+    COALESCE(SUM(d.numbers * d.cost), 0) AS total_in_detail
+FROM
+    x_contract c
+        LEFT JOIN
+    x_contract_detail d ON c.id = d.contract_id
+GROUP BY
+    c.id,
+    c.cost_price_total
+HAVING
+        c.cost_price_total <> COALESCE(SUM(d.numbers * d.cost), 0);
