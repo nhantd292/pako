@@ -4422,6 +4422,54 @@ class ContractTable extends DefaultTable {
 	        })->toArray();
 	    }
 
+        # Lấy tổng số tiền đã trả hàng group_by theo user_id
+        if($options['task'] == 'list-user-total-return') {
+            $result = $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
+                $ssFilter   = $arrParam['ssFilter'];
+                $date       = new \ZendX\Functions\Date();
+
+                // 1. SELECT CỘT user_id VÀ TỔNG (Dùng \Zend\Db\Sql\Expression)
+                $select->columns(array(
+                    'user_id',
+                    'total_return' => new \Zend\Db\Sql\Expression('SUM(' . TABLE_CONTRACT_DETAIL . '.numbers_return * ' . TABLE_CONTRACT_DETAIL . '.price)')
+                ));
+
+                // 2. JOIN BẢNG DETAIL
+                $select->join(
+                    TABLE_CONTRACT_DETAIL,
+                    TABLE_CONTRACT .'.id = '. TABLE_CONTRACT_DETAIL .'.contract_id',
+                    array(),
+                    'inner'
+                );
+
+                // 3. CÁC ĐIỀU KIỆN WHERE TỪ CÂU LỆNH SQL CỦA BẠN
+                $select->where->greaterThan(TABLE_CONTRACT_DETAIL . '.numbers_return', 0);
+                $select -> where -> equalTo(TABLE_CONTRACT .'.delete', 0);
+
+                if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
+                    $select -> where -> NEST
+                        -> greaterThanOrEqualTo(TABLE_CONTRACT .'.shipped_date', $date->formatToData($ssFilter['filter_date_begin']))
+                        ->AND
+                        -> lessThanOrEqualTo(TABLE_CONTRACT .'.shipped_date', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') )
+                        -> UNNEST;
+                } elseif (!empty($ssFilter['filter_date_begin'])) {
+                    $select->where->greaterThanOrEqualTo(TABLE_CONTRACT .'.shipped_date', $date->formatToData($ssFilter['filter_date_begin']));
+                } elseif (!empty($ssFilter['filter_date_end'])) {
+                    $select->where->lessThanOrEqualTo(TABLE_CONTRACT .'.shipped_date', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
+                }
+
+
+                // 4. GROUP BY USER_ID
+                $select->group(array(
+                    TABLE_CONTRACT . '.user_id'
+                ));
+            });
+
+            // Kết quả nhóm theo user_id nên sẽ trả ra nhiều dòng (mỗi dòng 1 user_id),
+            // do đó ta return trực tiếp kết quả chứ không dùng current()
+            return $result;
+        }
+
 	    if($options['task'] == 'join-user') {
 	        $result	= $this->tableGateway->select(function (Select $select) use ($arrParam){
 	            $arrData  = $arrParam['data'];

@@ -1941,7 +1941,7 @@ class SaleController extends ActionController {
                     $data_report['total']['reduce_sale'] += $value['price_reduce_sale'];
 
                     // Hàng hoàn
-                    if ($value['state'] == CANCEL_STATUS || $value['state'] == RETURN_STATUS || $value['return_status'] == 2) {
+                    if ($value['state'] == RETURN_STATUS || $value['return_status'] == 2) {
                         $data_report[$value['user_id']]['return'] += $value['price_total'];
                         $data_report['total']['return'] += $value['price_total'];
                     }
@@ -1964,6 +1964,17 @@ class SaleController extends ActionController {
                         $data_report['total']['sales_complete'] += $value['price_total'];
                     }
                 }
+            }
+
+            // Lấy dữ liệu doanh số hoàn.
+            $where_contract_return = array(
+                'filter_date_begin'         => $ssFilter->report['date_begin'],
+                'filter_date_end'           => $ssFilter->report['date_end'],
+            );
+            $contracts_return = $this->getServiceLocator()->get('Admin\Model\ContractTable')->report(array('ssFilter' => $where_contract_return), array('task' => 'list-user-total-return'));
+            foreach ($contracts_return as $key => $value) {
+                $data_report[$value['user_id']]['return'] += $value['total_return'];
+                $data_report['total']['return'] += $value['total_return'];
             }
 
             // Tham số bảng báo cáo

@@ -109,6 +109,7 @@
     							<td >'. $item->code .'</td>
     							<td >'. $item->full_name .'</td>
     							<td class="text-center">'. number_format($item->numbers) .'</td>
+    							<td class="text-center">'. number_format($item->numbers_return) .'</td>
     							<td class="text-right">'. number_format($item->price) .'</td>
     							<td class="text-right">'. number_format($item->total) .'</td>
     							'.$column_cost.'
@@ -127,7 +128,8 @@
     $xhtmlHead .= '<th class="text-center">Trạng thái</th>';
     $xhtmlHead .= '<th>Mã sản phẩm</th>';
     $xhtmlHead .= '<th>Tên sản phẩm</th>';
-    $xhtmlHead .= '<th class="text-center">số lượng</th>';
+    $xhtmlHead .= '<th class="text-center">Số lượng bán</th>';
+    $xhtmlHead .= '<th class="text-center">Số lượng trả</th>';
     $xhtmlHead .= '<th class="text-right">Giá bán</th>';
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
     if($show_cost) {

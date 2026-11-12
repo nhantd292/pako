@@ -178,6 +178,7 @@ class ContractDetailTable extends DefaultTable {
     		});
 		}
 
+		# Lấy tổng số giá vốn trong tiêu đề của sản phẩm đã bán
         if($options['task'] == 'list-item-total-cost') {
             $result = $this->tableGateway->select(function (Select $select) use ($arrParam, $options){
                 $ssFilter   = $arrParam['ssFilter'];
