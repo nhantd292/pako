@@ -1973,7 +1973,7 @@ class SaleController extends ActionController {
             );
             $contracts_return = $this->getServiceLocator()->get('Admin\Model\ContractTable')->report(array('ssFilter' => $where_contract_return), array('task' => 'list-user-total-return'));
             echo "<pre>";
-            print_r($contracts_return);
+            print_r($contracts_return->toArray());
             echo "</pre>";
             exit;
             foreach ($contracts_return as $key => $value) {
