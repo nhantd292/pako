@@ -216,9 +216,27 @@ class ContractDetailController extends ActionController {
                 $myForm->setData($this->_params['data']);
 
                 if($myForm->isValid()){
+                    $connection = $this->getConnection();
                     $this->_params['data'] = $myForm->getData(FormInterface::VALUES_AS_ARRAY);
                     $this->_params['item'] = $contractDetail;
+
+                    $connection->beginTransaction();
+                    # Cập nhật giá vốn cho chi tiết đơn hàng.
                     $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->saveItem($this->_params, array('task' => 'edit-cost'));
+
+                    # Cập nhật tổng giá vốn trong đơn hàng
+                    $items = $this->getServiceLocator()->get('Admin\Model\ContractDetailTable')->listItem(array('contract_id' => $contractDetail['contract_id']), array('task' => 'list-ajax'));
+                    $total_cost = 0;
+                    foreach ($items as $item) {
+                        $total_cost += $item['numbers'] * $item['total_cost'];
+                    }
+                    $data_update = array(
+                        'id' => $contractDetail['contract_id'],
+                        'cost_price_total' => $total_cost,
+                    );
+                    $this->getServiceLocator()->get('Admin\Model\ContractTable')->saveItem(array('data' => $data_update), array('task' => 'update-item'));
+
+                    $connection->commit();
                     $this->flashMessenger()->addSuccessMessage('Cập nhật dữ liệu thành công');
                     echo 'success';
                     return $this->response;

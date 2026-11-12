@@ -1688,6 +1688,9 @@ class ContractTable extends DefaultTable {
             if(isset($arrData['ck'])){
                 $data['ck'] = $arrData['ck'];
             }
+            if(isset($arrData['cost_price_total'])){
+                $data['cost_price_total'] = $arrData['cost_price_total'];
+            }
 
             try {
                 $this->tableGateway->update($data, array('id' => $id));

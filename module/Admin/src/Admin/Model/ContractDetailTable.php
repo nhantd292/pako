@@ -307,6 +307,7 @@ class ContractDetailTable extends DefaultTable {
 	
 	public function saveItem($arrParam = null, $options = null){
         $arrData = $arrParam['data'];
+        $arrItem = $arrParam['item'];
         $contract_id = $arrParam['contract_id'];
 	    $gid     = new \ZendX\Functions\Gid();
         $number   = new \ZendX\Functions\Number();
@@ -360,9 +361,14 @@ class ContractDetailTable extends DefaultTable {
             $id = $arrData['id'];
             $data = array();
             $data['cost'] = $number->formatToData($arrData['cost']);
+            $data['total_cost'] = $number->formatToData($arrData['cost']) * $arrItem['numbers'];
 
-            $this->tableGateway->update($data, array('id' => $id));
-            return $id;
+            try {
+                $this->tableGateway->update($data, array('id' => $id));
+                return true;
+            } catch (\Exception $e) {
+                throw new \Exception('Update contract Detail Table false: ' . $e->getMessage());
+            }
         }
 
         if($options['task'] == 'delete_product_by_contract_id') {
