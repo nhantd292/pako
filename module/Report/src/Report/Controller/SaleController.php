@@ -1973,13 +1973,19 @@ class SaleController extends ActionController {
             );
             $contracts_return = $this->getServiceLocator()->get('Admin\Model\ContractTable')->report(array('ssFilter' => $where_contract_return), array('task' => 'list-user-total-return'));
             echo "<pre>";
-            print_r($contracts_return->toArray());
+            print_r($data_report);
             echo "</pre>";
-            exit;
             foreach ($contracts_return as $key => $value) {
+                echo "<pre>";
+                print_r($value);
+                echo "</pre>";
                 $data_report[$value['user_id']]['return'] += $value['total_return'];
                 $data_report['total']['return'] += $value['total_return'];
             }
+            echo "<pre>";
+            print_r($data_report);
+            echo "</pre>";
+            exit;
 
             // Tham số bảng báo cáo
             foreach ($data_report as $key => $value){
