@@ -48,8 +48,8 @@ class ContractDetailTable extends DefaultTable {
                 }
 
                 $date_type = 'date';
-                if(!empty($ssFilter['date_type'])) {
-                    $date_type = $ssFilter['date_type'];
+                if(!empty($ssFilter['filter_date_type'])) {
+                    $date_type = $ssFilter['filter_date_type'];
                 }
                 if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
                     $select -> where -> NEST
@@ -150,8 +150,8 @@ class ContractDetailTable extends DefaultTable {
 
 
                 $date_type = 'date';
-                if(!empty($ssFilter['date_type'])) {
-                    $date_type = $ssFilter['date_type'];
+                if(!empty($ssFilter['filter_date_type'])) {
+                    $date_type = $ssFilter['filter_date_type'];
                 }
                 if(!empty($ssFilter['filter_date_begin']) && !empty($ssFilter['filter_date_end'])) {
                     $select -> where -> NEST
