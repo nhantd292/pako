@@ -4463,6 +4463,9 @@ class ContractTable extends DefaultTable {
                 $select->group(array(
                     TABLE_CONTRACT . '.user_id'
                 ));
+                echo "<pre>";
+                print_r($select->getSqlString());
+                echo "</pre>";
             });
 
             // Kết quả nhóm theo user_id nên sẽ trả ra nhiều dòng (mỗi dòng 1 user_id),

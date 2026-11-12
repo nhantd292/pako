@@ -1972,6 +1972,10 @@ class SaleController extends ActionController {
                 'filter_date_end'           => $ssFilter->report['date_end'],
             );
             $contracts_return = $this->getServiceLocator()->get('Admin\Model\ContractTable')->report(array('ssFilter' => $where_contract_return), array('task' => 'list-user-total-return'));
+            echo "<pre>";
+            print_r($contracts_return);
+            echo "</pre>";
+            exit;
             foreach ($contracts_return as $key => $value) {
                 $data_report[$value['user_id']]['return'] += $value['total_return'];
                 $data_report['total']['return'] += $value['total_return'];
