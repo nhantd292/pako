@@ -35,6 +35,18 @@ class ContractDetail extends Form{
 		    ),
 		));
 
+        // Loại ngày
+        $this->add(array(
+            'name' => 'filter_date_type',
+            'type' => 'Select',
+            'attributes' => array(
+                'class' => 'form-control select2 select2_basic',
+            ),
+            'options' => array(
+                'value_options' => array('date' => 'Ngày lên đơn', 'shipped_date' => 'Ngày xuất kho', 'not_shipped' => 'Chưa có ngày xuất kho', 'date_invoice' => 'Ngày xuất hóa đơn', 'date_return' => 'Ngày hoàn đơn'),
+            )
+        ));
+
 		// Bắt đầu từ ngày
 		$this->add(array(
 		    'name'			=> 'filter_date_begin',
