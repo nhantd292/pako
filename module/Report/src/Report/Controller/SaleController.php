@@ -1925,6 +1925,7 @@ class SaleController extends ActionController {
                 'filter_date_end'           => $ssFilter->report['date_end'],
                 'filter_product_group_id'   => $ssFilter->report['product_group_id'],
                 'filter_customer_type'      => $ssFilter->report['customer_type'],
+                'sale_id'            => $ssFilter->report['sale_id'],
                 'date_type'                 => "shipped_date",
             );
             $contracts = $this->getServiceLocator()->get('Admin\Model\ContractTable')->report(array('ssFilter' => $where_contract), array('task' => 'join-contact'));
@@ -1970,11 +1971,15 @@ class SaleController extends ActionController {
             $where_contract_return = array(
                 'filter_date_begin'         => $ssFilter->report['date_begin'],
                 'filter_date_end'           => $ssFilter->report['date_end'],
+                'filter_sale_id'            => $ssFilter->report['sale_id'],
             );
             $contracts_return = $this->getServiceLocator()->get('Admin\Model\ContractTable')->report(array('ssFilter' => $where_contract_return), array('task' => 'list-user-total-return'));
             foreach ($contracts_return as $value) {
                 $data_report[$value['user_id']]['return'] += $value['total_return'];
                 $data_report['total']['return'] += $value['total_return'];
+
+                $data_report[$value['user_id']]['sales_complete'] -= $value['total_return'];
+                $data_report['total']['sales_complete'] -= $value['total_return'];
             }
 
             // Tham số bảng báo cáo

@@ -4458,6 +4458,10 @@ class ContractTable extends DefaultTable {
                     $select->where->lessThanOrEqualTo(TABLE_CONTRACT .'.shipped_date', $date->formatToData($ssFilter['filter_date_end']. ' 23:59:59') );
                 }
 
+                if(!empty($ssFilter['filter_sale_id'])) {
+                    $select -> where -> equalTo(TABLE_CONTRACT .'.user_id', $ssFilter['filter_sale_id']);
+                }
+
 
                 // 4. GROUP BY USER_ID
                 $select->group(array(
