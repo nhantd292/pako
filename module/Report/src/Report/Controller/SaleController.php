@@ -1937,8 +1937,8 @@ class SaleController extends ActionController {
                 if (array_key_exists($value['user_id'], $data_report)) {
                     // Tổng doanh số
                     $vat = $value['option_vat'] == 'yes' ? $value['vat'] : 0 ;
-                    $data_report[$value['user_id']]['sales_total'] += $value['price_total'] - $vat;
-                    $data_report['total']['sales_total'] += $value['price_total'] - $vat;
+                    $data_report[$value['user_id']]['sales_total'] += $value['price_total'] - ($value['fee_other'] + $vat);
+                    $data_report['total']['sales_total'] += $value['price_total'] - ($value['fee_other'] + $vat);
 
                     // Thu khác + VAT
                     $data_report[$value['user_id']]['fee_other'] += $value['fee_other'] + $vat;
