@@ -1901,7 +1901,8 @@ class SaleController extends ActionController {
                 $data_report[$value['id']]['sales_total']       = 0; // Tổng doanh số
                 $data_report[$value['id']]['reduce_sale']       = 0; // giảm trừ doanh thu
                 $data_report[$value['id']]['return']            = 0; // Hàng hoàn
-                $data_report[$value['id']]['fee_other']         = 0; // thu khác vat
+                $data_report[$value['id']]['fee_other']         = 0; // thu khác
+                $data_report[$value['id']]['vat']               = 0; // vat
                 $data_report[$value['id']]['sales_complete']    = 0; // Doanh số thành công
                 $data_report[$value['id']]['percent_return']    = 0; // % hoàn
                 $data_report[$value['id']]['transport']         = 0; // % phí vận chuyển
@@ -1913,7 +1914,8 @@ class SaleController extends ActionController {
             $data_report['total']['sales_total']       = 0; // Tổng doanh số
             $data_report['total']['reduce_sale']       = 0; // giảm trừ doanh thu
             $data_report['total']['return']            = 0; // Hàng hoàn
-            $data_report['total']['fee_other']         = 0; // thu khác vat
+            $data_report['total']['fee_other']         = 0; // thu khác
+            $data_report['total']['vat']               = 0; // vat
             $data_report['total']['sales_complete']    = 0; // Doanh số thành công
             $data_report['total']['percent_return']    = 0; // % hoàn
             $data_report['total']['transport']         = 0; // % phí vận chuyển
@@ -1937,12 +1939,17 @@ class SaleController extends ActionController {
                 if (array_key_exists($value['user_id'], $data_report)) {
                     // Tổng doanh số
                     $vat = $value['option_vat'] == 'yes' ? $value['vat'] : 0 ;
-                    $data_report[$value['user_id']]['sales_total'] += $value['price_total'] - ($value['fee_other'] + $vat);
-                    $data_report['total']['sales_total'] += $value['price_total'] - ($value['fee_other'] + $vat);
+
+                    $data_report[$value['user_id']]['sales_total'] += $value['price_total'] - ($vat);
+                    $data_report['total']['sales_total'] += $value['price_total'] - ($vat);
 
                     // Thu khác + VAT
-                    $data_report[$value['user_id']]['fee_other'] += $value['fee_other'] + $vat;
-                    $data_report['total']['fee_other'] += $value['fee_other'] + $vat;
+                    $data_report[$value['user_id']]['fee_other'] += $value['fee_other'];
+                    $data_report['total']['fee_other'] += $value['fee_other'];
+
+                    // Thu khác + VAT
+                    $data_report[$value['user_id']]['vat'] += $vat;
+                    $data_report['total']['vat'] += $vat;
 
                     // Giảm trừ doanh thu
                     $data_report[$value['user_id']]['reduce_sale'] += $value['price_reduce_sale'];
@@ -2035,6 +2042,7 @@ class SaleController extends ActionController {
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['reduce_sale'].'</td> 
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['return'].'</td>
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['fee_other'].'</td> 
+        						<td class="mask_currency text-right">'.$data_report[$value['id']]['vat'].'</td> 
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['sales_complete'].'</td>
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['percent_return'].'%</td>
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['transport'].'</td>';
@@ -2055,6 +2063,7 @@ class SaleController extends ActionController {
         						<td class="mask_currency text-right">'.$data_report['total']['reduce_sale'].'</td> 
         						<td class="mask_currency text-right">'.$data_report['total']['return'].'</td>
         						<td class="mask_currency text-right">'.$data_report['total']['fee_other'].'</td> 
+        						<td class="mask_currency text-right">'.$data_report['total']['vat'].'</td> 
         						<td class="mask_currency text-right">'.$data_report['total']['sales_complete'].'</td>
         						<td class="mask_currency text-right">'.$data_report['total']['percent_return'].'%</td>
         						<td class="mask_currency text-right">'.$data_report['total']['transport'].'</td>';
@@ -2074,7 +2083,8 @@ class SaleController extends ActionController {
                             					<th class="text-center">Tổng doanh số</th>
                             					<th class="text-center">Giảm trừ doanh thu</th>
                             					<th class="text-center">DS hoàn</th>
-                            					<th class="text-center">Thu khác + VAT</th>
+                            					<th class="text-center">Thu khác</th>
+                            					<th class="text-center">VAT</th>
                             					<th class="text-center">DS thành công</th>
                             					<th class="text-center">% Hoàn</th>
                             					<th class="text-center">Phí vận chuyển</th>
