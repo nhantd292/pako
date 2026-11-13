@@ -1903,9 +1903,10 @@ class SaleController extends ActionController {
                 $data_report[$value['id']]['return']            = 0; // Hàng hoàn
                 $data_report[$value['id']]['fee_other']         = 0; // thu khác vat
                 $data_report[$value['id']]['sales_complete']    = 0; // Doanh số thành công
-                $data_report[$value['id']]['percent_return']  = 0; // % hoàn
+                $data_report[$value['id']]['percent_return']    = 0; // % hoàn
                 $data_report[$value['id']]['transport']         = 0; // % phí vận chuyển
                 $data_report[$value['id']]['cost']              = 0; // giá vốn
+                $data_report[$value['id']]['buy_cost']          = 0; // Mua lại giá vốn
                 $data_report[$value['id']]['profit']            = 0; // Lợi nhuận
             }
             $data_report['total']['name']              = "Tổng";
@@ -1914,9 +1915,10 @@ class SaleController extends ActionController {
             $data_report['total']['return']            = 0; // Hàng hoàn
             $data_report['total']['fee_other']         = 0; // thu khác vat
             $data_report['total']['sales_complete']    = 0; // Doanh số thành công
-            $data_report['total']['percent_return']  = 0; // % hoàn
+            $data_report['total']['percent_return']    = 0; // % hoàn
             $data_report['total']['transport']         = 0; // % phí vận chuyển
             $data_report['total']['cost']              = 0; // giá vốn
+            $data_report['total']['buy_cost']          = 0; // Mua lại giá vốn
             $data_report['total']['profit']            = 0; // Lợi nhuận
 
             // Lấy dữ liệu doanh số.
@@ -1925,7 +1927,7 @@ class SaleController extends ActionController {
                 'filter_date_end'           => $ssFilter->report['date_end'],
                 'filter_product_group_id'   => $ssFilter->report['product_group_id'],
                 'filter_customer_type'      => $ssFilter->report['customer_type'],
-                'sale_id'            => $ssFilter->report['sale_id'],
+                'sale_id'                   => $ssFilter->report['sale_id'],
                 'date_type'                 => "shipped_date",
             );
             $contracts = $this->getServiceLocator()->get('Admin\Model\ContractTable')->report(array('ssFilter' => $where_contract), array('task' => 'join-contact'));
@@ -1934,8 +1936,13 @@ class SaleController extends ActionController {
                 // Nếu người lên đơn nằm trong danh sách nhân viên sale.
                 if (array_key_exists($value['user_id'], $data_report)) {
                     // Tổng doanh số
-                    $data_report[$value['user_id']]['sales_total'] += $value['price_total'];
-                    $data_report['total']['sales_total'] += $value['price_total'];
+                    $vat = $value['option_vat'] == 'yes' ? $value['vat'] : 0 ;
+                    $data_report[$value['user_id']]['sales_total'] += $value['price_total'] - $vat;
+                    $data_report['total']['sales_total'] += $value['price_total'] - $vat;
+
+                    // Thu khác + VAT
+                    $data_report[$value['user_id']]['fee_other'] += $value['fee_other'] + $vat;
+                    $data_report['total']['fee_other'] += $value['fee_other'] + $vat;
 
                     // Giảm trừ doanh thu
                     $data_report[$value['user_id']]['reduce_sale'] += $value['price_reduce_sale'];
@@ -1946,10 +1953,6 @@ class SaleController extends ActionController {
                         $data_report[$value['user_id']]['return'] += $value['price_total'];
                         $data_report['total']['return'] += $value['price_total'];
                     }
-
-                    // Thu khác + VAT
-                    $data_report[$value['user_id']]['fee_other'] += $value['fee_other'] + $value['vat'];
-                    $data_report['total']['fee_other'] += $value['fee_other'] + $value['vat'];
 
                     // Phí vận chuyển
                     $data_report[$value['user_id']]['transport'] += $value['fee_shipp'];
@@ -1975,8 +1978,13 @@ class SaleController extends ActionController {
             );
             $contracts_return = $this->getServiceLocator()->get('Admin\Model\ContractTable')->report(array('ssFilter' => $where_contract_return), array('task' => 'list-user-total-return'));
             foreach ($contracts_return as $value) {
+                # Cộng thêm đơn hoàn một phần
                 $data_report[$value['user_id']]['return'] += $value['total_return'];
                 $data_report['total']['return'] += $value['total_return'];
+
+                # Mua lại giá vốn hàng hoàn
+                $data_report[$value['user_id']]['buy_cost'] += $value['total_cost'];
+                $data_report['total']['buy_cost'] += $value['total_cost'];
 
                 $data_report[$value['user_id']]['sales_complete'] -= $value['total_return'];
                 $data_report['total']['sales_complete'] -= $value['total_return'];
@@ -1985,7 +1993,7 @@ class SaleController extends ActionController {
             // Tham số bảng báo cáo
             foreach ($data_report as $key => $value){
                 $percent_return  = ($value['sales_total'] > 0 ? round(($value['return']) / $value['sales_total'] * 100, 2) : 0);
-                $profit  = $value['sales_complete'] - $value['price_reduce_sale'] - $value['transport'] - $value['cost'];
+                $profit  = $value['sales_complete'] - $value['price_reduce_sale'] - $value['transport'] - $value['cost'] - $value['fee_other'] + $value['buy_cost'];
 
                 $data_report[$key]['percent_return']  = $percent_return;
                 $data_report[$key]['profit']  = $profit;
@@ -2016,7 +2024,9 @@ class SaleController extends ActionController {
             foreach ($key_sort as $key => $value){
                 $cost_html = '';
                 if ($show_cost) {
-                    $cost_html = '<td class="mask_currency text-right">'.$data_report[$value['id']]['cost'].'</td>
+                    $cost_html = '
+                                <td class="mask_currency text-right">'.$data_report[$value['id']]['cost'].'</td>
+                                <td class="mask_currency text-right">'.$data_report[$value['id']]['buy_cost'].'</td>
         						<td class="mask_currency text-right">'.$data_report[$value['id']]['profit'].'</td>';
                 }
                 $xhtmlItems .= '<tr>
@@ -2034,8 +2044,10 @@ class SaleController extends ActionController {
             // Hiển thị dòng tổng tất cả.
             $cost_total_html = '';
             if ($show_cost) {
-                $cost_total_html = '<td class="mask_currency text-right">'.$data_report['total']['cost'].'</td>
-        						<td class="mask_currency text-right">'.$data_report['total']['profit'].'</td>';
+                $cost_total_html = '
+                                    <td class="mask_currency text-right">'.$data_report['total']['cost'].'</td>
+                                    <td class="mask_currency text-right">'.$data_report['total']['buy_cost'].'</td>
+        						    <td class="mask_currency text-right">'.$data_report['total']['profit'].'</td>';
             }
             $xhtmlItems .= '<tr class="text-bold text-red">
         		                <th class="text-bold">'.$data_report['total']['name'].'</th> <!--Tên nhân viên-->
@@ -2051,7 +2063,9 @@ class SaleController extends ActionController {
 
             $cost_header_html = '';
             if ($show_cost) {
-                $cost_header_html = '<th class="text-center">Giá vốn</th>
+                $cost_header_html = '
+                                    <th class="text-center">Giá vốn</th>
+                                    <th class="text-center">Mua lại vốn</th>
                             		<th class="text-center">Lợi nhuận thuần</th>';
             }
             $result['reportTable'] = '<thead>

@@ -4431,7 +4431,8 @@ class ContractTable extends DefaultTable {
                 // 1. SELECT CỘT user_id VÀ TỔNG (Dùng \Zend\Db\Sql\Expression)
                 $select->columns(array(
                     'user_id',
-                    'total_return' => new \Zend\Db\Sql\Expression('SUM(' . TABLE_CONTRACT_DETAIL . '.numbers_return * ' . TABLE_CONTRACT_DETAIL . '.price)')
+                    'total_return' => new \Zend\Db\Sql\Expression('SUM(' . TABLE_CONTRACT_DETAIL . '.numbers_return * ' . TABLE_CONTRACT_DETAIL . '.price)'),
+                    'total_cost' => new \Zend\Db\Sql\Expression('SUM(' . TABLE_CONTRACT_DETAIL . '.numbers_return * ' . TABLE_CONTRACT_DETAIL . '.cost)'),
                 ));
 
                 // 2. JOIN BẢNG DETAIL
