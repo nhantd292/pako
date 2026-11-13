@@ -1964,8 +1964,8 @@ class SaleController extends ActionController {
 
                     // DS thành công
                     if ($value['state'] == COMPLETE_STATUS) {
-                        $data_report[$value['user_id']]['sales_complete'] += $value['price_total'];
-                        $data_report['total']['sales_complete'] += $value['price_total'];
+                        $data_report[$value['user_id']]['sales_complete'] += $value['price_total'] - ($value['fee_other'] + $vat);
+                        $data_report['total']['sales_complete'] += $value['price_total'] - ($value['fee_other'] + $vat);
                     }
                 }
             }
@@ -1993,7 +1993,7 @@ class SaleController extends ActionController {
             // Tham số bảng báo cáo
             foreach ($data_report as $key => $value){
                 $percent_return  = ($value['sales_total'] > 0 ? round(($value['return']) / $value['sales_total'] * 100, 2) : 0);
-                $profit  = $value['sales_complete'] - $value['price_reduce_sale'] - $value['transport'] - $value['cost'] - $value['fee_other'] + $value['buy_cost'];
+                $profit  = $value['sales_complete'] - $value['price_reduce_sale'] - $value['transport'] - $value['cost'] + $value['buy_cost'];
 
                 $data_report[$key]['percent_return']  = $percent_return;
                 $data_report[$key]['profit']  = $profit;
