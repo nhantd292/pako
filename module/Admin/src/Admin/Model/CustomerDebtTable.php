@@ -377,9 +377,9 @@ class CustomerDebtTable extends DefaultTable {
                         -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
                         -> UNNEST;
                 }
-                echo "<pre>";
-                print_r($select->getSqlString());
-                echo "</pre>";
+//                echo "<pre>";
+//                print_r($select->getSqlString());
+//                echo "</pre>";
             });
         }
 		
