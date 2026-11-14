@@ -284,7 +284,7 @@ class CustomerDebtTable extends DefaultTable {
                 $select -> join(TABLE_CONTACT, TABLE_CONTACT .'.id = '. TABLE_CUSTOMER_DEBT .'.customer_id', array( 'customer_name' => 'name'), 'inner');
 
                         # lấy thông tin sản phẩm liên kết đơn hàng
-                $contract_join = (isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') ? 'inner' : 'leff';
+                $contract_join = (isset($ssFilter['filter_sale_branch_id']) && $ssFilter['filter_sale_branch_id'] != '') ? 'inner' : 'left';
                 $select -> join(TABLE_CONTRACT, TABLE_CONTRACT .'.id = '. TABLE_CUSTOMER_DEBT .'.orders_id', array(
                     'orders_code' => 'code',
                     'option_vat' => 'option_vat',
@@ -377,9 +377,9 @@ class CustomerDebtTable extends DefaultTable {
                         -> like(TABLE_CONTACT.'.user_ids', "%{$ssFilter['filter_user']}%")
                         -> UNNEST;
                 }
-//                echo "<pre>";
-//                print_r($select->getSqlString());
-//                echo "</pre>";
+                echo "<pre>";
+                print_r($select->getSqlString());
+                echo "</pre>";
             });
         }
 		

@@ -1943,11 +1943,11 @@ class SaleController extends ActionController {
                     $data_report[$value['user_id']]['sales_total'] += $value['price_total'] - ($vat);
                     $data_report['total']['sales_total'] += $value['price_total'] - ($vat);
 
-                    // Thu khác + VAT
+                    // Thu khác
                     $data_report[$value['user_id']]['fee_other'] += $value['fee_other'];
                     $data_report['total']['fee_other'] += $value['fee_other'];
 
-                    // Thu khác + VAT
+                    // VAT
                     $data_report[$value['user_id']]['vat'] += $vat;
                     $data_report['total']['vat'] += $vat;
 
