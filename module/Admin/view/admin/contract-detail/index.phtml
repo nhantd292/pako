@@ -112,6 +112,7 @@
     							<td class="text-center">'. number_format($item->numbers_return) .'</td>
     							<td class="text-right">'. number_format($item->price) .'</td>
     							<td class="text-right">'. number_format($item->total) .'</td>
+    							<td class="text-right">'. number_format($item->numbers_return*$item->price) .'</td>
     							'.$column_cost.'
     							<td class="text-right">'. number_format($item->weight) .'</td>
     							<td >'. $item->categoryName .'</td>
@@ -132,6 +133,8 @@
     $xhtmlHead .= '<th class="text-center">Số lượng trả</th>';
     $xhtmlHead .= '<th class="text-right">Giá bán</th>';
     $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
+    $xhtmlHead .= '<th class="text-right">Thành tiền</th>';
+    $xhtmlHead .= '<th class="text-right">Tổng tiền trả<br><span class="text-red">'.number_format($this->total_return).'</span></th>';
     if($show_cost) {
         $xhtmlHead .= '<th class="text-center">Giá vốn</th>';
         $xhtmlHead .= '<th class="text-right">Tổng Giá vốn<br><span class="text-red">'.number_format($this->total_cost).'</span></th>';
