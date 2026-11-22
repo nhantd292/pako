@@ -144,8 +144,11 @@ class CustomerDebtController extends ActionController
                     }
                 }
 
-                if ($paid_cash+$paid_transfer < $total_price) {
-                    $this->flashMessenger()->addErrorMessage('Số tiền phân bổ lớn hơn số tiền THU thực tế');
+//                if ($paid_cash+$paid_transfer < $total_price) {
+//                    $this->flashMessenger()->addErrorMessage('Số tiền phân bổ lớn hơn số tiền THU thực tế');
+//                }
+                if ($paid_cash+$paid_transfer != $total_price) {
+                    $this->flashMessenger()->addErrorMessage('Số tiền phân bổ không khớp với số tiền THU thực tế');
                 }
                 else {
                     ##### begin #####
