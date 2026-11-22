@@ -2004,7 +2004,7 @@ class SaleController extends ActionController {
                 $percent_return  = ($value['total_sales'] > 0 ? round(($value['return_sales'] + $value['return_sales_part']) / $value['total_sales'] * 100, 2) : 0);
                 $profit  = $value['complete_sales'] - $value['complete_reduce_sale'] - $value['transport'] - $value['cost'];
 
-                $data_report[$key]['percent_return']  = $percent_return;
+                $data_report[$key]['return_percent']  = $percent_return;
                 $data_report[$key]['profit']  = $profit;
             }
             // sắp xếp theo doanh tổng doanh thu
