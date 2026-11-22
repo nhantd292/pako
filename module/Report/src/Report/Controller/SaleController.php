@@ -2021,7 +2021,7 @@ class SaleController extends ActionController {
             }
             for($i = 0; $i < count($key_sort) - 1; $i++){
                 for($j = $i+1; $j < count($key_sort); $j++){
-                    if($key_sort[$i]['sales_total'] < $key_sort[$j]['sales_total']){
+                    if($key_sort[$i]['total_sales'] < $key_sort[$j]['total_sales']){
                         $tm           = $key_sort[$i];
                         $key_sort[$i] = $key_sort[$j];
                         $key_sort[$j] = $tm;
