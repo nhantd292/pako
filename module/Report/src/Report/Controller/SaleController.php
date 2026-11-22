@@ -2015,7 +2015,7 @@ class SaleController extends ActionController {
             foreach ($data_report as $key => $value) {
                 if($key != 'total'){
                     $key_sort[$i]['id'] = $key;
-                    $key_sort[$i]['sales_total'] = $data_report[$key]['sales_total'];
+                    $key_sort[$i]['total_sales'] = $data_report[$key]['total_sales'];
                     $i++;
                 }
             }
