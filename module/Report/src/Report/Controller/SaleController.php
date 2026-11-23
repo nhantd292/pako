@@ -1961,8 +1961,8 @@ class SaleController extends ActionController {
                     // Doanh số Hoàn
                     if ($value['state'] == RETURN_STATUS || $value['return_status'] == 2) {
                         # Doanh số
-                        $data_report[$value['user_id']]['return_sales'] += $value['price_total'];
-                        $data_report['total']['return_sales'] += $value['price_total'];
+                        $data_report[$value['user_id']]['return_sales'] += $value['price_total'] - $vat;
+                        $data_report['total']['return_sales'] += $value['price_total'] - $vat;
                         # Thu khác + VAT
                         $data_report[$value['user_id']]['return_fee_other'] += $value['fee_other'] + $vat;
                         $data_report['total']['return_fee_other'] += $value['fee_other'] + $vat;
@@ -1971,8 +1971,8 @@ class SaleController extends ActionController {
                     // DS thành công
                     if ($value['state'] == COMPLETE_STATUS) {
                         # Doanh số
-                        $data_report[$value['user_id']]['complete_sales'] += $value['price_total'];
-                        $data_report['total']['complete_sales'] += $value['price_total'];
+                        $data_report[$value['user_id']]['complete_sales'] += $value['price_total'] - $vat;
+                        $data_report['total']['complete_sales'] += $value['price_total'] - $vat;
                         # Thu khác + VAT
                         $data_report[$value['user_id']]['complete_fee_other'] += $value['fee_other'] + $vat;
                         $data_report['total']['complete_fee_other'] += $value['fee_other'] + $vat;
