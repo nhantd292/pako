@@ -148,9 +148,6 @@
             $xhtmlItems .= '<td>'. $phone .'</td>';
             $xhtmlItems .= '<td>'. $name .'</td>';
             $xhtmlItems .= '<td><div class="col-100 text-wrap">'. $customer_type.'</div></td>';
-//            $xhtmlItems .= '<td>'. $product_group.'</td>';
-            $xhtmlItems .= '<td class="text-center">'. $contract_number .'</td>';
-            $xhtmlItems .= '<td class="mask_currency text-right">'. $contract_price_total .'</td>';
             $xhtmlItems .= '<td><div class="col-190 text-wrap">'. $note .'</div></td>';
             $xhtmlItems .= '<td><div class="col-190 text-wrap">'. $content .'</div></td>';
             $xhtmlItems .= '<td class="text-center">'. $hisstory_success .'</td>';
@@ -172,9 +169,6 @@
     $xhtmlHead .= '<th width ="90">Điện thoại</th>';
     $xhtmlHead .= '<th width ="150">Họ tên</th>';
     $xhtmlHead .= '<th width ="120">Nhóm Khách hàng</th>';
-//    $xhtmlHead .= '<th width ="150">SP quan tâm</th>';
-    $xhtmlHead .= $this->linkAdminSort('Số lần mua sản phẩm', 'contract_total', $this->params['ssFilter'], array('class' => 'col-150', 'width' => '150'));
-    $xhtmlHead .= $this->linkAdminSort('Tổng doanh số', 'contract_price_total', $this->params['ssFilter'], array('class' => 'col-150', 'width' => '120'));
     $xhtmlHead .= '<th width ="200">Tên xe - Năm sản xuất</th>';
     $xhtmlHead .= '<th width ="220">Nội dung tư vấn</th>';
     $xhtmlHead .= '<th width ="150">Số lần được chăm sóc</th>';
