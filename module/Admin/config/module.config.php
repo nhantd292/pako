@@ -6,7 +6,7 @@ return array (
 	'controllers' => array(
 		'invokables' => array(
 			'Admin\Controller\Api'                    => Controller\ApiController::class,
-//			'Admin\Controller\Index'                  => Controller\IndexController::class,
+			'Admin\Controller\Index'                  => Controller\IndexController::class,
 //		    'Admin\Controller\Dynamic'                => Controller\DynamicController::class,
 //		    'Admin\Controller\Document'               => Controller\DocumentController::class,
 //		    'Admin\Controller\Notice'                 => Controller\NoticeController::class,
