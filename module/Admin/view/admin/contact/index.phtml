@@ -27,9 +27,9 @@
         array('element' => $myForm->get('filter_date_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_customer_type'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_last_action'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_number_contract'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_number_contract2'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
-        array('element' => $myForm->get('filter_sale_branch'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+//        array('element' => $myForm->get('filter_number_contract'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+//        array('element' => $myForm->get('filter_number_contract2'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
+//        array('element' => $myForm->get('filter_sale_branch'), 'boxClass' => 'col-md-1 col-sm-4 col-xs-6'),
 //        array('element' => $myForm->get('filter_sale_group'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_user'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
         array('element' => $myForm->get('filter_marketer_id'), 'boxClass' => 'col-md-2 col-sm-4 col-xs-6'),
@@ -51,7 +51,9 @@
     $xhtmlItems = '';
     $total_cost_ads = 0;
     if($this->items->count() > 0) {
+        $stt = 0;
         foreach ($this->items AS $item) {
+            $stt++;
             $cid                    = @$this->xFormInput('cid[]', $item->id, array('type' => 'checkbox', 'class' => 'checkboxes'));
             
             $id                     = $item->id;
@@ -139,10 +141,10 @@
             }
             $OrderReturnProducts    = $this->linkAdminHtml($linkReturnContract, array('type' => 'icon', 'title' => 'Trả hàng', 'target' => '_blank', 'class' => 'btn btn-xs dark', 'icon' => 'fa fa-minus'));
 
-            $controls               = $controlView . $controlEdit.$controlHistory. $addContract.'<br>'. $OrderReturnProducts;
+            $controls               = $controlView;
 
             $xhtmlItems .= '<tr id="tr_'. $id .'" '.$color_text_row.'>';
-    		$xhtmlItems .= '<td>'. $cid .'</td>';
+    		$xhtmlItems .= '<td class="text-center">'. $stt .'</td>';
 			$xhtmlItems .= '<td class="controls">'. $controls .'</td>';
             $xhtmlItems .= '<td>'. $date .'</td>';
             $xhtmlItems .= '<td>'. $phone .'</td>';
@@ -163,8 +165,8 @@
     }
     // Head
     $xhtmlHead  = '<tr>';
-    $xhtmlHead .= '<th width ="30" class="table-checkbox"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';
-    $xhtmlHead .= '<th width ="110">Công cụ</th>';
+    $xhtmlHead .= '<th width ="30" class="table-checkbox">STT</th>';
+    $xhtmlHead .= '<th width ="30"></th>';
     $xhtmlHead .= $this->linkAdminSort('Ngày', 'date', $this->params['ssFilter'], array('class' => 'col-150', 'width' => '110'));
     $xhtmlHead .= '<th width ="90">Điện thoại</th>';
     $xhtmlHead .= '<th width ="150">Họ tên</th>';
@@ -183,22 +185,6 @@
     
     // Control
     $arrControl = array(
-        array( 'name' => 'share','link' => 'javascript:popupAction(\''. $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'receive')) .'\');', 'caption' => 'Nhận data( có '.$this->count_form_data.' data mới)', 'icon' => 'fa-braille', 'attributes' => array( 'onclick' => '', 'class' => 'btn',  ) ),
-        array( 'name' => 'add', 'caption' => 'Thêm liên hệ', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'form')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => '', 'class' => 'btn', ) ),
-        array(
-            'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
-            'children' => array(
-                array( 'name' => 'transfer', 'caption' => 'Chuyển quyền quản lý', 'link' => 'javascript:;', 'icon' => 'fa-refresh', 'attributes' => array( 'onclick' => 'javascript:contactChangeUser();') ),
-//                array( 'name' => 'divider' ),
-                array( 'name' => 'delete', 'caption' => 'Xóa', 'link' => 'javascript:;', 'icon' => 'fa-trash', 'attributes' => array( 'onclick' => 'javascript:deleteItem(\'multi\', \'all\');' ) ),
-//                array( 'name' => 'divider' ),
-//                array( 'name' => 'check', 'caption' => 'Check data', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'check-info')), 'icon' => 'fa-database' ),
-//                array( 'name' => 'divider' ),
-//                array( 'name' => 'export', 'caption' => 'Xuất bản excel', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'export')), 'icon' => 'fa-file-excel-o', ),
-//                array( 'name' => 'import', 'caption' => 'Import dữ liệu', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'import')), 'icon' => 'fa fa-upload' ),
-            ),
-            'children-class' => 'dropdown-menu pull-right'
-        ),
     );
 ?>
 <form action="<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'filter')); ?>" name="adminFormFilter" id="adminFormFilter" method="post">

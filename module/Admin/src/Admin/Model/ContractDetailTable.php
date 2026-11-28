@@ -392,6 +392,9 @@ class ContractDetailTable extends DefaultTable {
                 if(isset($arrParam['contract_id']) && $arrParam['contract_id'] != '') {
                     $select->where->equalTo(TABLE_CONTRACT_DETAIL . '.contract_id', $arrParam['contract_id']);
                 }
+                else{
+                    $select->where->equalTo(TABLE_CONTRACT_DETAIL . '.contract_id', "17589374860rkkk4qag853");
+                }
             });
         }
 

@@ -49,7 +49,6 @@
 
             
             $xhtmlItems .= '<tr id="tr_'. $id .'" data-contact="'.$item['contact_id'].'">
-    							<td class="text-center">'. $cid .'</td>
                                 <td class="text-center">'. $index .'</td>
     							<td class="text-center text-bold"><a href="'. $linkDetail .'">'.  $item['code'] .'</a></td>
     							<td class="text-center">'. $item['note'] .'</td>
@@ -65,7 +64,6 @@
 
     // Head
     $xhtmlHead  = '<tr>';
-    $xhtmlHead .= '<th width="20" class="table-checkbox text-center"><input type="checkbox" class="group-checkable" data-set="#table-manager .checkboxes"/></th>';;
     $xhtmlHead .= '<th class="text-center" width="20">STT</th>';
     $xhtmlHead .= '<th class="text-center" width="50">Mã</th>';
     $xhtmlHead .= '<th class="text-center" width="150">Mô tả</th>';
@@ -79,15 +77,15 @@
     
     // Control
     $arrControl = array(
-        array( 'name' => 'add', 'caption' => 'Thêm', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn', ) ),
-        array(
-            'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
-            'children' => array(
-                array( 'name' => 'delete', 'caption' => 'Xóa', 'link' => 'javascript:;', 'icon' => 'fa-trash', 'attributes' => array( 'onclick' => 'javascript:deleteItem(\'multi\', \'all\');' ) ),
-                array('name' => 'sort', 'caption' => 'Sắp xếp', 'link' => 'javascript:;', 'icon' => 'fa-sort-alpha-asc', 'attributes' => array('onclick' => 'javascript:changeOrdering();',))
-                ),
-            'children-class' => 'dropdown-menu pull-right'
-        ),
+//        array( 'name' => 'add', 'caption' => 'Thêm', 'link' => $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'add')), 'icon' => 'fa-plus', 'attributes' => array( 'onclick' => 'javascript:void(0)', 'class' => 'btn', ) ),
+//        array(
+//            'name' => 'tool', 'caption' => 'Công cụ', 'link' => 'javascript:;', 'icon' => 'fa-link', 'attributes' => array( 'class' => 'btn dropdown-toggle', 'data-toggle' => 'dropdown', 'data-hover' => 'dropdown', ),
+//            'children' => array(
+//                array( 'name' => 'delete', 'caption' => 'Xóa', 'link' => 'javascript:;', 'icon' => 'fa-trash', 'attributes' => array( 'onclick' => 'javascript:deleteItem(\'multi\', \'all\');' ) ),
+//                array('name' => 'sort', 'caption' => 'Sắp xếp', 'link' => 'javascript:;', 'icon' => 'fa-sort-alpha-asc', 'attributes' => array('onclick' => 'javascript:changeOrdering();',))
+//                ),
+//            'children-class' => 'dropdown-menu pull-right'
+//        ),
     );
 ?>
 <form action="<?php echo $this->url('routeAdmin/default', array('controller' => $this->params['controller'], 'action' => 'filter')); ?>" name="adminFormFilter" id="adminFormFilter" method="post">

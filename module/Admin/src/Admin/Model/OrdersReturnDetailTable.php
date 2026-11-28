@@ -140,6 +140,9 @@ class OrdersReturnDetailTable extends DefaultTable {
                 if(isset($arrParam['orders_return_id']) && $arrParam['orders_return_id'] != '') {
                     $select->where->equalTo('orders_return_id', $arrParam['orders_return_id']);
                 }
+                else{
+                    $select->where->equalTo('orders_return_id', "17589374860rkkk4qag853");
+                }
     		});
 		}
 
