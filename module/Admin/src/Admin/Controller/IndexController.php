@@ -20,9 +20,12 @@ class IndexController extends ActionController {
     }
     
     public function indexAction() {
-      	$this->_viewModel['userInfo'] = $this->_userInfo;
-      	$viewModel = new ViewModel($this->_viewModel);
-      	return $viewModel;
+        $linkRedirect = $this->url()->fromRoute('routeAdmin/default', array('controller' => 'contract', 'action' => 'index'), array('force_canonical' => true));
+        $this->redirect()->toUrl($linkRedirect);
+
+//      	$this->_viewModel['userInfo'] = $this->_userInfo;
+//      	$viewModel = new ViewModel($this->_viewModel);
+//      	return $viewModel;
     }
     
     public function backupAction() {
