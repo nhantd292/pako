@@ -11,7 +11,7 @@ return array (
 //		    'Admin\Controller\Document'               => Controller\DocumentController::class,
 //		    'Admin\Controller\Notice'                 => Controller\NoticeController::class,
 //		    'Admin\Controller\Setting'                => Controller\SettingController::class,
-//			'Admin\Controller\User'                   => Controller\UserController::class,
+			'Admin\Controller\User'                   => Controller\UserController::class,
 //			'Admin\Controller\Permission'             => Controller\PermissionController::class,
 //			'Admin\Controller\PermissionList'         => Controller\PermissionListController::class,
 			'Admin\Controller\Contact'                => Controller\ContactController::class,
